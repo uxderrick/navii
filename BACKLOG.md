@@ -1,0 +1,45 @@
+# Navii Backlog
+
+Tracked work beyond the current scaffold. Ordered by impact, not priority — pick what fits the moment.
+
+## Combinatorial expansion (grow output space beyond 1.4M)
+
+- [ ] **More part variants** — multiplicative. Each new eye style ≈ +16.6%, each new body ≈ +20%, each new topper ≈ +12.5%. Cheap, fast wins.
+- [ ] **Continuous params** — turn discrete picks into seeded ranges:
+  - hue rotation on palette (±15° drift)
+  - body width % (0.9–1.1)
+  - eye gap % (0.85–1.15)
+  - mouth curvature %
+  - antenna tilt °
+  Turns 1.4M discrete → effectively unbounded. Bigger refactor: AvatarSpec gains numeric fields, renderer interpolates.
+- [ ] **Compound accessories** — allow stacking (blush + freckles + sparkle). Currently single-pick.
+- [ ] **Outfit slot** — collar / scarf / bowtie. New part layer below face, anchored to body.
+
+## Art polish (designer-needed, flagged for handoff)
+
+- [ ] Hand-drawn silhouette paths replacing current passable ones
+- [ ] Refined eye/mouth shapes at illustrator quality
+- [ ] Color story — palette pairings curated for harmony, not just hue spread
+- [ ] Per-body face-feature offsets fine-tuned by eye (anchor table currently sketch quality)
+
+## Distribution
+
+- [ ] Publish `@navii/core` + `@navii/react` to npm. Add tsup for dual ESM/CJS.
+- [ ] Tag v0.1.0
+- [ ] Cloudflare Worker deploy of `@navii/api` (swap `@resvg/resvg-js` → `@resvg/resvg-wasm`)
+- [ ] Public CDN at `navii.dev/avatar/<seed>`
+
+## Product
+
+- [ ] Demo site + docs — hero gallery, live seed input, copy-paste install
+- [ ] `<NaviiGroup seeds={[...]} max={5} />` overlap stack with +N tile
+- [ ] Lazy WebP fallback alongside PNG for smaller bytes
+- [ ] React Native binding (`@navii/native`) — same engine, native SVG renderer
+- [ ] CLI: `npx navii alice` → writes SVG to stdout
+
+## Engineering
+
+- [ ] Snapshot test of N seeds — guard against unintended part-pick drift
+- [ ] Bench: avatars/sec; aim ≥ 50K/s on M1
+- [ ] Strict size budget on `@navii/core` (target < 8KB gzipped)
+- [ ] Builder API — programmatic mix-and-match without seed: `Navii.build({body:'tall', eyes:'star'})`

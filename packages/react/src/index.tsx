@@ -1,0 +1,52 @@
+import * as React from 'react';
+import { createAvatar, type AvatarOptions } from '@navii/core';
+
+export interface NaviiProps extends AvatarOptions {
+  seed: string;
+  className?: string;
+  style?: React.CSSProperties;
+  alt?: string;
+}
+
+
+
+/**
+ * Drop-in React avatar. Renders the engine output as a data-URI SVG image so
+ * the SVG markup is treated as opaque by the browser (no inline scripting
+ * surface). Memoized on seed + options.
+ */
+export function Navii({
+  seed,
+  size = 96,
+  paletteId,
+  background,
+  title,
+  animated,
+  className,
+  style,
+  alt,
+}: NaviiProps): React.ReactElement {
+  const dataUri = React.useMemo(() => {
+    const opts: AvatarOptions = { size };
+    if (paletteId !== undefined) opts.paletteId = paletteId;
+    if (background !== undefined) opts.background = background;
+    if (title !== undefined) opts.title = title;
+    if (animated !== undefined) opts.animated = animated;
+    const svg = createAvatar(seed, opts);
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  }, [seed, size, paletteId, background, title, animated]);
+
+  return (
+    <img
+      src={dataUri}
+      width={size}
+      height={size}
+      alt={alt ?? title ?? ''}
+      className={className}
+      style={style}
+    />
+  );
+}
+
+export { createAvatar, selectAvatar, renderAvatar } from '@navii/core';
+export type { AvatarSpec, AvatarOptions, Palette } from '@navii/core';

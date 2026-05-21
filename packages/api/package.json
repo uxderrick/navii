@@ -1,0 +1,35 @@
+{
+  "name": "@navii/api",
+  "version": "0.0.1",
+  "description": "Hosted Navii avatar endpoint. GET /avatar/:seed → SVG.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx watch src/dev.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@navii/core": "workspace:*",
+    "hono": "^4.6.0"
+  },
+  "optionalDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "tsx": "^4.19.0"
+  },
+  "license": "MIT"
+}

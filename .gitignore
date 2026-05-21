@@ -1,0 +1,11 @@
+node_modules
+dist
+.turbo
+.next
+coverage
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+.vercel
+.wrangler

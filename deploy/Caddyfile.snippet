@@ -1,0 +1,21 @@
+navii-api.uxderrick.com {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "interest-cohort=()"
+		-Server
+	}
+
+	@assets path /avatar/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	reverse_proxy 127.0.0.1:8787 {
+		header_up X-Real-IP {remote_host}
+		health_uri /healthz
+		health_interval 30s
+		health_timeout 5s
+	}
+}

@@ -1,0 +1,35 @@
+# Production compose for Hetzner.
+#
+# Assumes host already runs a reverse proxy (Caddy/Nginx). API binds to
+# 127.0.0.1:8787 only — not exposed publicly. The host proxy forwards
+# https://navii-api.uxderrick.com → 127.0.0.1:8787.
+#
+# Usage on the box:
+#   cd /opt/navii && docker compose pull && docker compose up -d
+
+services:
+  api:
+    image: ${IMAGE:-ghcr.io/uxderrick/navii-api:latest}
+    container_name: navii-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "8787"
+      HOST: "0.0.0.0"
+      TRUST_PROXY: "1"
+      RATE_LIMIT_PER_MIN: "120"
+      PNG_CACHE_SIZE: "1000"
+      LOG_LEVEL: "info"
+    ports:
+      - "127.0.0.1:8787:8787"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "512M"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
