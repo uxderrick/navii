@@ -48,5 +48,16 @@ export function selectAvatar(seed: string, options: AvatarOptions = {}): AvatarS
     ? 'none'
     : topperRaw;
 
-  return { seed, palette, body, eyes, mouth, antenna, accessory, background, topper };
+  // Continuous tweaks — appended to the RNG stream so existing seeds keep the
+  // selections above unchanged when these were introduced.
+  const hueShift = Math.round(rng.range(-30, 30));
+  const bodyScale = Number(rng.range(0.92, 1.08).toFixed(3));
+  const eyeGapShift = Number(rng.range(-2, 2).toFixed(2));
+  const mouthCurveScale = Number(rng.range(0.85, 1.15).toFixed(3));
+  const antennaTilt = Math.round(rng.range(-8, 8));
+
+  return {
+    seed, palette, body, eyes, mouth, antenna, accessory, background, topper,
+    hueShift, bodyScale, eyeGapShift, mouthCurveScale, antennaTilt,
+  };
 }

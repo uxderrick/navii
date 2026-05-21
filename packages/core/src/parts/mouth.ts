@@ -1,10 +1,10 @@
 import type { MouthStyleId, Palette } from '../types.js';
 import type { FaceAnchor } from './anchor.js';
 
-export function renderMouth(id: MouthStyleId, palette: Palette, anchor: FaceAnchor): string {
+export function renderMouth(id: MouthStyleId, palette: Palette, anchor: FaceAnchor, curveScale = 1): string {
   const cx = anchor.cx;
   const y = anchor.mouthY;
-  const w = anchor.mouthSpan;
+  const w = anchor.mouthSpan * curveScale;
   const ink = palette.ink;
 
   switch (id) {

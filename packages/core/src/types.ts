@@ -40,6 +40,18 @@ export interface AvatarSpec {
   accessory: AccessoryId;
   background: BackgroundId;
   topper: TopperId;
+
+  // Continuous tweaks — extend the 1.4M discrete combos toward unbounded.
+  /** Hue rotation applied to body fill via SVG feColorMatrix. Degrees, signed. */
+  hueShift: number;
+  /** Uniform scale on body group. ~0.92 to 1.08. */
+  bodyScale: number;
+  /** Adjustment to anchor.eyeOffset (px in viewBox units). Signed. */
+  eyeGapShift: number;
+  /** Multiplier on mouth span. ~0.85 to 1.15. */
+  mouthCurveScale: number;
+  /** Antenna rotation in degrees. Signed. */
+  antennaTilt: number;
 }
 
 export interface AvatarOptions {
