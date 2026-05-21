@@ -78,6 +78,32 @@ describe('api', () => {
     const body = await res.json();
     expect(body).toMatchObject({ ok: true });
   });
+
+  it('GET /group returns composed SVG', async () => {
+    const res = await get('/group?seeds=alice,bob,carol&size=48');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('image/svg+xml');
+    const body = await res.text();
+    expect(body.startsWith('<svg')).toBe(true);
+    expect(body.match(/<svg x="/g)?.length).toBe(3);
+  });
+
+  it('GET /group requires seeds', async () => {
+    const res = await get('/group');
+    expect(res.status).toBe(400);
+  });
+
+  it('GET /group honors max + emits +N tile', async () => {
+    const res = await get('/group?seeds=a,b,c,d,e,f&size=32&max=3');
+    const body = await res.text();
+    expect(body).toContain('+4');
+  });
+
+  it('GET /group caps seeds at 50', async () => {
+    const many = Array.from({ length: 80 }, (_, i) => `u${i}`).join(',');
+    const res = await get(`/group?seeds=${many}&size=24&max=50`);
+    expect(res.status).toBe(200);
+  });
 });
 
 import { createApp } from '../src/app.js';

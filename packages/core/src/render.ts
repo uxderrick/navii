@@ -19,41 +19,62 @@ import type { AvatarOptions, AvatarSpec } from './types.js';
  * a hash of the seed so multiple Navii avatars can coexist on the same page
  * without id collisions. When `options.animated` is true, an inline <style>
  * block is emitted with seeded delays so a grid desyncs naturally.
+ *
+ * For composing multiple avatars into one SVG (groups), use `renderAvatarInner`
+ * which omits the outer <svg> wrapper.
  */
 export function renderAvatar(spec: AvatarSpec, options: AvatarOptions = {}): string {
   const size = options.size ?? 96;
-  const animated = options.animated === true;
-  const gradId = `navii-grad-${stableId(spec.seed)}`;
-  const bgOverride = typeof options.background === 'object' ? options.background.color : undefined;
-  const anchor = ANCHORS[spec.body];
-
   const titleAttrs = options.title
     ? ` role="img" aria-label="${escapeXml(options.title)}"`
     : ' aria-hidden="true"';
 
-  const antennaSvg = renderAntenna(spec.antenna, anchor, spec.palette);
-  const accessorySvg = renderAccessory(spec.accessory, spec.palette, anchor);
-
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${size}" height="${size}"${titleAttrs}>`,
     options.title ? `<title>${escapeXml(options.title)}</title>` : '',
-    `<defs>${renderBodyDefs(spec.body, spec.palette, gradId)}</defs>`,
-    animated ? renderAnimationStyle(spec) : '',
-    renderBackground(spec.background, spec.palette, bgOverride),
-    wrap('n-body', animated, renderBody(spec.body, spec.palette, gradId)),
-    renderTopper(spec.topper, anchor, spec.palette),
-    wrap('n-eyes', animated, renderEyes(spec.eyes, spec.palette, anchor)),
-    renderMouth(spec.mouth, spec.palette, anchor),
-    antennaSvg ? wrap('n-antenna', animated, antennaSvg) : '',
-    accessorySvg && spec.accessory === 'sparkle'
-      ? wrap('n-sparkle', animated, accessorySvg)
-      : accessorySvg,
+    renderAvatarInner(spec, options),
     `</svg>`,
   ].join('');
 }
 
-function wrap(cls: string, animated: boolean, inner: string): string {
-  if (!animated || !inner) return inner;
+/**
+ * Renders the inner content of an avatar (defs + style + parts) WITHOUT the
+ * outer <svg>. Use for composing multiple avatars into one document.
+ *
+ * Defs/style are scoped via a per-seed class so groups don't share animations.
+ */
+export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {}): string {
+  const animated = options.animated === true;
+  const id = stableId(spec.seed);
+  const scopeClass = `n-${id}`;
+  const gradId = `navii-grad-${id}`;
+  const bgOverride = typeof options.background === 'object' ? options.background.color : undefined;
+  const anchor = ANCHORS[spec.body];
+
+  const antennaSvg = renderAntenna(spec.antenna, anchor, spec.palette);
+  const accessorySvg = renderAccessory(spec.accessory, spec.palette, anchor);
+
+  const parts = [
+    renderBackground(spec.background, spec.palette, bgOverride),
+    wrap('body', renderBody(spec.body, spec.palette, gradId)),
+    renderTopper(spec.topper, anchor, spec.palette),
+    wrap('eyes', renderEyes(spec.eyes, spec.palette, anchor)),
+    renderMouth(spec.mouth, spec.palette, anchor),
+    antennaSvg ? wrap('antenna', antennaSvg) : '',
+    accessorySvg && spec.accessory === 'sparkle'
+      ? wrap('sparkle', accessorySvg)
+      : accessorySvg,
+  ].join('');
+
+  return [
+    `<defs>${renderBodyDefs(spec.body, spec.palette, gradId)}</defs>`,
+    animated ? renderAnimationStyle(spec, scopeClass) : '',
+    animated ? `<g class="${scopeClass}">${parts}</g>` : parts,
+  ].join('');
+}
+
+function wrap(cls: string, inner: string): string {
+  if (!inner) return inner;
   return `<g class="${cls}">${inner}</g>`;
 }
 

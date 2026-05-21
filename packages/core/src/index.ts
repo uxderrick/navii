@@ -1,7 +1,8 @@
 export * from './types.js';
 export { createRng, cyrb53 } from './prng.js';
 export { selectAvatar } from './select.js';
-export { renderAvatar } from './render.js';
+export { renderAvatar, renderAvatarInner } from './render.js';
+export { renderGroup, type GroupOptions } from './group.js';
 
 import { selectAvatar } from './select.js';
 import { renderAvatar } from './render.js';

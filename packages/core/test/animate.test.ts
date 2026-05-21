@@ -14,10 +14,11 @@ describe('animated', () => {
     expect(svg).toContain('@keyframes n-blink');
   });
 
-  it('wraps body + eyes in animated mode', () => {
+  it('wraps body + eyes + scope class in animated mode', () => {
     const svg = createAvatar('alice', { animated: true });
-    expect(svg).toContain('class="n-body"');
-    expect(svg).toContain('class="n-eyes"');
+    expect(svg).toContain('class="body"');
+    expect(svg).toContain('class="eyes"');
+    expect(svg).toMatch(/class="n-[a-z0-9]+"/); // per-seed scope wrapper
   });
 
   it('respects prefers-reduced-motion', () => {

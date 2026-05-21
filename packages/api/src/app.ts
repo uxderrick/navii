@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { createAvatar, type AvatarOptions } from '@navii/core';
+import { createAvatar, renderGroup, type AvatarOptions, type GroupOptions } from '@navii/core';
 import { svgToPng } from './raster.js';
 import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
 import { LruCache } from './middleware/lruCache.js';
@@ -38,9 +38,45 @@ export function createApp(options: AppOptions = {}) {
   app.get('/', (c) =>
     c.json({
       name: 'navii',
-      endpoints: { avatar: '/avatar/:seed', gallery: '/gallery', health: '/healthz' },
+      endpoints: {
+        avatar: '/avatar/:seed',
+        group: '/group?seeds=a,b,c',
+        gallery: '/gallery',
+        health: '/healthz',
+      },
     }),
   );
+
+  app.get('/group', (c) => {
+    const rawSeeds = c.req.query('seeds') ?? '';
+    const seeds = rawSeeds
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 50);
+    if (seeds.length === 0) return c.text('seeds required (comma-separated)', 400);
+
+    const size = clampInt(c.req.query('size'), 16, 256, 64);
+    const overlap = clampFloat(c.req.query('overlap'), 0, 0.7, 0.3);
+    const maxRaw = c.req.query('max');
+    const ring = c.req.query('ring');
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+
+    const opts: GroupOptions = { size, overlap };
+    if (maxRaw) opts.max = clampInt(maxRaw, 1, 50, seeds.length);
+    if (ring) opts.ring = ring;
+    if (animated) opts.animated = true;
+
+    const svg = renderGroup(seeds, opts);
+    return new Response(svg, {
+      status: 200,
+      headers: {
+        'content-type': 'image/svg+xml; charset=utf-8',
+        'cache-control': 'public, max-age=31536000, immutable',
+        'access-control-allow-origin': '*',
+      },
+    });
+  });
 
   app.get('/healthz', (c) => c.json({ ok: true, pngCacheSize: pngCache.size }));
 
@@ -121,6 +157,13 @@ function stripExt(s: string): string {
 function clampInt(raw: string | undefined, min: number, max: number, fallback: number): number {
   if (!raw) return fallback;
   const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+
+function clampFloat(raw: string | undefined, min: number, max: number, fallback: number): number {
+  if (!raw) return fallback;
+  const n = Number.parseFloat(raw);
   if (!Number.isFinite(n)) return fallback;
   return Math.max(min, Math.min(max, n));
 }
