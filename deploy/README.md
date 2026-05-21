@@ -63,11 +63,30 @@ curl -o /tmp/a.png 'https://navii-api.uxderrick.com/avatar/alice.png?size=256' &
 open 'https://navii-api.uxderrick.com/gallery?count=96&size=128'
 ```
 
-## Update
+## Update flow (steady state)
+
+After initial deploy is wired:
 
 ```sh
-cd /opt/navii && docker compose pull && docker compose up -d
+# local — ship code
+git commit -am "…" && git push
+git tag v0.1.x && git push origin v0.1.x
+# release.yml: test → build → push to ghcr.io/uxderrick/navii-api (~90s)
+
+# on box — adopt new image
+ssh root@204.168.183.130 'cd /opt/navii && docker compose pull && docker compose up -d'
 ```
+
+Verify:
+
+```sh
+curl -sI https://navii-api.uxderrick.com/healthz
+```
+
+Notes:
+- Never re-tag an existing version; always bump (`v0.1.2` → `v0.1.3`).
+- Anything imported at runtime must live in `dependencies`, not `devDependencies` (pnpm deploy strips dev).
+- Logs: `docker compose -f /opt/navii/docker-compose.yml logs --tail=100 -f api`.
 
 ## Env reference
 
