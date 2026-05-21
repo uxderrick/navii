@@ -15,6 +15,8 @@ export interface GroupOptions extends AvatarOptions {
   counterInk?: string;
   /** Optional ring around each tile (border). Default: white-ish for visual separation when overlapping. */
   ring?: string;
+  /** Solid (or near-solid) fill behind each avatar inside the clip — prevents underlying avatars showing through gaps when tiles overlap. Default `#ffffff`. Use `'transparent'` to skip. */
+  tileBg?: string;
 }
 
 /**
@@ -33,6 +35,7 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const overlap = clamp(options.overlap ?? 0.3, 0, 0.7);
   const max = options.max ?? seeds.length;
   const ring = options.ring ?? '#ffffff';
+  const tileBg = options.tileBg ?? '#ffffff';
   const counterFill = options.counterFill ?? '#E5E7EB';
   const counterInk = options.counterInk ?? '#374151';
 
@@ -48,9 +51,12 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const tiles = visibleSeeds.map((seed, i) => {
     const x = i * step;
     const spec = selectAvatar(seed, options);
+    const bgCircle = tileBg !== 'transparent'
+      ? `<circle cx="50" cy="50" r="50" fill="${tileBg}" />`
+      : '';
     return `<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
       <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
-      <g clip-path="url(#navii-clip)">${renderAvatarInner(spec, options)}</g>
+      <g clip-path="url(#navii-clip)">${bgCircle}${renderAvatarInner(spec, options)}</g>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
     </svg>`;
   });

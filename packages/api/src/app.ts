@@ -62,9 +62,11 @@ export function createApp(options: AppOptions = {}) {
     const ring = c.req.query('ring');
     const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
 
+    const tileBg = c.req.query('tileBg');
     const opts: GroupOptions = { size, overlap };
     if (maxRaw) opts.max = clampInt(maxRaw, 1, 50, seeds.length);
     if (ring) opts.ring = ring;
+    if (tileBg) opts.tileBg = tileBg;
     if (animated) opts.animated = true;
 
     const svg = renderGroup(seeds, opts);
