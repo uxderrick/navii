@@ -27,6 +27,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile=false
+      - run: pnpm --filter '@navii/core' run build
       - run: pnpm -r run typecheck
       - run: pnpm -r run test
 
