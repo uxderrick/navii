@@ -94,6 +94,7 @@ export function createApp(options: AppOptions = {}) {
     const background = c.req.query('background');
     const title = c.req.query('title');
     const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    const tileBg = c.req.query('tileBg');
 
     const avatarOpts: AvatarOptions = { size };
     if (paletteId) avatarOpts.paletteId = paletteId;
@@ -102,11 +103,12 @@ export function createApp(options: AppOptions = {}) {
     }
     if (title) avatarOpts.title = title;
     if (animated && !wantsPng) avatarOpts.animated = true;
+    if (tileBg) avatarOpts.tileBg = tileBg;
 
     const svg = createAvatar(seed, avatarOpts);
 
     if (wantsPng) {
-      const cacheKey = canonicalKey(seed, size, paletteId, background, title);
+      const cacheKey = canonicalKey(seed, size, paletteId, background, title, tileBg);
       let png = pngCache.get(cacheKey);
       if (!png) {
         try {
@@ -176,8 +178,9 @@ function canonicalKey(
   palette: string | undefined,
   background: string | undefined,
   title: string | undefined,
+  tileBg: string | undefined,
 ): string {
-  return `${seed}|s=${size}|p=${palette ?? ''}|b=${background ?? ''}|t=${title ?? ''}`;
+  return `${seed}|s=${size}|p=${palette ?? ''}|b=${background ?? ''}|t=${title ?? ''}|tb=${tileBg ?? ''}`;
 }
 
 function renderGallery(seeds: string[], size: number, animated: boolean): string {

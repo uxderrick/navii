@@ -67,4 +67,10 @@ export interface AvatarOptions {
   title?: string;
   /** Emit idle animations (float, blink, antenna pulse, sparkle twinkle). Default false. */
   animated?: boolean;
+  /**
+   * Opaque circular background behind the avatar (clipped to disc).
+   * Examples: `'#ffffff'`, `'#0b0b0c'`, `'auto'` (palette accent).
+   * When set, avatar renders as a filled tile rather than a transparent figure.
+   */
+  tileBg?: string;
 }

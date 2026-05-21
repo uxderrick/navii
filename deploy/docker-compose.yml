@@ -17,7 +17,7 @@ services:
       PORT: "8787"
       HOST: "0.0.0.0"
       TRUST_PROXY: "1"
-      RATE_LIMIT_PER_MIN: "120"
+      RATE_LIMIT_PER_MIN: "600"
       PNG_CACHE_SIZE: "1000"
       LOG_LEVEL: "info"
     ports:

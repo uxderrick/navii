@@ -68,7 +68,11 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
     ? `<g${transformAntenna(spec.antennaTilt ?? 0, anchor)}><g class="antenna">${antennaSvg}</g></g>`
     : '';
 
+  const tileBg = resolveTileBg(options.tileBg, spec.palette);
+  const tileCircle = tileBg ? `<circle cx="50" cy="50" r="50" fill="${tileBg}" />` : '';
+
   const parts = [
+    tileCircle,
     renderBackground(spec.background, spec.palette, bgOverride),
     bodyWrapped,
     renderTopper(spec.topper, anchor, spec.palette),
@@ -92,6 +96,12 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
     animated ? renderAnimationStyle(spec, scopeClass) : '',
     animated ? `<g class="${scopeClass}">${parts}</g>` : parts,
   ].join('');
+}
+
+function resolveTileBg(raw: string | undefined, palette: { accent: string; bodyFrom: string }): string | undefined {
+  if (!raw) return undefined;
+  if (raw === 'auto') return palette.accent;
+  return raw;
 }
 
 function transformBody(scale: number, anchor: FaceAnchor): string {
