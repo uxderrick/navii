@@ -18,12 +18,26 @@ import type {
   TopperId,
 } from '../types.js';
 
-export const BODY_IDS: readonly BodyShapeId[] = ['orb', 'tall', 'squat', 'pear', 'pebble'];
-export const EYE_IDS: readonly EyeStyleId[] = ['round', 'wide', 'squint', 'wink', 'sleepy', 'star'];
-export const MOUTH_IDS: readonly MouthStyleId[] = ['smile', 'grin', 'open', 'flat', 'smirk', 'awe'];
+export const BODY_IDS: readonly BodyShapeId[] = [
+  'orb', 'tall', 'squat', 'pear', 'pebble',
+  'dumpling', 'taro', 'wisp',
+];
+export const EYE_IDS: readonly EyeStyleId[] = [
+  'round', 'wide', 'squint', 'wink', 'sleepy', 'star',
+  'heart', 'oval', 'dot', 'cross',
+];
+export const MOUTH_IDS: readonly MouthStyleId[] = [
+  'smile', 'grin', 'open', 'flat', 'smirk', 'awe',
+  'tongue', 'tooth', 'wave', 'dot',
+];
 export const ANTENNA_IDS: readonly AntennaStyleId[] = ['none', 'classic', 'curl', 'double', 'spike'];
-export const ACCESSORY_IDS: readonly AccessoryId[] = ['none', 'blush', 'freckles', 'sparkle'];
+export const ACCESSORY_IDS: readonly AccessoryId[] = [
+  'none', 'blush', 'freckles', 'sparkle',
+  'glasses', 'eyepatch', 'mole',
+];
 export const BACKGROUND_IDS: readonly BackgroundId[] = ['none', 'solid', 'ring'];
 export const TOPPER_IDS: readonly TopperId[] = [
+  // 'none' weighted ~2× so plain-headed avatars stay common
   'none', 'none', 'ears', 'roundEars', 'horn', 'horns', 'tuft', 'cap', 'leaf',
+  'headband', 'halo', 'crown', 'antlers',
 ];

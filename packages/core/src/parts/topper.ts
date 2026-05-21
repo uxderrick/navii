@@ -65,5 +65,35 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
         `<path d="M${cx - 1} ${topY + 2} Q${cx - 6} ${topY - 4} ${cx - 1} ${topY - 8} Q${cx + 3} ${topY - 4} ${cx - 1} ${topY + 2} Z" fill="#22C55E" stroke="${ink}" stroke-width="0.4" opacity="0.95" />`,
         `<path d="M${cx + 1} ${topY + 2} Q${cx + 5} ${topY - 2} ${cx + 6} ${topY - 6}" stroke="#16A34A" stroke-width="1" fill="none" stroke-linecap="round" />`,
       ].join('');
+
+    case 'headband':
+      // Sweatband across forehead
+      return [
+        `<path d="M${cx - 18} ${topY + 8} Q${cx} ${topY + 2} ${cx + 18} ${topY + 8} L${cx + 18} ${topY + 12} Q${cx} ${topY + 6} ${cx - 18} ${topY + 12} Z" fill="${palette.bodyTo}" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 2}" y="${topY + 4}" width="4" height="4" rx="1" fill="${palette.accent}" stroke="${ink}" stroke-width="0.4" />`,
+      ].join('');
+
+    case 'halo':
+      // Floating ring above head
+      return [
+        `<ellipse cx="${cx}" cy="${topY - 6}" rx="11" ry="2.5" fill="none" stroke="#FACC15" stroke-width="2" opacity="0.95" />`,
+        `<ellipse cx="${cx}" cy="${topY - 6}" rx="8.5" ry="1.6" fill="none" stroke="#FDE68A" stroke-width="0.6" opacity="0.7" />`,
+      ].join('');
+
+    case 'crown':
+      // Three-point crown
+      return [
+        `<path d="M${cx - 11} ${topY + 4} L${cx - 11} ${topY - 4} L${cx - 6} ${topY + 1} L${cx} ${topY - 7} L${cx + 6} ${topY + 1} L${cx + 11} ${topY - 4} L${cx + 11} ${topY + 4} Z" fill="#FACC15" stroke="${ink}" stroke-width="0.7" />`,
+        `<circle cx="${cx - 11}" cy="${topY - 4}" r="1.4" fill="#EF4444" stroke="${ink}" stroke-width="0.3" />`,
+        `<circle cx="${cx}" cy="${topY - 7}" r="1.6" fill="#EF4444" stroke="${ink}" stroke-width="0.3" />`,
+        `<circle cx="${cx + 11}" cy="${topY - 4}" r="1.4" fill="#EF4444" stroke="${ink}" stroke-width="0.3" />`,
+      ].join('');
+
+    case 'antlers':
+      // Branching antlers
+      return [
+        `<path d="M${cx - 5} ${topY + 4} L${cx - 6} ${topY - 4} M${cx - 6} ${topY - 4} L${cx - 10} ${topY - 6} M${cx - 6} ${topY - 4} L${cx - 6} ${topY - 9} M${cx - 6} ${topY - 9} L${cx - 8} ${topY - 11} M${cx - 6} ${topY - 9} L${cx - 3} ${topY - 11}" stroke="${ink}" stroke-width="1.3" stroke-linecap="round" fill="none" />`,
+        `<path d="M${cx + 5} ${topY + 4} L${cx + 6} ${topY - 4} M${cx + 6} ${topY - 4} L${cx + 10} ${topY - 6} M${cx + 6} ${topY - 4} L${cx + 6} ${topY - 9} M${cx + 6} ${topY - 9} L${cx + 8} ${topY - 11} M${cx + 6} ${topY - 9} L${cx + 3} ${topY - 11}" stroke="${ink}" stroke-width="1.3" stroke-linecap="round" fill="none" />`,
+      ].join('');
   }
 }

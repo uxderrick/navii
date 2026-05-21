@@ -14,21 +14,23 @@ export interface Palette {
   blush: string;
 }
 
-export type BodyShapeId = 'orb' | 'tall' | 'squat' | 'pear' | 'pebble';
-export type EyeStyleId = 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star';
-export type MouthStyleId = 'smile' | 'grin' | 'open' | 'flat' | 'smirk' | 'awe';
+export type BodyShapeId =
+  | 'orb' | 'tall' | 'squat' | 'pear' | 'pebble'
+  | 'dumpling' | 'taro' | 'wisp';
+export type EyeStyleId =
+  | 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star'
+  | 'heart' | 'oval' | 'dot' | 'cross';
+export type MouthStyleId =
+  | 'smile' | 'grin' | 'open' | 'flat' | 'smirk' | 'awe'
+  | 'tongue' | 'tooth' | 'wave' | 'dot';
 export type AntennaStyleId = 'none' | 'classic' | 'curl' | 'double' | 'spike';
-export type AccessoryId = 'none' | 'blush' | 'freckles' | 'sparkle';
+export type AccessoryId =
+  | 'none' | 'blush' | 'freckles' | 'sparkle'
+  | 'glasses' | 'eyepatch' | 'mole';
 export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
-  | 'none'
-  | 'ears'
-  | 'roundEars'
-  | 'horn'
-  | 'horns'
-  | 'tuft'
-  | 'cap'
-  | 'leaf';
+  | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
+  | 'headband' | 'halo' | 'crown' | 'antlers';
 
 export interface AvatarSpec {
   seed: string;

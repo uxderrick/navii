@@ -25,6 +25,15 @@ const BODY_PATHS: Record<BodyShapeId, string> = {
 
   // Pebble — asymmetric river stone, slight tilt right
   pebble: 'M52 19 C72 21 86 36 84 56 C82 73 68 85 50 85 C30 85 16 72 16 54 C16 35 32 17 52 19 Z',
+
+  // Dumpling — round bottom-heavy, narrow shoulders, sits low
+  dumpling: 'M50 30 C62 30 70 38 70 48 C70 56 78 64 80 72 C82 82 70 88 50 88 C30 88 18 82 20 72 C22 64 30 56 30 48 C30 38 38 30 50 30 Z',
+
+  // Taro — gourd shape: small head bulge, fuller bottom
+  taro: 'M50 14 C58 14 64 22 64 30 C64 36 60 40 60 46 C60 54 76 60 78 76 C80 88 66 91 50 91 C34 91 20 88 22 76 C24 60 40 54 40 46 C40 40 36 36 36 30 C36 22 42 14 50 14 Z',
+
+  // Wisp — tall narrow body, slight bottom flare, ghost-like
+  wisp: 'M50 12 C60 12 66 24 66 40 C66 60 74 78 70 90 C64 96 36 96 30 90 C26 78 34 60 34 40 C34 24 40 12 50 12 Z',
 };
 
 export function bodyAnchor(id: BodyShapeId): FaceAnchor {

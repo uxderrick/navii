@@ -69,4 +69,25 @@ export const ANCHORS: Record<BodyShapeId, FaceAnchor> = {
     groundY: 85,
     cheekY: 59, cheekOffset: 19,
   },
+  dumpling: {
+    cx: 50, eyeY: 58, eyeOffset: 11, eyeScale: 0.98,
+    mouthY: 68, mouthSpan: 8,
+    topperX: 50, topperY: 32,
+    groundY: 88,
+    cheekY: 64, cheekOffset: 21,
+  },
+  taro: {
+    cx: 50, eyeY: 50, eyeOffset: 9, eyeScale: 1.02,
+    mouthY: 60, mouthSpan: 6.5,
+    topperX: 50, topperY: 14,
+    groundY: 91,
+    cheekY: 55, cheekOffset: 14,
+  },
+  wisp: {
+    cx: 50, eyeY: 47, eyeOffset: 7.5, eyeScale: 1.08,
+    mouthY: 58, mouthSpan: 5.5,
+    topperX: 50, topperY: 12,
+    groundY: 94,
+    cheekY: 53, cheekOffset: 12,
+  },
 };

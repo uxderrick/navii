@@ -32,6 +32,13 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 ## Product
 
 - [ ] Demo site + docs — hero gallery, live seed input, copy-paste install
+- [ ] **Seed uniqueness guidance** — must land in README, demo site docs, AND hosted `/api` documentation. Cover everywhere a dev meets Navii. Key points:
+  - Seed must be a **stable unique identifier** per user (e.g. `user.id`, UUID, email). NOT display name — names collide → duplicate avatars.
+  - Determinism is the contract: same seed always = same avatar. So **do not pass `Date.now()` at render time** — avatar would change on every refresh.
+  - If only a name exists, recommend composing with a stable created-at: `seed = \`${name}-${user.createdAt}\``. Bake uniqueness in at signup, not at render.
+  - Same rule applies to hosted endpoint `/avatar/:seed`.
+  - Add JSDoc on `createAvatar(seed)` echoing this.
+  - Follow-up task once docs land: ship `Navii.seed({ id?, email?, name?, createdAt? })` helper that picks the most unique field and hashes a composite — guides callers into pit of success.
 - [ ] `<NaviiGroup seeds={[...]} max={5} />` overlap stack with +N tile
 - [ ] Lazy WebP fallback alongside PNG for smaller bytes
 - [ ] React Native binding (`@navii/native`) — same engine, native SVG renderer
@@ -43,3 +50,4 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 - [ ] Bench: avatars/sec; aim ≥ 50K/s on M1
 - [ ] Strict size budget on `@navii/core` (target < 8KB gzipped)
 - [ ] Builder API — programmatic mix-and-match without seed: `Navii.build({body:'tall', eyes:'star'})`
+- [ ] `Navii.seed({ id?, email?, name?, createdAt? })` helper — composes most-unique-available field(s), hashes to stable seed string. Ships after uniqueness guidance doc lands so callers already understand why.

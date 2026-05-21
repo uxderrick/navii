@@ -25,6 +25,13 @@ export const PALETTES: readonly Palette[] = [
   { id: 'forest',    bodyFrom: '#86EFAC', bodyTo: '#16A34A', accent: '#F0FDF4', ink: '#14532D', blush: '#FBCFE8' },
   { id: 'slate',     bodyFrom: '#CBD5E1', bodyTo: '#64748B', accent: '#F8FAFC', ink: '#0F172A', blush: '#FBCFE8' },
   { id: 'fuchsia',   bodyFrom: '#F0ABFC', bodyTo: '#D946EF', accent: '#FDF4FF', ink: '#701A75', blush: '#FBCFE8' },
+  // v0.4 additions — broader brand fit
+  { id: 'terracotta', bodyFrom: '#FBBF9C', bodyTo: '#C2410C', accent: '#FFF7ED', ink: '#7C2D12', blush: '#FECACA' },
+  { id: 'navy',       bodyFrom: '#93C5FD', bodyTo: '#1E3A8A', accent: '#EFF6FF', ink: '#172554', blush: '#FBCFE8' },
+  { id: 'lavender',   bodyFrom: '#DDD6FE', bodyTo: '#7C3AED', accent: '#F5F3FF', ink: '#3B0764', blush: '#F5D0FE' },
+  { id: 'charcoal',   bodyFrom: '#9CA3AF', bodyTo: '#374151', accent: '#F9FAFB', ink: '#030712', blush: '#FBCFE8' },
+  { id: 'butter',     bodyFrom: '#FEF9C3', bodyTo: '#FACC15', accent: '#FEFCE8', ink: '#713F12', blush: '#FCA5A5' },
+  { id: 'aqua',       bodyFrom: '#A5F3FC', bodyTo: '#0891B2', accent: '#ECFEFF', ink: '#083344', blush: '#FBCFE8' },
 ];
 
 export const PALETTE_BY_ID: Record<string, Palette> = Object.fromEntries(

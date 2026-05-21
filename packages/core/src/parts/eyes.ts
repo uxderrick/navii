@@ -59,7 +59,43 @@ export function renderEyes(id: EyeStyleId, palette: Palette, anchor: FaceAnchor)
 
     case 'star':
       return [starEye(lx, y, ink), starEye(rx, y, ink)].join('');
+
+    case 'heart':
+      return [heartEye(lx, y, ink), heartEye(rx, y, ink)].join('');
+
+    case 'oval':
+      // Vertical oval pupils (cute, anime-ish)
+      return [
+        sclera(lx, y, 4.5 * s, 5 * s),
+        sclera(rx, y, 4.5 * s, 5 * s),
+        `<ellipse cx="${lx}" cy="${y}" rx="${1.6 * s}" ry="${3 * s}" fill="${ink}" />`,
+        `<ellipse cx="${rx}" cy="${y}" rx="${1.6 * s}" ry="${3 * s}" fill="${ink}" />`,
+        glint(lx + 0.8, y - 1.5),
+        glint(rx + 0.8, y - 1.5),
+      ].join('');
+
+    case 'dot':
+      // Minimal dot eyes
+      return [
+        `<circle cx="${lx}" cy="${y}" r="${1.4 * s}" fill="${ink}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${1.4 * s}" fill="${ink}" />`,
+      ].join('');
+
+    case 'cross':
+      // X eyes (cartoon "knocked out" — works for laughing too)
+      return [crossEye(lx, y, ink), crossEye(rx, y, ink)].join('');
   }
+}
+
+function heartEye(cx: number, cy: number, color: string): string {
+  // Two small circles + triangle below = heart silhouette
+  const s = 2;
+  return `<path d="M${cx} ${cy + s * 1.4} L${cx - s * 1.8} ${cy - s * 0.2} A${s} ${s} 0 0 1 ${cx} ${cy - s * 0.6} A${s} ${s} 0 0 1 ${cx + s * 1.8} ${cy - s * 0.2} Z" fill="${color}" />`;
+}
+
+function crossEye(cx: number, cy: number, color: string): string {
+  const s = 2.4;
+  return `<g stroke="${color}" stroke-width="1.6" stroke-linecap="round"><line x1="${cx - s}" y1="${cy - s}" x2="${cx + s}" y2="${cy + s}" /><line x1="${cx - s}" y1="${cy + s}" x2="${cx + s}" y2="${cy - s}" /></g>`;
 }
 
 function sclera(cx: number, cy: number, rx: number, ry: number): string {
