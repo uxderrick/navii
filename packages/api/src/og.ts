@@ -26,8 +26,11 @@ export function ogSvg(): string {
 
   const textRow = 2; // middle row reserved for the headline (no avatars)
 
-  // DejaVu ships in the Docker runtime; others fall back for local dev.
-  const sans = `'DejaVu Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif`;
+  // Use generic `sans-serif` so resvg falls back to whatever font is
+  // available — DejaVu on the Linux runtime, Helvetica on macOS. Naming a
+  // specific family that resvg can't resolve causes text to disappear
+  // silently in the PNG raster.
+  const sans = `sans-serif`;
 
   const tiles: string[] = [];
   let n = 0;
