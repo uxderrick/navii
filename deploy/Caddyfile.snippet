@@ -1,8 +1,3 @@
-# navii — split-domain deploy.
-# Append both blocks to the host /etc/caddy/Caddyfile.
-# Both proxies hit the same container backend (127.0.0.1:8787).
-
-# ── API host ───────────────────────────────────────────────────────────────
 navii-api.uxderrick.com {
 	encode zstd gzip
 
@@ -25,7 +20,6 @@ navii-api.uxderrick.com {
 	}
 }
 
-# ── Landing host ───────────────────────────────────────────────────────────
 navii.uxderrick.com {
 	encode zstd gzip
 
@@ -37,7 +31,6 @@ navii.uxderrick.com {
 		-Server
 	}
 
-	# Landing HTML is cached briefly so updates roll out fast
 	@html path /
 	header @html Cache-Control "public, max-age=300"
 
