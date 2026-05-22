@@ -768,10 +768,20 @@ export function landingHtml(): string {
   const TEMPLATES = ${TEMPLATES_JSON};
   const PRIMARY_URL_RE = /https?:\\/\\/[^\\s'"<>)]+/;
 
+  function applyParams(src) {
+    return src.replace(/(\\/(?:avatar\\/[^?\\s'"<>)]+|group))(\\?[^\\s'"<>)]*)?/g, function (_m, path, query) {
+      query = (query || '').replace(/[?&]animated=1/g, '');
+      if (query.charAt(0) === '&') query = '?' + query.slice(1);
+      if (state.animated) query += (query ? '&' : '?') + 'animated=1';
+      return path + query;
+    });
+  }
+
   function renderSnippet() {
     const uc = TEMPLATES[state.usecase] || TEMPLATES.profile;
     const tmpl = uc[state.framework] || uc.html || uc.url || '';
-    return tmpl.split('__SEED__').join(state.seed || 'alice@example.com');
+    const seeded = tmpl.split('__SEED__').join(state.seed || 'alice@example.com');
+    return applyParams(seeded);
   }
 
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
@@ -879,6 +889,7 @@ export function landingHtml(): string {
   function refreshPreview() {
     const seed = state.seed || 'alice@example.com';
     const enc = encodeURIComponent(seed);
+    const anim = state.animated ? '&animated=1' : '';
 
     // Toggle which use-case preview is visible.
     document.querySelectorAll('.pv').forEach(function (el) { el.classList.remove('active'); });
@@ -898,19 +909,19 @@ export function landingHtml(): string {
     };
 
     setText('.pv-profile [data-role="name"]', seed);
-    setSrc('.pv-profile [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=128&tileBg=auto');
+    setSrc('.pv-profile [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=128&tileBg=auto' + anim);
 
-    setSrc('.pv-team [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=96');
+    setSrc('.pv-team [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=96' + anim);
     setText('.pv-team [data-role="name-short"]', seed.split('@')[0].slice(0, 8));
 
     setText('.pv-comment [data-role="name"]', seed);
-    setSrc('.pv-comment [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=72');
+    setSrc('.pv-comment [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=72' + anim);
 
-    setSrc('.pv-fallback [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=192&tileBg=auto');
+    setSrc('.pv-fallback [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=192&tileBg=auto' + anim);
 
-    setSrc('.pv[data-pv="group"] [data-role="group"]', API_BASE + '/group?seeds=' + enc + ',bob,carol,dave,eve&size=64&overlap=0.32');
+    setSrc('.pv[data-pv="group"] [data-role="group"]', API_BASE + '/group?seeds=' + enc + ',bob,carol,dave,eve&size=64&overlap=0.32' + anim);
 
-    setSrc('.pv[data-pv="url"] [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=256&animated=1');
+    setSrc('.pv[data-pv="url"] [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=256' + (state.animated ? '&animated=1' : ''));
 
     wrap.classList.remove('error');
   }
@@ -921,8 +932,18 @@ export function landingHtml(): string {
     refreshPreview();
   }
 
+  function syncSeedFromCode() {
+    const m = input.value.match(/\\/avatar\\/([^?\\s'"<>)\${}]+)/);
+    if (!m) return;
+    const next = decodeURIComponent(m[1]);
+    if (!next || next === state.seed) return;
+    state.seed = next;
+    if (seedInput.value !== next) seedInput.value = next;
+  }
+
   function onInput() {
     paintCode();
+    syncSeedFromCode();
     clearTimeout(t);
     t = setTimeout(refreshPreview, 140);
   }
@@ -955,6 +976,13 @@ export function landingHtml(): string {
 
   frameworkSel.addEventListener('change', function () {
     state.framework = frameworkSel.value;
+    rebuild();
+  });
+
+  animBtn.addEventListener('click', function () {
+    state.animated = !state.animated;
+    animBtn.classList.toggle('on', state.animated);
+    animBtn.setAttribute('aria-pressed', state.animated ? 'true' : 'false');
     rebuild();
   });
 
