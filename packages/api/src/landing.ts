@@ -17,6 +17,8 @@ const CAST_SEEDS: readonly string[] = [
 const GROUP_SEEDS = ['aria', 'milo', 'nova', 'kai', 'sage'];
 
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
+const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.uxderrick.com';
+const OG_IMAGE = `${API_BASE}/og.png`;
 
 export function landingHtml(): string {
   const tiles = CAST_SEEDS.map(
@@ -33,8 +35,59 @@ export function landingHtml(): string {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Navii — every user, a face</title>
-<meta name="description" content="Drop-in deterministic mascot avatars. Same seed in, same face out — every time." />
+<meta name="description" content="Drop-in deterministic mascot avatars. Pass any string — user id, email, UUID — get back a clean SVG or PNG. Same seed in, same face out, every time." />
 <meta name="theme-color" content="#0a0a0b" />
+<meta name="color-scheme" content="dark" />
+<meta name="author" content="uxderrick" />
+<meta name="keywords" content="avatar, avatars, mascot, deterministic avatar, identicon, placeholder avatar, user avatar, svg avatar, png avatar, dicebear alternative, generated avatar" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+
+<link rel="canonical" href="${SITE_BASE}/" />
+
+<!-- icons (relative so they work on both landing + api origins, and in local dev) -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="mask-icon" href="/favicon.svg" color="#c084fc" />
+
+<!-- preconnect to API origin (icons + cast images) -->
+<link rel="preconnect" href="${API_BASE}" crossorigin />
+<link rel="dns-prefetch" href="${API_BASE}" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Navii" />
+<meta property="og:title" content="Navii — every user, a face" />
+<meta property="og:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out — every time." />
+<meta property="og:url" content="${SITE_BASE}/" />
+<meta property="og:image" content="${OG_IMAGE}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Five Navii mascot avatars over the line 'Every user, a face.'" />
+<meta property="og:locale" content="en_US" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Navii — every user, a face" />
+<meta name="twitter:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out — every time." />
+<meta name="twitter:image" content="${OG_IMAGE}" />
+<meta name="twitter:image:alt" content="Five Navii mascot avatars over the line 'Every user, a face.'" />
+
+<!-- Structured data: software application -->
+<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Navii',
+  description: 'Deterministic mascot avatar service. Seed in, SVG/PNG out, every time.',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  url: SITE_BASE,
+  image: OG_IMAGE,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  author: { '@type': 'Person', name: 'uxderrick', url: 'https://github.com/uxderrick' },
+  license: 'https://opensource.org/licenses/MIT',
+})}</script>
+
 <style>
   :root {
     --bg: #0a0a0b;
@@ -117,6 +170,25 @@ export function landingHtml(): string {
   }
   .editor-head .dots { display: flex; gap: 6px; }
   .editor-head .dots i { display: block; width: 10px; height: 10px; border-radius: 50%; background: #27272a; }
+  .editor-head .right { display: flex; gap: 10px; align-items: center; }
+  .framework-select {
+    appearance: none;
+    background: var(--bg-2);
+    border: 1px solid #27272a;
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 3px 26px 3px 10px;
+    cursor: pointer;
+    font: 11px ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%;
+    background-size: 4px 4px;
+    background-repeat: no-repeat;
+  }
+  .framework-select:hover { border-color: var(--muted-2); }
+  .framework-select:focus { outline: none; border-color: var(--accent); }
   .editor-head .copy {
     background: transparent;
     border: 1px solid #27272a;
@@ -169,12 +241,18 @@ export function landingHtml(): string {
   }
   .code-area textarea::selection { background: rgba(192, 132, 252, 0.28); -webkit-text-fill-color: transparent; }
 
-  .tk-verb   { color: var(--accent); font-weight: 600; }
-  .tk-host   { color: var(--muted-2); }
-  .tk-punct  { color: var(--muted-2); }
-  .tk-key    { color: #93c5fd; }
-  .tk-val    { color: #fbbf24; }
-  .tk-num    { color: var(--good); }
+  .tk-verb     { color: var(--accent); font-weight: 600; }
+  .tk-host     { color: var(--muted-2); }
+  .tk-path     { color: var(--ink); }
+  .tk-punct    { color: var(--muted-2); }
+  .tk-key      { color: #93c5fd; }
+  .tk-val      { color: #fbbf24; }
+  .tk-num      { color: var(--good); }
+  .tk-tag      { color: #f472b6; }
+  .tk-attr     { color: #93c5fd; }
+  .tk-str      { color: #fbbf24; }
+  .tk-keyword  { color: var(--accent); }
+  .tk-comment  { color: var(--muted-2); font-style: italic; }
 
   .editor-foot {
     border-top: 1px solid var(--line);
@@ -422,17 +500,25 @@ export function landingHtml(): string {
     <div class="editor-card">
       <div class="editor-head">
         <span class="dots"><i></i><i></i><i></i></span>
-        <span style="opacity:.8">request</span>
-        <button class="copy" id="copy-btn" type="button">copy</button>
+        <div class="right">
+          <select id="framework-select" class="framework-select" aria-label="framework">
+            <option value="html">HTML</option>
+            <option value="react">React</option>
+            <option value="next">Next.js</option>
+            <option value="vue">Vue</option>
+            <option value="svelte">Svelte</option>
+            <option value="curl">curl</option>
+            <option value="fetch">fetch</option>
+            <option value="url">URL</option>
+          </select>
+          <button class="copy" id="copy-btn" type="button">copy</button>
+        </div>
       </div>
       <div class="editor-body">
         <div class="gutter" id="gutter"></div>
         <div class="code-area">
           <pre id="code-display"><code></code></pre>
-          <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off">GET ${API_BASE}/avatar/alice@example.com
-  ?size=320
-  &amp;palette=violet
-  &amp;animated=1</textarea>
+          <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
         </div>
       </div>
       <div class="editor-foot" id="presets">
@@ -609,37 +695,142 @@ export function landingHtml(): string {
   const presets = document.getElementById('presets');
   let t = null;
 
+  const frameworkSel = document.getElementById('framework-select');
+  const state = { framework: 'html', preset: 'palette' };
+
   const PRESETS = {
-    basic:    'GET ' + API_BASE + '/avatar/alice@example.com',
-    animated: 'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &animated=1',
-    palette:  'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &palette=violet\\n  &animated=1',
-    tile:     'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &tileBg=%23ffffff',
-    dark:     'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &tileBg=%230b0b0c',
-    png:      'GET ' + API_BASE + '/avatar/alice@example.com.png\\n  ?size=320\\n  &tileBg=auto',
-    group:    'GET ' + API_BASE + '/group\\n  ?seeds=alice,bob,carol,dave,eve\\n  &size=80\\n  &overlap=0.32'
+    basic:    { seed: 'alice@example.com', size: 320, params: {} },
+    animated: { seed: 'alice@example.com', size: 320, params: { animated: '1' } },
+    palette:  { seed: 'alice@example.com', size: 320, params: { palette: 'violet', animated: '1' } },
+    tile:     { seed: 'alice@example.com', size: 320, params: { tileBg: '#ffffff', animated: '1' } },
+    dark:     { seed: 'alice@example.com', size: 320, params: { tileBg: '#0b0b0c', animated: '1' } },
+    png:      { seed: 'alice@example.com', size: 320, ext: '.png', params: { tileBg: 'auto' } },
+    group:    { group: ['alice','bob','carol','dave','eve'], size: 80, params: { overlap: '0.32' } }
+  };
+
+  function buildUrl(p) {
+    const u = new URL(API_BASE);
+    if (p.group) {
+      u.pathname = '/group';
+      u.searchParams.set('seeds', p.group.join(','));
+      if (p.size) u.searchParams.set('size', String(p.size));
+    } else {
+      u.pathname = '/avatar/' + encodeURIComponent(p.seed) + (p.ext || '');
+      if (p.size) u.searchParams.set('size', String(p.size));
+    }
+    for (const [k, v] of Object.entries(p.params || {})) u.searchParams.set(k, v);
+    return u.toString();
+  }
+
+  const FRAMEWORKS = {
+    html: function (ctx) {
+      if (ctx.isGroup) return '<img src="' + ctx.url + '" alt="team" />';
+      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width="64"\\n  height="64"\\n/>';
+    },
+    react: function (ctx) {
+      if (ctx.isGroup) return '<img src="' + ctx.url + '" alt="team" />';
+      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width={64}\\n  height={64}\\n/>';
+    },
+    next: function (ctx) {
+      return "import Image from 'next/image';\\n\\n<Image\\n  src=\\"" + ctx.url + "\\"\\n  alt=\\"" + ctx.seed + "\\"\\n  width={64}\\n  height={64}\\n  unoptimized\\n/>";
+    },
+    vue: function (ctx) {
+      return '<template>\\n  <img\\n    src="' + ctx.url + '"\\n    alt="' + ctx.seed + '"\\n    width="64"\\n    height="64"\\n  />\\n</template>';
+    },
+    svelte: function (ctx) {
+      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width="64"\\n  height="64"\\n/>';
+    },
+    curl: function (ctx) {
+      return "curl -o avatar.svg \\\\\\n  '" + ctx.url + "'";
+    },
+    fetch: function (ctx) {
+      return "const res = await fetch('" + ctx.url + "');\\nconst svg = await res.text();";
+    },
+    url: function (ctx) {
+      return 'GET ' + ctx.url;
+    }
   };
 
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
   function span(cls, text) { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text; return s; }
 
+  /**
+   * Position-based tokenizer. Each pattern stamps a class on character
+   * positions; later passes only fill in unmarked positions. URLs override
+   * string marks so query params get colored inside string literals.
+   */
   function tokenize(src) {
-    const out = [];
-    const re = /(GET|POST|PUT|PATCH|DELETE)|(https?:\\/\\/[^\\s/?]+)|([?&])([a-zA-Z][\\w-]*)(=)([^&\\s]*)/g;
-    let last = 0;
-    for (const m of src.matchAll(re)) {
-      if (m.index > last) out.push({ text: src.slice(last, m.index) });
-      if (m[1])      out.push({ cls: 'tk-verb', text: m[1] });
-      else if (m[2]) out.push({ cls: 'tk-host', text: m[2] });
-      else if (m[3]) {
-        out.push({ cls: 'tk-punct', text: m[3] });
-        out.push({ cls: 'tk-key',   text: m[4] });
-        out.push({ cls: 'tk-punct', text: m[5] });
-        const v = m[6];
-        out.push({ cls: /^-?\\d+(\\.\\d+)?$/.test(v) ? 'tk-num' : 'tk-val', text: v });
-      }
-      last = m.index + m[0].length;
+    const N = src.length;
+    const marks = new Array(N).fill(null);
+    const stamp = function (start, end, cls) {
+      for (let i = start; i < end; i++) if (marks[i] === null) marks[i] = cls;
+    };
+    const overwrite = function (start, end, cls) {
+      for (let i = start; i < end; i++) marks[i] = cls;
+    };
+
+    // Strings (incl. quotes)
+    for (const m of src.matchAll(/'[^'\\n]*'|"[^"\\n]*"|\`[^\`]*\`/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-str');
     }
-    if (last < src.length) out.push({ text: src.slice(last) });
+    // Comments (// or #)
+    for (const m of src.matchAll(/(\\/\\/[^\\n]*|#[^\\n]*)/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-comment');
+    }
+    // HTML/JSX tags
+    for (const m of src.matchAll(/<\\/?[a-zA-Z][\\w-]*|\\/>/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-tag');
+    }
+    // Attribute names (word followed by =, when not preceded by .)
+    for (const m of src.matchAll(/\\b([a-zA-Z:][a-zA-Z\\d:_-]*)(?==)/g)) {
+      const prev = src[m.index - 1];
+      if (prev === '.' || prev === '$') continue;
+      stamp(m.index, m.index + m[1].length, 'tk-attr');
+    }
+    // JS keywords
+    for (const m of src.matchAll(/\\b(import|from|const|let|var|return|await|async|new|function|of|in|true|false|null)\\b/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-keyword');
+    }
+    // HTTP verbs at start of line
+    for (const m of src.matchAll(/(?:^|\\n)(GET|POST|PUT|PATCH|DELETE)\\b/g)) {
+      const off = m[0].length - m[1].length;
+      overwrite(m.index + off, m.index + off + m[1].length, 'tk-verb');
+    }
+    // URLs — overwrite to give structure to URL inside strings
+    for (const m of src.matchAll(/https?:\\/\\/[^\\s'"<>)]+/g)) {
+      const start = m.index;
+      const end = start + m[0].length;
+      // host portion: protocol + // + domain (until next /)
+      const protoEnd = m[0].indexOf('//') + 2;
+      const slashAfter = m[0].indexOf('/', protoEnd);
+      const hostEnd = slashAfter < 0 ? end : start + slashAfter;
+      overwrite(start, hostEnd, 'tk-host');
+      // path until ? or end
+      const qIdx = m[0].indexOf('?');
+      const pathEndAbs = qIdx < 0 ? end : start + qIdx;
+      overwrite(hostEnd, pathEndAbs, 'tk-path');
+      // query params
+      if (qIdx >= 0) {
+        for (const q of m[0].slice(qIdx).matchAll(/([?&])([a-zA-Z][\\w-]*)(=)([^&\\s'"<>)]*)/g)) {
+          let cur = start + qIdx + q.index;
+          overwrite(cur, cur + q[1].length, 'tk-punct'); cur += q[1].length;
+          overwrite(cur, cur + q[2].length, 'tk-key');   cur += q[2].length;
+          overwrite(cur, cur + q[3].length, 'tk-punct'); cur += q[3].length;
+          const isNum = /^-?\\d+(\\.\\d+)?$/.test(q[4]);
+          overwrite(cur, cur + q[4].length, isNum ? 'tk-num' : 'tk-val');
+        }
+      }
+    }
+
+    const out = [];
+    let i = 0;
+    while (i < N) {
+      const cls = marks[i];
+      let j = i + 1;
+      while (j < N && marks[j] === cls) j++;
+      out.push({ cls: cls, text: src.slice(i, j) });
+      i = j;
+    }
     return out;
   }
 
@@ -657,13 +848,13 @@ export function landingHtml(): string {
     }
   }
 
-  function extractUrl(text) {
-    const cleaned = text.replace(/^\\s*GET\\s+/i, '').replace(/\\s+/g, '');
-    try { new URL(cleaned); return cleaned; } catch { return null; }
+  function findFirstUrl(text) {
+    const m = text.match(/https?:\\/\\/[^\\s'"<>)]+/);
+    return m ? m[0] : null;
   }
 
   function refreshPreview() {
-    const url = extractUrl(input.value);
+    const url = findFirstUrl(input.value);
     if (!url) { wrap.classList.add('error'); return; }
     wrap.classList.remove('error');
     try {
@@ -672,6 +863,20 @@ export function landingHtml(): string {
       if (!isGroup && !u.searchParams.has('size')) u.searchParams.set('size', '320');
       live.src = u.toString();
     } catch { live.src = url; }
+  }
+
+  function rebuild() {
+    const p = PRESETS[state.preset];
+    const url = buildUrl(p);
+    const ctx = {
+      url: url,
+      seed: p.group ? 'team' : (p.seed || 'user'),
+      isGroup: !!p.group
+    };
+    const tmpl = FRAMEWORKS[state.framework] || FRAMEWORKS.html;
+    input.value = tmpl(ctx);
+    paintCode();
+    refreshPreview();
   }
 
   function onInput() {
@@ -700,17 +905,20 @@ export function landingHtml(): string {
     if (!btn) return;
     const key = btn.getAttribute('data-preset');
     if (!PRESETS[key]) return;
-    input.value = PRESETS[key];
+    state.preset = key;
     document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    onInput();
+    rebuild();
+  });
+
+  frameworkSel.addEventListener('change', function () {
+    state.framework = frameworkSel.value;
+    rebuild();
   });
 
   copyBtn.addEventListener('click', async function () {
-    const url = extractUrl(input.value);
-    if (!url) return;
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(input.value);
       copyBtn.textContent = 'copied';
       copyBtn.classList.add('ok');
       setTimeout(function () {
@@ -720,8 +928,7 @@ export function landingHtml(): string {
     } catch {}
   });
 
-  paintCode();
-  refreshPreview();
+  rebuild();
 })();
 </script>
 

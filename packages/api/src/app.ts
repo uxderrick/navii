@@ -5,6 +5,7 @@ import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
 import { LruCache } from './middleware/lruCache.js';
 import { log } from './log.js';
 import { landingHtml } from './landing.js';
+import { ogPng } from './og.js';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
@@ -93,6 +94,86 @@ export function createApp(options: AppOptions = {}) {
   });
 
   app.get('/healthz', (c) => c.json({ ok: true, pngCacheSize: pngCache.size }));
+
+  // ── SEO / icons ──────────────────────────────────────────────────────────
+
+  app.get('/favicon.svg', (c) => {
+    const svg = createAvatar('navii', { size: 64 });
+    return new Response(svg, {
+      status: 200,
+      headers: {
+        'content-type': 'image/svg+xml; charset=utf-8',
+        'cache-control': 'public, max-age=86400, immutable',
+      },
+    });
+  });
+
+  app.get('/favicon.ico', (c) => c.redirect('/favicon.svg', 301));
+
+  app.get('/apple-touch-icon.png', async (c) => {
+    const cacheKey = 'apple-touch-icon-180';
+    let png = pngCache.get(cacheKey);
+    if (!png) {
+      try {
+        const svg = createAvatar('navii', { size: 180, tileBg: '#0a0a0b' });
+        png = await svgToPng(svg, 180);
+        pngCache.set(cacheKey, png);
+      } catch (err) {
+        log.error({ err: (err as Error).message }, 'apple-touch-icon raster failed');
+        return c.text('icon unavailable', 501);
+      }
+    }
+    return new Response(png as BodyInit, {
+      status: 200,
+      headers: {
+        'content-type': 'image/png',
+        'cache-control': 'public, max-age=86400, immutable',
+      },
+    });
+  });
+
+  app.get('/og.png', async (c) => {
+    try {
+      const png = await ogPng();
+      return new Response(png as BodyInit, {
+        status: 200,
+        headers: {
+          'content-type': 'image/png',
+          'cache-control': 'public, max-age=86400, immutable',
+          'access-control-allow-origin': '*',
+        },
+      });
+    } catch (err) {
+      log.error({ err: (err as Error).message }, 'og.png raster failed');
+      return c.text(`OG image unavailable: ${(err as Error).message}`, 501);
+    }
+  });
+
+  app.get('/robots.txt', (c) => {
+    const body = `User-agent: *\nAllow: /\nDisallow: /gallery\n\nSitemap: https://navii.uxderrick.com/sitemap.xml\n`;
+    return new Response(body, {
+      status: 200,
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': 'public, max-age=86400',
+      },
+    });
+  });
+
+  app.get('/sitemap.xml', (c) => {
+    const urls = ['https://navii.uxderrick.com/', 'https://navii.uxderrick.com/#cast', 'https://navii.uxderrick.com/#reference'];
+    const body =
+      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+      urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n') +
+      `\n</urlset>\n`;
+    return new Response(body, {
+      status: 200,
+      headers: {
+        'content-type': 'application/xml; charset=utf-8',
+        'cache-control': 'public, max-age=86400',
+      },
+    });
+  });
 
   app.get('/avatar/:seed{.+}', async (c) => {
     const rawSeed = c.req.param('seed');
