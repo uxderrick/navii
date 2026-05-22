@@ -300,14 +300,48 @@ export function landingHtml(): string {
     position: relative;
     min-height: 320px;
   }
-  .preview-card img { max-width: 88%; max-height: 88%; display: block; }
+  .pv { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 320px; }
+  .pv.active { display: flex; }
+
+  /* profile card variant */
+  .pv-profile { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; gap: 12px; flex-direction: row; align-items: center; }
+  .pv-profile img { width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0; }
+  .pv-profile .info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pv-profile .info strong { font-size: 14px; color: var(--ink); word-break: break-all; line-height: 1.2; }
+  .pv-profile .info span { font-size: 12px; color: var(--muted-2); }
+
+  /* team variant */
+  .pv-team { gap: 10px; }
+  .pv-team ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; align-items: center; }
+  .pv-team li { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .pv-team li img { width: 44px; height: 44px; border-radius: 50%; }
+  .pv-team li span { font: 10px ui-monospace, monospace; color: var(--muted-2); }
+
+  /* comment variant */
+  .pv-comment { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; gap: 12px; flex-direction: row; align-items: flex-start; max-width: 340px; }
+  .pv-comment img { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; }
+  .pv-comment .body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .pv-comment .body strong { font-size: 13px; color: var(--ink); word-break: break-all; }
+  .pv-comment .body p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+  /* fallback variant */
+  .pv-fallback { gap: 12px; }
+  .pv-fallback img { width: 96px; height: 96px; border-radius: 50%; }
+  .pv-fallback .note { font: 11px ui-monospace, monospace; color: var(--muted-2); }
+  .pv-fallback .note strong { color: var(--good); font-weight: 600; }
+
+  /* group + url variants — keep image-centric */
+  .pv-img { gap: 8px; }
+  .pv-img img { max-width: 92%; max-height: 240px; display: block; }
+  .pv-img .note { font: 11px ui-monospace, monospace; color: var(--muted-2); }
+
   .preview-card.error::after {
     content: 'invalid URL';
     position: absolute; bottom: 14px; right: 16px;
     color: #f87171;
     font: 11px ui-monospace, monospace;
   }
-  .preview-card.error img { opacity: 0.25; }
+  .preview-card.error .pv.active { opacity: 0.25; }
 
   /* ── section headings ── */
   section h2 {
@@ -599,7 +633,45 @@ export function landingHtml(): string {
     </div>
 
     <div class="preview-card" id="preview-wrap">
-      <img id="live" src="${API_BASE}/avatar/alice@example.com?size=320&amp;palette=violet&amp;animated=1" alt="" />
+      <div class="pv pv-profile active" data-pv="profile">
+        <img data-role="avatar" src="${API_BASE}/avatar/alice@example.com?size=128&amp;tileBg=auto" alt="" width="56" height="56" />
+        <div class="info">
+          <strong data-role="name">alice@example.com</strong>
+          <span>Member</span>
+        </div>
+      </div>
+
+      <div class="pv pv-team" data-pv="team">
+        <ul>
+          <li><img data-role="avatar" src="${API_BASE}/avatar/alice@example.com?size=96" alt="" /><span data-role="name-short">alice</span></li>
+          <li><img src="${API_BASE}/avatar/bob?size=96" alt="" /><span>bob</span></li>
+          <li><img src="${API_BASE}/avatar/carol?size=96" alt="" /><span>carol</span></li>
+          <li><img src="${API_BASE}/avatar/dave?size=96" alt="" /><span>dave</span></li>
+        </ul>
+      </div>
+
+      <div class="pv pv-comment" data-pv="comment">
+        <img data-role="avatar" src="${API_BASE}/avatar/alice@example.com?size=72" alt="" width="36" height="36" />
+        <div class="body">
+          <strong data-role="name">alice@example.com</strong>
+          <p>Anyone seen the v0.8 deploy?</p>
+        </div>
+      </div>
+
+      <div class="pv pv-fallback" data-pv="fallback">
+        <img data-role="avatar" src="${API_BASE}/avatar/alice@example.com?size=192&amp;tileBg=auto" alt="" width="96" height="96" />
+        <p class="note">user has no photoUrl — <strong>Navii rendered</strong></p>
+      </div>
+
+      <div class="pv pv-img" data-pv="group">
+        <img data-role="group" src="${API_BASE}/group?seeds=alice@example.com,bob,carol,dave,eve&amp;size=64&amp;overlap=0.32" alt="team" />
+        <p class="note">/group · 5 members</p>
+      </div>
+
+      <div class="pv pv-img" data-pv="url">
+        <img data-role="avatar" src="${API_BASE}/avatar/alice@example.com?size=256&amp;animated=1" alt="" width="240" height="240" />
+        <p class="note">raw /avatar endpoint</p>
+      </div>
     </div>
   </div>
 
@@ -656,7 +728,6 @@ export function landingHtml(): string {
   const input   = document.getElementById('code-input');
   const display = document.querySelector('#code-display code');
   const gutter  = document.getElementById('gutter');
-  const live    = document.getElementById('live');
   const wrap    = document.getElementById('preview-wrap');
   const copyBtn = document.getElementById('copy-btn');
   const usecases = document.getElementById('usecases');
@@ -778,15 +849,42 @@ export function landingHtml(): string {
   }
 
   function refreshPreview() {
-    const url = findFirstUrl(input.value);
-    if (!url) { wrap.classList.add('error'); return; }
+    const seed = state.seed || 'alice@example.com';
+    const enc = encodeURIComponent(seed);
+
+    // Toggle which use-case preview is visible.
+    document.querySelectorAll('.pv').forEach(function (el) { el.classList.remove('active'); });
+    const active = document.querySelector('.pv[data-pv="' + state.usecase + '"]');
+    if (active) active.classList.add('active');
+    else {
+      const fallback = document.querySelector('.pv[data-pv="profile"]');
+      if (fallback) fallback.classList.add('active');
+    }
+
+    // Update seed-dependent text + image src inside each variant.
+    const setText = function (sel, val) {
+      document.querySelectorAll(sel).forEach(function (el) { el.textContent = val; });
+    };
+    const setSrc = function (sel, src) {
+      document.querySelectorAll(sel).forEach(function (el) { el.setAttribute('src', src); });
+    };
+
+    setText('.pv-profile [data-role="name"]', seed);
+    setSrc('.pv-profile [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=128&tileBg=auto');
+
+    setSrc('.pv-team [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=96');
+    setText('.pv-team [data-role="name-short"]', seed.split('@')[0].slice(0, 8));
+
+    setText('.pv-comment [data-role="name"]', seed);
+    setSrc('.pv-comment [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=72');
+
+    setSrc('.pv-fallback [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=192&tileBg=auto');
+
+    setSrc('.pv[data-pv="group"] [data-role="group"]', API_BASE + '/group?seeds=' + enc + ',bob,carol,dave,eve&size=64&overlap=0.32');
+
+    setSrc('.pv[data-pv="url"] [data-role="avatar"]', API_BASE + '/avatar/' + enc + '?size=256&animated=1');
+
     wrap.classList.remove('error');
-    try {
-      const u = new URL(url);
-      const isGroup = u.pathname === '/group';
-      if (!isGroup && !u.searchParams.has('size')) u.searchParams.set('size', '320');
-      live.src = u.toString();
-    } catch { live.src = url; }
   }
 
   function rebuild() {
