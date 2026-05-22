@@ -219,7 +219,9 @@ export function createApp(options: AppOptions = {}) {
     });
   });
 
-  app.get('/build', (c) => {
+  app.get('/build', (c) => c.redirect('/builder', 301));
+
+  app.get('/builder', (c) => {
     return new Response(builderHtml(), {
       status: 200,
       headers: {

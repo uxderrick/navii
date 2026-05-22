@@ -161,6 +161,28 @@ export function landingHtml(): string {
     max-width: 60ch;
     margin: 0;
   }
+  .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+  .hero-ctas a {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .hero-ctas a.primary {
+    background: var(--accent);
+    color: #0a0a0b;
+    border: 1px solid var(--accent);
+  }
+  .hero-ctas a.primary:hover { background: #d4a8ff; border-color: #d4a8ff; color: #0a0a0b; }
+  .hero-ctas a.secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line-2);
+  }
+  .hero-ctas a.secondary:hover { color: var(--accent); border-color: var(--accent); }
+  .hero-ctas a svg { width: 14px; height: 14px; }
 
   /* ── playground (full-width 2-col) ── */
   .playground {
@@ -629,6 +651,10 @@ export function landingHtml(): string {
   <header class="hero">
     <h1>A face for <em>every user.</em></h1>
     <p class="lede">Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
+    <div class="hero-ctas">
+      <a class="primary" href="/builder">Use avatar builder →</a>
+      <a class="secondary" href="/docs">How to use</a>
+    </div>
   </header>
 
   <div class="playground">

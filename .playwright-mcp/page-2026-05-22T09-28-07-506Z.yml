@@ -1,0 +1,216 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+    - generic [ref=e7]:
+      - link "cast" [ref=e8] [cursor=pointer]:
+        - /url: "#cast"
+      - link "docs" [ref=e9] [cursor=pointer]:
+        - /url: /docs/quickstart
+      - link "github" [ref=e10] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - banner [ref=e11]:
+    - heading "A face for every user." [level=1] [ref=e12]:
+      - text: A face for
+      - emphasis [ref=e13]: every user.
+    - paragraph [ref=e14]: Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.
+    - generic [ref=e15]:
+      - link "Use avatar builder →" [ref=e16] [cursor=pointer]:
+        - /url: /builder
+      - link "How to use" [ref=e17] [cursor=pointer]:
+        - /url: /docs
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e25]:
+        - combobox "framework" [ref=e26] [cursor=pointer]:
+          - option "HTML" [selected]
+          - option "React"
+          - option "Next.js"
+          - option "Vue"
+          - option "Svelte"
+          - option "curl"
+          - option "fetch"
+          - option "URL"
+        - button "copy" [ref=e27] [cursor=pointer]
+      - generic [ref=e28]:
+        - generic [ref=e29]: user id
+        - textbox "user id" [ref=e30]:
+          - /placeholder: user.id, email, uuid…
+          - text: alice@example.com
+        - button "animated" [ref=e31] [cursor=pointer]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: "1"
+          - generic [ref=e35]: "2"
+          - generic [ref=e36]: "3"
+          - generic [ref=e37]: "4"
+          - generic [ref=e38]: "5"
+          - generic [ref=e39]: "6"
+          - generic [ref=e40]: "7"
+        - generic [ref=e41]:
+          - generic:
+            - code: <div class="user-card"> <img src="https://navii-api.uxderrick.com/avatar/alice@example.com?size=96&tileBg=auto" alt="alice@example.com" width="64" height="64" /> <div> <strong>alice@example.com</strong> <span>Member</span> </div> </div>
+          - textbox [ref=e42]: <div class="user-card"> <img src="https://navii-api.uxderrick.com/avatar/alice@example.com?size=96&tileBg=auto" alt="alice@example.com" width="64" height="64" /> <div> <strong>alice@example.com</strong> <span>Member</span> </div> </div>
+      - generic [ref=e43]:
+        - button "profile card" [ref=e44] [cursor=pointer]
+        - button "team list" [ref=e45] [cursor=pointer]
+        - button "comment row" [ref=e46] [cursor=pointer]
+        - button "photo fallback" [ref=e47] [cursor=pointer]
+        - button "group" [ref=e48] [cursor=pointer]
+        - button "just the URL" [ref=e49] [cursor=pointer]
+    - generic [ref=e52]:
+      - strong [ref=e53]: alice@example.com
+      - generic [ref=e54]: Member
+  - separator [ref=e55]
+  - generic [ref=e56]:
+    - heading "the cast" [level=2] [ref=e57]
+    - paragraph [ref=e58]: 22M+ distinct faces.
+    - paragraph [ref=e59]: 22 palettes × 8 bodies × 10 eyes × 10 mouths × 5 antennas × 12 toppers × 7 accessories.
+    - paragraph [ref=e60]: Continuous tweaks (hue, scale, eye gap, mouth curve, antenna tilt) make it effectively unlimited.
+    - generic [ref=e61]:
+      - link "aria aria" [ref=e62] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/aria?size=192&animated=1
+        - img "aria" [ref=e63]
+        - generic [ref=e64]: aria
+      - link "milo milo" [ref=e65] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/milo?size=192&animated=1
+        - img "milo" [ref=e66]
+        - generic [ref=e67]: milo
+      - link "nova nova" [ref=e68] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/nova?size=192&animated=1
+        - img "nova" [ref=e69]
+        - generic [ref=e70]: nova
+      - link "kai kai" [ref=e71] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/kai?size=192&animated=1
+        - img "kai" [ref=e72]
+        - generic [ref=e73]: kai
+      - link "sage sage" [ref=e74] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/sage?size=192&animated=1
+        - img "sage" [ref=e75]
+        - generic [ref=e76]: sage
+      - link "eden eden" [ref=e77] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/eden?size=192&animated=1
+        - img "eden" [ref=e78]
+        - generic [ref=e79]: eden
+      - link "luna luna" [ref=e80] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/luna?size=192&animated=1
+        - img "luna" [ref=e81]
+        - generic [ref=e82]: luna
+      - link "rio rio" [ref=e83] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/rio?size=192&animated=1
+        - img "rio" [ref=e84]
+        - generic [ref=e85]: rio
+      - link "pip pip" [ref=e86] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/pip?size=192&animated=1
+        - img "pip" [ref=e87]
+        - generic [ref=e88]: pip
+      - link "wren wren" [ref=e89] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/wren?size=192&animated=1
+        - img "wren" [ref=e90]
+        - generic [ref=e91]: wren
+      - link "zane zane" [ref=e92] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/zane?size=192&animated=1
+        - img "zane" [ref=e93]
+        - generic [ref=e94]: zane
+      - link "iris iris" [ref=e95] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/iris?size=192&animated=1
+        - img "iris" [ref=e96]
+        - generic [ref=e97]: iris
+      - link "fox fox" [ref=e98] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/fox?size=192&animated=1
+        - img "fox" [ref=e99]
+        - generic [ref=e100]: fox
+      - link "jin jin" [ref=e101] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/jin?size=192&animated=1
+        - img "jin" [ref=e102]
+        - generic [ref=e103]: jin
+      - link "leo leo" [ref=e104] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/leo?size=192&animated=1
+        - img "leo" [ref=e105]
+        - generic [ref=e106]: leo
+      - link "pax pax" [ref=e107] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/pax?size=192&animated=1
+        - img "pax" [ref=e108]
+        - generic [ref=e109]: pax
+      - link "roo roo" [ref=e110] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/roo?size=192&animated=1
+        - img "roo" [ref=e111]
+        - generic [ref=e112]: roo
+      - link "tava tava" [ref=e113] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/tava?size=192&animated=1
+        - img "tava" [ref=e114]
+        - generic [ref=e115]: tava
+      - link "yumi yumi" [ref=e116] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/yumi?size=192&animated=1
+        - img "yumi" [ref=e117]
+        - generic [ref=e118]: yumi
+      - link "cass cass" [ref=e119] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/cass?size=192&animated=1
+        - img "cass" [ref=e120]
+        - generic [ref=e121]: cass
+      - link "odi odi" [ref=e122] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/odi?size=192&animated=1
+        - img "odi" [ref=e123]
+        - generic [ref=e124]: odi
+      - link "hex hex" [ref=e125] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/hex?size=192&animated=1
+        - img "hex" [ref=e126]
+        - generic [ref=e127]: hex
+      - link "fae fae" [ref=e128] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/fae?size=192&animated=1
+        - img "fae" [ref=e129]
+        - generic [ref=e130]: fae
+      - link "rune rune" [ref=e131] [cursor=pointer]:
+        - /url: https://navii-api.uxderrick.com/avatar/rune?size=192&animated=1
+        - img "rune" [ref=e132]
+        - generic [ref=e133]: rune
+  - separator [ref=e134]
+  - generic [ref=e135]:
+    - heading "groups" [level=2] [ref=e136]
+    - paragraph [ref=e137]: For teams, threads, comments. Anywhere people gather. Opaque tiles so overlap stays clean.
+    - generic [ref=e138]:
+      - img "avatar group" [ref=e139]
+      - code [ref=e140]: GET https://navii-api.uxderrick.com/group?seeds=aria,milo,nova,kai,sage&size=72&overlap=0.32
+  - separator [ref=e141]
+  - generic [ref=e142]:
+    - heading "docs" [level=2] [ref=e143]
+    - paragraph [ref=e144]:
+      - text: Full reference at
+      - link "/docs" [ref=e145] [cursor=pointer]:
+        - /url: /docs/quickstart
+      - text: . Quickstart, concepts, parts catalog, HTTP API, SDK, deployment.
+    - generic [ref=e146]:
+      - link "Quickstart Install + first avatar in 60 seconds." [ref=e147] [cursor=pointer]:
+        - /url: /docs/quickstart
+        - heading "Quickstart" [level=3] [ref=e148]
+        - paragraph [ref=e149]: Install + first avatar in 60 seconds.
+      - link "Concepts Seeds, determinism, parts overview." [ref=e150] [cursor=pointer]:
+        - /url: /docs/concepts
+        - heading "Concepts" [level=3] [ref=e151]
+        - paragraph [ref=e152]: Seeds, determinism, parts overview.
+      - link "Parts catalog Every variant value, rendered." [ref=e153] [cursor=pointer]:
+        - /url: /docs/parts
+        - heading "Parts catalog" [level=3] [ref=e154]
+        - paragraph [ref=e155]: Every variant value, rendered.
+      - link "HTTP API Endpoints, params, errors, headers." [ref=e156] [cursor=pointer]:
+        - /url: /docs/http-api
+        - heading "HTTP API" [level=3] [ref=e157]
+        - paragraph [ref=e158]: Endpoints, params, errors, headers.
+      - link "@usenavii/core Functions, types, composition." [ref=e159] [cursor=pointer]:
+        - /url: /docs/sdk-core
+        - heading "@usenavii/core" [level=3] [ref=e160]
+        - paragraph [ref=e161]: Functions, types, composition.
+      - link "@usenavii/react Component props + memoization." [ref=e162] [cursor=pointer]:
+        - /url: /docs/sdk-react
+        - heading "@usenavii/react" [level=3] [ref=e163]
+        - paragraph [ref=e164]: Component props + memoization.
+  - separator [ref=e165]
+  - contentinfo [ref=e166]:
+    - generic [ref=e167]: navii · deterministic avatars · open source · MIT
+    - generic [ref=e168]:
+      - link "github" [ref=e169] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+      - text: ·
+      - link "/api" [ref=e170] [cursor=pointer]:
+        - /url: /api
