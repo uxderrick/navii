@@ -44,8 +44,10 @@ interface DocPage {
 }
 
 const PAGES: DocPage[] = [
+  { slug: 'overview',    section: 'Start',     title: 'Overview',            summary: 'What Navii is, what it solves, when to reach for it.', body: pageOverview },
   { slug: 'quickstart',  section: 'Start',     title: 'Quickstart',          summary: 'Install and render your first avatar in 60 seconds.', body: pageQuickstart },
   { slug: 'concepts',    section: 'Start',     title: 'Concepts',            summary: 'Determinism, seeds, and the rules that make Navii work.', body: pageConcepts },
+  { slug: 'recipes',     section: 'Start',     title: 'Recipes',             summary: 'Battle-tested patterns: SSR, fallbacks, galleries, React Native.', body: pageRecipes },
   { slug: 'parts',       section: 'Reference', title: 'Parts catalog',       summary: 'Every variant value, rendered.', body: pageParts },
   { slug: 'http-api',    section: 'Reference', title: 'HTTP API',            summary: 'Full endpoint reference for the hosted service.', body: pageHttpApi },
   { slug: 'rate-limits', section: 'Reference', title: 'Rate limits',         summary: 'Per-route quotas, why immutable caching makes Navii cheap to host.', body: pageRateLimits },
@@ -60,7 +62,7 @@ export function isDocSlug(slug: string): boolean {
 }
 
 export function defaultDocSlug(): string {
-  return PAGES[0]!.slug;
+  return 'quickstart';
 }
 
 export function docsHtml(slug: string): string {
@@ -362,6 +364,173 @@ function notFound(): string {
 // ────────────────────────────────────────────────────────────────────────────
 // pages
 
+function pageOverview(): string {
+  return `
+    <header class="page-head">
+      <h1>Overview</h1>
+      <p class="lede">Navii is a deterministic mascot avatar service. Pass any string — a user id, an email, a UUID — and get back a designed SVG of a unique character. Same seed always returns the same face.</p>
+    </header>
+
+    <section>
+      <h2 id="what-it-solves">What it solves</h2>
+      <p>Every app has the same gap: between signup and the moment a user uploads a profile photo, you've got a gray circle with their initial. That's not a brand moment. It's not a profile. It's not anything.</p>
+      <p>Navii fills that gap. One function call (or one <code>&lt;img src&gt;</code>) gives every user a face the moment they exist.</p>
+      <ul>
+        <li><strong>Deterministic</strong> — same seed → same SVG, byte-for-byte, forever. Safe to cache, safe to mirror.</li>
+        <li><strong>Stateless</strong> — no accounts, no database, no avatar table. The seed is the avatar.</li>
+        <li><strong>Designed</strong> — 22 palettes × 8 bodies × 10 eyes × 10 mouths × 12 toppers × continuous tweaks. 22M+ combinations.</li>
+        <li><strong>Optional motion</strong> — opt-in idle animation. Honors <code>prefers-reduced-motion</code>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 id="when-to-use">When to reach for it</h2>
+      <ul>
+        <li>Signup placeholder before users upload a photo</li>
+        <li>Comment threads, activity feeds, team rosters</li>
+        <li>Empty states for any "person" in your UI</li>
+        <li>Brand mascots / logo marks (use <a href="/docs/sdk-core">Navii.build</a> for direct construction)</li>
+        <li>Email + OG images (PNG endpoint)</li>
+      </ul>
+      <p>Not for: app icons, illustrations, anything where a specific designer-drawn character is required.</p>
+    </section>
+
+    <section>
+      <h2 id="three-shapes">Three ways to consume it</h2>
+      <table class="ref-table">
+        <thead><tr><th>Shape</th><th>For</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;img src&gt;</code> URL</td><td>any framework, even plain HTML</td><td>1 HTTP round-trip per device per seed (then immutable-cached forever)</td></tr>
+          <tr><td><code>@usenavii/core</code></td><td>node + browser bundles, no network</td><td>~9 KB gz dependency</td></tr>
+          <tr><td><code>@usenavii/react</code></td><td>React apps; <code>&lt;Navii seed=… /&gt;</code></td><td>~10 KB gz, memoized</td></tr>
+        </tbody>
+      </table>
+      <p>Pick whatever's smallest for you. All three render the same byte-identical SVG for a given seed.</p>
+    </section>
+
+    <section>
+      <h2 id="next">Next</h2>
+      <ul>
+        <li><a href="/docs/quickstart">Quickstart</a> — first avatar in 60 seconds.</li>
+        <li><a href="/docs/concepts">Concepts</a> — the seed rule + determinism contract you need to understand.</li>
+        <li><a href="/docs/recipes">Recipes</a> — copy-paste patterns for SSR, fallbacks, galleries, RN.</li>
+      </ul>
+    </section>
+  `;
+}
+
+function pageRecipes(): string {
+  return `
+    <header class="page-head">
+      <h1>Recipes</h1>
+      <p class="lede">Battle-tested patterns. Copy-paste, adjust seeds, ship.</p>
+    </header>
+
+    <section>
+      <h2 id="seed-from-user">Compose a stable seed from a user object</h2>
+      <p>The single biggest mistake is passing a display name as the seed. Names collide. Use the helper:</p>
+      <pre class="code"><code>import { Navii } from '@usenavii/core';
+
+const s = Navii.seed({
+  id: user.id,            // wins if present
+  email: user.email,      // fallback
+  name: user.name,        // last resort
+  createdAt: user.createdAt, // composed with name if id+email missing
+});
+
+createAvatar(s);</code></pre>
+      <p>Why it matters: <a href="/docs/concepts#seeds">the seed rule</a> says same seed = same avatar. If two users share a seed they share an avatar. <code>Navii.seed</code> picks the most-unique field automatically.</p>
+    </section>
+
+    <section>
+      <h2 id="photo-fallback">Photo fallback (Navii when no photoUrl)</h2>
+      <p>Easiest pattern: <code>??</code> to fall back to a Navii URL when the user hasn't uploaded:</p>
+      <pre class="code"><code>function Avatar({ user }) {
+  const navii = \`${API_BASE}/avatar/\${encodeURIComponent(user.id)}?size=64&amp;tileBg=auto\`;
+  return (
+    &lt;img
+      src={user.photoUrl ?? navii}
+      alt={user.name}
+      width={64}
+      height={64}
+    /&gt;
+  );
+}</code></pre>
+      <p>If you want the upload to load first and Navii as <code>onError</code> recovery:</p>
+      <pre class="code"><code>&lt;img
+  src={user.photoUrl}
+  onError={(e) =&gt; { e.currentTarget.src = naviiUrl; }}
+  alt={user.name}
+/&gt;</code></pre>
+    </section>
+
+    <section>
+      <h2 id="ssr">Server-side rendering (Next.js, Remix, Astro)</h2>
+      <p>The simplest SSR path is the hosted endpoint — zero engine in your bundle, works in every renderer:</p>
+      <pre class="code"><code>// server or client component — no difference
+&lt;img src={\`${API_BASE}/avatar/\${user.id}?size=64\`} /&gt;</code></pre>
+      <p>If you want zero extra HTTP requests (inlining the SVG in your HTML stream), use <code>@usenavii/core</code> on the server and pipe the SVG string into your template. Since the engine is deterministic and pure, server output matches client output — no hydration mismatch.</p>
+    </section>
+
+    <section>
+      <h2 id="gallery">Loading lots of avatars at once (team list, feed)</h2>
+      <p>Don't fire 100 <code>/avatar/*</code> requests. Use <code>/group</code> — one SVG, one request, no rate limit:</p>
+      <pre class="code"><code>const ids = team.map(u =&gt; u.id).join(',');
+&lt;img src={\`${API_BASE}/group?seeds=\${ids}&amp;size=48&amp;overlap=0.3\`} alt="team" /&gt;</code></pre>
+      <p>For a multi-row grid use <a href="/docs/http-api#utility"><code>/cast.svg</code></a>:</p>
+      <pre class="code"><code>&lt;img src={\`${API_BASE}/cast.svg?seeds=\${ids}&amp;cols=6&amp;size=80\`} /&gt;</code></pre>
+    </section>
+
+    <section>
+      <h2 id="react-native">React Native</h2>
+      <p>No dedicated package needed. Use core + <code>react-native-svg</code>:</p>
+      <pre class="code"><code>import { createAvatar } from '@usenavii/core';
+import { SvgXml } from 'react-native-svg';
+
+export function Navii({ seed, size = 64 }) {
+  const svg = createAvatar(seed, { size });
+  return &lt;SvgXml xml={svg} width={size} height={size} /&gt;;
+}</code></pre>
+      <p>Determinism still holds — same SVG in RN as in the browser, byte-identical to the hosted API.</p>
+    </section>
+
+    <section>
+      <h2 id="brand-mascot">Fixed brand mascot (no seed)</h2>
+      <p>When you want a specific look — logo, empty-state, 404 page — skip the seed and build directly:</p>
+      <pre class="code"><code>import { Navii } from '@usenavii/core';
+
+const heroSvg = Navii.build({
+  body: 'tall',
+  eyes: 'star',
+  mouth: 'grin',
+  palette: 'violet',
+  topper: 'crown',
+}, { size: 256, animated: true });</code></pre>
+      <p>Or via URL: <code>/build/render?body=tall&amp;eyes=star&amp;palette=violet&amp;topper=crown</code>. Use the <a href="${SITE_BASE}/builder">builder UI</a> to design visually + copy the params.</p>
+    </section>
+
+    <section>
+      <h2 id="caching">Caching your own copies</h2>
+      <p>Responses ship <code>Cache-Control: public, max-age=31536000, immutable</code>. Any layer between you and the API (CDN, browser, service worker) respects that. No extra config needed.</p>
+      <p>If you do want offline copies:</p>
+      <pre class="code"><code>const svg = await fetch(\`${API_BASE}/avatar/\${userId}\`).then(r =&gt; r.text());
+await fs.writeFile(\`avatars/\${userId}.svg\`, svg);</code></pre>
+      <p>Bytes are deterministic — re-fetching the same seed produces the same content.</p>
+    </section>
+
+    <section>
+      <h2 id="anti-patterns">Anti-patterns</h2>
+      <ul>
+        <li><strong>Passing <code>Date.now()</code> as the seed.</strong> Avatar changes every render. Determinism is the contract.</li>
+        <li><strong>Passing a display name.</strong> Two "Alice"s look identical. Use a stable id.</li>
+        <li><strong>Fetching <code>/avatar/*</code> in a loop without caching.</strong> Hit <code>/group</code> or <code>/cast.svg</code> instead.</li>
+        <li><strong>Stripping <code>Cache-Control</code> in your proxy.</strong> You'd hammer the origin for no reason.</li>
+        <li><strong>Rasterizing client-side.</strong> Use <code>.png</code> URLs if you need PNG; resvg on the server is faster than canvas in the browser.</li>
+      </ul>
+    </section>
+  `;
+}
+
 function pageQuickstart(): string {
   return `
     <header class="page-head">
@@ -466,25 +635,43 @@ function pageConcepts(): string {
 
 function pageParts(): string {
   // Base spec — every catalog tile uses this as a foundation, only the
-  // target part is mutated. Keeps "what changed" obvious to the reader.
+  // target part is mutated. Each tile is rendered as a separate <img>
+  // pointing at /build/render so the browser caches each variant
+  // independently (immutable) and lazy-loads below-the-fold rows.
   const baseSeed = 'navii-doc-base';
-  const base: AvatarSpec = {
-    ...selectAvatar(baseSeed),
-    // pin neutral choices so we don't accidentally clash w/ a topper-suppressed body etc
+  const baseSelected = selectAvatar(baseSeed);
+
+  interface PartChoice {
+    palette: string;
+    body: BodyShapeId;
+    eyes: EyeStyleId;
+    mouth: MouthStyleId;
+    antenna: AntennaStyleId;
+    accessory: AccessoryId;
+    background: BackgroundId;
+    topper: TopperId;
+  }
+  const base: PartChoice = {
+    palette: baseSelected.palette.id,
+    body: baseSelected.body,
+    eyes: baseSelected.eyes,
+    mouth: baseSelected.mouth,
     antenna: 'classic',
     accessory: 'none',
     background: 'ring',
     topper: 'none',
-    hueShift: 0,
-    bodyScale: 1,
-    eyeGapShift: 0,
-    mouthCurveScale: 1,
-    antennaTilt: 0,
   };
 
-  function tile(label: string, spec: AvatarSpec): string {
-    const svg = renderAvatar(spec, { size: 120 });
-    return `<div class="ptile"><div class="ptile-art">${svg}</div><div class="ptile-label">${escapeHtml(label)}</div></div>`;
+  function tileUrl(override: Partial<PartChoice>): string {
+    const spec = { ...base, ...override };
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(spec)) p.set(k, String(v));
+    p.set('size', '240');
+    return `${API_BASE}/build/render?${p.toString()}`;
+  }
+
+  function tile(label: string, url: string): string {
+    return `<div class="ptile"><div class="ptile-art"><img src="${url}" alt="${escapeHtml(label)}" loading="lazy" decoding="async" width="120" height="120" /></div><div class="ptile-label">${escapeHtml(label)}</div></div>`;
   }
 
   function grid(items: string[]): string {
@@ -492,28 +679,30 @@ function pageParts(): string {
   }
 
   const palettes = grid(
-    (PALETTES as readonly Palette[]).map((p) =>
-      tile(p.id, { ...base, palette: p }),
-    ),
+    (PALETTES as readonly Palette[]).map((p) => tile(p.id, tileUrl({ palette: p.id }))),
   );
-  const bodies = grid((BODY_IDS as readonly BodyShapeId[]).map((b) => tile(b, { ...base, body: b })));
-  const eyes = grid((EYE_IDS as readonly EyeStyleId[]).map((e) => tile(e, { ...base, eyes: e })));
-  const mouths = grid((MOUTH_IDS as readonly MouthStyleId[]).map((m) => tile(m, { ...base, mouth: m })));
+  const bodies = grid(
+    (BODY_IDS as readonly BodyShapeId[]).map((b) => tile(b, tileUrl({ body: b }))),
+  );
+  const eyes = grid(
+    (EYE_IDS as readonly EyeStyleId[]).map((e) => tile(e, tileUrl({ eyes: e }))),
+  );
+  const mouths = grid(
+    (MOUTH_IDS as readonly MouthStyleId[]).map((m) => tile(m, tileUrl({ mouth: m }))),
+  );
   const antennae = grid(
-    (ANTENNA_IDS as readonly AntennaStyleId[]).map((a) => tile(a, { ...base, antenna: a })),
+    (ANTENNA_IDS as readonly AntennaStyleId[]).map((a) => tile(a, tileUrl({ antenna: a }))),
   );
   const accessories = grid(
-    (ACCESSORY_IDS as readonly AccessoryId[]).map((a) => tile(a, { ...base, accessory: a })),
+    (ACCESSORY_IDS as readonly AccessoryId[]).map((a) => tile(a, tileUrl({ accessory: a }))),
   );
   const backgrounds = grid(
-    (BACKGROUND_IDS as readonly BackgroundId[]).map((b) => tile(b, { ...base, background: b })),
+    (BACKGROUND_IDS as readonly BackgroundId[]).map((b) => tile(b, tileUrl({ background: b }))),
   );
   const uniqueToppers = Array.from(new Set(TOPPER_IDS as readonly TopperId[]));
   const toppers = grid(
-    uniqueToppers.map((t) =>
-      // antenna suppressed so the topper actually shows
-      tile(t, { ...base, antenna: 'none', topper: t }),
-    ),
+    // antenna suppressed so the topper actually shows
+    uniqueToppers.map((t) => tile(t, tileUrl({ antenna: 'none', topper: t }))),
   );
 
   return `
