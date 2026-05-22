@@ -1,0 +1,38 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "@usenavii/react smoke test" [level=1] [ref=e5]
+    - paragraph [ref=e6]: Consumer of the published npm package.
+  - generic [ref=e7]:
+    - img "alice@example.com" [ref=e8]
+    - textbox "type a seed" [ref=e9]: alice@example.com
+  - generic [ref=e10]:
+    - heading "Team list" [level=2] [ref=e11]
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - img "Alice Chen" [ref=e14]
+        - generic [ref=e15]:
+          - strong [ref=e16]: Alice Chen
+          - text: Engineer
+      - listitem [ref=e17]:
+        - img "Bob Patel" [ref=e18]
+        - generic [ref=e19]:
+          - strong [ref=e20]: Bob Patel
+          - text: Designer
+      - listitem [ref=e21]:
+        - img "Carol Smith" [ref=e22]
+        - generic [ref=e23]:
+          - strong [ref=e24]: Carol Smith
+          - text: PM
+      - listitem [ref=e25]:
+        - img "Dave Lin" [ref=e26]
+        - generic [ref=e27]:
+          - strong [ref=e28]: Dave Lin
+          - text: Engineer
+      - listitem [ref=e29]:
+        - img "Eve Johnson" [ref=e30]
+        - generic [ref=e31]:
+          - strong [ref=e32]: Eve Johnson
+          - text: Manager
+  - generic [ref=e33]:
+    - heading "Determinism check" [level=2] [ref=e34]
+    - paragraph [ref=e35]: "Same seed renders identically across mounts:"

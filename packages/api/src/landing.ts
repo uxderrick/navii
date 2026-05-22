@@ -36,7 +36,7 @@ export function landingHtml(): string {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Navii. Every user, a face.</title>
+<title>Navii. A face for every user.</title>
 <meta name="description" content="Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time." />
 <meta name="theme-color" content="#0a0a0b" />
 <meta name="color-scheme" content="dark" />
@@ -64,21 +64,21 @@ export function landingHtml(): string {
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Navii" />
-<meta property="og:title" content="Navii. Every user, a face." />
+<meta property="og:title" content="Navii. A face for every user." />
 <meta property="og:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out, every time." />
 <meta property="og:url" content="${SITE_BASE}/" />
 <meta property="og:image" content="${OG_IMAGE}" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Five Navii mascot avatars over the line 'Every user, a face.'" />
+<meta property="og:image:alt" content="Five Navii mascot avatars over the line 'A face for every user.'" />
 <meta property="og:locale" content="en_US" />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Navii. Every user, a face." />
+<meta name="twitter:title" content="Navii. A face for every user." />
 <meta name="twitter:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out, every time." />
 <meta name="twitter:image" content="${OG_IMAGE}" />
-<meta name="twitter:image:alt" content="Five Navii mascot avatars over the line 'Every user, a face.'" />
+<meta name="twitter:image:alt" content="Five Navii mascot avatars over the line 'A face for every user.'" />
 
 <!-- Structured data: software application -->
 <script type="application/ld+json">${JSON.stringify({

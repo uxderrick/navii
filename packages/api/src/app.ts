@@ -51,7 +51,12 @@ export function createApp(options: AppOptions = {}) {
   app.get('/api', (c) =>
     c.json({
       name: 'navii',
-      version: '0.5.0',
+      version: '0.2.0',
+      site: 'https://navii.uxderrick.com',
+      packages: {
+        core: '@usenavii/core',
+        react: '@usenavii/react',
+      },
       endpoints: {
         avatar: '/avatar/:seed',
         group: '/group?seeds=a,b,c',
@@ -59,6 +64,13 @@ export function createApp(options: AppOptions = {}) {
         health: '/healthz',
         docs: '/docs',
       },
+      seed: {
+        rule: 'Same seed in → same avatar out. Pass a stable unique identifier per user.',
+        recommended: ['user.id', 'UUID', 'user.email'],
+        avoid: ['display name (collides — two "Alice"s get the same avatar)', 'Date.now() at render time (breaks reproducibility)'],
+        helper: 'use @usenavii/core seed({ id, email, name, createdAt }) to pick the most-unique field automatically',
+      },
+      determinism: 'Same seed + same query → byte-identical response, forever. Safe to cache, safe to mirror.',
     }),
   );
 

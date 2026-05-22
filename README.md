@@ -119,7 +119,38 @@ createAvatar(seed: string, options?: AvatarOptions): string
 selectAvatar(seed: string, options?: AvatarOptions): AvatarSpec
 renderAvatar(spec:  AvatarSpec, options?: AvatarOptions): string
 renderGroup(seeds:  string[],   options?: GroupOptions):  string
+
+// ergonomic helpers
+seed(fields:  SeedFields): string          // pick most-unique field
+build(spec?:  BuildSpec, opts?): string    // manual mix-and-match (no seed)
+
+// namespace bundle
+Navii.{ create, render, select, group, seed, build }
 ```
+
+#### `Navii.seed({ id, email, name, createdAt })`
+
+Picks the most-unique stable field automatically. Prefers `id` → `email` → `name+createdAt` → `name`. Stops devs accidentally passing display names.
+
+```ts
+import { Navii } from '@usenavii/core';
+
+const s = Navii.seed({ id: user.id, email: user.email, name: user.name });
+const svg = Navii.create(s);
+```
+
+#### `Navii.build({ body, eyes, mouth, ... })`
+
+Direct construction from explicit part choices — no seed. For brand mascots, logo marks, designer-curated avatars.
+
+```ts
+const svg = Navii.build({
+  body: 'tall', eyes: 'star', mouth: 'grin',
+  palette: 'violet', topper: 'crown',
+}, { size: 192, animated: true });
+```
+
+Any field left unspecified falls back to its first variant.
 
 #### `AvatarOptions`
 
