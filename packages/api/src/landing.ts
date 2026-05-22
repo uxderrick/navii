@@ -217,7 +217,7 @@ export function landingHtml(): string {
   .seed-bar input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--accent); font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 4px 0; }
   .seed-bar input::placeholder { color: #52525b; }
 
-  .editor-body { position: relative; display: grid; grid-template-columns: 48px 1fr; flex: 1; min-height: 240px; }
+  .editor-body { position: relative; display: grid; grid-template-columns: 48px 1fr; height: 360px; overflow: hidden; }
   .gutter {
     background: var(--bg-3);
     border-right: 1px solid var(--line);
@@ -230,7 +230,7 @@ export function landingHtml(): string {
   }
   .gutter b { display: block; padding-right: 12px; font-weight: 400; }
 
-  .code-area { position: relative; padding: 0; overflow: hidden; }
+  .code-area { position: relative; padding: 0; height: 100%; overflow: hidden; }
   .code-area pre, .code-area textarea {
     margin: 0;
     padding: 16px 18px;
@@ -240,7 +240,8 @@ export function landingHtml(): string {
     word-break: break-word;
     tab-size: 2;
   }
-  .code-area pre { color: var(--ink); background: transparent; pointer-events: none; min-height: 240px; }
+  .code-area pre { color: var(--ink); background: transparent; pointer-events: none; height: 100%; overflow-y: auto; }
+  .gutter { overflow-y: hidden; }
   .code-area textarea {
     position: absolute;
     inset: 0;
@@ -300,13 +301,13 @@ export function landingHtml(): string {
     position: relative;
     min-height: 320px;
   }
-  .pv { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 320px; }
+  .pv { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
   .pv.active { display: flex; }
 
-  /* profile card variant */
-  .pv-profile { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; gap: 12px; flex-direction: row; align-items: center; }
+  /* profile card variant — fills available width */
+  .pv-profile { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; gap: 14px; flex-direction: row; align-items: center; width: 100%; }
   .pv-profile img { width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0; }
-  .pv-profile .info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pv-profile .info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
   .pv-profile .info strong { font-size: 14px; color: var(--ink); word-break: break-all; line-height: 1.2; }
   .pv-profile .info span { font-size: 12px; color: var(--muted-2); }
 
@@ -317,10 +318,10 @@ export function landingHtml(): string {
   .pv-team li img { width: 44px; height: 44px; border-radius: 50%; }
   .pv-team li span { font: 10px ui-monospace, monospace; color: var(--muted-2); }
 
-  /* comment variant */
-  .pv-comment { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; gap: 12px; flex-direction: row; align-items: flex-start; max-width: 340px; }
+  /* comment variant — fills available width */
+  .pv-comment { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; gap: 12px; flex-direction: row; align-items: flex-start; width: 100%; }
   .pv-comment img { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; }
-  .pv-comment .body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .pv-comment .body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
   .pv-comment .body strong { font-size: 13px; color: var(--ink); word-break: break-all; }
   .pv-comment .body p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
 
