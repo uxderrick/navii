@@ -48,6 +48,7 @@ const PAGES: DocPage[] = [
   { slug: 'concepts',    section: 'Start',     title: 'Concepts',            summary: 'Determinism, seeds, and the rules that make Navii work.', body: pageConcepts },
   { slug: 'parts',       section: 'Reference', title: 'Parts catalog',       summary: 'Every variant value, rendered.', body: pageParts },
   { slug: 'http-api',    section: 'Reference', title: 'HTTP API',            summary: 'Full endpoint reference for the hosted service.', body: pageHttpApi },
+  { slug: 'rate-limits', section: 'Reference', title: 'Rate limits',         summary: 'Per-route quotas, why immutable caching makes Navii cheap to host.', body: pageRateLimits },
   { slug: 'sdk-core',    section: 'SDK',       title: '@usenavii/core',         summary: 'Engine functions, types, and advanced composition.', body: pageSdkCore },
   { slug: 'sdk-react',   section: 'SDK',       title: '@usenavii/react',        summary: 'React component with memoized rendering.', body: pageSdkReact },
   { slug: 'deployment',  section: 'Operate',   title: 'Self-hosting',        summary: 'Docker, env vars, reverse proxy notes.', body: pageDeployment },
@@ -649,21 +650,8 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
 
     <section>
       <h2 id="rate-limits">Rate limits</h2>
-      <p>Per-IP sliding window. Hosted deployment (<code>navii-api.uxderrick.com</code>):</p>
-      <table class="ref-table">
-        <thead><tr><th>Route</th><th>Limit</th></tr></thead>
-        <tbody>
-          <tr><td><code>/avatar/:seed</code> (SVG + PNG)</td><td><strong>600 req/min/IP</strong></td></tr>
-          <tr><td><code>/group</code></td><td>unlimited</td></tr>
-          <tr><td><code>/cast.svg</code></td><td>unlimited</td></tr>
-          <tr><td><code>/build/render</code> (SVG + PNG)</td><td>unlimited</td></tr>
-          <tr><td><code>/builder</code>, <code>/docs</code>, <code>/</code>, <code>/api</code></td><td>unlimited</td></tr>
-          <tr><td><code>/healthz</code>, <code>/gallery</code>, icons</td><td>unlimited</td></tr>
-        </tbody>
-      </table>
-      <p>Why this works: responses ship <code>Cache-Control: public, max-age=31536000, immutable</code>, so browsers + CDNs cache forever per <code>(seed, params)</code>. A user's avatar hits the API once per device, then never again. 1000 users typically ≈ ~15K API requests/month total.</p>
-      <p>Exceeded → HTTP <code>429</code> + <code>Retry-After</code> header (seconds until window resets).</p>
-      <p>Self-hosting? Tune via the <code>RATE_LIMIT_PER_MIN</code> env var (defaults to <code>120</code> when not set). See <a href="/docs/deployment">Deployment</a>.</p>
+      <p><code>/avatar/*</code> is limited to <strong>600 req/min/IP</strong>. Other routes are unlimited. Exceeded → HTTP <code>429</code> + <code>Retry-After</code>.</p>
+      <p>Full table, cache rationale, and self-hosting tuning live on the dedicated <a href="/docs/rate-limits">Rate limits</a> page.</p>
     </section>
 
     <section>
@@ -672,6 +660,86 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
       <pre class="code"><code>raw:     alice@example.com
 encoded: alice%40example.com</code></pre>
       <p>The server decodes back to the raw seed before hashing, so both URLs produce the same SVG. Empty seeds → 400.</p>
+    </section>
+  `;
+}
+
+function pageRateLimits(): string {
+  return `
+    <header class="page-head">
+      <h1>Rate limits</h1>
+      <p class="lede">Per-IP quotas on the hosted API, why they're set the way they are, and how to tune them when self-hosting.</p>
+    </header>
+
+    <section>
+      <h2 id="hosted">Hosted (<code>navii-api.uxderrick.com</code>)</h2>
+      <table class="ref-table">
+        <thead><tr><th>Route</th><th>Limit (per IP)</th><th>Window</th></tr></thead>
+        <tbody>
+          <tr><td><code>/avatar/:seed</code> (SVG)</td><td><strong>600 req/min</strong></td><td>60s sliding</td></tr>
+          <tr><td><code>/avatar/:seed.png</code></td><td><strong>600 req/min</strong> (shared bucket)</td><td>60s sliding</td></tr>
+          <tr><td><code>/group</code></td><td>unlimited</td><td>—</td></tr>
+          <tr><td><code>/cast.svg</code></td><td>unlimited</td><td>—</td></tr>
+          <tr><td><code>/build/render</code> (SVG + PNG)</td><td>unlimited</td><td>—</td></tr>
+          <tr><td><code>/builder</code>, <code>/docs</code>, <code>/</code>, <code>/api</code></td><td>unlimited</td><td>—</td></tr>
+          <tr><td><code>/healthz</code>, <code>/gallery</code>, icons, <code>/og.png</code></td><td>unlimited</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 id="why-this-is-enough">Why this is more than enough</h2>
+      <p>Avatar responses ship the strongest cache header a CDN respects:</p>
+      <pre class="code"><code>Cache-Control: public, max-age=31536000, immutable</code></pre>
+      <p>That means every browser, every proxy, every CDN caches the exact <code>(seed, params)</code> bytes <strong>for a year</strong>. Same user, same device → one request, then zero forever. A given seed's response is byte-identical (it's deterministic), so the cache is always valid.</p>
+      <p>Realistic monthly traffic for 1 000 active users:</p>
+      <pre class="code"><code>1 000 users × ~3 devices avg × ~5 cache-miss loads/mo ≈ 15 000 req/mo</code></pre>
+      <p>That's ~21 requests/hour. The 600/min/IP ceiling exists only to swat abusers — normal apps won't notice it.</p>
+    </section>
+
+    <section>
+      <h2 id="when-you-hit-it">When you hit it</h2>
+      <pre class="code"><code>HTTP/1.1 429 Too Many Requests
+Retry-After: 23
+Content-Type: text/plain
+
+Rate limit exceeded</code></pre>
+      <p><code>Retry-After</code> is seconds until your IP's window resets. Back off, retry. No exponential backoff math needed — the server already tells you when to come back.</p>
+      <p>Common triggers:</p>
+      <ul>
+        <li>Loading an avatar gallery with hundreds of unique seeds in one go (use <code>/group</code> or <code>/cast.svg</code> instead — both unlimited)</li>
+        <li>Server-side rendering that fetches per request instead of caching</li>
+        <li>Crawlers / scrapers</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 id="how-to-stay-under">How to stay under it</h2>
+      <ul>
+        <li><strong>Respect the cache headers.</strong> Don't strip them in your reverse proxy.</li>
+        <li><strong>Bundle calls.</strong> If you need 5 teammates, hit <code>/group?seeds=a,b,c,d,e</code> (one request, unlimited route) instead of five <code>/avatar/*</code> calls.</li>
+        <li><strong>Self-host</strong> the API container if you ever expect <em>uncached</em> bursts above 600/min from a single IP — the docker image is the same one we run.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 id="self-host">Self-hosting? Tune it</h2>
+      <p>The limit is just an env var on the API container:</p>
+      <pre class="code"><code># /opt/navii/.env or docker-compose env block
+RATE_LIMIT_PER_MIN=600        # bump as needed
+TRUST_PROXY=1                 # enable X-Forwarded-For reading (Caddy/Nginx)</code></pre>
+      <p>Set to <code>0</code> to disable rate-limiting entirely. See <a href="/docs/deployment">Deployment</a> for the full env reference.</p>
+      <p><strong>Don't enable <code>TRUST_PROXY</code> behind a raw CDN</strong> — clients can spoof <code>X-Forwarded-For</code>. Use it only behind a proxy you control.</p>
+    </section>
+
+    <section>
+      <h2 id="storage">Implementation notes</h2>
+      <ul>
+        <li>Sliding window, in-memory <code>Map&lt;ip, { count, resetAt }&gt;</code>, pruned every 60s.</li>
+        <li>Stateless across container restarts — a deploy resets the limiter.</li>
+        <li>Per-process. If you scale to N replicas, each replica has its own bucket — effective limit becomes <code>N × RATE_LIMIT_PER_MIN</code>. Swap for Redis when this matters.</li>
+        <li>IP attribution comes from <code>X-Forwarded-For</code> first when <code>TRUST_PROXY=1</code>, else falls back to "unknown" (single bucket for all — fail-open behind a misconfigured proxy, fail-safe otherwise).</li>
+      </ul>
     </section>
   `;
 }
