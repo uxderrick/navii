@@ -6,7 +6,7 @@
  * cached in-process since the output never changes.
  */
 
-import { selectAvatar, renderAvatarInner } from '@navii/core';
+import { selectAvatar, renderAvatarInner } from '@usenavii/core';
 import { svgToPng } from './raster.js';
 
 const OG_WIDTH = 1200;

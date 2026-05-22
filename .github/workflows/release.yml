@@ -28,7 +28,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile=false
-      - run: pnpm --filter '@navii/core' run build
+      - run: pnpm --filter '@usenavii/core' run build
       - run: pnpm -r run typecheck
       - run: pnpm -r run test
 
@@ -85,15 +85,15 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - run: pnpm install --frozen-lockfile=false
-      - run: pnpm --filter '@navii/core' run build
-      - run: pnpm --filter '@navii/react' run build
+      - run: pnpm --filter '@usenavii/core' run build
+      - run: pnpm --filter '@usenavii/react' run build
 
-      - name: publish @navii/core
-        run: pnpm --filter '@navii/core' publish --access public --no-git-checks
+      - name: publish @usenavii/core
+        run: pnpm --filter '@usenavii/core' publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: publish @navii/react
-        run: pnpm --filter '@navii/react' publish --access public --no-git-checks
+      - name: publish @usenavii/react
+        run: pnpm --filter '@usenavii/react' publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

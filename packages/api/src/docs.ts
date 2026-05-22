@@ -20,7 +20,7 @@ import {
   type BackgroundId,
   type TopperId,
   type Palette,
-} from '@navii/core';
+} from '@usenavii/core';
 import {
   BODY_IDS,
   EYE_IDS,
@@ -30,7 +30,7 @@ import {
   BACKGROUND_IDS,
   TOPPER_IDS,
   PALETTES,
-} from '@navii/core/parts';
+} from '@usenavii/core/parts';
 
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.uxderrick.com';
@@ -48,8 +48,8 @@ const PAGES: DocPage[] = [
   { slug: 'concepts',    section: 'Start',     title: 'Concepts',            summary: 'Determinism, seeds, and the rules that make Navii work.', body: pageConcepts },
   { slug: 'parts',       section: 'Reference', title: 'Parts catalog',       summary: 'Every variant value, rendered.', body: pageParts },
   { slug: 'http-api',    section: 'Reference', title: 'HTTP API',            summary: 'Full endpoint reference for the hosted service.', body: pageHttpApi },
-  { slug: 'sdk-core',    section: 'SDK',       title: '@navii/core',         summary: 'Engine functions, types, and advanced composition.', body: pageSdkCore },
-  { slug: 'sdk-react',   section: 'SDK',       title: '@navii/react',        summary: 'React component with memoized rendering.', body: pageSdkReact },
+  { slug: 'sdk-core',    section: 'SDK',       title: '@usenavii/core',         summary: 'Engine functions, types, and advanced composition.', body: pageSdkCore },
+  { slug: 'sdk-react',   section: 'SDK',       title: '@usenavii/react',        summary: 'React component with memoized rendering.', body: pageSdkReact },
   { slug: 'deployment',  section: 'Operate',   title: 'Self-hosting',        summary: 'Docker, env vars, reverse proxy notes.', body: pageDeployment },
   { slug: 'changelog',   section: 'Operate',   title: 'Changelog',           summary: 'Version history and breaking changes.', body: pageChangelog },
 ];
@@ -194,9 +194,9 @@ function pageQuickstart(): string {
     </section>
 
     <section>
-      <h2 id="core">@navii/core (any JS runtime)</h2>
-      <pre class="code"><code>npm i @navii/core</code></pre>
-      <pre class="code"><code>import { createAvatar } from '@navii/core';
+      <h2 id="core">@usenavii/core (any JS runtime)</h2>
+      <pre class="code"><code>npm i @usenavii/core</code></pre>
+      <pre class="code"><code>import { createAvatar } from '@usenavii/core';
 
 const svg = createAvatar(user.id, { size: 96 });
 document.body.insertAdjacentHTML('beforeend', svg);</code></pre>
@@ -204,9 +204,9 @@ document.body.insertAdjacentHTML('beforeend', svg);</code></pre>
     </section>
 
     <section>
-      <h2 id="react">@navii/react</h2>
-      <pre class="code"><code>npm i @navii/react</code></pre>
-      <pre class="code"><code>import { Navii } from '@navii/react';
+      <h2 id="react">@usenavii/react</h2>
+      <pre class="code"><code>npm i @usenavii/react</code></pre>
+      <pre class="code"><code>import { Navii } from '@usenavii/react';
 
 &lt;Navii seed={user.id} size={64} title={user.name} animated /&gt;</code></pre>
       <p>Memoized <code>&lt;img src="data:image/svg+xml;..."&gt;</code> — the SVG renders client-side and is treated as opaque image by the browser (no inline scripting surface).</p>
@@ -275,7 +275,7 @@ function pageConcepts(): string {
         <li><code>palette</code> — force a specific color family.</li>
         <li><code>background</code> — force <code>none</code>, <code>solid</code>, or <code>ring</code>.</li>
       </ul>
-      <p>Programmatic callers via <code>@navii/core</code> can override anything by mutating the <code>AvatarSpec</code> directly. See <a href="/docs/sdk-core">@navii/core docs</a>.</p>
+      <p>Programmatic callers via <code>@usenavii/core</code> can override anything by mutating the <code>AvatarSpec</code> directly. See <a href="/docs/sdk-core">@usenavii/core docs</a>.</p>
     </section>
   `;
 }
@@ -441,7 +441,7 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
           <tr><td><code>animated</code></td><td>0 / 1</td><td>0</td><td>Per-avatar animation.</td></tr>
         </tbody>
       </table>
-      <p class="note"><strong>SDK-only:</strong> <code>counterFill</code> and <code>counterInk</code> (the <code>+N</code> tile's colors) are settable via <code>GroupOptions</code> in <code>@navii/core</code> but not yet wired to query params.</p>
+      <p class="note"><strong>SDK-only:</strong> <code>counterFill</code> and <code>counterInk</code> (the <code>+N</code> tile's colors) are settable via <code>GroupOptions</code> in <code>@usenavii/core</code> but not yet wired to query params.</p>
     </section>
 
     <section>
@@ -510,13 +510,13 @@ encoded: alice%40example.com</code></pre>
 function pageSdkCore(): string {
   return `
     <header class="page-head">
-      <h1>@navii/core</h1>
+      <h1>@usenavii/core</h1>
       <p class="lede">Framework-agnostic engine. Seed in, SVG string out. Pure TypeScript, zero runtime dependencies, ~8 KB gzipped target.</p>
     </header>
 
     <section>
       <h2 id="install">Install</h2>
-      <pre class="code"><code>npm i @navii/core
+      <pre class="code"><code>npm i @usenavii/core
 # or pnpm / yarn / bun</code></pre>
     </section>
 
@@ -573,7 +573,7 @@ renderGroup(seeds:  string[], options?: GroupOptions): string</code></pre>
     <section>
       <h2 id="compose">Advanced: composition</h2>
       <p>The split <code>selectAvatar</code> + <code>renderAvatar</code> lets you override any part programmatically — not just the two the HTTP API exposes.</p>
-      <pre class="code"><code>import { selectAvatar, renderAvatar } from '@navii/core';
+      <pre class="code"><code>import { selectAvatar, renderAvatar } from '@usenavii/core';
 
 const base = selectAvatar('alice');
 const svg = renderAvatar({ ...base, body: 'tall', eyes: 'star' }, { size: 128 });</code></pre>
@@ -601,7 +601,7 @@ const svg = renderAvatar({ ...base, body: 'tall', eyes: 'star' }, { size: 128 })
       <ul>
         <li><code>createRng(seed)</code> — the PRNG used internally. Returns <code>{ next(), range(min, max), pick(arr) }</code>.</li>
         <li><code>cyrb53(string)</code> — fast 53-bit string hash. Used to seed the PRNG.</li>
-        <li><code>@navii/core/parts</code> subpath — exports the part-id arrays (<code>BODY_IDS</code>, <code>EYE_IDS</code>, etc.) and <code>PALETTES</code>.</li>
+        <li><code>@usenavii/core/parts</code> subpath — exports the part-id arrays (<code>BODY_IDS</code>, <code>EYE_IDS</code>, etc.) and <code>PALETTES</code>.</li>
       </ul>
     </section>
   `;
@@ -610,19 +610,19 @@ const svg = renderAvatar({ ...base, body: 'tall', eyes: 'star' }, { size: 128 })
 function pageSdkReact(): string {
   return `
     <header class="page-head">
-      <h1>@navii/react</h1>
-      <p class="lede">A thin React component on top of <code>@navii/core</code>. Memoized; renders the engine output as a data-URI <code>&lt;img&gt;</code> so the SVG is treated as opaque by the browser.</p>
+      <h1>@usenavii/react</h1>
+      <p class="lede">A thin React component on top of <code>@usenavii/core</code>. Memoized; renders the engine output as a data-URI <code>&lt;img&gt;</code> so the SVG is treated as opaque by the browser.</p>
     </header>
 
     <section>
       <h2 id="install">Install</h2>
-      <pre class="code"><code>npm i @navii/react</code></pre>
-      <p><code>@navii/core</code> is bundled in; you don't install it separately unless you also use the engine directly.</p>
+      <pre class="code"><code>npm i @usenavii/react</code></pre>
+      <p><code>@usenavii/core</code> is bundled in; you don't install it separately unless you also use the engine directly.</p>
     </section>
 
     <section>
       <h2 id="usage">Usage</h2>
-      <pre class="code"><code>import { Navii } from '@navii/react';
+      <pre class="code"><code>import { Navii } from '@usenavii/react';
 
 export function UserChip({ user }) {
   return (
@@ -659,7 +659,7 @@ export function UserChip({ user }) {
 
     <section>
       <h2 id="re-exports">Re-exports</h2>
-      <p>All <code>@navii/core</code> top-level exports are re-exported for convenience: <code>createAvatar</code>, <code>selectAvatar</code>, <code>renderAvatar</code>, plus the types <code>AvatarSpec</code>, <code>AvatarOptions</code>, <code>Palette</code>.</p>
+      <p>All <code>@usenavii/core</code> top-level exports are re-exported for convenience: <code>createAvatar</code>, <code>selectAvatar</code>, <code>renderAvatar</code>, plus the types <code>AvatarSpec</code>, <code>AvatarOptions</code>, <code>Palette</code>.</p>
     </section>
   `;
 }
@@ -740,7 +740,7 @@ function pageChangelog(): string {
       <ul>
         <li>Livelier animations — float now bobs + tilts + squashes; double blink; antenna sway; stronger spark pulse; rotating sparkle twinkle.</li>
         <li>Cast expanded: 22 palettes, 8 bodies, 10 eyes, 10 mouths, 12 toppers, 7 accessories.</li>
-        <li><code>renderGroup</code> + <code>GroupOptions</code> exported from <code>@navii/core</code>.</li>
+        <li><code>renderGroup</code> + <code>GroupOptions</code> exported from <code>@usenavii/core</code>.</li>
         <li>Continuous params (<code>hueShift</code>, <code>bodyScale</code>, etc.) wired into <code>selectAvatar</code> + <code>renderAvatar</code>.</li>
         <li>Split-domain deploy — landing on <code>navii.uxderrick.com</code>, API on <code>navii-api.uxderrick.com</code>.</li>
         <li>Default rate limit bumped to 600/min.</li>
@@ -751,7 +751,7 @@ function pageChangelog(): string {
     <section>
       <h2 id="next">What's next</h2>
       <ul>
-        <li>npm publish of <code>@navii/core</code> + <code>@navii/react</code> via tsup.</li>
+        <li>npm publish of <code>@usenavii/core</code> + <code>@usenavii/react</code> via tsup.</li>
         <li><code>Navii.seed({ id, email, name, createdAt })</code> ergonomic seed composer.</li>
         <li>Cloudflare Worker deploy (wasm raster).</li>
         <li>React Native binding.</li>

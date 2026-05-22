@@ -9,7 +9,7 @@
     "build": "pnpm -r --filter './packages/*' run build",
     "test": "pnpm -r --filter './packages/*' run test",
     "typecheck": "pnpm -r --filter './packages/*' run typecheck",
-    "dev:api": "pnpm --filter @navii/api run dev"
+    "dev:api": "pnpm --filter @usenavii/api run dev"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

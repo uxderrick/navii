@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createAvatar, type AvatarOptions } from '@navii/core';
+import { createAvatar, type AvatarOptions } from '@usenavii/core';
 
 export interface NaviiProps extends AvatarOptions {
   seed: string;
@@ -48,5 +48,5 @@ export function Navii({
   );
 }
 
-export { createAvatar, selectAvatar, renderAvatar } from '@navii/core';
-export type { AvatarSpec, AvatarOptions, Palette } from '@navii/core';
+export { createAvatar, selectAvatar, renderAvatar } from '@usenavii/core';
+export type { AvatarSpec, AvatarOptions, Palette } from '@usenavii/core';

@@ -1,5 +1,5 @@
 {
-  "name": "@navii/core",
+  "name": "@usenavii/core",
   "version": "0.1.0",
   "description": "Deterministic mascot avatar engine. Pass any seed, get back a clean, designed SVG that's the same every time.",
   "type": "module",

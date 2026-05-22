@@ -18,9 +18,9 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 
 ## Distribution
 
-- [ ] Publish `@navii/core` + `@navii/react` to npm. Add tsup for dual ESM/CJS.
+- [ ] Publish `@usenavii/core` + `@usenavii/react` to npm. Add tsup for dual ESM/CJS.
 - [ ] Tag v0.1.0
-- [ ] Cloudflare Worker deploy of `@navii/api` (swap `@resvg/resvg-js` → `@resvg/resvg-wasm`)
+- [ ] Cloudflare Worker deploy of `@usenavii/api` (swap `@resvg/resvg-js` → `@resvg/resvg-wasm`)
 - [ ] Public CDN at `navii.dev/avatar/<seed>`
 
 ## Product
@@ -34,15 +34,15 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
   - Add JSDoc on `createAvatar(seed)` echoing this.
   - Follow-up task once docs land: ship `Navii.seed({ id?, email?, name?, createdAt? })` helper that picks the most unique field and hashes a composite — guides callers into pit of success.
   - _Progress: README "The seed: read this once" section landed (✅/⚠️/❌ table). Still TODO: demo site copy, hosted `/api` JSON + landing page copy, JSDoc on `createAvatar`._
-- [x] `<NaviiGroup seeds={[...]} max={5} />` overlap stack with +N tile — `renderGroup` + `GroupOptions` exported from `@navii/core`, covered by `group.test.ts`.
+- [x] `<NaviiGroup seeds={[...]} max={5} />` overlap stack with +N tile — `renderGroup` + `GroupOptions` exported from `@usenavii/core`, covered by `group.test.ts`.
 - [ ] Lazy WebP fallback alongside PNG for smaller bytes
-- [ ] React Native binding (`@navii/native`) — same engine, native SVG renderer
+- [ ] React Native binding (`@usenavii/native`) — same engine, native SVG renderer
 - [ ] CLI: `npx navii alice` → writes SVG to stdout
 
 ## Engineering
 
 - [ ] Snapshot test of N seeds — guard against unintended part-pick drift
 - [ ] Bench: avatars/sec; aim ≥ 50K/s on M1
-- [ ] Strict size budget on `@navii/core` (target < 8KB gzipped)
+- [ ] Strict size budget on `@usenavii/core` (target < 8KB gzipped)
 - [ ] Builder API — programmatic mix-and-match without seed: `Navii.build({body:'tall', eyes:'star'})`
 - [ ] `Navii.seed({ id?, email?, name?, createdAt? })` helper — composes most-unique-available field(s), hashes to stable seed string. Ships after uniqueness guidance doc lands so callers already understand why.

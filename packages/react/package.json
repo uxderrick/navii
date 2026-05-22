@@ -1,5 +1,5 @@
 {
-  "name": "@navii/react",
+  "name": "@usenavii/react",
   "version": "0.1.0",
   "description": "React binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
@@ -47,7 +47,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@navii/core": "workspace:^"
+    "@usenavii/core": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=17"

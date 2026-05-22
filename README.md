@@ -13,8 +13,8 @@ Drop-in deterministic mascot avatars. No uploads, no blank gray circles, no stat
 seed in  →  same avatar out, every time.
 ```
 
-[![npm](https://img.shields.io/npm/v/@navii/core?label=%40navii%2Fcore)](https://www.npmjs.com/package/@navii/core)
-[![npm](https://img.shields.io/npm/v/@navii/react?label=%40navii%2Freact)](https://www.npmjs.com/package/@navii/react)
+[![npm](https://img.shields.io/npm/v/@usenavii/core?label=%40navii%2Fcore)](https://www.npmjs.com/package/@usenavii/core)
+[![npm](https://img.shields.io/npm/v/@usenavii/react?label=%40navii%2Freact)](https://www.npmjs.com/package/@usenavii/react)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Live demo](https://img.shields.io/badge/demo-navii.uxderrick.com-c084fc)](https://navii.uxderrick.com)
 
@@ -38,9 +38,9 @@ seed in  →  same avatar out, every time.
 
 | Package        | What it is                                                  |
 | -------------- | ----------------------------------------------------------- |
-| `@navii/core`  | Framework-agnostic engine. Seed → SVG string. Pure TS.      |
-| `@navii/react` | Thin React component. `<Navii seed="alice" />`.             |
-| `@navii/api`   | Hono app exposing `GET /avatar/:seed`. Deploy anywhere.     |
+| `@usenavii/core`  | Framework-agnostic engine. Seed → SVG string. Pure TS.      |
+| `@usenavii/react` | Thin React component. `<Navii seed="alice" />`.             |
+| `@usenavii/api`   | Hono app exposing `GET /avatar/:seed`. Deploy anywhere.     |
 
 > **Status:** v0.1 — public API stable. Deterministic contract locked. Cast may grow (new variants appended to PRNG stream, never inserted).
 
@@ -50,13 +50,13 @@ seed in  →  same avatar out, every time.
 
 ```sh
 # pick one
-npm  add @navii/core
-pnpm add @navii/core
-yarn add @navii/core
-bun  add @navii/core
+npm  add @usenavii/core
+pnpm add @usenavii/core
+yarn add @usenavii/core
+bun  add @usenavii/core
 
 # for React
-npm add @navii/react
+npm add @usenavii/react
 ```
 
 ## Quick start
@@ -64,7 +64,7 @@ npm add @navii/react
 ### Node / browser (vanilla TS)
 
 ```ts
-import { createAvatar } from '@navii/core';
+import { createAvatar } from '@usenavii/core';
 
 const svg = createAvatar(user.id, { size: 96 });
 document.body.insertAdjacentHTML('beforeend', svg);
@@ -73,7 +73,7 @@ document.body.insertAdjacentHTML('beforeend', svg);
 ### React
 
 ```tsx
-import { Navii } from '@navii/react';
+import { Navii } from '@usenavii/react';
 
 <Navii seed={user.id} size={64} title={user.name} animated />
 ```
@@ -112,7 +112,7 @@ If your app *only* has a display name, compose a stable seed at signup time (e.g
 
 ## API reference
 
-### `@navii/core`
+### `@usenavii/core`
 
 ```ts
 createAvatar(seed: string, options?: AvatarOptions): string
@@ -143,7 +143,7 @@ renderGroup(seeds:  string[],   options?: GroupOptions):  string
 | `counterFill`  | `string` | `#E5E7EB`  | Background of the `+N` tile.                     |
 | `counterInk`   | `string` | `#374151`  | Text color of the `+N` tile.                     |
 
-### `@navii/react`
+### `@usenavii/react`
 
 ```tsx
 <Navii
@@ -160,7 +160,7 @@ renderGroup(seeds:  string[],   options?: GroupOptions):  string
 
 Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated as opaque by the browser (no inline scripting surface).
 
-### `@navii/api` — hosted endpoint
+### `@usenavii/api` — hosted endpoint
 
 | Method | Path                  | Purpose                                |
 | ------ | --------------------- | -------------------------------------- |
@@ -244,7 +244,7 @@ Live backlog: [`BACKLOG.md`](./BACKLOG.md). Highlights:
 ```bash
 pnpm install
 pnpm test           # runs vitest across all packages
-pnpm build          # builds @navii/core, @navii/react, @navii/api
+pnpm build          # builds @usenavii/core, @usenavii/react, @usenavii/api
 pnpm dev:api        # hot-reload hosted endpoint on :8787
 ```
 

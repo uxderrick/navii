@@ -1,5 +1,5 @@
 {
-  "name": "@navii/api",
+  "name": "@usenavii/api",
   "version": "0.0.1",
   "description": "Hosted Navii avatar endpoint. GET /avatar/:seed → SVG.",
   "type": "module",
@@ -20,7 +20,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@navii/core": "workspace:*",
+    "@usenavii/core": "workspace:*",
     "@hono/node-server": "^1.13.0",
     "@resvg/resvg-js": "^2.6.2",
     "hono": "^4.6.0"

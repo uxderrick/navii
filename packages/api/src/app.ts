@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { createAvatar, renderGroup, type AvatarOptions, type GroupOptions } from '@navii/core';
+import { createAvatar, renderGroup, type AvatarOptions, type GroupOptions } from '@usenavii/core';
 import { svgToPng } from './raster.js';
 import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
 import { LruCache } from './middleware/lruCache.js';
