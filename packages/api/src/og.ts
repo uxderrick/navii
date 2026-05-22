@@ -46,7 +46,11 @@ export function ogSvg(): string {
   }
 
   const textRowY = startY + textRow * (size + gap);
-  const headlineCenterY = textRowY + size / 2;
+  // Baseline-positioned y: offset from row center by ~0.35 × font-size so the
+  // visual cap-height centers on the row. resvg does not honor
+  // `dominant-baseline="middle"` reliably, so we tune y manually.
+  const headlineFontSize = 76;
+  const headlineY = textRowY + size / 2 + headlineFontSize * 0.34;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${OG_WIDTH}" height="${OG_HEIGHT}" viewBox="0 0 ${OG_WIDTH} ${OG_HEIGHT}">
@@ -58,7 +62,7 @@ export function ogSvg(): string {
   </defs>
   <rect width="${OG_WIDTH}" height="${OG_HEIGHT}" fill="url(#ogBg)" />
   ${tiles.join('\n  ')}
-  <text x="${OG_WIDTH / 2}" y="${headlineCenterY}" font-family="${sans}" font-size="76" font-weight="700" fill="#f5f5f5" text-anchor="middle" letter-spacing="-2.5" dominant-baseline="middle">A face for <tspan fill="#c084fc">every user.</tspan></text>
+  <text x="${OG_WIDTH / 2}" y="${headlineY}" font-family="${sans}" font-size="${headlineFontSize}" font-weight="700" fill="#f5f5f5" text-anchor="middle" letter-spacing="-2.5">A face for <tspan fill="#c084fc">every user.</tspan></text>
 </svg>`;
 }
 
