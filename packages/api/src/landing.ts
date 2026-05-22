@@ -70,36 +70,40 @@ export function landingHtml(): string {
   nav.top .links { display: flex; gap: 20px; font-size: 14px; color: var(--muted-2); }
   nav.top .links a:hover { color: var(--ink); }
 
-  /* ── hero ── */
-  header.hero {
-    padding: 48px 0 72px;
-    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center;
-  }
-  @media (max-width: 980px) { header.hero { grid-template-columns: 1fr; gap: 40px; } }
-
+  /* ── hero (centered) ── */
+  header.hero { padding: 48px 0 28px; text-align: center; }
   header.hero h1 {
-    font-size: clamp(40px, 6vw, 64px);
+    font-size: clamp(40px, 6.4vw, 72px);
     line-height: 1.0;
     letter-spacing: -0.035em;
-    margin: 0 0 16px;
+    margin: 0 0 18px;
     font-weight: 600;
   }
   header.hero h1 em { font-style: normal; color: var(--accent); }
   header.hero p.lede {
     color: var(--muted);
-    font-size: clamp(15px, 1.4vw, 17px);
-    max-width: 50ch;
-    margin: 0 0 28px;
+    font-size: clamp(15px, 1.4vw, 18px);
+    max-width: 60ch;
+    margin: 0 auto;
   }
 
-  /* ── editable URL playground ── */
-  .editor {
+  /* ── playground (full-width 2-col) ── */
+  .playground {
+    margin: 40px 0 28px;
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  @media (max-width: 980px) { .playground { grid-template-columns: 1fr; } }
+
+  .editor-card {
+    background: var(--bg-2);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: var(--bg-2);
     overflow: hidden;
-    margin: 0 0 14px;
-    position: relative;
+    display: flex;
+    flex-direction: column;
   }
   .editor-head {
     display: flex; align-items: center; justify-content: space-between;
@@ -111,9 +115,11 @@ export function landingHtml(): string {
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
+  .editor-head .dots { display: flex; gap: 6px; }
+  .editor-head .dots i { display: block; width: 10px; height: 10px; border-radius: 50%; background: #27272a; }
   .editor-head .copy {
     background: transparent;
-    border: 1px solid var(--line);
+    border: 1px solid #27272a;
     color: var(--muted);
     border-radius: 6px;
     padding: 3px 10px;
@@ -124,55 +130,92 @@ export function landingHtml(): string {
   }
   .editor-head .copy:hover { color: var(--ink); border-color: var(--muted-2); }
   .editor-head .copy.ok { color: var(--good); border-color: var(--good); }
-  .editor textarea {
-    width: 100%;
-    min-height: 142px;
-    border: 0;
-    background: transparent;
-    color: var(--ink);
-    padding: 14px 16px 16px;
-    font: 13.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
-    resize: vertical;
-    outline: none;
+
+  .editor-body { position: relative; display: grid; grid-template-columns: 48px 1fr; flex: 1; min-height: 240px; }
+  .gutter {
+    background: var(--bg-3);
+    border-right: 1px solid var(--line);
+    color: var(--muted-2);
+    font: 13.5px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace;
+    padding: 16px 0;
+    text-align: right;
+    user-select: none;
+    overflow: hidden;
+  }
+  .gutter b { display: block; padding-right: 12px; font-weight: 400; }
+
+  .code-area { position: relative; padding: 0; overflow: hidden; }
+  .code-area pre, .code-area textarea {
+    margin: 0;
+    padding: 16px 18px;
+    font: 13.5px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
     tab-size: 2;
   }
-  .editor textarea::selection { background: rgba(192, 132, 252, 0.25); }
-  .preset-row {
+  .code-area pre { color: var(--ink); background: transparent; pointer-events: none; min-height: 240px; }
+  .code-area textarea {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    resize: none;
+    color: transparent;
+    caret-color: var(--ink);
+    -webkit-text-fill-color: transparent;
+  }
+  .code-area textarea::selection { background: rgba(192, 132, 252, 0.28); -webkit-text-fill-color: transparent; }
+
+  .tk-verb   { color: var(--accent); font-weight: 600; }
+  .tk-host   { color: var(--muted-2); }
+  .tk-punct  { color: var(--muted-2); }
+  .tk-key    { color: #93c5fd; }
+  .tk-val    { color: #fbbf24; }
+  .tk-num    { color: var(--good); }
+
+  .editor-foot {
+    border-top: 1px solid var(--line);
+    background: var(--bg-3);
+    padding: 12px 14px;
     display: flex; gap: 8px; flex-wrap: wrap;
-    margin-bottom: 8px;
   }
   .preset {
     background: var(--bg-2);
     border: 1px solid var(--line);
     color: var(--muted);
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 999px;
     font: 12.5px ui-sans-serif, system-ui, sans-serif;
     cursor: pointer;
     transition: color .15s, border-color .15s;
   }
   .preset:hover { color: var(--ink); border-color: var(--muted-2); }
-  .preset.active { color: var(--accent); border-color: var(--accent); }
+  .preset.active { color: var(--accent); border-color: var(--accent); background: rgba(192,132,252,0.08); }
 
-  /* ── hero avatar ── */
-  .live-avatar {
-    aspect-ratio: 1;
-    max-width: 360px;
-    margin: 0 auto;
-    background: radial-gradient(circle at 35% 30%, #1c1c22, var(--bg) 70%);
+  /* preview column */
+  .preview-card {
+    background: linear-gradient(135deg, #1c1c22, var(--bg));
     border: 1px solid var(--line);
-    border-radius: 28px;
-    display: grid; place-items: center;
-    overflow: hidden;
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     position: relative;
+    min-height: 320px;
   }
-  .live-avatar img { width: 78%; height: 78%; display: block; }
-  .live-avatar.error::after {
+  .preview-card img { max-width: 88%; max-height: 88%; display: block; }
+  .preview-card.error::after {
     content: 'invalid URL';
-    position: absolute; inset: auto 14px 14px auto;
+    position: absolute; bottom: 14px; right: 16px;
     color: #f87171;
     font: 11px ui-monospace, monospace;
   }
+  .preview-card.error img { opacity: 0.25; }
 
   /* ── section headings ── */
   section h2 {
@@ -371,24 +414,31 @@ export function landingHtml(): string {
   </nav>
 
   <header class="hero">
-    <div>
-      <h1>Every user, <em>a face.</em></h1>
-      <p class="lede">Drop-in deterministic mascot avatars. Pass any string — user id, email, UUID — get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
+    <h1>Every user, <em>a face.</em></h1>
+    <p class="lede">Drop-in deterministic mascot avatars. Pass any string — user id, email, UUID — get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
+  </header>
 
-      <div class="editor" aria-label="Editable avatar URL">
-        <div class="editor-head">
-          <span>request</span>
-          <button class="copy" id="copy-btn" type="button">copy</button>
-        </div>
-        <textarea id="editor" spellcheck="false" autocomplete="off" wrap="soft">GET ${API_BASE}/avatar/alice@example.com
-  ?size=320
-  &animated=1</textarea>
+  <div class="playground">
+    <div class="editor-card">
+      <div class="editor-head">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span style="opacity:.8">request</span>
+        <button class="copy" id="copy-btn" type="button">copy</button>
       </div>
-
-      <div class="preset-row" id="presets">
+      <div class="editor-body">
+        <div class="gutter" id="gutter"></div>
+        <div class="code-area">
+          <pre id="code-display"><code></code></pre>
+          <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off">GET ${API_BASE}/avatar/alice@example.com
+  ?size=320
+  &amp;palette=violet
+  &amp;animated=1</textarea>
+        </div>
+      </div>
+      <div class="editor-foot" id="presets">
         <button class="preset" data-preset="basic">basic</button>
+        <button class="preset active" data-preset="palette">palette</button>
         <button class="preset" data-preset="animated">animated</button>
-        <button class="preset" data-preset="palette">palette</button>
         <button class="preset" data-preset="tile">filled tile</button>
         <button class="preset" data-preset="dark">dark tile</button>
         <button class="preset" data-preset="png">PNG raster</button>
@@ -396,10 +446,10 @@ export function landingHtml(): string {
       </div>
     </div>
 
-    <div class="live-avatar" id="live-wrap">
-      <img id="live" src="${API_BASE}/avatar/alice@example.com?size=320&amp;animated=1" alt="" />
+    <div class="preview-card" id="preview-wrap">
+      <img id="live" src="${API_BASE}/avatar/alice@example.com?size=320&amp;palette=violet&amp;animated=1" alt="" />
     </div>
-  </header>
+  </div>
 
   <hr class="rule" />
 
@@ -547,76 +597,132 @@ export function landingHtml(): string {
 </div>
 
 <script>
-  (function () {
-    const API_BASE = ${JSON.stringify(API_BASE)};
-    const editor = document.getElementById('editor');
-    const live = document.getElementById('live');
-    const liveWrap = document.getElementById('live-wrap');
-    const copyBtn = document.getElementById('copy-btn');
-    const presets = document.getElementById('presets');
-    let t = null;
+(function () {
+  const API_BASE = ${JSON.stringify(API_BASE)};
 
-    const PRESETS = {
-      basic:    'GET ' + API_BASE + '/avatar/alice@example.com',
-      animated: 'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &animated=1',
-      palette:  'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &palette=violet\\n  &animated=1',
-      tile:     'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &tileBg=%23ffffff',
-      dark:     'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &tileBg=%230b0b0c',
-      png:      'GET ' + API_BASE + '/avatar/alice@example.com.png\\n  ?size=320\\n  &tileBg=auto',
-      group:    'GET ' + API_BASE + '/group\\n  ?seeds=alice,bob,carol,dave,eve\\n  &size=80\\n  &overlap=0.32'
-    };
+  const input   = document.getElementById('code-input');
+  const display = document.querySelector('#code-display code');
+  const gutter  = document.getElementById('gutter');
+  const live    = document.getElementById('live');
+  const wrap    = document.getElementById('preview-wrap');
+  const copyBtn = document.getElementById('copy-btn');
+  const presets = document.getElementById('presets');
+  let t = null;
 
-    function extractUrl(text) {
-      // strip "GET " verb, join multi-line params back into a single URL
-      const cleaned = text.replace(/^\\s*GET\\s+/i, '').replace(/\\s+/g, '');
-      try { new URL(cleaned); return cleaned; } catch { return null; }
+  const PRESETS = {
+    basic:    'GET ' + API_BASE + '/avatar/alice@example.com',
+    animated: 'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &animated=1',
+    palette:  'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &palette=violet\\n  &animated=1',
+    tile:     'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &tileBg=%23ffffff',
+    dark:     'GET ' + API_BASE + '/avatar/alice@example.com\\n  ?size=320\\n  &tileBg=%230b0b0c',
+    png:      'GET ' + API_BASE + '/avatar/alice@example.com.png\\n  ?size=320\\n  &tileBg=auto',
+    group:    'GET ' + API_BASE + '/group\\n  ?seeds=alice,bob,carol,dave,eve\\n  &size=80\\n  &overlap=0.32'
+  };
+
+  function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function span(cls, text) { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text; return s; }
+
+  function tokenize(src) {
+    const out = [];
+    const re = /(GET|POST|PUT|PATCH|DELETE)|(https?:\\/\\/[^\\s/?]+)|([?&])([a-zA-Z][\\w-]*)(=)([^&\\s]*)/g;
+    let last = 0;
+    for (const m of src.matchAll(re)) {
+      if (m.index > last) out.push({ text: src.slice(last, m.index) });
+      if (m[1])      out.push({ cls: 'tk-verb', text: m[1] });
+      else if (m[2]) out.push({ cls: 'tk-host', text: m[2] });
+      else if (m[3]) {
+        out.push({ cls: 'tk-punct', text: m[3] });
+        out.push({ cls: 'tk-key',   text: m[4] });
+        out.push({ cls: 'tk-punct', text: m[5] });
+        const v = m[6];
+        out.push({ cls: /^-?\\d+(\\.\\d+)?$/.test(v) ? 'tk-num' : 'tk-val', text: v });
+      }
+      last = m.index + m[0].length;
     }
+    if (last < src.length) out.push({ text: src.slice(last) });
+    return out;
+  }
 
-    function update() {
-      const url = extractUrl(editor.value);
-      if (!url) { liveWrap.classList.add('error'); return; }
-      liveWrap.classList.remove('error');
-      // tweak the URL size param down for hero preview if absent
-      try {
-        const u = new URL(url);
-        // Only render avatar endpoints here; group renders too but width differs
-        const isGroup = u.pathname === '/group';
-        if (!isGroup && !u.searchParams.has('size')) u.searchParams.set('size', '320');
-        if (!isGroup && !u.searchParams.has('animated')) u.searchParams.set('animated', '1');
-        live.src = u.toString();
-      } catch { live.src = url; }
+  function paintCode() {
+    const src = input.value;
+    clear(display);
+    for (const tok of tokenize(src)) {
+      if (tok.cls) display.appendChild(span(tok.cls, tok.text));
+      else display.appendChild(document.createTextNode(tok.text));
     }
+    clear(gutter);
+    const lines = src.split('\\n').length;
+    for (let i = 1; i <= lines; i++) {
+      const b = document.createElement('b'); b.textContent = String(i); gutter.appendChild(b);
+    }
+  }
 
-    editor.addEventListener('input', function () {
-      clearTimeout(t);
-      t = setTimeout(update, 140);
-    });
+  function extractUrl(text) {
+    const cleaned = text.replace(/^\\s*GET\\s+/i, '').replace(/\\s+/g, '');
+    try { new URL(cleaned); return cleaned; } catch { return null; }
+  }
 
-    presets.addEventListener('click', function (ev) {
-      const btn = ev.target.closest('button.preset');
-      if (!btn) return;
-      const key = btn.getAttribute('data-preset');
-      if (!PRESETS[key]) return;
-      editor.value = PRESETS[key];
-      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      update();
-    });
+  function refreshPreview() {
+    const url = extractUrl(input.value);
+    if (!url) { wrap.classList.add('error'); return; }
+    wrap.classList.remove('error');
+    try {
+      const u = new URL(url);
+      const isGroup = u.pathname === '/group';
+      if (!isGroup && !u.searchParams.has('size')) u.searchParams.set('size', '320');
+      live.src = u.toString();
+    } catch { live.src = url; }
+  }
 
-    copyBtn.addEventListener('click', async function () {
-      const url = extractUrl(editor.value);
-      if (!url) return;
-      try {
-        await navigator.clipboard.writeText(url);
-        copyBtn.textContent = 'copied';
-        copyBtn.classList.add('ok');
-        setTimeout(function () {
-          copyBtn.textContent = 'copy';
-          copyBtn.classList.remove('ok');
-        }, 1400);
-      } catch {}
-    });
-  })();
+  function onInput() {
+    paintCode();
+    clearTimeout(t);
+    t = setTimeout(refreshPreview, 140);
+  }
+
+  input.addEventListener('input', onInput);
+  input.addEventListener('scroll', function () {
+    display.parentElement.scrollTop = input.scrollTop;
+    gutter.scrollTop = input.scrollTop;
+  });
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = input.selectionStart, e2 = input.selectionEnd;
+      input.value = input.value.slice(0, s) + '  ' + input.value.slice(e2);
+      input.selectionStart = input.selectionEnd = s + 2;
+      onInput();
+    }
+  });
+
+  presets.addEventListener('click', function (ev) {
+    const btn = ev.target.closest('button.preset');
+    if (!btn) return;
+    const key = btn.getAttribute('data-preset');
+    if (!PRESETS[key]) return;
+    input.value = PRESETS[key];
+    document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    onInput();
+  });
+
+  copyBtn.addEventListener('click', async function () {
+    const url = extractUrl(input.value);
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      copyBtn.textContent = 'copied';
+      copyBtn.classList.add('ok');
+      setTimeout(function () {
+        copyBtn.textContent = 'copy';
+        copyBtn.classList.remove('ok');
+      }, 1400);
+    } catch {}
+  });
+
+  paintCode();
+  refreshPreview();
+})();
 </script>
 
 </body>
