@@ -321,7 +321,6 @@ export function builderHtml(): string {
       </a>
     </div>
     <div class="links">
-      <a href="/#cast">cast</a>
       <a href="/docs/quickstart">docs</a>
       <a href="https://github.com/uxderrick/navii">github</a>
     </div>
