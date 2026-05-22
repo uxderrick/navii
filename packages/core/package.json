@@ -1,32 +1,59 @@
 {
   "name": "@navii/core",
-  "version": "0.0.1",
-  "description": "Deterministic mascot avatar engine. Seed in, SVG out.",
+  "version": "0.1.0",
+  "description": "Deterministic mascot avatar engine. Pass any seed, get back a clean, designed SVG that's the same every time.",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./parts": {
-      "types": "./dist/parts/index.d.ts",
-      "import": "./dist/parts/index.js"
+      "types": "./dist/parts.d.ts",
+      "import": "./dist/parts.js",
+      "require": "./dist/parts.cjs"
     }
   },
   "files": [
     "dist",
-    "src"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm run build"
   },
-  "keywords": ["avatar", "mascot", "svg", "deterministic", "navii"],
+  "keywords": [
+    "avatar",
+    "avatars",
+    "mascot",
+    "svg",
+    "deterministic",
+    "identicon",
+    "placeholder",
+    "navii"
+  ],
   "license": "MIT",
-  "sideEffects": false
+  "author": "uxderrick",
+  "homepage": "https://navii.uxderrick.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uxderrick/navii.git",
+    "directory": "packages/core"
+  },
+  "bugs": "https://github.com/uxderrick/navii/issues",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0"
+  }
 }

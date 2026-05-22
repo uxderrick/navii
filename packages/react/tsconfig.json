@@ -3,10 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "jsx": "react-jsx",
-    "composite": true
+    "jsx": "react-jsx"
   },
-  "references": [{ "path": "../core" }],
   "include": ["src"],
   "exclude": ["dist", "node_modules"]
 }

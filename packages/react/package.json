@@ -1,33 +1,60 @@
 {
   "name": "@navii/react",
-  "version": "0.0.1",
-  "description": "React binding for Navii deterministic avatars.",
+  "version": "0.1.0",
+  "description": "React binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "avatar",
+    "avatars",
+    "mascot",
+    "svg",
+    "react",
+    "deterministic",
+    "navii"
+  ],
+  "license": "MIT",
+  "author": "uxderrick",
+  "homepage": "https://navii.uxderrick.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uxderrick/navii.git",
+    "directory": "packages/react"
+  },
+  "bugs": "https://github.com/uxderrick/navii/issues",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
-    "@navii/core": "workspace:*"
+    "@navii/core": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=17"
   },
   "devDependencies": {
     "@types/react": "^18.3.0",
-    "react": "^18.3.0"
-  },
-  "license": "MIT",
-  "sideEffects": false
+    "react": "^18.3.0",
+    "tsup": "^8.3.0"
+  }
 }

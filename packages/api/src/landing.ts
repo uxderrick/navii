@@ -216,6 +216,31 @@ export function landingHtml(): string {
   .seed-bar label { color: var(--muted-2); font: 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
   .seed-bar input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--accent); font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 4px 0; }
   .seed-bar input::placeholder { color: #52525b; }
+  .seed-bar .toggle {
+    background: transparent;
+    border: 1px solid #27272a;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 3px 10px 3px 8px;
+    cursor: pointer;
+    font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .seed-bar .toggle::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #27272a;
+    transition: background .15s, box-shadow .15s;
+  }
+  .seed-bar .toggle:hover { color: var(--ink); border-color: var(--muted-2); }
+  .seed-bar .toggle.on { color: var(--accent); border-color: var(--accent); background: rgba(192,132,252,0.08); }
+  .seed-bar .toggle.on::before { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 
   .editor-body { position: relative; display: grid; grid-template-columns: 48px 1fr; height: 360px; overflow: hidden; }
   .gutter {
@@ -615,6 +640,7 @@ export function landingHtml(): string {
       <div class="seed-bar">
         <label for="seed-input">user id</label>
         <input id="seed-input" type="text" value="alice@example.com" autocomplete="off" spellcheck="false" placeholder="user.id, email, uuid…" />
+        <button id="animated-toggle" class="toggle" type="button" aria-pressed="false" title="toggle animated preview">animated</button>
       </div>
       <div class="editor-body">
         <div class="gutter" id="gutter"></div>
@@ -736,7 +762,8 @@ export function landingHtml(): string {
 
   const frameworkSel = document.getElementById('framework-select');
   const seedInput = document.getElementById('seed-input');
-  const state = { framework: 'html', usecase: 'profile', seed: 'alice@example.com' };
+  const animBtn = document.getElementById('animated-toggle');
+  const state = { framework: 'html', usecase: 'profile', seed: 'alice@example.com', animated: false };
 
   const TEMPLATES = ${TEMPLATES_JSON};
   const PRIMARY_URL_RE = /https?:\\/\\/[^\\s'"<>)]+/;

@@ -1,0 +1,499 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`determinism contract > SVG byte snapshots remain stable per seed 1`] = `
+[
+  {
+    "bytes": 2122,
+    "seed": "alice@example.com",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-18em258" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCA5A5" />
+  <stop offset="100%" stop-color="#EF4444" />
+</radialGradient><filter id="navii-hue-18em258" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-16" /></filter></defs><rect x="0" y="0" width="100" height="100" fill="#FCA5A5" opacity="0.18" /><g transform="translate(50 91) scale(0.941) translate(-50 -91)" filter="url(#navii-hue-18em258)"><g class="body"><ellipse cx="50" cy="95" rx="22" ry="2.6" fill="#7F1D1D" opacity="0.16" /><path d="M50 14 C58 14 64 22 64 30 C64 36 60 40 60 46 C60 54 76 60 78 76 C80 88 66 91 50 91 C34 91 20 88 22 76 C24 60 40 54 40 46 C40 40 36 36 36 30 C36 22 42 14 50 14 Z" fill="url(#navii-grad-18em258)" stroke="rgba(127,29,29,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="36" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 36)" /></g></g><g class="eyes"><ellipse cx="41.57" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="58.43" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="41.57" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7F1D1D" /><ellipse cx="58.43" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7F1D1D" /><circle cx="42.37" cy="48.5" r="0.8" fill="#FFFFFF" /><circle cx="59.23" cy="48.5" r="0.8" fill="#FFFFFF" /></g><path d="M42.344 58 Q50 69 57.656 58" stroke="#7F1D1D" stroke-width="1.8" stroke-linecap="round" fill="#7F1D1D" fill-opacity="0.55" /><ellipse cx="50" cy="63" rx="3.6608000000000005" ry="1.8" fill="#F472B6" opacity="0.75" /><g transform="rotate(6 50 16)"><g class="antenna"><path d="M50 14 Q51 9 52.5 5" stroke="#7F1D1D" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="4" r="2.6" fill="#FEF2F2" stroke="#7F1D1D" stroke-width="0.6" opacity="0.95" /></g></g><ellipse cx="36" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /><ellipse cx="64" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /></svg>",
+  },
+  {
+    "bytes": 2143,
+    "seed": "bob",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-3773w8" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCD34D" />
+  <stop offset="100%" stop-color="#F59E0B" />
+</radialGradient><filter id="navii-hue-3773w8" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="14" /></filter></defs><circle cx="50" cy="50" r="48" fill="#FCD34D" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFF7ED" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 88) scale(0.944) translate(-50 -88)" filter="url(#navii-hue-3773w8)"><g class="body"><ellipse cx="50" cy="92" rx="22" ry="2.6" fill="#78350F" opacity="0.16" /><path d="M50 30 C62 30 70 38 70 48 C70 56 78 64 80 72 C82 82 70 88 50 88 C30 88 18 82 20 72 C22 64 30 56 30 48 C30 38 38 30 50 30 Z" fill="url(#navii-grad-3773w8)" stroke="rgba(120,53,15,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="44" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 44)" /></g></g><g class="eyes"><ellipse cx="40.06" cy="58" rx="3.92" ry="4.41" fill="#FFFFFF" /><circle cx="40.06" cy="58" r="2.156" fill="#78350F" /><circle cx="41.06" cy="57" r="0.8" fill="#FFFFFF" /><path d="M55.94 58 Q59.94 54.5 63.94 58" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /></g><path d="M42.984 68 Q50 73 57.016 68" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /><rect x="48.8" y="68.4" width="2.4" height="2.6" rx="0.4" fill="#FFFFFF" stroke="#78350F" stroke-width="0.4" /><g transform="rotate(-2 50 34)"><g class="antenna"><path d="M46 32 Q45 28 44.5 24" stroke="#78350F" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><path d="M54 32 Q55 28 55.5 24" stroke="#78350F" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="44.5" cy="23" r="2.1" fill="#FFF7ED" stroke="#78350F" stroke-width="0.5" opacity="0.95" /><circle class="spark" cx="55.5" cy="23" r="2.1" fill="#FFF7ED" stroke="#78350F" stroke-width="0.5" opacity="0.95" /></g></g></svg>",
+  },
+  {
+    "bytes": 2346,
+    "seed": "carol",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-47x852" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#93C5FD" />
+  <stop offset="100%" stop-color="#3B82F6" />
+</radialGradient><filter id="navii-hue-47x852" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-14" /></filter></defs><circle cx="50" cy="50" r="48" fill="#93C5FD" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFFFFF" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 85) scale(0.92) translate(-50 -85)" filter="url(#navii-hue-47x852)"><g class="body"><ellipse cx="50" cy="89" rx="22" ry="2.6" fill="#1E3A8A" opacity="0.16" /><path d="M52 19 C72 21 86 36 84 56 C82 73 68 85 50 85 C30 85 16 72 16 54 C16 35 32 17 52 19 Z" fill="url(#navii-grad-47x852)" stroke="rgba(30,58,138,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="40" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 40)" /></g></g><g class="eyes"><ellipse cx="38.22" cy="54" rx="5" ry="5.5" fill="#FFFFFF" /><ellipse cx="61.78" cy="54" rx="5" ry="5.5" fill="#FFFFFF" /><circle cx="38.22" cy="54.5" r="3" fill="#1E3A8A" /><circle cx="61.78" cy="54.5" r="3" fill="#1E3A8A" /><circle cx="39.42" cy="53.5" r="0.8" fill="#FFFFFF" /><circle cx="62.980000000000004" cy="53.5" r="0.8" fill="#FFFFFF" /></g><path d="M42.545 64 Q46.2725 61.5 50 64 Q53.7275 66.5 57.455 64" stroke="#1E3A8A" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(7 53 25)"><g class="antenna"><path d="M49 23 Q48 19 47.5 15" stroke="#1E3A8A" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><path d="M57 23 Q58 19 58.5 15" stroke="#1E3A8A" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="47.5" cy="14" r="2.1" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="0.5" opacity="0.95" /><circle class="spark" cx="58.5" cy="14" r="2.1" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="0.5" opacity="0.95" /></g></g><circle cx="42" cy="59" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="45" cy="60.5" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="58" cy="59" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="55" cy="60.5" r="0.85" fill="#1E3A8A" opacity="0.55" /></svg>",
+  },
+  {
+    "bytes": 1672,
+    "seed": "user-1",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-972feq" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#CBD5E1" />
+  <stop offset="100%" stop-color="#64748B" />
+</radialGradient><filter id="navii-hue-972feq" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-11" /></filter></defs><g transform="translate(50 86) scale(0.924) translate(-50 -86)" filter="url(#navii-hue-972feq)"><g class="body"><ellipse cx="50" cy="90" rx="22" ry="2.6" fill="#0F172A" opacity="0.16" /><path d="M50 28 C74 28 88 42 88 60 C88 78 74 86 50 86 C26 86 12 78 12 60 C12 42 26 28 50 28 Z" fill="url(#navii-grad-972feq)" stroke="rgba(15,23,42,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="42" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 42)" /></g></g><g class="eyes"><g stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"><line x1="35.550000000000004" y1="53.6" x2="40.35" y2="58.4" /><line x1="35.550000000000004" y1="58.4" x2="40.35" y2="53.6" /></g><g stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"><line x1="59.65" y1="53.6" x2="64.45" y2="58.4" /><line x1="59.65" y1="58.4" x2="64.45" y2="53.6" /></g></g><path d="M43.112 66 Q50 69 57.888 64" stroke="#0F172A" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(5 50 32)"><g class="antenna"><path d="M50 30 Q51 25 52.5 21" stroke="#0F172A" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="20" r="2.6" fill="#F8FAFC" stroke="#0F172A" stroke-width="0.6" opacity="0.95" /></g></g></svg>",
+  },
+  {
+    "bytes": 1992,
+    "seed": "user-2",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-972fer" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FDBA74" />
+  <stop offset="100%" stop-color="#F97316" />
+</radialGradient><filter id="navii-hue-972fer" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="12" /></filter></defs><rect x="0" y="0" width="100" height="100" fill="#FDBA74" opacity="0.18" /><g transform="translate(50 91) scale(0.964) translate(-50 -91)" filter="url(#navii-hue-972fer)"><g class="body"><ellipse cx="50" cy="95" rx="22" ry="2.6" fill="#7C2D12" opacity="0.16" /><path d="M50 14 C58 14 64 22 64 30 C64 36 60 40 60 46 C60 54 76 60 78 76 C80 88 66 91 50 91 C34 91 20 88 22 76 C24 60 40 54 40 46 C40 40 36 36 36 30 C36 22 42 14 50 14 Z" fill="url(#navii-grad-972fer)" stroke="rgba(124,45,18,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="36" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 36)" /></g></g><path d="M34 20 Q34 6 50 6 Q66 6 66 20 Z" fill="#7C2D12" opacity="0.92" /><rect x="34" y="19" width="32" height="2.5" rx="1" fill="#FFF7ED" opacity="0.85" /><circle cx="50" cy="5" r="2.2" fill="#FFF7ED" stroke="#7C2D12" stroke-width="0.5" /><g class="eyes"><ellipse cx="42.84" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="57.16" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="42.84" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7C2D12" /><ellipse cx="57.16" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7C2D12" /><circle cx="43.64" cy="48.5" r="0.8" fill="#FFFFFF" /><circle cx="57.959999999999994" cy="48.5" r="0.8" fill="#FFFFFF" /></g><path d="M44.306 61 Q47.153 58.5 50 61 Q52.847 63.5 55.694 61" stroke="#7C2D12" stroke-width="1.8" stroke-linecap="round" fill="none" /><ellipse cx="36" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /><ellipse cx="64" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /></svg>",
+  },
+  {
+    "bytes": 2126,
+    "seed": "user-42",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-jcrwpj" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCD34D" />
+  <stop offset="100%" stop-color="#F59E0B" />
+</radialGradient><filter id="navii-hue-jcrwpj" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="27" /></filter></defs><circle cx="50" cy="50" r="48" fill="#FCD34D" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFF7ED" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 88) scale(1.062) translate(-50 -88)" filter="url(#navii-hue-jcrwpj)"><g class="body"><ellipse cx="50" cy="92" rx="22" ry="2.6" fill="#78350F" opacity="0.16" /><path d="M50 30 C62 30 70 38 70 48 C70 56 78 64 80 72 C82 82 70 88 50 88 C30 88 18 82 20 72 C22 64 30 56 30 48 C30 38 38 30 50 30 Z" fill="url(#navii-grad-jcrwpj)" stroke="rgba(120,53,15,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="44" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 44)" /></g></g><g class="eyes"><g stroke="#78350F" stroke-width="1.6" stroke-linecap="round"><line x1="36.910000000000004" y1="55.6" x2="41.71" y2="60.4" /><line x1="36.910000000000004" y1="60.4" x2="41.71" y2="55.6" /></g><g stroke="#78350F" stroke-width="1.6" stroke-linecap="round"><line x1="58.29" y1="55.6" x2="63.089999999999996" y2="60.4" /><line x1="58.29" y1="60.4" x2="63.089999999999996" y2="55.6" /></g></g><path d="M41.312 66 Q50 77 58.688 66" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="#78350F" fill-opacity="0.55" /><ellipse cx="50" cy="71" rx="4.228400000000001" ry="1.8" fill="#F472B6" opacity="0.75" /><g><g class="antenna"><path d="M50 32 Q51 27 52.5 23" stroke="#78350F" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="22" r="2.6" fill="#FFF7ED" stroke="#78350F" stroke-width="0.6" opacity="0.95" /></g></g><ellipse cx="29" cy="64" rx="3.6" ry="2.2" fill="#FB7185" opacity="0.5" /><ellipse cx="71" cy="64" rx="3.6" ry="2.2" fill="#FB7185" opacity="0.5" /></svg>",
+  },
+  {
+    "bytes": 1996,
+    "seed": "navii",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-4fox18" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCD34D" />
+  <stop offset="100%" stop-color="#F59E0B" />
+</radialGradient><filter id="navii-hue-4fox18" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="23" /></filter></defs><rect x="0" y="0" width="100" height="100" fill="#FCD34D" opacity="0.18" /><g transform="translate(50 94) scale(1.057) translate(-50 -94)" filter="url(#navii-hue-4fox18)"><g class="body"><ellipse cx="50" cy="98" rx="22" ry="2.6" fill="#78350F" opacity="0.16" /><path d="M50 12 C60 12 66 24 66 40 C66 60 74 78 70 90 C64 96 36 96 30 90 C26 78 34 60 34 40 C34 24 40 12 50 12 Z" fill="url(#navii-grad-4fox18)" stroke="rgba(120,53,15,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="33" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 33)" /></g></g><circle cx="37" cy="14" r="6" fill="#F59E0B" stroke="#78350F" stroke-width="0.6" /><circle cx="63" cy="14" r="6" fill="#F59E0B" stroke="#78350F" stroke-width="0.6" /><circle cx="37" cy="14" r="3" fill="#FB7185" opacity="0.6" /><circle cx="63" cy="14" r="3" fill="#FB7185" opacity="0.6" /><g class="eyes"><ellipse cx="44.230000000000004" cy="47" rx="4.32" ry="4.86" fill="#FFFFFF" /><ellipse cx="55.769999999999996" cy="47" rx="4.32" ry="4.86" fill="#FFFFFF" /><circle cx="44.230000000000004" cy="47" r="2.3760000000000003" fill="#78350F" /><circle cx="55.769999999999996" cy="47" r="2.3760000000000003" fill="#78350F" /><circle cx="45.230000000000004" cy="46" r="0.8" fill="#FFFFFF" /><circle cx="56.769999999999996" cy="46" r="0.8" fill="#FFFFFF" /></g><path d="M44.676 58 Q50 63 55.324 58" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /><ellipse cx="38" cy="53" rx="3.6" ry="2.2" fill="#FB7185" opacity="0.5" /><ellipse cx="62" cy="53" rx="3.6" ry="2.2" fill="#FB7185" opacity="0.5" /></svg>",
+  },
+  {
+    "bytes": 1904,
+    "seed": "team@navii.com",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-161nvw0" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#6EE7B7" />
+  <stop offset="100%" stop-color="#34D399" />
+</radialGradient><filter id="navii-hue-161nvw0" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-21" /></filter></defs><circle cx="50" cy="50" r="48" fill="#6EE7B7" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#ECFDF5" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 94) scale(1.054) translate(-50 -94)" filter="url(#navii-hue-161nvw0)"><g class="body"><ellipse cx="50" cy="98" rx="22" ry="2.6" fill="#064E3B" opacity="0.16" /><path d="M50 12 C60 12 66 24 66 40 C66 60 74 78 70 90 C64 96 36 96 30 90 C26 78 34 60 34 40 C34 24 40 12 50 12 Z" fill="url(#navii-grad-161nvw0)" stroke="rgba(6,78,59,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="33" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 33)" /></g></g><path d="M49 14 Q50 6 54 2 Q56 8 53 14 Z" fill="#ECFDF5" stroke="#064E3B" stroke-width="0.6" /><g class="eyes"><path d="M43.99 44 L45.04 45.95 L46.99 47 L45.04 48.05 L43.99 50 L42.940000000000005 48.05 L40.99 47 L42.940000000000005 45.95 Z" fill="#064E3B" /><path d="M56.01 44 L57.059999999999995 45.95 L59.01 47 L57.059999999999995 48.05 L56.01 50 L54.96 48.05 L53.01 47 L54.96 45.95 Z" fill="#064E3B" /></g><path d="M44.8795 59 Q47.439750000000004 56.5 50 59 Q52.560249999999996 61.5 55.1205 59" stroke="#064E3B" stroke-width="1.8" stroke-linecap="round" fill="none" /><circle cx="42" cy="53" r="0.85" fill="#064E3B" opacity="0.55" /><circle cx="45" cy="54.5" r="0.85" fill="#064E3B" opacity="0.55" /><circle cx="58" cy="53" r="0.85" fill="#064E3B" opacity="0.55" /><circle cx="55" cy="54.5" r="0.85" fill="#064E3B" opacity="0.55" /></svg>",
+  },
+  {
+    "bytes": 1656,
+    "seed": "uuid-550e8400-e29b-41d4-a716-446655440000",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-15prqos" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#DDD6FE" />
+  <stop offset="100%" stop-color="#7C3AED" />
+</radialGradient><filter id="navii-hue-15prqos" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-4" /></filter></defs><g transform="translate(50 86) scale(0.979) translate(-50 -86)" filter="url(#navii-hue-15prqos)"><g class="body"><ellipse cx="50" cy="90" rx="22" ry="2.6" fill="#3B0764" opacity="0.16" /><path d="M50 20 C72 20 84 36 84 54 C84 73 70 86 50 86 C30 86 16 73 16 54 C16 36 28 20 50 20 Z" fill="url(#navii-grad-15prqos)" stroke="rgba(59,7,100,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="38" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 38)" /></g></g><path d="M45 26 L44 18 M44 18 L40 16 M44 18 L44 13 M44 13 L42 11 M44 13 L47 11" stroke="#3B0764" stroke-width="1.3" stroke-linecap="round" fill="none" /><path d="M55 26 L56 18 M56 18 L60 16 M56 18 L56 13 M56 13 L58 11 M56 13 L53 11" stroke="#3B0764" stroke-width="1.3" stroke-linecap="round" fill="none" /><g class="eyes"><path d="M34.82 52 Q39.32 48.5 43.82 52" stroke="#3B0764" stroke-width="1.8" stroke-linecap="round" fill="none" /><path d="M56.18 52 Q60.68 48.5 65.18 52" stroke="#3B0764" stroke-width="1.8" stroke-linecap="round" fill="none" /></g><path d="M41.51 60 Q50 71 58.49 60" stroke="#3B0764" stroke-width="1.8" stroke-linecap="round" fill="#3B0764" fill-opacity="0.55" /><ellipse cx="50" cy="65" rx="4.1195" ry="1.8" fill="#F472B6" opacity="0.75" /></svg>",
+  },
+  {
+    "bytes": 1750,
+    "seed": "0",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-3t1x" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#D8B4FE" />
+  <stop offset="100%" stop-color="#9333EA" />
+</radialGradient><filter id="navii-hue-3t1x" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="2" /></filter></defs><g transform="translate(50 94) scale(1.039) translate(-50 -94)" filter="url(#navii-hue-3t1x)"><g class="body"><ellipse cx="50" cy="98" rx="22" ry="2.6" fill="#3B0764" opacity="0.16" /><path d="M50 12 C60 12 66 24 66 40 C66 60 74 78 70 90 C64 96 36 96 30 90 C26 78 34 60 34 40 C34 24 40 12 50 12 Z" fill="url(#navii-grad-3t1x)" stroke="rgba(59,7,100,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="33" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 33)" /></g></g><path d="M39 16 L39 8 L44 13 L50 5 L56 13 L61 8 L61 16 Z" fill="#FACC15" stroke="#3B0764" stroke-width="0.7" /><circle cx="39" cy="8" r="1.4" fill="#EF4444" stroke="#3B0764" stroke-width="0.3" /><circle cx="50" cy="5" r="1.6" fill="#EF4444" stroke="#3B0764" stroke-width="0.3" /><circle cx="61" cy="8" r="1.4" fill="#EF4444" stroke="#3B0764" stroke-width="0.3" /><g class="eyes"><path d="M42.18 49.8 L38.58 46.6 A2 2 0 0 1 42.18 45.8 A2 2 0 0 1 45.78 46.6 Z" fill="#3B0764" /><path d="M57.82 49.8 L54.22 46.6 A2 2 0 0 1 57.82 45.8 A2 2 0 0 1 61.42 46.6 Z" fill="#3B0764" /></g><path d="M43.819 56 Q50 67 56.181 56" stroke="#3B0764" stroke-width="1.8" stroke-linecap="round" fill="#3B0764" fill-opacity="0.55" /><ellipse cx="50" cy="61" rx="2.8495500000000002" ry="1.8" fill="#F472B6" opacity="0.75" /><circle cx="42.8" cy="55" r="0.9" fill="#3B0764" /></svg>",
+  },
+  {
+    "bytes": 1915,
+    "seed": "a",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-3t3a" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#9CA3AF" />
+  <stop offset="100%" stop-color="#374151" />
+</radialGradient><filter id="navii-hue-3t3a" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="13" /></filter></defs><g transform="translate(50 86) scale(0.928) translate(-50 -86)" filter="url(#navii-hue-3t3a)"><g class="body"><ellipse cx="50" cy="90" rx="22" ry="2.6" fill="#030712" opacity="0.16" /><path d="M50 20 C72 20 84 36 84 54 C84 73 70 86 50 86 C30 86 16 73 16 54 C16 36 28 20 50 20 Z" fill="url(#navii-grad-3t3a)" stroke="rgba(3,7,18,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="38" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 38)" /></g></g><g class="eyes"><path d="M34.74 51.5 Q38.74 54 42.74 51.5" stroke="#030712" stroke-width="1.7" stroke-linecap="round" fill="none" /><path d="M57.26 51.5 Q61.26 54 65.25999999999999 51.5" stroke="#030712" stroke-width="1.7" stroke-linecap="round" fill="none" /><circle cx="38.74" cy="52.5" r="0.9" fill="#030712" /><circle cx="61.26" cy="52.5" r="0.9" fill="#030712" /></g><path d="M43.329 63 Q46.664500000000004 60.5 50 63 Q53.335499999999996 65.5 56.671 63" stroke="#030712" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(-2 50 24)"><g class="antenna"><path d="M50 22 Q56 18 51 14 Q46 11 51 8" stroke="#030712" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="51" cy="8" r="2.2" fill="#F9FAFB" stroke="#030712" stroke-width="0.6" opacity="0.95" /></g></g><ellipse cx="61.26" cy="52" rx="6" ry="5.2" fill="#030712" /><path d="M55.26 48 L32 44" stroke="#030712" stroke-width="0.9" /><path d="M67.25999999999999 49 L72 46" stroke="#030712" stroke-width="0.9" /></svg>",
+  },
+  {
+    "bytes": 2057,
+    "seed": "longer-seed-with-dashes-and-numbers-123",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-1pkjl90" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FDE68A" />
+  <stop offset="100%" stop-color="#EAB308" />
+</radialGradient><filter id="navii-hue-1pkjl90" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-19" /></filter></defs><rect x="0" y="0" width="100" height="100" fill="#FDE68A" opacity="0.18" /><g transform="translate(50 85) scale(1.012) translate(-50 -85)" filter="url(#navii-hue-1pkjl90)"><g class="body"><ellipse cx="50" cy="89" rx="22" ry="2.6" fill="#713F12" opacity="0.16" /><path d="M52 19 C72 21 86 36 84 56 C82 73 68 85 50 85 C30 85 16 72 16 54 C16 35 32 17 52 19 Z" fill="url(#navii-grad-1pkjl90)" stroke="rgba(113,63,18,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="40" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 40)" /></g></g><g class="eyes"><path d="M34.86 53.5 Q38.86 56 42.86 53.5" stroke="#713F12" stroke-width="1.7" stroke-linecap="round" fill="none" /><path d="M57.14 53.5 Q61.14 56 65.14 53.5" stroke="#713F12" stroke-width="1.7" stroke-linecap="round" fill="none" /><circle cx="38.86" cy="54.5" r="0.9" fill="#713F12" /><circle cx="61.14" cy="54.5" r="0.9" fill="#713F12" /></g><circle cx="50" cy="64" r="1.2" fill="#713F12" /><g transform="rotate(3 53 25)"><g class="antenna"><path d="M53 23 Q59 19 54 15 Q49 12 54 9" stroke="#713F12" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="54" cy="9" r="2.2" fill="#FEFCE8" stroke="#713F12" stroke-width="0.6" opacity="0.95" /></g></g><circle cx="38.86" cy="54" r="6" fill="none" stroke="#713F12" stroke-width="1.2" /><circle cx="61.14" cy="54" r="6" fill="none" stroke="#713F12" stroke-width="1.2" /><line x1="44.86" y1="54" x2="55.14" y2="54" stroke="#713F12" stroke-width="1.2" /><circle cx="38.86" cy="54" r="5" fill="#FFFFFF" opacity="0.18" /><circle cx="61.14" cy="54" r="5" fill="#FFFFFF" opacity="0.18" /></svg>",
+  },
+]
+`;
+
+exports[`determinism contract > animated SVG snapshots remain stable per seed 1`] = `
+[
+  {
+    "seed": "alice@example.com",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-18em258" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCA5A5" />
+  <stop offset="100%" stop-color="#EF4444" />
+</radialGradient><filter id="navii-hue-18em258" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-16" /></filter></defs><style>
+    .n-18em258 .body { animation: n-float 3.4s ease-in-out infinite; animation-delay: 1.94s; transform-origin: 50px 80px; transform-box: view-box; }
+    .n-18em258 .eyes { animation: n-blink 5.4s ease-in-out infinite; animation-delay: 3.43s; transform-origin: 50px 52px; transform-box: view-box; }
+    .n-18em258 .antenna { animation: n-sway 3.6s ease-in-out infinite; animation-delay: 0.08s; transform-origin: 50% 100%; transform-box: fill-box; }
+    .n-18em258 .spark { animation: n-pulse 1.9s ease-in-out infinite; animation-delay: 1.02s; transform-origin: center; transform-box: fill-box; }
+    .n-18em258 .sparkle { animation: n-twinkle 2.2s ease-in-out infinite; animation-delay: 1.80s; transform-origin: center; transform-box: fill-box; }
+    @keyframes n-float {
+      0%, 100% { transform: translateY(0)      rotate(0deg)    scale(1, 1); }
+      25%      { transform: translateY(-2px)   rotate(-1.6deg) scale(1.025, 0.975); }
+      50%      { transform: translateY(-4.5px) rotate(0deg)    scale(0.985, 1.025); }
+      75%      { transform: translateY(-2px)   rotate(1.6deg)  scale(1.025, 0.975); }
+    }
+    @keyframes n-blink {
+      0%, 85%, 91%, 100% { transform: scaleY(1); }
+      87%, 89%, 93%, 95% { transform: scaleY(0.06); }
+    }
+    @keyframes n-sway {
+      0%, 100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-5deg); }
+      75%      { transform: rotate(5deg); }
+    }
+    @keyframes n-pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50%      { opacity: 1;    transform: scale(1.32); }
+    }
+    @keyframes n-twinkle {
+      0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(0.85); }
+      50%      { opacity: 1;   transform: rotate(180deg) scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .n-18em258 .body, .n-18em258 .eyes, .n-18em258 .antenna, .n-18em258 .spark, .n-18em258 .sparkle { animation: none; }
+    }
+  </style><g class="n-18em258"><rect x="0" y="0" width="100" height="100" fill="#FCA5A5" opacity="0.18" /><g transform="translate(50 91) scale(0.941) translate(-50 -91)" filter="url(#navii-hue-18em258)"><g class="body"><ellipse cx="50" cy="95" rx="22" ry="2.6" fill="#7F1D1D" opacity="0.16" /><path d="M50 14 C58 14 64 22 64 30 C64 36 60 40 60 46 C60 54 76 60 78 76 C80 88 66 91 50 91 C34 91 20 88 22 76 C24 60 40 54 40 46 C40 40 36 36 36 30 C36 22 42 14 50 14 Z" fill="url(#navii-grad-18em258)" stroke="rgba(127,29,29,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="36" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 36)" /></g></g><g class="eyes"><ellipse cx="41.57" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="58.43" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="41.57" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7F1D1D" /><ellipse cx="58.43" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7F1D1D" /><circle cx="42.37" cy="48.5" r="0.8" fill="#FFFFFF" /><circle cx="59.23" cy="48.5" r="0.8" fill="#FFFFFF" /></g><path d="M42.344 58 Q50 69 57.656 58" stroke="#7F1D1D" stroke-width="1.8" stroke-linecap="round" fill="#7F1D1D" fill-opacity="0.55" /><ellipse cx="50" cy="63" rx="3.6608000000000005" ry="1.8" fill="#F472B6" opacity="0.75" /><g transform="rotate(6 50 16)"><g class="antenna"><path d="M50 14 Q51 9 52.5 5" stroke="#7F1D1D" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="4" r="2.6" fill="#FEF2F2" stroke="#7F1D1D" stroke-width="0.6" opacity="0.95" /></g></g><ellipse cx="36" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /><ellipse cx="64" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /></g></svg>",
+  },
+  {
+    "seed": "bob",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-3773w8" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCD34D" />
+  <stop offset="100%" stop-color="#F59E0B" />
+</radialGradient><filter id="navii-hue-3773w8" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="14" /></filter></defs><style>
+    .n-3773w8 .body { animation: n-float 3.4s ease-in-out infinite; animation-delay: 0.29s; transform-origin: 50px 80px; transform-box: view-box; }
+    .n-3773w8 .eyes { animation: n-blink 5.4s ease-in-out infinite; animation-delay: 0.94s; transform-origin: 50px 52px; transform-box: view-box; }
+    .n-3773w8 .antenna { animation: n-sway 3.6s ease-in-out infinite; animation-delay: 0.29s; transform-origin: 50% 100%; transform-box: fill-box; }
+    .n-3773w8 .spark { animation: n-pulse 1.9s ease-in-out infinite; animation-delay: 1.49s; transform-origin: center; transform-box: fill-box; }
+    .n-3773w8 .sparkle { animation: n-twinkle 2.2s ease-in-out infinite; animation-delay: 0.29s; transform-origin: center; transform-box: fill-box; }
+    @keyframes n-float {
+      0%, 100% { transform: translateY(0)      rotate(0deg)    scale(1, 1); }
+      25%      { transform: translateY(-2px)   rotate(-1.6deg) scale(1.025, 0.975); }
+      50%      { transform: translateY(-4.5px) rotate(0deg)    scale(0.985, 1.025); }
+      75%      { transform: translateY(-2px)   rotate(1.6deg)  scale(1.025, 0.975); }
+    }
+    @keyframes n-blink {
+      0%, 85%, 91%, 100% { transform: scaleY(1); }
+      87%, 89%, 93%, 95% { transform: scaleY(0.06); }
+    }
+    @keyframes n-sway {
+      0%, 100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-5deg); }
+      75%      { transform: rotate(5deg); }
+    }
+    @keyframes n-pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50%      { opacity: 1;    transform: scale(1.32); }
+    }
+    @keyframes n-twinkle {
+      0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(0.85); }
+      50%      { opacity: 1;   transform: rotate(180deg) scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .n-3773w8 .body, .n-3773w8 .eyes, .n-3773w8 .antenna, .n-3773w8 .spark, .n-3773w8 .sparkle { animation: none; }
+    }
+  </style><g class="n-3773w8"><circle cx="50" cy="50" r="48" fill="#FCD34D" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFF7ED" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 88) scale(0.944) translate(-50 -88)" filter="url(#navii-hue-3773w8)"><g class="body"><ellipse cx="50" cy="92" rx="22" ry="2.6" fill="#78350F" opacity="0.16" /><path d="M50 30 C62 30 70 38 70 48 C70 56 78 64 80 72 C82 82 70 88 50 88 C30 88 18 82 20 72 C22 64 30 56 30 48 C30 38 38 30 50 30 Z" fill="url(#navii-grad-3773w8)" stroke="rgba(120,53,15,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="44" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 44)" /></g></g><g class="eyes"><ellipse cx="40.06" cy="58" rx="3.92" ry="4.41" fill="#FFFFFF" /><circle cx="40.06" cy="58" r="2.156" fill="#78350F" /><circle cx="41.06" cy="57" r="0.8" fill="#FFFFFF" /><path d="M55.94 58 Q59.94 54.5 63.94 58" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /></g><path d="M42.984 68 Q50 73 57.016 68" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /><rect x="48.8" y="68.4" width="2.4" height="2.6" rx="0.4" fill="#FFFFFF" stroke="#78350F" stroke-width="0.4" /><g transform="rotate(-2 50 34)"><g class="antenna"><path d="M46 32 Q45 28 44.5 24" stroke="#78350F" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><path d="M54 32 Q55 28 55.5 24" stroke="#78350F" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="44.5" cy="23" r="2.1" fill="#FFF7ED" stroke="#78350F" stroke-width="0.5" opacity="0.95" /><circle class="spark" cx="55.5" cy="23" r="2.1" fill="#FFF7ED" stroke="#78350F" stroke-width="0.5" opacity="0.95" /></g></g></g></svg>",
+  },
+  {
+    "seed": "carol",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-47x852" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#93C5FD" />
+  <stop offset="100%" stop-color="#3B82F6" />
+</radialGradient><filter id="navii-hue-47x852" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-14" /></filter></defs><style>
+    .n-47x852 .body { animation: n-float 3.4s ease-in-out infinite; animation-delay: 0.14s; transform-origin: 50px 80px; transform-box: view-box; }
+    .n-47x852 .eyes { animation: n-blink 5.4s ease-in-out infinite; animation-delay: 0.60s; transform-origin: 50px 52px; transform-box: view-box; }
+    .n-47x852 .antenna { animation: n-sway 3.6s ease-in-out infinite; animation-delay: 1.73s; transform-origin: 50% 100%; transform-box: fill-box; }
+    .n-47x852 .spark { animation: n-pulse 1.9s ease-in-out infinite; animation-delay: 1.23s; transform-origin: center; transform-box: fill-box; }
+    .n-47x852 .sparkle { animation: n-twinkle 2.2s ease-in-out infinite; animation-delay: 0.49s; transform-origin: center; transform-box: fill-box; }
+    @keyframes n-float {
+      0%, 100% { transform: translateY(0)      rotate(0deg)    scale(1, 1); }
+      25%      { transform: translateY(-2px)   rotate(-1.6deg) scale(1.025, 0.975); }
+      50%      { transform: translateY(-4.5px) rotate(0deg)    scale(0.985, 1.025); }
+      75%      { transform: translateY(-2px)   rotate(1.6deg)  scale(1.025, 0.975); }
+    }
+    @keyframes n-blink {
+      0%, 85%, 91%, 100% { transform: scaleY(1); }
+      87%, 89%, 93%, 95% { transform: scaleY(0.06); }
+    }
+    @keyframes n-sway {
+      0%, 100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-5deg); }
+      75%      { transform: rotate(5deg); }
+    }
+    @keyframes n-pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50%      { opacity: 1;    transform: scale(1.32); }
+    }
+    @keyframes n-twinkle {
+      0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(0.85); }
+      50%      { opacity: 1;   transform: rotate(180deg) scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .n-47x852 .body, .n-47x852 .eyes, .n-47x852 .antenna, .n-47x852 .spark, .n-47x852 .sparkle { animation: none; }
+    }
+  </style><g class="n-47x852"><circle cx="50" cy="50" r="48" fill="#93C5FD" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFFFFF" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 85) scale(0.92) translate(-50 -85)" filter="url(#navii-hue-47x852)"><g class="body"><ellipse cx="50" cy="89" rx="22" ry="2.6" fill="#1E3A8A" opacity="0.16" /><path d="M52 19 C72 21 86 36 84 56 C82 73 68 85 50 85 C30 85 16 72 16 54 C16 35 32 17 52 19 Z" fill="url(#navii-grad-47x852)" stroke="rgba(30,58,138,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="40" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 40)" /></g></g><g class="eyes"><ellipse cx="38.22" cy="54" rx="5" ry="5.5" fill="#FFFFFF" /><ellipse cx="61.78" cy="54" rx="5" ry="5.5" fill="#FFFFFF" /><circle cx="38.22" cy="54.5" r="3" fill="#1E3A8A" /><circle cx="61.78" cy="54.5" r="3" fill="#1E3A8A" /><circle cx="39.42" cy="53.5" r="0.8" fill="#FFFFFF" /><circle cx="62.980000000000004" cy="53.5" r="0.8" fill="#FFFFFF" /></g><path d="M42.545 64 Q46.2725 61.5 50 64 Q53.7275 66.5 57.455 64" stroke="#1E3A8A" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(7 53 25)"><g class="antenna"><path d="M49 23 Q48 19 47.5 15" stroke="#1E3A8A" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><path d="M57 23 Q58 19 58.5 15" stroke="#1E3A8A" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="47.5" cy="14" r="2.1" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="0.5" opacity="0.95" /><circle class="spark" cx="58.5" cy="14" r="2.1" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="0.5" opacity="0.95" /></g></g><circle cx="42" cy="59" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="45" cy="60.5" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="58" cy="59" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="55" cy="60.5" r="0.85" fill="#1E3A8A" opacity="0.55" /></g></svg>",
+  },
+  {
+    "seed": "user-1",
+    "svg": "<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><radialGradient id="navii-grad-972feq" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#CBD5E1" />
+  <stop offset="100%" stop-color="#64748B" />
+</radialGradient><filter id="navii-hue-972feq" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-11" /></filter></defs><style>
+    .n-972feq .body { animation: n-float 3.4s ease-in-out infinite; animation-delay: 1.99s; transform-origin: 50px 80px; transform-box: view-box; }
+    .n-972feq .eyes { animation: n-blink 5.4s ease-in-out infinite; animation-delay: 2.61s; transform-origin: 50px 52px; transform-box: view-box; }
+    .n-972feq .antenna { animation: n-sway 3.6s ease-in-out infinite; animation-delay: 0.42s; transform-origin: 50% 100%; transform-box: fill-box; }
+    .n-972feq .spark { animation: n-pulse 1.9s ease-in-out infinite; animation-delay: 1.25s; transform-origin: center; transform-box: fill-box; }
+    .n-972feq .sparkle { animation: n-twinkle 2.2s ease-in-out infinite; animation-delay: 0.42s; transform-origin: center; transform-box: fill-box; }
+    @keyframes n-float {
+      0%, 100% { transform: translateY(0)      rotate(0deg)    scale(1, 1); }
+      25%      { transform: translateY(-2px)   rotate(-1.6deg) scale(1.025, 0.975); }
+      50%      { transform: translateY(-4.5px) rotate(0deg)    scale(0.985, 1.025); }
+      75%      { transform: translateY(-2px)   rotate(1.6deg)  scale(1.025, 0.975); }
+    }
+    @keyframes n-blink {
+      0%, 85%, 91%, 100% { transform: scaleY(1); }
+      87%, 89%, 93%, 95% { transform: scaleY(0.06); }
+    }
+    @keyframes n-sway {
+      0%, 100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-5deg); }
+      75%      { transform: rotate(5deg); }
+    }
+    @keyframes n-pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50%      { opacity: 1;    transform: scale(1.32); }
+    }
+    @keyframes n-twinkle {
+      0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(0.85); }
+      50%      { opacity: 1;   transform: rotate(180deg) scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .n-972feq .body, .n-972feq .eyes, .n-972feq .antenna, .n-972feq .spark, .n-972feq .sparkle { animation: none; }
+    }
+  </style><g class="n-972feq"><g transform="translate(50 86) scale(0.924) translate(-50 -86)" filter="url(#navii-hue-972feq)"><g class="body"><ellipse cx="50" cy="90" rx="22" ry="2.6" fill="#0F172A" opacity="0.16" /><path d="M50 28 C74 28 88 42 88 60 C88 78 74 86 50 86 C26 86 12 78 12 60 C12 42 26 28 50 28 Z" fill="url(#navii-grad-972feq)" stroke="rgba(15,23,42,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="42" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 42)" /></g></g><g class="eyes"><g stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"><line x1="35.550000000000004" y1="53.6" x2="40.35" y2="58.4" /><line x1="35.550000000000004" y1="58.4" x2="40.35" y2="53.6" /></g><g stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"><line x1="59.65" y1="53.6" x2="64.45" y2="58.4" /><line x1="59.65" y1="58.4" x2="64.45" y2="53.6" /></g></g><path d="M43.112 66 Q50 69 57.888 64" stroke="#0F172A" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(5 50 32)"><g class="antenna"><path d="M50 30 Q51 25 52.5 21" stroke="#0F172A" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="20" r="2.6" fill="#F8FAFC" stroke="#0F172A" stroke-width="0.6" opacity="0.95" /></g></g></g></svg>",
+  },
+]
+`;
+
+exports[`determinism contract > group SVG snapshot remains stable 1`] = `
+"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.2 64" width="243.2" height="64" aria-hidden="true"><svg x="0" y="0" width="64" height="64" viewBox="0 0 100 100" overflow="visible">
+      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip)"><circle cx="50" cy="50" r="50" fill="#ffffff" /><defs><radialGradient id="navii-grad-18em258" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCA5A5" />
+  <stop offset="100%" stop-color="#EF4444" />
+</radialGradient><filter id="navii-hue-18em258" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-16" /></filter></defs><rect x="0" y="0" width="100" height="100" fill="#FCA5A5" opacity="0.18" /><g transform="translate(50 91) scale(0.941) translate(-50 -91)" filter="url(#navii-hue-18em258)"><g class="body"><ellipse cx="50" cy="95" rx="22" ry="2.6" fill="#7F1D1D" opacity="0.16" /><path d="M50 14 C58 14 64 22 64 30 C64 36 60 40 60 46 C60 54 76 60 78 76 C80 88 66 91 50 91 C34 91 20 88 22 76 C24 60 40 54 40 46 C40 40 36 36 36 30 C36 22 42 14 50 14 Z" fill="url(#navii-grad-18em258)" stroke="rgba(127,29,29,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="36" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 36)" /></g></g><g class="eyes"><ellipse cx="41.57" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="58.43" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="41.57" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7F1D1D" /><ellipse cx="58.43" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7F1D1D" /><circle cx="42.37" cy="48.5" r="0.8" fill="#FFFFFF" /><circle cx="59.23" cy="48.5" r="0.8" fill="#FFFFFF" /></g><path d="M42.344 58 Q50 69 57.656 58" stroke="#7F1D1D" stroke-width="1.8" stroke-linecap="round" fill="#7F1D1D" fill-opacity="0.55" /><ellipse cx="50" cy="63" rx="3.6608000000000005" ry="1.8" fill="#F472B6" opacity="0.75" /><g transform="rotate(6 50 16)"><g class="antenna"><path d="M50 14 Q51 9 52.5 5" stroke="#7F1D1D" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="4" r="2.6" fill="#FEF2F2" stroke="#7F1D1D" stroke-width="0.6" opacity="0.95" /></g></g><ellipse cx="36" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /><ellipse cx="64" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /></g>
+      <circle cx="50" cy="50" r="49" fill="none" stroke="#ffffff" stroke-width="2" />
+    </svg><svg x="44.8" y="0" width="64" height="64" viewBox="0 0 100 100" overflow="visible">
+      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip)"><circle cx="50" cy="50" r="50" fill="#ffffff" /><defs><radialGradient id="navii-grad-3773w8" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FCD34D" />
+  <stop offset="100%" stop-color="#F59E0B" />
+</radialGradient><filter id="navii-hue-3773w8" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="14" /></filter></defs><circle cx="50" cy="50" r="48" fill="#FCD34D" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFF7ED" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 88) scale(0.944) translate(-50 -88)" filter="url(#navii-hue-3773w8)"><g class="body"><ellipse cx="50" cy="92" rx="22" ry="2.6" fill="#78350F" opacity="0.16" /><path d="M50 30 C62 30 70 38 70 48 C70 56 78 64 80 72 C82 82 70 88 50 88 C30 88 18 82 20 72 C22 64 30 56 30 48 C30 38 38 30 50 30 Z" fill="url(#navii-grad-3773w8)" stroke="rgba(120,53,15,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="44" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 44)" /></g></g><g class="eyes"><ellipse cx="40.06" cy="58" rx="3.92" ry="4.41" fill="#FFFFFF" /><circle cx="40.06" cy="58" r="2.156" fill="#78350F" /><circle cx="41.06" cy="57" r="0.8" fill="#FFFFFF" /><path d="M55.94 58 Q59.94 54.5 63.94 58" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /></g><path d="M42.984 68 Q50 73 57.016 68" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" /><rect x="48.8" y="68.4" width="2.4" height="2.6" rx="0.4" fill="#FFFFFF" stroke="#78350F" stroke-width="0.4" /><g transform="rotate(-2 50 34)"><g class="antenna"><path d="M46 32 Q45 28 44.5 24" stroke="#78350F" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><path d="M54 32 Q55 28 55.5 24" stroke="#78350F" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="44.5" cy="23" r="2.1" fill="#FFF7ED" stroke="#78350F" stroke-width="0.5" opacity="0.95" /><circle class="spark" cx="55.5" cy="23" r="2.1" fill="#FFF7ED" stroke="#78350F" stroke-width="0.5" opacity="0.95" /></g></g></g>
+      <circle cx="50" cy="50" r="49" fill="none" stroke="#ffffff" stroke-width="2" />
+    </svg><svg x="89.6" y="0" width="64" height="64" viewBox="0 0 100 100" overflow="visible">
+      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip)"><circle cx="50" cy="50" r="50" fill="#ffffff" /><defs><radialGradient id="navii-grad-47x852" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#93C5FD" />
+  <stop offset="100%" stop-color="#3B82F6" />
+</radialGradient><filter id="navii-hue-47x852" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-14" /></filter></defs><circle cx="50" cy="50" r="48" fill="#93C5FD" opacity="0.14" /><circle cx="50" cy="50" r="46" fill="none" stroke="#FFFFFF" stroke-width="0.6" opacity="0.4" /><g transform="translate(50 85) scale(0.92) translate(-50 -85)" filter="url(#navii-hue-47x852)"><g class="body"><ellipse cx="50" cy="89" rx="22" ry="2.6" fill="#1E3A8A" opacity="0.16" /><path d="M52 19 C72 21 86 36 84 56 C82 73 68 85 50 85 C30 85 16 72 16 54 C16 35 32 17 52 19 Z" fill="url(#navii-grad-47x852)" stroke="rgba(30,58,138,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="40" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 40)" /></g></g><g class="eyes"><ellipse cx="38.22" cy="54" rx="5" ry="5.5" fill="#FFFFFF" /><ellipse cx="61.78" cy="54" rx="5" ry="5.5" fill="#FFFFFF" /><circle cx="38.22" cy="54.5" r="3" fill="#1E3A8A" /><circle cx="61.78" cy="54.5" r="3" fill="#1E3A8A" /><circle cx="39.42" cy="53.5" r="0.8" fill="#FFFFFF" /><circle cx="62.980000000000004" cy="53.5" r="0.8" fill="#FFFFFF" /></g><path d="M42.545 64 Q46.2725 61.5 50 64 Q53.7275 66.5 57.455 64" stroke="#1E3A8A" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(7 53 25)"><g class="antenna"><path d="M49 23 Q48 19 47.5 15" stroke="#1E3A8A" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><path d="M57 23 Q58 19 58.5 15" stroke="#1E3A8A" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="47.5" cy="14" r="2.1" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="0.5" opacity="0.95" /><circle class="spark" cx="58.5" cy="14" r="2.1" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="0.5" opacity="0.95" /></g></g><circle cx="42" cy="59" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="45" cy="60.5" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="58" cy="59" r="0.85" fill="#1E3A8A" opacity="0.55" /><circle cx="55" cy="60.5" r="0.85" fill="#1E3A8A" opacity="0.55" /></g>
+      <circle cx="50" cy="50" r="49" fill="none" stroke="#ffffff" stroke-width="2" />
+    </svg><svg x="134.39999999999998" y="0" width="64" height="64" viewBox="0 0 100 100" overflow="visible">
+      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip)"><circle cx="50" cy="50" r="50" fill="#ffffff" /><defs><radialGradient id="navii-grad-972feq" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#CBD5E1" />
+  <stop offset="100%" stop-color="#64748B" />
+</radialGradient><filter id="navii-hue-972feq" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="-11" /></filter></defs><g transform="translate(50 86) scale(0.924) translate(-50 -86)" filter="url(#navii-hue-972feq)"><g class="body"><ellipse cx="50" cy="90" rx="22" ry="2.6" fill="#0F172A" opacity="0.16" /><path d="M50 28 C74 28 88 42 88 60 C88 78 74 86 50 86 C26 86 12 78 12 60 C12 42 26 28 50 28 Z" fill="url(#navii-grad-972feq)" stroke="rgba(15,23,42,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="42" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 42)" /></g></g><g class="eyes"><g stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"><line x1="35.550000000000004" y1="53.6" x2="40.35" y2="58.4" /><line x1="35.550000000000004" y1="58.4" x2="40.35" y2="53.6" /></g><g stroke="#0F172A" stroke-width="1.6" stroke-linecap="round"><line x1="59.65" y1="53.6" x2="64.45" y2="58.4" /><line x1="59.65" y1="58.4" x2="64.45" y2="53.6" /></g></g><path d="M43.112 66 Q50 69 57.888 64" stroke="#0F172A" stroke-width="1.8" stroke-linecap="round" fill="none" /><g transform="rotate(5 50 32)"><g class="antenna"><path d="M50 30 Q51 25 52.5 21" stroke="#0F172A" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55" /><circle class="spark" cx="52.5" cy="20" r="2.6" fill="#F8FAFC" stroke="#0F172A" stroke-width="0.6" opacity="0.95" /></g></g></g>
+      <circle cx="50" cy="50" r="49" fill="none" stroke="#ffffff" stroke-width="2" />
+    </svg><svg x="179.2" y="0" width="64" height="64" viewBox="0 0 100 100" overflow="visible">
+      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip)"><circle cx="50" cy="50" r="50" fill="#ffffff" /><defs><radialGradient id="navii-grad-972fer" cx="42%" cy="32%" r="68%">
+  <stop offset="0%" stop-color="#FDBA74" />
+  <stop offset="100%" stop-color="#F97316" />
+</radialGradient><filter id="navii-hue-972fer" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="12" /></filter></defs><rect x="0" y="0" width="100" height="100" fill="#FDBA74" opacity="0.18" /><g transform="translate(50 91) scale(0.964) translate(-50 -91)" filter="url(#navii-hue-972fer)"><g class="body"><ellipse cx="50" cy="95" rx="22" ry="2.6" fill="#7C2D12" opacity="0.16" /><path d="M50 14 C58 14 64 22 64 30 C64 36 60 40 60 46 C60 54 76 60 78 76 C80 88 66 91 50 91 C34 91 20 88 22 76 C24 60 40 54 40 46 C40 40 36 36 36 30 C36 22 42 14 50 14 Z" fill="url(#navii-grad-972fer)" stroke="rgba(124,45,18,0.18)" stroke-width="0.7" /><ellipse cx="38" cy="36" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 38 36)" /></g></g><path d="M34 20 Q34 6 50 6 Q66 6 66 20 Z" fill="#7C2D12" opacity="0.92" /><rect x="34" y="19" width="32" height="2.5" rx="1" fill="#FFF7ED" opacity="0.85" /><circle cx="50" cy="5" r="2.2" fill="#FFF7ED" stroke="#7C2D12" stroke-width="0.5" /><g class="eyes"><ellipse cx="42.84" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="57.16" cy="50" rx="4.59" ry="5.1" fill="#FFFFFF" /><ellipse cx="42.84" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7C2D12" /><ellipse cx="57.16" cy="50" rx="1.6320000000000001" ry="3.06" fill="#7C2D12" /><circle cx="43.64" cy="48.5" r="0.8" fill="#FFFFFF" /><circle cx="57.959999999999994" cy="48.5" r="0.8" fill="#FFFFFF" /></g><path d="M44.306 61 Q47.153 58.5 50 61 Q52.847 63.5 55.694 61" stroke="#7C2D12" stroke-width="1.8" stroke-linecap="round" fill="none" /><ellipse cx="36" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /><ellipse cx="64" cy="55" rx="3.6" ry="2.2" fill="#FECACA" opacity="0.5" /></g>
+      <circle cx="50" cy="50" r="49" fill="none" stroke="#ffffff" stroke-width="2" />
+    </svg></svg>"
+`;
+
+exports[`determinism contract > spec snapshots remain stable per seed 1`] = `
+[
+  {
+    "accessory": "blush",
+    "antenna": "classic",
+    "antennaTilt": 6,
+    "background": "solid",
+    "body": "taro",
+    "bodyScale": 0.941,
+    "eyeGapShift": -0.57,
+    "eyes": "oval",
+    "hueShift": -16,
+    "mouth": "open",
+    "mouthCurveScale": 1.024,
+    "palette": "coral",
+    "seed": "alice@example.com",
+    "topper": "none",
+  },
+  {
+    "accessory": "none",
+    "antenna": "double",
+    "antennaTilt": -2,
+    "background": "ring",
+    "body": "dumpling",
+    "bodyScale": 0.944,
+    "eyeGapShift": -1.06,
+    "eyes": "wink",
+    "hueShift": 14,
+    "mouth": "tooth",
+    "mouthCurveScale": 0.877,
+    "palette": "amber",
+    "seed": "bob",
+    "topper": "none",
+  },
+  {
+    "accessory": "freckles",
+    "antenna": "double",
+    "antennaTilt": 7,
+    "background": "ring",
+    "body": "pebble",
+    "bodyScale": 0.92,
+    "eyeGapShift": 1.28,
+    "eyes": "wide",
+    "hueShift": -14,
+    "mouth": "wave",
+    "mouthCurveScale": 0.994,
+    "palette": "sky",
+    "seed": "carol",
+    "topper": "none",
+  },
+  {
+    "accessory": "none",
+    "antenna": "classic",
+    "antennaTilt": 5,
+    "background": "none",
+    "body": "squat",
+    "bodyScale": 0.924,
+    "eyeGapShift": 1.05,
+    "eyes": "cross",
+    "hueShift": -11,
+    "mouth": "smirk",
+    "mouthCurveScale": 0.861,
+    "palette": "slate",
+    "seed": "user-1",
+    "topper": "none",
+  },
+  {
+    "accessory": "blush",
+    "antenna": "none",
+    "antennaTilt": -4,
+    "background": "solid",
+    "body": "taro",
+    "bodyScale": 0.964,
+    "eyeGapShift": -1.84,
+    "eyes": "oval",
+    "hueShift": 12,
+    "mouth": "wave",
+    "mouthCurveScale": 0.876,
+    "palette": "peach",
+    "seed": "user-2",
+    "topper": "cap",
+  },
+  {
+    "accessory": "blush",
+    "antenna": "classic",
+    "antennaTilt": -0,
+    "background": "ring",
+    "body": "dumpling",
+    "bodyScale": 1.062,
+    "eyeGapShift": -0.31,
+    "eyes": "cross",
+    "hueShift": 27,
+    "mouth": "open",
+    "mouthCurveScale": 0.961,
+    "palette": "amber",
+    "seed": "user-42",
+    "topper": "none",
+  },
+  {
+    "accessory": "blush",
+    "antenna": "none",
+    "antennaTilt": 1,
+    "background": "solid",
+    "body": "wisp",
+    "bodyScale": 1.057,
+    "eyeGapShift": -1.73,
+    "eyes": "round",
+    "hueShift": 23,
+    "mouth": "smile",
+    "mouthCurveScale": 0.968,
+    "palette": "amber",
+    "seed": "navii",
+    "topper": "roundEars",
+  },
+  {
+    "accessory": "freckles",
+    "antenna": "none",
+    "antennaTilt": 0,
+    "background": "ring",
+    "body": "wisp",
+    "bodyScale": 1.054,
+    "eyeGapShift": -1.49,
+    "eyes": "star",
+    "hueShift": -21,
+    "mouth": "wave",
+    "mouthCurveScale": 0.931,
+    "palette": "mint",
+    "seed": "team@navii.com",
+    "topper": "horn",
+  },
+  {
+    "accessory": "none",
+    "antenna": "none",
+    "antennaTilt": -3,
+    "background": "none",
+    "body": "orb",
+    "bodyScale": 0.979,
+    "eyeGapShift": 0.68,
+    "eyes": "squint",
+    "hueShift": -4,
+    "mouth": "open",
+    "mouthCurveScale": 1.07,
+    "palette": "lavender",
+    "seed": "uuid-550e8400-e29b-41d4-a716-446655440000",
+    "topper": "antlers",
+  },
+  {
+    "accessory": "mole",
+    "antenna": "none",
+    "antennaTilt": -3,
+    "background": "none",
+    "body": "wisp",
+    "bodyScale": 1.039,
+    "eyeGapShift": 0.32,
+    "eyes": "heart",
+    "hueShift": 2,
+    "mouth": "open",
+    "mouthCurveScale": 0.942,
+    "palette": "plum",
+    "seed": "0",
+    "topper": "crown",
+  },
+  {
+    "accessory": "eyepatch",
+    "antenna": "curl",
+    "antennaTilt": -2,
+    "background": "none",
+    "body": "orb",
+    "bodyScale": 0.928,
+    "eyeGapShift": 1.26,
+    "eyes": "sleepy",
+    "hueShift": 13,
+    "mouth": "wave",
+    "mouthCurveScale": 0.953,
+    "palette": "charcoal",
+    "seed": "a",
+    "topper": "none",
+  },
+  {
+    "accessory": "glasses",
+    "antenna": "curl",
+    "antennaTilt": 3,
+    "background": "solid",
+    "body": "pebble",
+    "bodyScale": 1.012,
+    "eyeGapShift": 0.64,
+    "eyes": "sleepy",
+    "hueShift": -19,
+    "mouth": "dot",
+    "mouthCurveScale": 0.879,
+    "palette": "sand",
+    "seed": "longer-seed-with-dashes-and-numbers-123",
+    "topper": "none",
+  },
+]
+`;

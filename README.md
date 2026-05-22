@@ -2,16 +2,23 @@
 
 # Navii
 
-**Deterministic mascot avatars from a seed.**
-No uploads. No blank gray circles. No state to manage.
+**A face for every user.**
+Drop-in deterministic mascot avatars. No uploads, no blank gray circles, no state to manage.
+
+<a href="https://navii.uxderrick.com">
+  <img src="https://navii-api.uxderrick.com/group?seeds=aria,milo,nova,kai,sage,eden,luna,rio,pip,wren,zane,iris&size=80&overlap=0.32&ring=%230a0a0b&tileBg=%23ffffff" alt="Navii cast" />
+</a>
 
 ```
 seed in  →  same avatar out, every time.
 ```
 
-Pass a user id, email, or UUID — get back a clean, character-style SVG that's stable across sessions, devices, and platforms.
+[![npm](https://img.shields.io/npm/v/@navii/core?label=%40navii%2Fcore)](https://www.npmjs.com/package/@navii/core)
+[![npm](https://img.shields.io/npm/v/@navii/react?label=%40navii%2Freact)](https://www.npmjs.com/package/@navii/react)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-navii.uxderrick.com-c084fc)](https://navii.uxderrick.com)
 
-[Live demo](https://navii.uxderrick.com) · [API playground](https://navii.uxderrick.com#playground) · [Gallery](https://navii-api.uxderrick.com/gallery)
+[Live demo](https://navii.uxderrick.com) · [API playground](https://navii.uxderrick.com#playground) · [Gallery](https://navii-api.uxderrick.com/gallery) · [Docs](https://navii.uxderrick.com/docs)
 
 </div>
 
@@ -35,9 +42,22 @@ Pass a user id, email, or UUID — get back a clean, character-style SVG that's 
 | `@navii/react` | Thin React component. `<Navii seed="alice" />`.             |
 | `@navii/api`   | Hono app exposing `GET /avatar/:seed`. Deploy anywhere.     |
 
-> **Status:** Pre-release scaffold (v0.0.x). API surface may move before v0.1.
+> **Status:** v0.1 — public API stable. Deterministic contract locked. Cast may grow (new variants appended to PRNG stream, never inserted).
 
 ---
+
+## Install
+
+```sh
+# pick one
+npm  add @navii/core
+pnpm add @navii/core
+yarn add @navii/core
+bun  add @navii/core
+
+# for React
+npm add @navii/react
+```
 
 ## Quick start
 
@@ -172,15 +192,15 @@ Responses set `Cache-Control: public, max-age=31536000, immutable` — safe for 
 | Part         | Variants                                            | Count |
 | ------------ | --------------------------------------------------- | ----- |
 | `palette`    | indigo, mint, amber, sky, violet, cyan, rose, lime, peach, teal, sand, plum, coral, forest, slate, fuchsia, terracotta, navy, lavender, charcoal, butter, aqua | 22 |
-| `body`       | orb, tall, squat, pear, pebble                      | 5     |
-| `eyes`       | round, wide, squint, wink, sleepy, star             | 6     |
-| `mouth`      | smile, grin, open, flat, smirk, awe                 | 6     |
+| `body`       | orb, tall, squat, pear, pebble, dumpling, taro, wisp | 8    |
+| `eyes`       | round, wide, squint, wink, sleepy, star, heart, oval, dot, cross | 10 |
+| `mouth`      | smile, grin, open, flat, smirk, awe, tongue, tooth, wave, dot | 10 |
 | `antenna`    | none, classic, curl, double, spike                  | 5     |
 | `accessory`  | none, blush, freckles, sparkle, glasses, eyepatch, mole | 7 |
 | `background` | none, solid, ring                                   | 3     |
-| `topper`     | none, ears, roundEars, horn, horns, tuft, cap, leaf | 8     |
+| `topper`     | none, ears, roundEars, horn, horns, tuft, cap, leaf, headband, halo, crown, antlers | 12 |
 
-Discrete combinatorial space: 22 × 5 × 6 × 6 × 5 × 7 × 3 × 8 = **3,326,400** distinct avatars.
+Discrete combinatorial space: 22 × 8 × 10 × 10 × 5 × 7 × 3 × 12 = **22,176,000** distinct avatars.
 
 **Continuous params** ride on top of every seed:
 
@@ -210,12 +230,12 @@ This means: a backend can render the same avatar in Node that the browser render
 
 Live backlog: [`BACKLOG.md`](./BACKLOG.md). Highlights:
 
-- More part variants (bodies, eyes, mouths, antennae)
+- More part variants (more eyes, mouths, antennae)
 - Compound accessories + outfit slot
 - Cloudflare Worker deploy (resvg-wasm)
 - `Navii.seed({ id, email, name, createdAt })` ergonomic helper
-- React Native binding, CLI, demo site
-- Snapshot tests + perf bench
+- React Native binding, CLI
+- Avatar builder UI (manual mix-and-match without seed)
 
 ---
 

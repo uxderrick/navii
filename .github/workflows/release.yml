@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 env:
   REGISTRY: ghcr.io
@@ -31,7 +32,8 @@ jobs:
       - run: pnpm -r run typecheck
       - run: pnpm -r run test
 
-  publish:
+  publish-image:
+    name: publish docker image
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -65,3 +67,33 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  publish-npm:
+    name: publish npm packages
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm --filter '@navii/core' run build
+      - run: pnpm --filter '@navii/react' run build
+
+      - name: publish @navii/core
+        run: pnpm --filter '@navii/core' publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: publish @navii/react
+        run: pnpm --filter '@navii/react' publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

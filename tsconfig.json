@@ -1,8 +1,4 @@
 {
   "files": [],
-  "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/react" },
-    { "path": "./packages/api" }
-  ]
+  "references": []
 }
