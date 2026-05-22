@@ -6,6 +6,7 @@ import { LruCache } from './middleware/lruCache.js';
 import { log } from './log.js';
 import { landingHtml } from './landing.js';
 import { builderHtml, parseBuildQuery, buildSpecToSvg } from './builder.js';
+import { renderCast, DEFAULT_CAST_SEEDS } from './cast.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 
@@ -90,6 +91,37 @@ export function createApp(options: AppOptions = {}) {
       headers: {
         'content-type': 'text/html; charset=utf-8',
         'cache-control': 'public, max-age=300',
+      },
+    });
+  });
+
+  app.get('/cast.svg', (c) => {
+    const rawSeeds = c.req.query('seeds');
+    const seeds = rawSeeds
+      ? rawSeeds.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 144)
+      : DEFAULT_CAST_SEEDS;
+    if (seeds.length === 0) return c.text('seeds required', 400);
+
+    const cols = clampInt(c.req.query('cols'), 1, 12, 6);
+    const size = clampInt(c.req.query('size'), 16, 256, 100);
+    const gap = clampInt(c.req.query('gap'), 0, 48, 12);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    const bg = c.req.query('bg');
+
+    const svg = renderCast(seeds, {
+      cols,
+      size,
+      gap,
+      animated,
+      ...(bg ? { bg } : {}),
+    });
+
+    return new Response(svg, {
+      status: 200,
+      headers: {
+        'content-type': 'image/svg+xml; charset=utf-8',
+        'cache-control': 'public, max-age=31536000, immutable',
+        'access-control-allow-origin': '*',
       },
     });
   });

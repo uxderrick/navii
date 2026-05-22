@@ -6,7 +6,7 @@
 Drop-in deterministic mascot avatars. No uploads, no blank gray circles, no state to manage.
 
 <a href="https://navii.uxderrick.com">
-  <img src="./docs/hero.png" alt="Navii — 22M+ deterministic mascot avatars" width="100%" />
+  <img src="https://navii-api.uxderrick.com/cast.svg?animated=1&size=120" alt="Navii cast — 24 unique deterministic mascots" width="100%" />
 </a>
 
 ```
