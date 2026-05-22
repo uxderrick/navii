@@ -5,7 +5,7 @@ import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
 import { LruCache } from './middleware/lruCache.js';
 import { log } from './log.js';
 import { landingHtml } from './landing.js';
-import { ogPng } from './og.js';
+import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 
 export interface AppOptions {
@@ -152,6 +152,16 @@ export function createApp(options: AppOptions = {}) {
       },
     });
   });
+
+  app.get('/og.svg', (c) =>
+    new Response(ogSvg(), {
+      status: 200,
+      headers: {
+        'content-type': 'image/svg+xml; charset=utf-8',
+        'cache-control': 'no-store',
+      },
+    }),
+  );
 
   app.get('/og.png', async (c) => {
     try {
