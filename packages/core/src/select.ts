@@ -56,8 +56,11 @@ export function selectAvatar(seed: string, options: AvatarOptions = {}): AvatarS
   const mouthCurveScale = Number(rng.range(0.85, 1.15).toFixed(3));
   const antennaTilt = Math.round(rng.range(-8, 8));
 
+  // Outfit is intentionally NOT drawn from the seed — it's a decorator slot,
+  // only set via build() / builder UI. Keeps seeded thumbs visually light.
   return {
     seed, palette, body, eyes, mouth, antenna, accessory, background, topper,
+    outfit: 'none',
     hueShift, bodyScale, eyeGapShift, mouthCurveScale, antennaTilt,
   };
 }

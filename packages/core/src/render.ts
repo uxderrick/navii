@@ -7,6 +7,7 @@ import {
   renderEyes,
   renderMouth,
   renderTopper,
+  renderOutfit,
 } from './parts/index.js';
 import { ANCHORS, type FaceAnchor } from './parts/anchor.js';
 import { renderAnimationStyle } from './animate.js';
@@ -71,10 +72,14 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
   const tileBg = resolveTileBg(options.tileBg, spec.palette);
   const tileCircle = tileBg ? `<circle cx="50" cy="50" r="50" fill="${tileBg}" />` : '';
 
+  const outfitSvg = renderOutfit(spec.outfit ?? 'none', anchor, spec.palette);
+
   const parts = [
     tileCircle,
     renderBackground(spec.background, spec.palette, bgOverride),
     bodyWrapped,
+    // outfit sits on the body but below the face, so face features stay readable
+    outfitSvg,
     renderTopper(spec.topper, anchor, spec.palette),
     wrap('eyes', renderEyes(spec.eyes, spec.palette, anchor)),
     renderMouth(spec.mouth, spec.palette, anchor, spec.mouthCurveScale ?? 1),

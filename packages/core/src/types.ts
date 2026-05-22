@@ -31,6 +31,8 @@ export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
   | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
   | 'headband' | 'halo' | 'crown' | 'antlers';
+export type OutfitId =
+  | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace';
 
 export interface AvatarSpec {
   seed: string;
@@ -42,6 +44,7 @@ export interface AvatarSpec {
   accessory: AccessoryId;
   background: BackgroundId;
   topper: TopperId;
+  outfit: OutfitId;
 
   // Continuous tweaks — extend the 1.4M discrete combos toward unbounded.
   /** Hue rotation applied to body fill via SVG feColorMatrix. Degrees, signed. */

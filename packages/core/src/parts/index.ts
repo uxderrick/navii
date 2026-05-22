@@ -6,6 +6,7 @@ export * from './antenna.js';
 export * from './accessory.js';
 export * from './background.js';
 export * from './topper.js';
+export * from './outfit.js';
 export * from './anchor.js';
 
 import type {
@@ -15,6 +16,7 @@ import type {
   BodyShapeId,
   EyeStyleId,
   MouthStyleId,
+  OutfitId,
   TopperId,
 } from '../types.js';
 
@@ -40,4 +42,8 @@ export const TOPPER_IDS: readonly TopperId[] = [
   // 'none' weighted ~2× so plain-headed avatars stay common
   'none', 'none', 'ears', 'roundEars', 'horn', 'horns', 'tuft', 'cap', 'leaf',
   'headband', 'halo', 'crown', 'antlers',
+];
+export const OUTFIT_IDS: readonly OutfitId[] = [
+  // 'none' weighted heavy — most avatars stay plain-chested
+  'none', 'none', 'none', 'collar', 'scarf', 'bowtie', 'sunflower', 'necklace',
 ];

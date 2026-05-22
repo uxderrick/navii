@@ -271,7 +271,7 @@ export function createApp(options: AppOptions = {}) {
 
   app.get('/build/render', async (c) => {
     const q: Record<string, string | undefined> = {};
-    for (const k of ['body','palette','background','eyes','mouth','accessory','topper','antenna','hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt']) {
+    for (const k of ['body','palette','background','eyes','mouth','accessory','topper','antenna','outfit','hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt']) {
       const v = c.req.query(k);
       if (v !== undefined) q[k] = v;
     }
@@ -317,7 +317,7 @@ export function createApp(options: AppOptions = {}) {
   app.get('/build/render.png', async (c) => {
     // Convenience alias — same as /build/render with `.png` semantics.
     const q: Record<string, string | undefined> = {};
-    for (const k of ['body','palette','background','eyes','mouth','accessory','topper','antenna','hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt']) {
+    for (const k of ['body','palette','background','eyes','mouth','accessory','topper','antenna','outfit','hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt']) {
       const v = c.req.query(k);
       if (v !== undefined) q[k] = v;
     }

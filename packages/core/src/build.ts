@@ -9,6 +9,7 @@ import type {
   BodyShapeId,
   EyeStyleId,
   MouthStyleId,
+  OutfitId,
   TopperId,
 } from './types.js';
 
@@ -31,6 +32,7 @@ export interface BuildSpec {
   accessory?: AccessoryId;
   background?: BackgroundId;
   topper?: TopperId;
+  outfit?: OutfitId;
   hueShift?: number;
   bodyScale?: number;
   eyeGapShift?: number;
@@ -68,6 +70,7 @@ export function build(spec: BuildSpec = {}, options: AvatarOptions = {}): string
     accessory: spec.accessory ?? 'none',
     background: spec.background ?? 'none',
     topper: spec.topper ?? 'none',
+    outfit: spec.outfit ?? 'none',
     hueShift: spec.hueShift ?? 0,
     bodyScale: spec.bodyScale ?? 1,
     eyeGapShift: spec.eyeGapShift ?? 0,

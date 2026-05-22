@@ -24,6 +24,7 @@ const ANTENNA = ['none', 'classic', 'curl', 'double', 'spike'] as const;
 const ACCESSORY = ['none', 'blush', 'freckles', 'sparkle', 'glasses', 'eyepatch', 'mole'] as const;
 const BACKGROUND = ['none', 'solid', 'ring'] as const;
 const TOPPER = ['none', 'ears', 'roundEars', 'horn', 'horns', 'tuft', 'cap', 'leaf', 'headband', 'halo', 'crown', 'antlers'] as const;
+const OUTFIT = ['none', 'collar', 'scarf', 'bowtie', 'sunflower', 'necklace'] as const;
 const PALETTE = [
   'indigo', 'mint', 'amber', 'sky', 'violet', 'cyan', 'rose', 'lime', 'peach', 'teal',
   'sand', 'plum', 'coral', 'forest', 'slate', 'fuchsia', 'terracotta', 'navy',
@@ -54,6 +55,7 @@ export function parseBuildQuery(q: Record<string, string | undefined>): BuildSpe
   const accessory = inEnum(q['accessory'], ACCESSORY);
   const background = inEnum(q['background'], BACKGROUND);
   const topper = inEnum(q['topper'], TOPPER);
+  const outfit = inEnum(q['outfit'], OUTFIT);
   if (palette) spec.palette = palette;
   if (body) spec.body = body;
   if (eyes) spec.eyes = eyes;
@@ -62,6 +64,7 @@ export function parseBuildQuery(q: Record<string, string | undefined>): BuildSpe
   if (accessory) spec.accessory = accessory;
   if (background) spec.background = background;
   if (topper) spec.topper = topper;
+  if (outfit) spec.outfit = outfit;
 
   const h = num(q['hueShift'], -30, 30);
   const bs = num(q['bodyScale'], 0.92, 1.08);
@@ -365,6 +368,12 @@ export function builderHtml(): string {
       </div>
 
       <div class="panel-group">
+        <h2>Outfit</h2>
+        <div class="field"><div class="field-row"><label for="f-outfit">Outfit</label>
+          <select id="f-outfit"><option value="">— none —</option>${opts(OUTFIT)}</select></div></div>
+      </div>
+
+      <div class="panel-group">
         <h2>Continuous</h2>
         <div class="field"><div class="field-row"><label for="f-hueShift">Hue shift</label>
           <span class="val" id="v-hueShift">0°</span></div>
@@ -418,7 +427,7 @@ export function builderHtml(): string {
   const SITE_BASE = ${JSON.stringify(SITE_BASE)};
 
   const FIELDS = {
-    select: ['body','palette','background','eyes','mouth','accessory','topper','antenna'],
+    select: ['body','palette','background','eyes','mouth','accessory','topper','antenna','outfit'],
     range:  ['hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt'],
   };
 
