@@ -1,3 +1,5 @@
+import { TEMPLATES_JSON } from './landingTemplates.js';
+
 /**
  * Landing page served at GET /.
  *
@@ -551,14 +553,13 @@ export function landingHtml(): string {
           <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="soft"></textarea>
         </div>
       </div>
-      <div class="editor-foot" id="presets">
-        <button class="preset" data-preset="basic">basic</button>
-        <button class="preset active" data-preset="palette">palette</button>
-        <button class="preset" data-preset="animated">animated</button>
-        <button class="preset" data-preset="tile">filled tile</button>
-        <button class="preset" data-preset="dark">dark tile</button>
-        <button class="preset" data-preset="png">PNG raster</button>
-        <button class="preset" data-preset="group">group</button>
+      <div class="editor-foot" id="usecases">
+        <button class="preset active" data-usecase="profile">profile card</button>
+        <button class="preset" data-usecase="team">team list</button>
+        <button class="preset" data-usecase="comment">comment row</button>
+        <button class="preset" data-usecase="fallback">photo fallback</button>
+        <button class="preset" data-usecase="group">group</button>
+        <button class="preset" data-usecase="url">just the URL</button>
       </div>
     </div>
 
@@ -621,68 +622,21 @@ export function landingHtml(): string {
   const live    = document.getElementById('live');
   const wrap    = document.getElementById('preview-wrap');
   const copyBtn = document.getElementById('copy-btn');
-  const presets = document.getElementById('presets');
+  const usecases = document.getElementById('usecases');
   let t = null;
 
   const frameworkSel = document.getElementById('framework-select');
   const seedInput = document.getElementById('seed-input');
-  const state = { framework: 'html', preset: 'palette', seed: 'alice@example.com' };
+  const state = { framework: 'html', usecase: 'profile', seed: 'alice@example.com' };
 
-  function currentPresets() {
-    const s = state.seed || 'alice@example.com';
-    return {
-      basic:    { seed: s, size: 320, params: {} },
-      animated: { seed: s, size: 320, params: { animated: '1' } },
-      palette:  { seed: s, size: 320, params: { palette: 'violet', animated: '1' } },
-      tile:     { seed: s, size: 320, params: { tileBg: '#ffffff', animated: '1' } },
-      dark:     { seed: s, size: 320, params: { tileBg: '#0b0b0c', animated: '1' } },
-      png:      { seed: s, size: 320, ext: '.png', params: { tileBg: 'auto' } },
-      group:    { group: [s, 'bob', 'carol', 'dave', 'eve'], size: 80, params: { overlap: '0.32' } }
-    };
+  const TEMPLATES = ${TEMPLATES_JSON};
+  const PRIMARY_URL_RE = /https?:\\/\\/[^\\s'"<>)]+/;
+
+  function renderSnippet() {
+    const uc = TEMPLATES[state.usecase] || TEMPLATES.profile;
+    const tmpl = uc[state.framework] || uc.html || uc.url || '';
+    return tmpl.split('__SEED__').join(state.seed || 'alice@example.com');
   }
-
-  function buildUrl(p) {
-    const u = new URL(API_BASE);
-    if (p.group) {
-      u.pathname = '/group';
-      u.searchParams.set('seeds', p.group.join(','));
-      if (p.size) u.searchParams.set('size', String(p.size));
-    } else {
-      u.pathname = '/avatar/' + encodeURIComponent(p.seed) + (p.ext || '');
-      if (p.size) u.searchParams.set('size', String(p.size));
-    }
-    for (const [k, v] of Object.entries(p.params || {})) u.searchParams.set(k, v);
-    return u.toString();
-  }
-
-  const FRAMEWORKS = {
-    html: function (ctx) {
-      if (ctx.isGroup) return '<img src="' + ctx.url + '" alt="team" />';
-      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width="64"\\n  height="64"\\n/>';
-    },
-    react: function (ctx) {
-      if (ctx.isGroup) return '<img src="' + ctx.url + '" alt="team" />';
-      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width={64}\\n  height={64}\\n/>';
-    },
-    next: function (ctx) {
-      return "import Image from 'next/image';\\n\\n<Image\\n  src=\\"" + ctx.url + "\\"\\n  alt=\\"" + ctx.seed + "\\"\\n  width={64}\\n  height={64}\\n  unoptimized\\n/>";
-    },
-    vue: function (ctx) {
-      return '<template>\\n  <img\\n    src="' + ctx.url + '"\\n    alt="' + ctx.seed + '"\\n    width="64"\\n    height="64"\\n  />\\n</template>';
-    },
-    svelte: function (ctx) {
-      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width="64"\\n  height="64"\\n/>';
-    },
-    curl: function (ctx) {
-      return "curl -o avatar.svg \\\\\\n  '" + ctx.url + "'";
-    },
-    fetch: function (ctx) {
-      return "const res = await fetch('" + ctx.url + "');\\nconst svg = await res.text();";
-    },
-    url: function (ctx) {
-      return 'GET ' + ctx.url;
-    }
-  };
 
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
   function span(cls, text) { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text; return s; }
@@ -799,16 +753,7 @@ export function landingHtml(): string {
   }
 
   function rebuild() {
-    const presetsMap = currentPresets();
-    const p = presetsMap[state.preset];
-    const url = buildUrl(p);
-    const ctx = {
-      url: url,
-      seed: p.group ? 'team' : (p.seed || 'user'),
-      isGroup: !!p.group
-    };
-    const tmpl = FRAMEWORKS[state.framework] || FRAMEWORKS.html;
-    input.value = tmpl(ctx);
+    input.value = renderSnippet();
     paintCode();
     refreshPreview();
   }
@@ -834,12 +779,12 @@ export function landingHtml(): string {
     }
   });
 
-  presets.addEventListener('click', function (ev) {
+  usecases.addEventListener('click', function (ev) {
     const btn = ev.target.closest('button.preset');
     if (!btn) return;
-    const key = btn.getAttribute('data-preset');
-    if (!currentPresets()[key]) return;
-    state.preset = key;
+    const key = btn.getAttribute('data-usecase');
+    if (!key || !TEMPLATES[key]) return;
+    state.usecase = key;
     document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     rebuild();
