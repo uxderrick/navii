@@ -106,7 +106,12 @@ export function landingHtml(): string {
     color-scheme: dark;
   }
   *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  section { scroll-margin-top: 80px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
   body {
     font: 16px/1.6 'Inter', 'Inter Display', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-feature-settings: 'cv11', 'ss01', 'ss03';
@@ -172,16 +177,17 @@ export function landingHtml(): string {
   }
   .hero-ctas a.primary:hover { background: #d4a8ff; border-color: #d4a8ff; color: #0a0a0b; }
   .hero-ctas a.secondary {
-    background: transparent;
+    background: var(--bg-2);
     color: var(--ink);
-    border: 1px solid var(--line-2);
+    border: 1px solid #27272a;
   }
+  .hero-ctas a.secondary:hover { background: var(--bg-3); }
   .hero-ctas a.secondary:hover { color: var(--accent); border-color: var(--accent); }
   .hero-ctas a svg { width: 14px; height: 14px; }
 
   /* ── playground (full-width 2-col) ── */
   .playground {
-    margin: 40px 0 28px;
+    margin: 0 0 28px;
     display: grid;
     grid-template-columns: 1.45fr 1fr;
     gap: 24px;
@@ -244,8 +250,35 @@ export function landingHtml(): string {
 
   .seed-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg-2); border-bottom: 1px solid var(--line); }
   .seed-bar label { color: var(--muted-2); font: 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  .seed-field { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; }
   .seed-bar input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--accent); font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 4px 0; }
   .seed-bar input::placeholder { color: #52525b; }
+  #seed-measure {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    pointer-events: none;
+    font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace;
+    padding: 4px 0;
+  }
+  .seed-caret {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2px;
+    height: 16px;
+    background: var(--accent);
+    transform: translate(0, -50%);
+    pointer-events: none;
+    animation: seed-blink 1s steps(1) infinite;
+    box-shadow: 0 0 6px rgba(192, 132, 252, 0.45);
+    border-radius: 1px;
+  }
+  .seed-field.focused .seed-caret { display: none; }
+  @keyframes seed-blink {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
   .seed-bar .toggle {
     background: transparent;
     border: 1px solid #27272a;
@@ -417,41 +450,48 @@ export function landingHtml(): string {
   }
   section .blurb span { color: var(--muted); }
 
-  /* ── cast hierarchy (lead / breakdown / foot) ── */
-  .cast-lead {
-    margin: 0 0 8px;
-    font-size: clamp(28px, 3.6vw, 40px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    font-weight: 600;
+  /* ── cast ── */
+  .cast-section { margin: 56px 0 0; }
+  @media (max-width: 540px) {
+    header.hero { padding: 32px 0 12px; }
+    .cast-section { margin: 16px 0 0; }
   }
-  .cast-num {
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.025em;
-    font-weight: 700;
-  }
-  .cast-breakdown {
-    margin: 0 0 8px;
-    color: var(--muted);
-    font-size: clamp(13.5px, 1.2vw, 15px);
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    letter-spacing: 0.005em;
-  }
-  .cast-foot {
-    margin: 0 0 28px;
-    color: var(--muted-2);
-    font-size: 13.5px;
+
+  /* full-bleed wrapper escapes container padding */
+  .cast-grid-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 0 24px;
   }
 
   /* ── cast grid ── */
   .cast-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     gap: 14px;
   }
-  @media (max-width: 880px) { .cast-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 880px) { .cast-grid { gap: 8px; } }
+  @media (max-width: 540px) {
+    .cast-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  }
+
+  /* ── install (playground) section ── */
+  .install-section { margin: 56px 0 0; }
+  .install-cta { display: flex; justify-content: flex-start; margin-top: 20px; }
+  .install-cta a.secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    background: var(--bg-2);
+    color: var(--ink);
+    border: 1px solid #27272a;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .install-cta a.secondary:hover { background: var(--bg-3); border-color: var(--muted-2); }
   .tile {
     position: relative;
     display: block;
@@ -645,12 +685,21 @@ export function landingHtml(): string {
 
   <header class="hero">
     <h1>A face for <em>every user.</em></h1>
-    <p class="lede">Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
+    <p class="lede">Drop-in 22M+ deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
     <div class="hero-ctas">
-      <a class="primary" href="/builder">Use avatar builder →</a>
-      <a class="secondary" href="/docs">How to use</a>
+      <a class="primary" href="#install">Try it →</a>
+      <a class="secondary" href="/docs/quickstart">Read docs</a>
     </div>
   </header>
+
+  <section id="cast" class="cast-section">
+    <div class="cast-grid-bleed"><div class="cast-grid">${tiles}</div></div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="install" class="install-section">
+    <p class="blurb">Try it. <span>Change the user id, switch frameworks, copy the snippet.</span></p>
 
   <div class="playground">
     <div class="editor-card">
@@ -672,7 +721,11 @@ export function landingHtml(): string {
       </div>
       <div class="seed-bar">
         <label for="seed-input">user id</label>
-        <input id="seed-input" type="text" value="alice@example.com" autocomplete="off" spellcheck="false" placeholder="user.id, email, uuid…" />
+        <div class="seed-field">
+          <input id="seed-input" type="text" value="alice@example.com" autocomplete="off" spellcheck="false" placeholder="user.id, email, uuid…" />
+          <span id="seed-measure" aria-hidden="true"></span>
+          <span id="seed-caret" class="seed-caret" aria-hidden="true"></span>
+        </div>
         <button id="animated-toggle" class="toggle" type="button" aria-pressed="false" title="toggle animated preview">animated</button>
       </div>
       <div class="editor-body">
@@ -735,14 +788,9 @@ export function landingHtml(): string {
     </div>
   </div>
 
-  <hr class="rule" />
-
-  <section id="cast">
-    <h2>the cast</h2>
-    <p class="cast-lead"><span class="cast-num">22M+</span> distinct faces.</p>
-    <p class="cast-breakdown">22 palettes &times; 8 bodies &times; 10 eyes &times; 10 mouths &times; 5 antennas &times; 12 toppers &times; 7 accessories.</p>
-    <p class="cast-foot">Continuous tweaks (hue, scale, eye gap, mouth curve, antenna tilt) make it effectively unlimited.</p>
-    <div class="cast-grid">${tiles}</div>
+  <div class="install-cta">
+    <a class="secondary" href="/docs/quickstart">Read docs</a>
+  </div>
   </section>
 
   <hr class="rule" />
@@ -1008,9 +1056,26 @@ export function landingHtml(): string {
     rebuild();
   });
 
+  const seedField = seedInput.parentElement;
+  const seedMeasure = document.getElementById('seed-measure');
+  const seedCaret = document.getElementById('seed-caret');
+  function positionCaret() {
+    if (!seedMeasure || !seedCaret) return;
+    seedMeasure.textContent = seedInput.value || seedInput.placeholder || '';
+    const w = seedMeasure.getBoundingClientRect().width;
+    const max = seedInput.getBoundingClientRect().width;
+    const x = Math.min(w, Math.max(0, max - 2));
+    seedCaret.style.left = x + 'px';
+  }
+  seedInput.addEventListener('focus', function () { if (seedField) seedField.classList.add('focused'); });
+  seedInput.addEventListener('blur',  function () { if (seedField) seedField.classList.remove('focused'); positionCaret(); });
+  window.addEventListener('resize', positionCaret);
+  setTimeout(positionCaret, 0);
+
   let seedT = null;
   seedInput.addEventListener('input', function () {
     state.seed = seedInput.value.trim() || 'alice@example.com';
+    positionCaret();
     clearTimeout(seedT);
     seedT = setTimeout(rebuild, 140);
   });
