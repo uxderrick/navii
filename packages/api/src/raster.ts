@@ -41,8 +41,11 @@ export async function svgToPng(svg: string, sizePx: number): Promise<Uint8Array>
     fitTo: { mode: 'width', value: sizePx },
     font: {
       loadSystemFonts: true,
-      // Help resvg map generic CSS family keywords to the fonts available in
-      // the Docker runtime (DejaVu) without depending on system-wide config.
+      // Force-load the DejaVu directory that ships in the Docker runtime.
+      // resvg's auto-scan of system fonts is unreliable across distros, so we
+      // point at the canonical Debian path explicitly. On non-Linux dev
+      // machines this path simply doesn't exist and the option is ignored.
+      fontDirs: ['/usr/share/fonts/truetype/dejavu', '/usr/share/fonts'],
       sansSerifFamily: 'DejaVu Sans',
       serifFamily: 'DejaVu Serif',
       monospaceFamily: 'DejaVu Sans Mono',
