@@ -376,7 +376,7 @@ function pageOverview(): string {
       <p>Every app has the same gap: between signup and the moment a user uploads a profile photo, you've got a gray circle with their initial. That's not a brand moment. It's not a profile. It's not anything.</p>
       <p>Navii fills that gap. One function call (or one <code>&lt;img src&gt;</code>) gives every user a face the moment they exist.</p>
       <ul>
-        <li><strong>Deterministic</strong> — same seed → same SVG, byte-for-byte, forever. Safe to cache, safe to mirror.</li>
+        <li><strong>Deterministic</strong> — same seed → same SVG, byte-identical within a release. Safe to cache, safe to mirror.</li>
         <li><strong>Stateless</strong> — no accounts, no database, no avatar table. The seed is the avatar.</li>
         <li><strong>Designed</strong> — 22 palettes × 8 bodies × 10 eyes × 10 mouths × 12 toppers × continuous tweaks. 22M+ combinations.</li>
         <li><strong>Optional motion</strong> — opt-in idle animation. Honors <code>prefers-reduced-motion</code>.</li>
@@ -562,7 +562,7 @@ document.body.insertAdjacentHTML('beforeend', svg);</code></pre>
       <pre class="code"><code>import { Navii } from '@usenavii/react';
 
 &lt;Navii seed={user.id} size={64} title={user.name} animated /&gt;</code></pre>
-      <p>Memoized <code>&lt;img src="data:image/svg+xml;..."&gt;</code> — the SVG renders client-side and is treated as opaque image by the browser (no inline scripting surface).</p>
+      <p>Memoized <code>&lt;img src="data:image/svg+xml;..."&gt;</code>. The data URI is computed during both server and client render via <code>useMemo</code>, so SSR (Next.js, Remix) emits the same markup the client hydrates — no mismatch. The browser treats the data URI as an opaque image (no inline scripting surface).</p>
     </section>
 
     <section>
@@ -580,7 +580,7 @@ function pageConcepts(): string {
   return `
     <header class="page-head">
       <h1>Concepts</h1>
-      <p class="lede">Navii makes one promise: same seed in → same avatar out, byte-for-byte, forever. Everything else flows from that.</p>
+      <p class="lede">Navii makes one promise: same seed in → same avatar out, byte-identical within a release. Everything else flows from that.</p>
     </header>
 
     <section>
@@ -877,6 +877,28 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
 encoded: alice%40example.com</code></pre>
       <p>The server decodes back to the raw seed before hashing, so both URLs produce the same SVG. Empty seeds → 400.</p>
     </section>
+
+    <section>
+      <h2 id="versioning">Versioning and stability</h2>
+      <p>The deterministic contract is scoped to <strong>a single release of the engine</strong>. A given seed + a given engine version → byte-identical SVG, forever. We won't silently change that.</p>
+      <p>What we promise to keep stable in patch + minor releases:</p>
+      <ul>
+        <li>Existing seeds' part selections don't shift when new variants are added (new parts append to the PRNG stream, never insert).</li>
+        <li>Endpoint URLs, query params, and response headers stay backwards-compatible.</li>
+        <li>SVG markup may change in tiny non-visible ways (formatting, attribute order) — treat as text-content stable, not byte-stable across upgrades.</li>
+      </ul>
+      <p>What can change in a major release:</p>
+      <ul>
+        <li>Cast rebases (existing seeds get new combinations). Documented in the changelog.</li>
+        <li>Default option values.</li>
+      </ul>
+      <p>If you need absolute byte-stability across engine upgrades, mirror the SVG bytes locally — see the <a href="/docs/recipes#caching">caching recipe</a>.</p>
+    </section>
+
+    <section>
+      <h2 id="auth">Authentication</h2>
+      <p>None. Every endpoint is anonymous. CORS is wide open (<code>access-control-allow-origin: *</code>) — embed from anywhere, no token, no signup. If you need to lock down a self-hosted deployment, put it behind your own auth layer (Cloudflare Access, BasicAuth via Caddy, etc.).</p>
+    </section>
   `;
 }
 
@@ -1106,7 +1128,7 @@ export function UserChip({ user }) {
 
     <section>
       <h2 id="memo">Memoization</h2>
-      <p>The component memoizes the data-URI on <code>seed</code> + all option props. The SVG renders client-side on first mount; subsequent renders with the same props reuse the cached URI.</p>
+      <p>The component memoizes the data-URI on <code>seed</code> + all option props via <code>useMemo</code>. This runs on both the server (SSR) and client (hydration), so output is byte-identical between the two renders. Subsequent renders with unchanged props reuse the cached URI without re-running the engine.</p>
       <p>If you're rendering a list, ensure your seeds are stable across renders (e.g. <code>user.id</code>, not <code>idx + Date.now()</code>) — otherwise every render rebuilds every avatar.</p>
     </section>
 
@@ -1138,7 +1160,7 @@ docker run -p 8787:8787 navii-api</code></pre>
         <tbody>
           <tr><td><code>PORT</code></td><td>8787</td><td>HTTP listen port.</td></tr>
           <tr><td><code>HOST</code></td><td>0.0.0.0</td><td>HTTP bind address.</td></tr>
-          <tr><td><code>RATE_LIMIT_PER_MIN</code></td><td>120</td><td>Per-IP rate limit on <code>/avatar/*</code>. See <a href="/docs/rate-limits">Rate limits</a> for full details.</td></tr>
+          <tr><td><code>RATE_LIMIT_PER_MIN</code></td><td>120 <span style="color:var(--muted-2)">(engine) · 600 (hosted)</span></td><td>Per-IP rate limit on <code>/avatar/*</code>. Engine default is 120 if unset; the hosted deployment at <code>navii-api.uxderrick.com</code> runs 600. See <a href="/docs/rate-limits">Rate limits</a> for full details.</td></tr>
           <tr><td><code>PNG_CACHE_SIZE</code></td><td>500</td><td>LRU capacity for rasterized PNG responses.</td></tr>
           <tr><td><code>TRUST_PROXY</code></td><td>0</td><td>Set to <code>1</code> behind a reverse proxy you control (Caddy/Nginx). Enables <code>X-Forwarded-For</code> reading for rate-limit IP attribution. <strong>Never enable behind raw CDN</strong> — clients could spoof IPs.</td></tr>
           <tr><td><code>NAVII_API_BASE</code></td><td><code>https://navii-api.uxderrick.com</code></td><td>Used in landing + docs HTML for absolute API URLs (e.g. cast images, OG image).</td></tr>

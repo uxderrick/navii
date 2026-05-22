@@ -47,6 +47,8 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 
 - [x] **Snapshot tests** — 12 fixed seeds locked: spec fields, static SVG bytes, animated SVG bytes, group SVG. CI fails on drift. Intentional cast changes refresh via `vitest -u` + major bump.
 - [x] **CI publish workflow** — on `v*` tag: test → docker image to GHCR → npm publish (skip if version already on registry).
+- [ ] **X-Forwarded-For: read rightmost-trusted IP, not leftmost** — current `rateLimit` middleware reads the leftmost XFF value, which is the client-controlled one. Per MDN, the leftmost values are untrusted; the correct read is the rightmost IP from a configurable "trust hops" count. Low-priority since hosted deployment runs behind one trusted Caddy hop, but fix before encouraging users to self-host behind multi-hop proxies.
+- [ ] **Self-host Inter woff2** — bundle one weight + variable font file into the Docker image, serve from `/fonts/inter.woff2`, drop the Google Fonts blocking request. ~30 min.
 - [ ] Bench: avatars/sec; aim ≥ 50K/s on M1
 - [ ] Strict size budget on `@usenavii/core` (target < 8KB gzipped). Wire `size-limit` or `pkg-size` into CI as an assertion.
 
