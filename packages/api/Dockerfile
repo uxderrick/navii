@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# Multi-stage build for @navii/api.
+# Multi-stage build for @usenavii/api.
 # Stage 1: install workspace deps + build core/api.
 # Stage 2: copy only prod artifacts into a slim runtime.
 
@@ -22,11 +22,11 @@ RUN pnpm install --frozen-lockfile=false
 COPY packages/core packages/core
 COPY packages/api packages/api
 
-RUN pnpm --filter @navii/core run build \
- && pnpm --filter @navii/api run build
+RUN pnpm --filter @usenavii/core run build \
+ && pnpm --filter @usenavii/api run build
 
 # Produce a deployable bundle directory
-RUN pnpm deploy --filter=@navii/api --prod /out
+RUN pnpm deploy --filter=@usenavii/api --prod /out
 
 # --- runtime image -----------------------------------------------------------
 FROM node:20-bookworm-slim AS runtime
