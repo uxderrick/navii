@@ -128,6 +128,163 @@ ${styleBlock()}
   </footer>
 
 </div>
+
+<script>
+(function () {
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function svgIcon(kind) {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    if (kind === 'check') {
+      svg.setAttribute('stroke-width', '1.6');
+      const p = document.createElementNS(SVG_NS, 'path');
+      p.setAttribute('d', 'M3 8.5l3.5 3.5L13 5');
+      svg.appendChild(p);
+    } else {
+      svg.setAttribute('stroke-width', '1.4');
+      const r = document.createElementNS(SVG_NS, 'rect');
+      r.setAttribute('x', '4'); r.setAttribute('y', '4');
+      r.setAttribute('width', '9'); r.setAttribute('height', '9');
+      r.setAttribute('rx', '1.5');
+      svg.appendChild(r);
+      const p = document.createElementNS(SVG_NS, 'path');
+      p.setAttribute('d', 'M3 11V3.5A1.5 1.5 0 0 1 4.5 2H11');
+      svg.appendChild(p);
+    }
+    return svg;
+  }
+
+  function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function span(cls, text) { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text; return s; }
+  function setButtonContent(btn, kind, label) {
+    clear(btn);
+    btn.appendChild(svgIcon(kind));
+    btn.appendChild(span('lbl', label));
+  }
+
+  function tokenize(src) {
+    const N = src.length;
+    const marks = new Array(N).fill(null);
+    const stamp = function (start, end, cls) {
+      for (let i = start; i < end; i++) if (marks[i] === null) marks[i] = cls;
+    };
+    const overwrite = function (start, end, cls) {
+      for (let i = start; i < end; i++) marks[i] = cls;
+    };
+
+    for (const m of src.matchAll(/'[^'\\n]*'|"[^"\\n]*"|\`[^\`]*\`/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-str');
+    }
+    for (const m of src.matchAll(/(\\/\\/[^\\n]*|#[^\\n]*)/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-comment');
+    }
+    for (const m of src.matchAll(/<\\/?[a-zA-Z][\\w-]*|\\/>/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-tag');
+    }
+    for (const m of src.matchAll(/\\b([a-zA-Z:][a-zA-Z\\d:_-]*)(?==)/g)) {
+      const prev = src[m.index - 1];
+      if (prev === '.' || prev === '\$') continue;
+      stamp(m.index, m.index + m[1].length, 'tk-attr');
+    }
+    for (const m of src.matchAll(/\\b(import|from|const|let|var|return|await|async|new|function|interface|type|export|default|extends|implements|of|in|true|false|null|undefined|class)\\b/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-keyword');
+    }
+    for (const m of src.matchAll(/(?:^|\\n)(GET|POST|PUT|PATCH|DELETE)\\b/g)) {
+      const off = m[0].length - m[1].length;
+      overwrite(m.index + off, m.index + off + m[1].length, 'tk-verb');
+    }
+    for (const m of src.matchAll(/\\b\\d+(?:\\.\\d+)?\\b/g)) {
+      stamp(m.index, m.index + m[0].length, 'tk-num');
+    }
+    for (const m of src.matchAll(/https?:\\/\\/[^\\s'"<>)]+/g)) {
+      const start = m.index;
+      const end = start + m[0].length;
+      const protoEnd = m[0].indexOf('//') + 2;
+      const slashAfter = m[0].indexOf('/', protoEnd);
+      const hostEnd = slashAfter < 0 ? end : start + slashAfter;
+      overwrite(start, hostEnd, 'tk-host');
+      const qIdx = m[0].indexOf('?');
+      const pathEndAbs = qIdx < 0 ? end : start + qIdx;
+      overwrite(hostEnd, pathEndAbs, 'tk-path');
+      if (qIdx >= 0) {
+        for (const q of m[0].slice(qIdx).matchAll(/([?&])([a-zA-Z][\\w-]*)(=)([^&\\s'"<>)]*)/g)) {
+          let cur = start + qIdx + q.index;
+          overwrite(cur, cur + q[1].length, 'tk-punct'); cur += q[1].length;
+          overwrite(cur, cur + q[2].length, 'tk-key');   cur += q[2].length;
+          overwrite(cur, cur + q[3].length, 'tk-punct'); cur += q[3].length;
+          const isNum = /^-?\\d+(\\.\\d+)?\$/.test(q[4]);
+          overwrite(cur, cur + q[4].length, isNum ? 'tk-num' : 'tk-val');
+        }
+      }
+    }
+
+    const out = [];
+    let i = 0;
+    while (i < N) {
+      const cls = marks[i];
+      let j = i + 1;
+      while (j < N && marks[j] === cls) j++;
+      out.push({ cls: cls, text: src.slice(i, j) });
+      i = j;
+    }
+    return out;
+  }
+
+  function paint(codeEl) {
+    const src = codeEl.textContent;
+    clear(codeEl);
+    for (const tok of tokenize(src)) {
+      if (tok.cls) codeEl.appendChild(span(tok.cls, tok.text));
+      else codeEl.appendChild(document.createTextNode(tok.text));
+    }
+  }
+
+  function makeButton(getText) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-icon';
+    btn.setAttribute('aria-label', 'Copy code');
+    setButtonContent(btn, 'copy', 'copy');
+    btn.addEventListener('click', async function () {
+      try {
+        await navigator.clipboard.writeText(getText());
+        btn.classList.add('ok');
+        setButtonContent(btn, 'check', 'copied');
+        setTimeout(function () {
+          btn.classList.remove('ok');
+          setButtonContent(btn, 'copy', 'copy');
+        }, 1400);
+      } catch (e) {}
+    });
+    return btn;
+  }
+
+  function enhance() {
+    document.querySelectorAll('pre.code').forEach(function (pre) {
+      if (pre.parentElement && pre.parentElement.classList.contains('code-block')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'code-block';
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      const codeEl = pre.querySelector('code') || pre;
+      paint(codeEl);
+      wrap.appendChild(makeButton(function () { return codeEl.textContent; }));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', enhance);
+  } else {
+    enhance();
+  }
+})();
+</script>
+
 </body>
 </html>`;
 }
@@ -898,17 +1055,61 @@ nav.top .links a:hover { color: var(--ink); }
 .content ul li { margin-bottom: 6px; }
 
 /* code blocks */
+.code-block { position: relative; margin: 0 0 16px; }
+.code-block pre.code { margin: 0; }
 pre.code {
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 14px 44px 14px 16px;
   overflow-x: auto;
   margin: 0 0 16px;
   font-size: 13px;
   line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
-pre.code code { background: transparent; border: 0; padding: 0; font-size: inherit; }
+pre.code code { background: transparent; border: 0; padding: 0; font-size: inherit; font-family: inherit; color: var(--ink); }
+
+.copy-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s, color .15s, border-color .15s, background .15s;
+  font: 10.5px ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+}
+.code-block:hover .copy-icon,
+.code-block:focus-within .copy-icon { opacity: 1; }
+.copy-icon:hover { color: var(--ink); border-color: var(--muted-2); background: var(--bg-2); }
+.copy-icon.ok { color: var(--good); border-color: var(--good); opacity: 1; }
+.copy-icon svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+/* syntax tokens */
+pre.code .tk-tag     { color: #f472b6; }
+pre.code .tk-attr    { color: #93c5fd; }
+pre.code .tk-str     { color: #fbbf24; }
+pre.code .tk-keyword { color: var(--accent); }
+pre.code .tk-num     { color: var(--good); }
+pre.code .tk-comment { color: var(--muted-2); font-style: italic; }
+pre.code .tk-verb    { color: var(--accent); font-weight: 600; }
+pre.code .tk-host    { color: var(--muted-2); }
+pre.code .tk-path    { color: var(--ink); }
+pre.code .tk-punct   { color: var(--muted-2); }
+pre.code .tk-key     { color: #93c5fd; }
+pre.code .tk-val     { color: #fbbf24; }
+pre.code .tk-type    { color: #93c5fd; }
 
 /* tables */
 .content table {

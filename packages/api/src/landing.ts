@@ -126,7 +126,20 @@ export function landingHtml(): string {
   hr.rule { border: 0; border-top: 1px solid var(--line); margin: 88px 0; }
 
   /* ── nav ── */
-  nav.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  nav.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 10, 11, 0.72);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--line);
+    margin: 0 -24px;
+  }
   nav.top .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; }
   nav.top .brand img { width: 28px; height: 28px; border-radius: 50%; }
   nav.top .links { display: flex; gap: 20px; font-size: 14px; color: var(--muted-2); }
@@ -608,7 +621,6 @@ export function landingHtml(): string {
     </div>
     <div class="links">
       <a href="#cast">cast</a>
-      <a href="#group">groups</a>
       <a href="/docs/quickstart">docs</a>
       <a href="https://github.com/uxderrick/navii">github</a>
     </div>
@@ -727,7 +739,7 @@ export function landingHtml(): string {
 
   <section id="reference">
     <h2>docs</h2>
-    <p class="blurb">Full reference moved to <a href="/docs/quickstart" style="color:var(--accent)">/docs</a>. <span>Quickstart, concepts, parts catalog, HTTP API, SDK, deployment.</span></p>
+    <p class="blurb">Full reference at <a href="/docs/quickstart" style="color:var(--accent)">/docs</a>. <span>Quickstart, concepts, parts catalog, HTTP API, SDK, deployment.</span></p>
 
     <div class="docs-cards">
       <a class="doc-card" href="/docs/quickstart"><h3>Quickstart</h3><p>Install + first avatar in 60 seconds.</p></a>
