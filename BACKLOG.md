@@ -37,9 +37,10 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 - [x] **`Navii.build({ body, eyes, mouth, ... })` builder API** — direct construction without a seed. For brand mascots, logo marks, designer curation.
 - [x] **`Navii` namespace** — `Navii.{ create, render, select, group, seed, build }` for users who like the dotted style.
 - [x] **`<NaviiGroup>` / `renderGroup`** — horizontal stacks with overlap + `+N` counter tile.
-- [ ] **Avatar builder UI** at `/build` — interactive customizer over `Navii.build()`. Lets users mix-and-match in the browser, copy the resulting URL or `<Navii build={…} />` snippet. v2 differentiator.
-- [ ] Lazy WebP fallback alongside PNG for smaller bytes (esp. mobile)
-- [ ] React Native binding (`@usenavii/native`) — same engine, RN-native SVG renderer
+- [x] **Avatar builder UI** at `/builder` (alias `/build`). Interactive customizer over `Navii.build()` — mix-and-match in the browser, copy URL or snippet. Linked from landing hero CTA.
+- [ ] ~~Lazy WebP fallback alongside PNG~~ — _deferred. SVG already 3 KB; WebP wins only matter for dense PNG UIs. Revisit if someone files an issue._
+- [ ] ~~React Native binding (`@usenavii/native`)~~ — _deferred. RN devs can use `@usenavii/core` + `react-native-svg`'s `SvgXml` in 2 lines. Add README snippet instead of a dedicated package._
+- [ ] **README snippet: React Native usage** — show the `@usenavii/core` + `SvgXml` pattern so RN consumers find it (5 min docs change).
 - [ ] CLI — `npx @usenavii/cli alice > a.svg`, `--build --body tall --eyes star`, `--batch users.json`. Targets: build scripts, CI, Figma imports.
 
 ## Engineering
