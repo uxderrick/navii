@@ -89,11 +89,25 @@ jobs:
       - run: pnpm --filter '@usenavii/react' run build
 
       - name: publish @usenavii/core
-        run: pnpm --filter '@usenavii/core' publish --access public --no-git-checks
+        working-directory: packages/core
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view @usenavii/core@$PKG_VERSION version >/dev/null 2>&1; then
+            echo "@usenavii/core@$PKG_VERSION already on registry — skipping"
+            exit 0
+          fi
+          pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: publish @usenavii/react
-        run: pnpm --filter '@usenavii/react' publish --access public --no-git-checks
+        working-directory: packages/react
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view @usenavii/react@$PKG_VERSION version >/dev/null 2>&1; then
+            echo "@usenavii/react@$PKG_VERSION already on registry — skipping"
+            exit 0
+          fi
+          pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
