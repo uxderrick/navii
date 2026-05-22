@@ -123,8 +123,8 @@ export function landingHtml(): string {
   nav.top .links { display: flex; gap: 20px; font-size: 14px; color: var(--muted-2); }
   nav.top .links a:hover { color: var(--ink); }
 
-  /* ── hero (centered) ── */
-  header.hero { padding: 48px 0 28px; text-align: center; }
+  /* ── hero (left-aligned) ── */
+  header.hero { padding: 48px 0 28px; text-align: left; }
   header.hero h1 {
     font-size: clamp(40px, 6.4vw, 72px);
     line-height: 1.0;
@@ -137,7 +137,7 @@ export function landingHtml(): string {
     color: var(--muted);
     font-size: clamp(15px, 1.4vw, 18px);
     max-width: 60ch;
-    margin: 0 auto;
+    margin: 0;
   }
 
   /* ── playground (full-width 2-col) ── */
@@ -518,7 +518,7 @@ export function landingHtml(): string {
   </nav>
 
   <header class="hero">
-    <h1>Every user, <em>a face.</em></h1>
+    <h1>A face for <em>every user.</em></h1>
     <p class="lede">Drop-in deterministic mascot avatars. Pass any string — user id, email, UUID — get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
   </header>
 
