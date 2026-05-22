@@ -4,6 +4,7 @@ import { svgToPng } from './raster.js';
 import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
 import { LruCache } from './middleware/lruCache.js';
 import { log } from './log.js';
+import { landingHtml } from './landing.js';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
@@ -35,9 +36,20 @@ export function createApp(options: AppOptions = {}) {
     );
   }
 
-  app.get('/', (c) =>
+  app.get('/', (c) => {
+    return new Response(landingHtml(), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
+
+  app.get('/api', (c) =>
     c.json({
       name: 'navii',
+      version: '0.5.0',
       endpoints: {
         avatar: '/avatar/:seed',
         group: '/group?seeds=a,b,c',

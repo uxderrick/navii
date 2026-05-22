@@ -8,8 +8,16 @@ async function get(path: string): Promise<Response> {
 }
 
 describe('api', () => {
-  it('GET / returns metadata', async () => {
+  it('GET / returns landing HTML', async () => {
     const res = await get('/');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const body = await res.text();
+    expect(body).toContain('<title>Navii');
+  });
+
+  it('GET /api returns JSON metadata', async () => {
+    const res = await get('/api');
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toMatchObject({ name: 'navii' });
