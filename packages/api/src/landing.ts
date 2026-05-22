@@ -181,7 +181,14 @@ export function landingHtml(): string {
     color: var(--ink);
     border: 1px solid #27272a;
   }
-  .hero-ctas a.secondary:hover { background: var(--bg-3); }
+  .hero-ctas a.secondary:hover { background: var(--bg-3); border-color: var(--muted-2); }
+  .hero-ctas a.tertiary {
+    background: transparent;
+    color: var(--muted);
+    border: 0;
+    padding: 9px 6px;
+  }
+  .hero-ctas a.tertiary:hover { color: var(--ink); }
   .hero-ctas a.secondary:hover { color: var(--accent); border-color: var(--accent); }
   .hero-ctas a svg { width: 14px; height: 14px; }
 
@@ -688,7 +695,7 @@ export function landingHtml(): string {
     <p class="lede">Drop-in 22M+ deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
     <div class="hero-ctas">
       <a class="primary" href="#install">Try it →</a>
-      <a class="secondary" href="/docs/quickstart">Read docs</a>
+      <a class="secondary" href="/builder">Customize a face</a>
     </div>
   </header>
 
