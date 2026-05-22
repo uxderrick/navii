@@ -1,3 +1,8 @@
+# navii — split-domain deploy.
+# Append both blocks to the host /etc/caddy/Caddyfile.
+# Both proxies hit the same container backend (127.0.0.1:8787).
+
+# ── API host ───────────────────────────────────────────────────────────────
 navii-api.uxderrick.com {
 	encode zstd gzip
 
@@ -9,13 +14,37 @@ navii-api.uxderrick.com {
 		-Server
 	}
 
-	@assets path /avatar/*
+	@assets path /avatar/* /group*
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 
 	reverse_proxy 127.0.0.1:8787 {
 		header_up X-Real-IP {remote_host}
 		health_uri /healthz
 		health_interval 30s
+		health_timeout 5s
+	}
+}
+
+# ── Landing host ───────────────────────────────────────────────────────────
+navii.uxderrick.com {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "interest-cohort=()"
+		-Server
+	}
+
+	# Landing HTML is cached briefly so updates roll out fast
+	@html path /
+	header @html Cache-Control "public, max-age=300"
+
+	reverse_proxy 127.0.0.1:8787 {
+		header_up X-Real-IP {remote_host}
+		health_uri /healthz
+		health_interval 60s
 		health_timeout 5s
 	}
 }

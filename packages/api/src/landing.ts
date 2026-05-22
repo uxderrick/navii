@@ -15,13 +15,21 @@ const CAST_SEEDS: readonly string[] = [
 
 const GROUP_SEEDS = ['aria', 'milo', 'nova', 'kai', 'sage'];
 
+/**
+ * API base URL — landing is served from navii.uxderrick.com, the avatar
+ * endpoints live on navii-api.uxderrick.com. Override at deploy time via
+ * NAVII_API_BASE env var if hosting changes.
+ */
+const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
+
 export function landingHtml(): string {
   const tiles = CAST_SEEDS.map(
     (s) =>
-      `<a class="tile" href="/avatar/${s}?size=192&animated=1" title="${s}"><img src="/avatar/${s}?size=160&animated=1" alt="${s}" loading="lazy" width="160" height="160" /><span>${s}</span></a>`,
+      `<a class="tile" href="${API_BASE}/avatar/${s}?size=192&animated=1" title="${s}"><img src="${API_BASE}/avatar/${s}?size=160&animated=1" alt="${s}" loading="lazy" width="160" height="160" /><span>${s}</span></a>`,
   ).join('');
 
-  const groupUrl = `/group?seeds=${GROUP_SEEDS.join(',')}&size=72&overlap=0.32`;
+  const groupPath = `/group?seeds=${GROUP_SEEDS.join(',')}&size=72&overlap=0.32`;
+  const groupUrl = `${API_BASE}${groupPath}`;
 
   return `<!doctype html>
 <html lang="en">
@@ -262,7 +270,7 @@ export function landingHtml(): string {
 
   <nav class="top">
     <div class="brand">
-      <img src="/avatar/navii?size=56" alt="navii" />
+      <img src="${API_BASE}/avatar/navii?size=56" alt="navii" />
       <span>navii</span>
     </div>
     <div class="links">
@@ -278,13 +286,13 @@ export function landingHtml(): string {
       <h1>Every user, <em>a face.</em></h1>
       <p class="lede">Drop-in deterministic mascot avatars. Pass any string — a user id, email, name — get a clean SVG. Same seed in, same face out, every time.</p>
       <div class="seed-input">
-        <span class="prefix">/avatar/</span>
+        <span class="prefix">${API_BASE.replace(/^https?:\/\//, '')}/avatar/</span>
         <input id="seed-input" type="text" value="alice@example.com" autocomplete="off" spellcheck="false" />
       </div>
-      <p class="url-line"><code id="seed-url">/avatar/alice@example.com?size=320&amp;animated=1</code></p>
+      <p class="url-line"><code id="seed-url">${API_BASE}/avatar/alice@example.com?size=320&amp;animated=1</code></p>
     </div>
     <div class="live-avatar">
-      <img id="live" src="/avatar/alice@example.com?size=320&amp;animated=1" alt="" />
+      <img id="live" src="${API_BASE}/avatar/alice@example.com?size=320&amp;animated=1" alt="" />
     </div>
   </header>
 
@@ -303,7 +311,7 @@ export function landingHtml(): string {
     <p class="blurb">For teams, threads, comments — anywhere people gather. <span>Opaque tiles so overlap stays clean.</span></p>
     <div class="group-demo">
       <img src="${groupUrl}" alt="avatar group" />
-      <code><span class="pink">GET</span> ${groupUrl}</code>
+      <code><span class="pink">GET</span> ${API_BASE}${groupPath}</code>
     </div>
   </section>
 
@@ -353,6 +361,7 @@ export function landingHtml(): string {
 
 <script>
   (function () {
+    const API_BASE = ${JSON.stringify(API_BASE)};
     const input = document.getElementById('seed-input');
     const live = document.getElementById('live');
     const url = document.getElementById('seed-url');
@@ -361,9 +370,8 @@ export function landingHtml(): string {
     function update() {
       const raw = input.value.trim() || 'alice@example.com';
       const enc = encodeURIComponent(raw);
-      const path = '/avatar/' + enc + '?size=320&animated=1';
-      live.src = path;
-      url.textContent = '/avatar/' + raw + '?size=320&animated=1';
+      live.src = API_BASE + '/avatar/' + enc + '?size=320&animated=1';
+      url.textContent = API_BASE + '/avatar/' + raw + '?size=320&animated=1';
     }
 
     input.addEventListener('input', function () {
