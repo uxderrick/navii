@@ -2,14 +2,14 @@
 
 Tracked work beyond the current scaffold. Ordered by impact, not priority — pick what fits the moment.
 
-## Combinatorial expansion (grow output space beyond 1.4M)
+## Combinatorial expansion (grow output space)
 
-- [ ] **More part variants** — multiplicative. Each new eye style ≈ +16.6%, each new body ≈ +20%, each new topper ≈ +12.5%. Cheap, fast wins. _Progress: palette 16→22, accessory 4→7 (+glasses/eyepatch/mole). Body/eyes/mouth/antenna still at original counts — easy next wins._
-- [x] **Continuous params** — hue rotation (±30°), body scale (0.92–1.08), eye gap shift (±2), mouth curvature (0.85×–1.15×), antenna tilt (±8°). Wired in `select.ts` + `render.ts`, covered by `continuous.test.ts`. Discrete space (3.3M) × continuous = effectively unbounded.
-- [ ] **Compound accessories** — allow stacking (blush + freckles + sparkle). Currently single-pick.
-- [ ] **Outfit slot** — collar / scarf / bowtie. New part layer below face, anchored to body.
+- [x] **More part variants** — _Progress: palette 16→22, body 5→8, eyes 6→10, mouth 6→10, accessory 4→7 (+glasses/eyepatch/mole), topper 8→12 (+headband/halo/crown/antlers). Antenna still at 5. Discrete space now 22.2M._ Further variants are nice-to-have but no longer a bottleneck.
+- [x] **Continuous params** — hue ±30°, body scale 0.92–1.08, eye gap ±2, mouth curvature 0.85–1.15, antenna tilt ±8°. Discrete × continuous = effectively unbounded.
+- [ ] **Compound accessories** — stack blush + freckles + sparkle on the same avatar. Currently single-pick.
+- [ ] **Outfit slot** — collar / scarf / bowtie. New layer below face, anchored to body.
 
-## Art polish (designer-needed, flagged for handoff)
+## Art polish (designer handoff)
 
 - [ ] Hand-drawn silhouette paths replacing current passable ones
 - [ ] Refined eye/mouth shapes at illustrator quality
@@ -18,31 +18,34 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 
 ## Distribution
 
-- [ ] Publish `@usenavii/core` + `@usenavii/react` to npm. Add tsup for dual ESM/CJS.
-- [ ] Tag v0.1.0
-- [ ] Cloudflare Worker deploy of `@usenavii/api` (swap `@resvg/resvg-js` → `@resvg/resvg-wasm`)
-- [ ] Public CDN at `navii.dev/avatar/<seed>`
+- [x] **Publish to npm** — `@usenavii/core@0.2.1`, `@usenavii/react@0.2.1` live. tsup dual ESM/CJS, per-package READMEs with hero image, GitHub Action publishes on tag with skip-if-published guard.
+- [x] **Public hosted endpoint** — `navii-api.uxderrick.com` (Hetzner + host Caddy + auto-TLS). PNG raster via resvg-js. Rate-limit 600/min/IP. LRU PNG cache. `/healthz`. CORS `*`. Immutable cache headers.
+- [ ] **Cloudflare Worker deploy** — swap `@resvg/resvg-js` → `@resvg/resvg-wasm`, edge cache, lower latency globally.
+- [ ] **Public CDN at `navii.dev`** — buy the domain, front Hetzner with Cloudflare proxy OR move to Workers entirely.
 
 ## Product
 
-- [ ] Demo site + docs — hero gallery, live seed input, copy-paste install
-- [ ] **Seed uniqueness guidance** — must land in README, demo site docs, AND hosted `/api` documentation. Cover everywhere a dev meets Navii. Key points:
-  - Seed must be a **stable unique identifier** per user (e.g. `user.id`, UUID, email). NOT display name — names collide → duplicate avatars.
-  - Determinism is the contract: same seed always = same avatar. So **do not pass `Date.now()` at render time** — avatar would change on every refresh.
-  - If only a name exists, recommend composing with a stable created-at: `seed = \`${name}-${user.createdAt}\``. Bake uniqueness in at signup, not at render.
-  - Same rule applies to hosted endpoint `/avatar/:seed`.
-  - Add JSDoc on `createAvatar(seed)` echoing this.
-  - Follow-up task once docs land: ship `Navii.seed({ id?, email?, name?, createdAt? })` helper that picks the most unique field and hashes a composite — guides callers into pit of success.
-  - _Progress: README "The seed: read this once" section landed (✅/⚠️/❌ table). Still TODO: demo site copy, hosted `/api` JSON + landing page copy, JSDoc on `createAvatar`._
-- [x] `<NaviiGroup seeds={[...]} max={5} />` overlap stack with +N tile — `renderGroup` + `GroupOptions` exported from `@usenavii/core`, covered by `group.test.ts`.
-- [ ] Lazy WebP fallback alongside PNG for smaller bytes
-- [ ] React Native binding (`@usenavii/native`) — same engine, native SVG renderer
-- [ ] CLI: `npx navii alice` → writes SVG to stdout
+- [x] **Demo site** — `navii.uxderrick.com`. Hero, framework-aware playground (7 frameworks × 6 use cases), animated cast grid, group demo, Redoc-style API reference, per-use-case rendered preview component.
+- [x] **Docs** — `navii.uxderrick.com/docs`. Multi-page.
+- [x] **Seed uniqueness guidance** — README ✅/⚠️/❌ table, JSDoc on `createAvatar`, `/api` JSON `seed` block, landing playground bar labeled "user id". Plus `Navii.seed({...})` helper that picks the most-unique field automatically.
+- [x] **`Navii.seed({ id, email, name, createdAt })` helper** — pit-of-success seed composer. Prefers id → email → name+createdAt → name.
+- [x] **`Navii.build({ body, eyes, mouth, ... })` builder API** — direct construction without a seed. For brand mascots, logo marks, designer curation.
+- [x] **`Navii` namespace** — `Navii.{ create, render, select, group, seed, build }` for users who like the dotted style.
+- [x] **`<NaviiGroup>` / `renderGroup`** — horizontal stacks with overlap + `+N` counter tile.
+- [ ] **Avatar builder UI** at `/build` — interactive customizer over `Navii.build()`. Lets users mix-and-match in the browser, copy the resulting URL or `<Navii build={…} />` snippet. v2 differentiator.
+- [ ] Lazy WebP fallback alongside PNG for smaller bytes (esp. mobile)
+- [ ] React Native binding (`@usenavii/native`) — same engine, RN-native SVG renderer
+- [ ] CLI — `npx @usenavii/cli alice > a.svg`, `--build --body tall --eyes star`, `--batch users.json`. Targets: build scripts, CI, Figma imports.
 
 ## Engineering
 
-- [ ] Snapshot test of N seeds — guard against unintended part-pick drift
+- [x] **Snapshot tests** — 12 fixed seeds locked: spec fields, static SVG bytes, animated SVG bytes, group SVG. CI fails on drift. Intentional cast changes refresh via `vitest -u` + major bump.
+- [x] **CI publish workflow** — on `v*` tag: test → docker image to GHCR → npm publish (skip if version already on registry).
 - [ ] Bench: avatars/sec; aim ≥ 50K/s on M1
-- [ ] Strict size budget on `@usenavii/core` (target < 8KB gzipped)
-- [ ] Builder API — programmatic mix-and-match without seed: `Navii.build({body:'tall', eyes:'star'})`
-- [ ] `Navii.seed({ id?, email?, name?, createdAt? })` helper — composes most-unique-available field(s), hashes to stable seed string. Ships after uniqueness guidance doc lands so callers already understand why.
+- [ ] Strict size budget on `@usenavii/core` (target < 8KB gzipped). Wire `size-limit` or `pkg-size` into CI as an assertion.
+
+## Discovery / launch (you-driven, no code)
+
+- [ ] Share — Show HN, Awesome lists, X. Packages + live demo + docs all ready.
+- [ ] Submit to https://github.com/topics/avatar and similar listings.
+- [ ] Demo GIF in repo README + on landing.
