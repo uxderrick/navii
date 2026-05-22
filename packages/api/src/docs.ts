@@ -649,8 +649,21 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
 
     <section>
       <h2 id="rate-limits">Rate limits</h2>
-      <p>Per-IP sliding window on <code>/avatar/*</code>. Default <strong>120 req/minute</strong>; this deployment runs at 600/min. Configurable via <code>RATE_LIMIT_PER_MIN</code> env var when self-hosting. <code>/group</code>, <code>/gallery</code>, <code>/healthz</code> are unlimited.</p>
-      <p>Exceeded → HTTP 429 + <code>retry-after</code> header.</p>
+      <p>Per-IP sliding window. Hosted deployment (<code>navii-api.uxderrick.com</code>):</p>
+      <table class="ref-table">
+        <thead><tr><th>Route</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr><td><code>/avatar/:seed</code> (SVG + PNG)</td><td><strong>600 req/min/IP</strong></td></tr>
+          <tr><td><code>/group</code></td><td>unlimited</td></tr>
+          <tr><td><code>/cast.svg</code></td><td>unlimited</td></tr>
+          <tr><td><code>/build/render</code> (SVG + PNG)</td><td>unlimited</td></tr>
+          <tr><td><code>/builder</code>, <code>/docs</code>, <code>/</code>, <code>/api</code></td><td>unlimited</td></tr>
+          <tr><td><code>/healthz</code>, <code>/gallery</code>, icons</td><td>unlimited</td></tr>
+        </tbody>
+      </table>
+      <p>Why this works: responses ship <code>Cache-Control: public, max-age=31536000, immutable</code>, so browsers + CDNs cache forever per <code>(seed, params)</code>. A user's avatar hits the API once per device, then never again. 1000 users typically ≈ ~15K API requests/month total.</p>
+      <p>Exceeded → HTTP <code>429</code> + <code>Retry-After</code> header (seconds until window resets).</p>
+      <p>Self-hosting? Tune via the <code>RATE_LIMIT_PER_MIN</code> env var (defaults to <code>120</code> when not set). See <a href="/docs/deployment">Deployment</a>.</p>
     </section>
 
     <section>
