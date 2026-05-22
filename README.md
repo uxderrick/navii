@@ -55,26 +55,30 @@ renderAvatar(spec: AvatarSpec, options?: AvatarOptions): string
 
 ### `AvatarOptions`
 
-| Option       | Type                                | Default        |
-| ------------ | ----------------------------------- | -------------- |
-| `size`       | `number` (px)                       | `96`           |
-| `paletteId`  | known palette id (e.g. `'mint'`)    | seed-derived   |
-| `background` | `'none' \| 'solid' \| 'ring'` or `{ color }` | seed-derived   |
-| `title`      | accessible label                    | none           |
+| Option       | Type                                          | Default      |
+| ------------ | --------------------------------------------- | ------------ |
+| `size`       | `number` (px)                                 | `96`         |
+| `paletteId`  | known palette id (e.g. `'mint'`)              | seed-derived |
+| `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`  | seed-derived |
+| `title`      | accessible label                              | none         |
+| `animated`   | `boolean` — idle float, blink, antenna sway, spark pulse, twinkle. Honors `prefers-reduced-motion`. | `false`      |
 
 ## Parts taxonomy
 
 | Part         | Variants                                            |
 | ------------ | --------------------------------------------------- |
-| `palette`    | 16 (indigo, mint, amber, sky, violet, cyan, rose, lime, peach, teal, sand, plum, coral, forest, slate, fuchsia) |
+| `palette`    | 22 (indigo, mint, amber, sky, violet, cyan, rose, lime, peach, teal, sand, plum, coral, forest, slate, fuchsia, terracotta, navy, lavender, charcoal, butter, aqua) |
 | `body`       | orb, tall, squat, pear, pebble                      |
 | `eyes`       | round, wide, squint, wink, sleepy, star             |
 | `mouth`      | smile, grin, open, flat, smirk, awe                 |
 | `antenna`    | none, classic, curl, double, spike                  |
-| `accessory`  | none, blush, freckles, sparkle                      |
+| `accessory`  | none, blush, freckles, sparkle, glasses, eyepatch, mole |
 | `background` | none, solid, ring                                   |
+| `topper`     | none, ears, roundEars, horn, horns, tuft, cap, leaf |
 
-Combinatorial space: 16 × 5 × 6 × 6 × 5 × 4 × 3 = **172,800** distinct avatars.
+Discrete combinatorial space: 22 × 5 × 6 × 6 × 5 × 7 × 3 × 8 = **3,326,400** distinct avatars.
+
+On top, each seed also drives **continuous params** — hue rotation (±30°), body scale (0.92–1.08), eye gap shift (±2), mouth curvature (0.85×–1.15×), and antenna tilt (±8°) — so the effective output space is unbounded while staying fully deterministic.
 
 ## Determinism guarantee
 
