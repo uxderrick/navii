@@ -5,6 +5,7 @@ import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
 import { LruCache } from './middleware/lruCache.js';
 import { log } from './log.js';
 import { landingHtml } from './landing.js';
+import { builderHtml, parseBuildQuery, buildSpecToSvg } from './builder.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 
@@ -216,6 +217,90 @@ export function createApp(options: AppOptions = {}) {
         'cache-control': 'public, max-age=86400',
       },
     });
+  });
+
+  app.get('/build', (c) => {
+    return new Response(builderHtml(), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
+
+  app.get('/build/render', async (c) => {
+    const q: Record<string, string | undefined> = {};
+    for (const k of ['body','palette','background','eyes','mouth','accessory','topper','antenna','hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt']) {
+      const v = c.req.query(k);
+      if (v !== undefined) q[k] = v;
+    }
+    const spec = parseBuildQuery(q);
+    const size = clampInt(c.req.query('size'), 16, 1024, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    const tileBg = c.req.query('tileBg');
+    const wantsPng = /\.png$/i.test(c.req.path);
+
+    const opts: AvatarOptions = { size };
+    if (animated && !wantsPng) opts.animated = true;
+    if (tileBg) opts.tileBg = tileBg;
+
+    const svg = buildSpecToSvg(spec, opts);
+
+    if (wantsPng) {
+      try {
+        const png = await svgToPng(svg, size);
+        return new Response(png as BodyInit, {
+          status: 200,
+          headers: {
+            'content-type': 'image/png',
+            'cache-control': 'public, max-age=31536000, immutable',
+            'access-control-allow-origin': '*',
+          },
+        });
+      } catch (err) {
+        log.error({ err: (err as Error).message }, 'build png raster failed');
+        return c.text(`PNG rasterization unavailable: ${(err as Error).message}`, 501);
+      }
+    }
+
+    return new Response(svg, {
+      status: 200,
+      headers: {
+        'content-type': 'image/svg+xml; charset=utf-8',
+        'cache-control': 'public, max-age=31536000, immutable',
+        'access-control-allow-origin': '*',
+      },
+    });
+  });
+
+  app.get('/build/render.png', async (c) => {
+    // Convenience alias — same as /build/render with `.png` semantics.
+    const q: Record<string, string | undefined> = {};
+    for (const k of ['body','palette','background','eyes','mouth','accessory','topper','antenna','hueShift','bodyScale','eyeGapShift','mouthCurveScale','antennaTilt']) {
+      const v = c.req.query(k);
+      if (v !== undefined) q[k] = v;
+    }
+    const spec = parseBuildQuery(q);
+    const size = clampInt(c.req.query('size'), 16, 1024, 96);
+    const tileBg = c.req.query('tileBg');
+    const opts: AvatarOptions = { size };
+    if (tileBg) opts.tileBg = tileBg;
+    const svg = buildSpecToSvg(spec, opts);
+    try {
+      const png = await svgToPng(svg, size);
+      return new Response(png as BodyInit, {
+        status: 200,
+        headers: {
+          'content-type': 'image/png',
+          'cache-control': 'public, max-age=31536000, immutable',
+          'access-control-allow-origin': '*',
+        },
+      });
+    } catch (err) {
+      log.error({ err: (err as Error).message }, 'build png raster failed');
+      return c.text(`PNG rasterization unavailable: ${(err as Error).message}`, 501);
+    }
   });
 
   app.get('/avatar/:seed{.+}', async (c) => {

@@ -1,0 +1,172 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+    - generic [ref=e7]:
+      - link "home" [ref=e8] [cursor=pointer]:
+        - /url: /
+      - link "docs" [ref=e9] [cursor=pointer]:
+        - /url: /docs
+      - link "github" [ref=e10] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - banner [ref=e11]:
+    - heading "Builder — mix any mascot." [level=1] [ref=e12]:
+      - text: Builder —
+      - emphasis [ref=e13]: mix any mascot.
+    - paragraph [ref=e14]: Pick parts directly. No seed needed. Copy the URL or the React snippet to ship a specific mascot — brand logo, fixed avatar, hero illustration.
+  - generic [ref=e15]:
+    - complementary [ref=e16]:
+      - generic [ref=e17]:
+        - heading "Body & Color" [level=2] [ref=e18]
+        - generic [ref=e20]:
+          - generic [ref=e21]: Body
+          - combobox "Body" [ref=e22] [cursor=pointer]:
+            - option "— random —" [selected]
+            - option "orb"
+            - option "tall"
+            - option "squat"
+            - option "pear"
+            - option "pebble"
+            - option "dumpling"
+            - option "taro"
+            - option "wisp"
+        - generic [ref=e24]:
+          - generic [ref=e25]: Palette
+          - combobox "Palette" [ref=e26] [cursor=pointer]:
+            - option "— first —" [selected]
+            - option "indigo"
+            - option "mint"
+            - option "amber"
+            - option "sky"
+            - option "violet"
+            - option "cyan"
+            - option "rose"
+            - option "lime"
+            - option "peach"
+            - option "teal"
+            - option "sand"
+            - option "plum"
+            - option "coral"
+            - option "forest"
+            - option "slate"
+            - option "fuchsia"
+            - option "terracotta"
+            - option "navy"
+            - option "lavender"
+            - option "charcoal"
+            - option "butter"
+            - option "aqua"
+        - generic [ref=e28]:
+          - generic [ref=e29]: Background
+          - combobox "Background" [ref=e30] [cursor=pointer]:
+            - option "— none —" [selected]
+            - option "none"
+            - option "solid"
+            - option "ring"
+      - generic [ref=e31]:
+        - heading "Face" [level=2] [ref=e32]
+        - generic [ref=e34]:
+          - generic [ref=e35]: Eyes
+          - combobox "Eyes" [ref=e36] [cursor=pointer]:
+            - option "— round —" [selected]
+            - option "round"
+            - option "wide"
+            - option "squint"
+            - option "wink"
+            - option "sleepy"
+            - option "star"
+            - option "heart"
+            - option "oval"
+            - option "dot"
+            - option "cross"
+        - generic [ref=e38]:
+          - generic [ref=e39]: Mouth
+          - combobox "Mouth" [ref=e40] [cursor=pointer]:
+            - option "— smile —" [selected]
+            - option "smile"
+            - option "grin"
+            - option "open"
+            - option "flat"
+            - option "smirk"
+            - option "awe"
+            - option "tongue"
+            - option "tooth"
+            - option "wave"
+            - option "dot"
+        - generic [ref=e42]:
+          - generic [ref=e43]: Accessory
+          - combobox "Accessory" [ref=e44] [cursor=pointer]:
+            - option "— none —" [selected]
+            - option "none"
+            - option "blush"
+            - option "freckles"
+            - option "sparkle"
+            - option "glasses"
+            - option "eyepatch"
+            - option "mole"
+      - generic [ref=e45]:
+        - heading "Toppers" [level=2] [ref=e46]
+        - generic [ref=e48]:
+          - generic [ref=e49]: Topper
+          - combobox "Topper" [ref=e50] [cursor=pointer]:
+            - option "— none —" [selected]
+            - option "none"
+            - option "ears"
+            - option "roundEars"
+            - option "horn"
+            - option "horns"
+            - option "tuft"
+            - option "cap"
+            - option "leaf"
+            - option "headband"
+            - option "halo"
+            - option "crown"
+            - option "antlers"
+        - generic [ref=e52]:
+          - generic [ref=e53]: Antenna
+          - combobox "Antenna" [ref=e54] [cursor=pointer]:
+            - option "— none —" [selected]
+            - option "none"
+            - option "classic"
+            - option "curl"
+            - option "double"
+            - option "spike"
+      - generic [ref=e55]:
+        - heading "Continuous" [level=2] [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e59]: Hue shift
+            - generic [ref=e60]: 0°
+          - slider "Hue shift" [ref=e61]: "0"
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - generic [ref=e64]: Body scale
+            - generic [ref=e65]: 1.00×
+          - slider "Body scale" [ref=e66]: "1"
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - generic [ref=e69]: Eye gap
+            - generic [ref=e70]: "0.0"
+          - slider "Eye gap" [ref=e71]: "0"
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]: Mouth curve
+            - generic [ref=e75]: 1.00×
+          - slider "Mouth curve" [ref=e76]: "1"
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: Antenna tilt
+            - generic [ref=e80]: 0°
+          - slider "Antenna tilt" [ref=e81]: "0"
+      - generic [ref=e82]:
+        - button "Randomize" [ref=e83] [cursor=pointer]
+        - button "Reset" [ref=e84] [cursor=pointer]
+    - generic [ref=e87]:
+      - generic [ref=e88]:
+        - button "URL" [ref=e89] [cursor=pointer]
+        - button "HTML" [ref=e90] [cursor=pointer]
+        - button "React" [ref=e91] [cursor=pointer]
+        - button "TS" [ref=e92] [cursor=pointer]
+        - button "Copy" [ref=e94] [cursor=pointer]
+      - generic [ref=e95]: GET https://navii-api.uxderrick.com/build/render?size=480
