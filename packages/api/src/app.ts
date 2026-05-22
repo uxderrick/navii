@@ -6,6 +6,7 @@ import { LruCache } from './middleware/lruCache.js';
 import { log } from './log.js';
 import { landingHtml } from './landing.js';
 import { ogPng } from './og.js';
+import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
@@ -56,9 +57,29 @@ export function createApp(options: AppOptions = {}) {
         group: '/group?seeds=a,b,c',
         gallery: '/gallery',
         health: '/healthz',
+        docs: '/docs',
       },
     }),
   );
+
+  app.get('/docs', (c) => c.redirect(`/docs/${defaultDocSlug()}`, 302));
+
+  app.get('/docs/:slug', (c) => {
+    const slug = c.req.param('slug');
+    if (!isDocSlug(slug)) {
+      return new Response(docsHtml(slug), {
+        status: 404,
+        headers: { 'content-type': 'text/html; charset=utf-8' },
+      });
+    }
+    return new Response(docsHtml(slug), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
 
   app.get('/group', (c) => {
     const rawSeeds = c.req.query('seeds') ?? '';
