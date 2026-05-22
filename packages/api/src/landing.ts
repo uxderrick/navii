@@ -36,8 +36,8 @@ export function landingHtml(): string {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Navii — every user, a face</title>
-<meta name="description" content="Drop-in deterministic mascot avatars. Pass any string — user id, email, UUID — get back a clean SVG or PNG. Same seed in, same face out, every time." />
+<title>Navii. Every user, a face.</title>
+<meta name="description" content="Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time." />
 <meta name="theme-color" content="#0a0a0b" />
 <meta name="color-scheme" content="dark" />
 <meta name="author" content="uxderrick" />
@@ -56,11 +56,16 @@ export function landingHtml(): string {
 <link rel="preconnect" href="${API_BASE}" crossorigin />
 <link rel="dns-prefetch" href="${API_BASE}" />
 
+<!-- Inter from Google Fonts (variable, optical sizing) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Navii" />
-<meta property="og:title" content="Navii — every user, a face" />
-<meta property="og:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out — every time." />
+<meta property="og:title" content="Navii. Every user, a face." />
+<meta property="og:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out, every time." />
 <meta property="og:url" content="${SITE_BASE}/" />
 <meta property="og:image" content="${OG_IMAGE}" />
 <meta property="og:image:width" content="1200" />
@@ -70,8 +75,8 @@ export function landingHtml(): string {
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Navii — every user, a face" />
-<meta name="twitter:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out — every time." />
+<meta name="twitter:title" content="Navii. Every user, a face." />
+<meta name="twitter:description" content="Drop-in deterministic mascot avatars. Same seed in, same face out, every time." />
 <meta name="twitter:image" content="${OG_IMAGE}" />
 <meta name="twitter:image:alt" content="Five Navii mascot avatars over the line 'Every user, a face.'" />
 
@@ -108,7 +113,9 @@ export function landingHtml(): string {
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
   body {
-    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 16px/1.6 'Inter', 'Inter Display', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -320,6 +327,34 @@ export function landingHtml(): string {
   }
   section .blurb span { color: var(--muted); }
 
+  /* ── cast hierarchy (lead / breakdown / foot) ── */
+  .cast-lead {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 3.6vw, 40px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .cast-num {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+  .cast-breakdown {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: clamp(13.5px, 1.2vw, 15px);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.005em;
+  }
+  .cast-foot {
+    margin: 0 0 28px;
+    color: var(--muted-2);
+    font-size: 13.5px;
+  }
+
   /* ── cast grid ── */
   .cast-grid {
     display: grid;
@@ -521,7 +556,7 @@ export function landingHtml(): string {
 
   <header class="hero">
     <h1>A face for <em>every user.</em></h1>
-    <p class="lede">Drop-in deterministic mascot avatars. Pass any string — user id, email, UUID — get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
+    <p class="lede">Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
   </header>
 
   <div class="playground">
@@ -572,7 +607,9 @@ export function landingHtml(): string {
 
   <section id="cast">
     <h2>the cast</h2>
-    <p class="blurb">22 palettes, 8 bodies, 10 eyes, 10 mouths, 5 antennas, 12 toppers, 7 accessories. <span>Plus continuous tweaks — every seed reads as an individual.</span></p>
+    <p class="cast-lead"><span class="cast-num">22M+</span> distinct faces.</p>
+    <p class="cast-breakdown">22 palettes &times; 8 bodies &times; 10 eyes &times; 10 mouths &times; 5 antennas &times; 12 toppers &times; 7 accessories.</p>
+    <p class="cast-foot">Continuous tweaks (hue, scale, eye gap, mouth curve, antenna tilt) make it effectively unlimited.</p>
     <div class="cast-grid">${tiles}</div>
   </section>
 
@@ -580,7 +617,7 @@ export function landingHtml(): string {
 
   <section id="group">
     <h2>groups</h2>
-    <p class="blurb">For teams, threads, comments — anywhere people gather. <span>Opaque tiles so overlap stays clean.</span></p>
+    <p class="blurb">For teams, threads, comments. Anywhere people gather. <span>Opaque tiles so overlap stays clean.</span></p>
     <div class="group-demo">
       <img src="${groupUrl}" alt="avatar group" />
       <code><span class="verb">GET</span> ${API_BASE}${groupPath}</code>
@@ -683,7 +720,7 @@ export function landingHtml(): string {
       const off = m[0].length - m[1].length;
       overwrite(m.index + off, m.index + off + m[1].length, 'tk-verb');
     }
-    // URLs — overwrite to give structure to URL inside strings
+    // URLs. Overwrite to give structure to URL inside strings
     for (const m of src.matchAll(/https?:\\/\\/[^\\s'"<>)]+/g)) {
       const start = m.index;
       const end = start + m[0].length;
@@ -822,22 +859,3 @@ export function landingHtml(): string {
 </html>`;
 }
 
-function avatarExample(label: string, urlForCode: string, exampleSeed: string, previewQuery: string): string {
-  const previewUrl = `${API_BASE}/avatar/${exampleSeed}?${previewQuery}`;
-  return `<div class="ex">
-    <span class="label">${label}</span>
-    <code><span style="color:var(--accent)">GET</span> ${urlForCode}</code>
-    <span class="preview"><img src="${previewUrl}" alt="" loading="lazy" width="56" height="56" /></span>
-  </div>`;
-}
-
-function groupExample(label: string, urlForCode: string): string {
-  const previewUrl = urlForCode.includes('size=')
-    ? urlForCode.replace(/size=\d+/, 'size=40')
-    : `${urlForCode}&size=40`;
-  return `<div class="ex">
-    <span class="label">${label}</span>
-    <code><span style="color:var(--accent)">GET</span> ${urlForCode}</code>
-    <span class="preview" style="width: 120px; height: 56px;"><img src="${previewUrl}" alt="" loading="lazy" /></span>
-  </div>`;
-}

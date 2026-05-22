@@ -1,0 +1,295 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - img "navii" [ref=e5]
+        - generic [ref=e6]: navii
+      - generic [ref=e7]:
+        - link "cast" [ref=e8] [cursor=pointer]:
+          - /url: "#cast"
+        - link "groups" [ref=e9] [cursor=pointer]:
+          - /url: "#group"
+        - link "docs" [ref=e10] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - link "github" [ref=e11] [cursor=pointer]:
+          - /url: https://github.com/uxderrick/navii
+    - banner [ref=e12]:
+      - heading "A face for every user." [level=1] [ref=e13]:
+        - text: A face for
+        - emphasis [ref=e14]: every user.
+      - paragraph [ref=e15]: Drop-in deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.
+    - generic [ref=e17]:
+      - generic [ref=e23]:
+        - combobox "framework" [ref=e24] [cursor=pointer]:
+          - option "HTML" [selected]
+          - option "React"
+          - option "Next.js"
+          - option "Vue"
+          - option "Svelte"
+          - option "curl"
+          - option "fetch"
+          - option "URL"
+        - button "copy" [ref=e25] [cursor=pointer]
+      - generic [ref=e26]:
+        - generic [ref=e27]: user id
+        - textbox "user id" [ref=e28]:
+          - /placeholder: user.id, email, uuid…
+          - text: alice@example.com
+      - generic [ref=e31]:
+        - generic:
+          - code
+        - textbox [ref=e32]
+      - generic [ref=e33]:
+        - button "profile card" [ref=e34] [cursor=pointer]
+        - button "team list" [ref=e35] [cursor=pointer]
+        - button "comment row" [ref=e36] [cursor=pointer]
+        - button "photo fallback" [ref=e37] [cursor=pointer]
+        - button "group" [ref=e38] [cursor=pointer]
+        - button "just the URL" [ref=e39] [cursor=pointer]
+    - separator [ref=e41]
+    - generic [ref=e42]:
+      - heading "the cast" [level=2] [ref=e43]
+      - paragraph [ref=e44]: 22,176,000 distinct faces from 22 × 8 × 10 × 10 × 5 × 12 × 7 parts. Continuous tweaks make it effectively unbounded.
+      - generic [ref=e45]:
+        - link "aria aria" [ref=e46] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/aria?size=192&animated=1
+          - img "aria" [ref=e47]
+          - generic [ref=e48]: aria
+        - link "milo milo" [ref=e49] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/milo?size=192&animated=1
+          - img "milo" [ref=e50]
+          - generic [ref=e51]: milo
+        - link "nova nova" [ref=e52] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/nova?size=192&animated=1
+          - img "nova" [ref=e53]
+          - generic [ref=e54]: nova
+        - link "kai kai" [ref=e55] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/kai?size=192&animated=1
+          - img "kai" [ref=e56]
+          - generic [ref=e57]: kai
+        - link "sage sage" [ref=e58] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/sage?size=192&animated=1
+          - img "sage" [ref=e59]
+          - generic [ref=e60]: sage
+        - link "eden eden" [ref=e61] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/eden?size=192&animated=1
+          - img "eden" [ref=e62]
+          - generic [ref=e63]: eden
+        - link "luna luna" [ref=e64] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/luna?size=192&animated=1
+          - img "luna" [ref=e65]
+          - generic [ref=e66]: luna
+        - link "rio rio" [ref=e67] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/rio?size=192&animated=1
+          - img "rio" [ref=e68]
+          - generic [ref=e69]: rio
+        - link "pip pip" [ref=e70] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/pip?size=192&animated=1
+          - img "pip" [ref=e71]
+          - generic [ref=e72]: pip
+        - link "wren wren" [ref=e73] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/wren?size=192&animated=1
+          - img "wren" [ref=e74]
+          - generic [ref=e75]: wren
+        - link "zane zane" [ref=e76] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/zane?size=192&animated=1
+          - img "zane" [ref=e77]
+          - generic [ref=e78]: zane
+        - link "iris iris" [ref=e79] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/iris?size=192&animated=1
+          - img "iris" [ref=e80]
+          - generic [ref=e81]: iris
+        - link "fox fox" [ref=e82] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/fox?size=192&animated=1
+          - img "fox" [ref=e83]
+          - generic [ref=e84]: fox
+        - link "jin jin" [ref=e85] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/jin?size=192&animated=1
+          - img "jin" [ref=e86]
+          - generic [ref=e87]: jin
+        - link "leo leo" [ref=e88] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/leo?size=192&animated=1
+          - img "leo" [ref=e89]
+          - generic [ref=e90]: leo
+        - link "pax pax" [ref=e91] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/pax?size=192&animated=1
+          - img "pax" [ref=e92]
+          - generic [ref=e93]: pax
+        - link "roo roo" [ref=e94] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/roo?size=192&animated=1
+          - img "roo" [ref=e95]
+          - generic [ref=e96]: roo
+        - link "tava tava" [ref=e97] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/tava?size=192&animated=1
+          - img "tava" [ref=e98]
+          - generic [ref=e99]: tava
+        - link "yumi yumi" [ref=e100] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/yumi?size=192&animated=1
+          - img "yumi" [ref=e101]
+          - generic [ref=e102]: yumi
+        - link "cass cass" [ref=e103] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/cass?size=192&animated=1
+          - img "cass" [ref=e104]
+          - generic [ref=e105]: cass
+        - link "odi odi" [ref=e106] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/odi?size=192&animated=1
+          - img "odi" [ref=e107]
+          - generic [ref=e108]: odi
+        - link "hex hex" [ref=e109] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/hex?size=192&animated=1
+          - img "hex" [ref=e110]
+          - generic [ref=e111]: hex
+        - link "fae fae" [ref=e112] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/fae?size=192&animated=1
+          - img "fae" [ref=e113]
+          - generic [ref=e114]: fae
+        - link "rune rune" [ref=e115] [cursor=pointer]:
+          - /url: https://navii-api.uxderrick.com/avatar/rune?size=192&animated=1
+          - img "rune" [ref=e116]
+          - generic [ref=e117]: rune
+    - separator [ref=e118]
+    - generic [ref=e119]:
+      - heading "groups" [level=2] [ref=e120]
+      - paragraph [ref=e121]: For teams, threads, comments. Anywhere people gather. Opaque tiles so overlap stays clean.
+      - generic [ref=e122]:
+        - img "avatar group" [ref=e123]
+        - code [ref=e124]: GET https://navii-api.uxderrick.com/group?seeds=aria,milo,nova,kai,sage&size=72&overlap=0.32
+    - separator [ref=e125]
+    - generic [ref=e126]:
+      - heading "docs" [level=2] [ref=e127]
+      - paragraph [ref=e128]:
+        - text: Full reference moved to
+        - link "/docs" [ref=e129] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - text: . Quickstart, concepts, parts catalog, HTTP API, SDK, deployment.
+      - generic [ref=e130]:
+        - link "Quickstart Install + first avatar in 60 seconds." [ref=e131] [cursor=pointer]:
+          - /url: /docs/quickstart
+          - heading "Quickstart" [level=3] [ref=e132]
+          - paragraph [ref=e133]: Install + first avatar in 60 seconds.
+        - link "Concepts Seeds, determinism, parts overview." [ref=e134] [cursor=pointer]:
+          - /url: /docs/concepts
+          - heading "Concepts" [level=3] [ref=e135]
+          - paragraph [ref=e136]: Seeds, determinism, parts overview.
+        - link "Parts catalog Every variant value, rendered." [ref=e137] [cursor=pointer]:
+          - /url: /docs/parts
+          - heading "Parts catalog" [level=3] [ref=e138]
+          - paragraph [ref=e139]: Every variant value, rendered.
+        - link "HTTP API Endpoints, params, errors, headers." [ref=e140] [cursor=pointer]:
+          - /url: /docs/http-api
+          - heading "HTTP API" [level=3] [ref=e141]
+          - paragraph [ref=e142]: Endpoints, params, errors, headers.
+        - link "@navii/core Functions, types, composition." [ref=e143] [cursor=pointer]:
+          - /url: /docs/sdk-core
+          - heading "@navii/core" [level=3] [ref=e144]
+          - paragraph [ref=e145]: Functions, types, composition.
+        - link "@navii/react Component props + memoization." [ref=e146] [cursor=pointer]:
+          - /url: /docs/sdk-react
+          - heading "@navii/react" [level=3] [ref=e147]
+          - paragraph [ref=e148]: Component props + memoization.
+    - separator [ref=e149]
+    - contentinfo [ref=e150]:
+      - generic [ref=e151]: navii · deterministic avatars · open source · MIT
+      - generic [ref=e152]:
+        - link "github" [ref=e153] [cursor=pointer]:
+          - /url: https://github.com/uxderrick/navii
+        - text: ·
+        - link "/api" [ref=e154] [cursor=pointer]:
+          - /url: /api
+  - text: \n\n
+  - generic [ref=e155]:
+    - text: \n
+    - generic [ref=e156]:
+      - text: \n
+      - strong [ref=e157]: "{user.name}"
+      - text: \n
+  - text: "\",\"curl\":\"curl -o avatar.png \\\\\\n 'https://navii-api.uxderrick.com/avatar/__SEED__?size=256&tileBg=auto'\",\"fetch\":\"const userId = '__SEED__';\\nconst res = await fetch(`https://navii-api.uxderrick.com/avatar/${encodeURIComponent(userId)}?size=96&tileBg=auto`);\\nconst svg = await res.text();\",\"url\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=96&tileBg=auto\"},\"team\":{\"html\":\""
+  - list [ref=e158]:
+    - text: \n
+    - listitem [ref=e159]:
+      - img "\\\"__SEED__\\\"" [ref=e160]
+    - text: \n
+    - listitem [ref=e161]:
+      - img "\\\"bob\\\"" [ref=e162]
+    - text: \n
+    - listitem [ref=e163]:
+      - img "\\\"carol\\\"" [ref=e164]
+    - text: \n
+    - listitem [ref=e165]:
+      - img "\\\"dave\\\"" [ref=e166]
+    - text: \n
+  - text: "\",\"react\":\"const team = [\\n { id: '__SEED__', name: 'Alice' },\\n { id: 'bob', name: 'Bob' },\\n { id: 'carol', name: 'Carol' },\\n { id: 'dave', name: 'Dave' },\\n];\\n\\nexport function Team() {\\n return (\\n"
+  - list [ref=e167]:
+    - text: "\\n {team.map(u => (\\n"
+    - listitem [ref=e168]: \n \n
+    - text: "\\n ))}\\n"
+  - text: "\\n );\\n}\",\"next\":\"import Image from 'next/image';\\n\\nconst team = [\\n { id: '__SEED__', name: 'Alice' },\\n { id: 'bob', name: 'Bob' },\\n { id: 'carol', name: 'Carol' },\\n];\\n\\nexport function Team() {\\n return (\\n"
+  - list [ref=e169]:
+    - text: "\\n {team.map(u => (\\n"
+    - listitem [ref=e170]: \n \n
+    - text: "\\n ))}\\n"
+  - text: "\\n );\\n}\",\"vue\":\" \\n\\n \",\"svelte\":\" \\n\\n"
+  - list [ref=e171]:
+    - text: "\\n {#each team as u (u.id)}\\n"
+    - listitem [ref=e172]: \n \n
+    - text: "\\n {/each}\\n"
+  - text: "\",\"curl\":\"# fetch each teammate in parallel\\nfor id in '__SEED__' bob carol dave; do\\n curl -s -o \\\"avatars/$id.svg\\\" \\\\\\n \\\"https://navii-api.uxderrick.com/avatar/$id?size=48\\\"\\ndone\",\"fetch\":\"const team = ['__SEED__', 'bob', 'carol', 'dave'];\\nconst svgs = await Promise.all(team.map(id =>\\n fetch(`https://navii-api.uxderrick.com/avatar/${encodeURIComponent(id)}?size=48`).then(r => r.text())\\n));\",\"url\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=48\"},\"comment\":{\"html\":\""
+  - article [ref=e173]:
+    - text: \n
+    - img "\\\"__SEED__\\\"" [ref=e174]
+    - text: \n
+    - generic [ref=e175]:
+      - text: \n
+      - strong [ref=e176]: __SEED__
+      - text: \n
+      - paragraph [ref=e177]: Anyone seen the v0.7 deploy?
+      - text: \n
+    - text: \n
+  - text: "\",\"react\":\"export function Comment({ author, body }) {\\n return (\\n"
+  - article [ref=e178]:
+    - text: \n
+    - generic [ref=e179]:
+      - text: \n
+      - generic [ref=e180]:
+        - text: \n
+        - strong [ref=e181]: "{author.name}"
+        - text: \n
+        - paragraph [ref=e182]: "{body}"
+        - text: \n
+      - text: \n
+  - text: "\\n );\\n}\",\"next\":\"import Image from 'next/image';\\n\\nexport function Comment({ author, body }) {\\n return (\\n"
+  - article [ref=e183]:
+    - text: \n
+    - generic [ref=e184]:
+      - text: \n
+      - generic [ref=e185]:
+        - text: \n
+        - strong [ref=e186]: "{author.name}"
+        - text: \n
+        - paragraph [ref=e187]: "{body}"
+        - text: \n
+      - text: \n
+  - text: "\\n );\\n}\",\"vue\":\" \",\"svelte\":\" \\n\\n"
+  - article [ref=e188]:
+    - text: \n
+    - generic [ref=e189]:
+      - text: \n
+      - strong [ref=e190]: "{author.name}"
+      - text: \n
+      - paragraph [ref=e191]: "{body}"
+      - text: \n
+  - text: "\",\"curl\":\"curl -o avatar.svg 'https://navii-api.uxderrick.com/avatar/__SEED__?size=40'\",\"fetch\":\"const svg = await fetch('https://navii-api.uxderrick.com/avatar/__SEED__?size=40').then(r => r.text());\",\"url\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=40\"},\"fallback\":{\"html\":\"\\n"
+  - generic [ref=e192]:
+    - text: "\",\"react\":\"export function Avatar({ user }) {\\n const navii = `https://navii-api.uxderrick.com/avatar/${encodeURIComponent(user.id)}?size=64&tileBg=auto`;\\n return (\\n"
+    - generic [ref=e193]:
+      - text: "\\n );\\n}\",\"next\":\"import Image from 'next/image';\\n\\nexport function Avatar({ user }) {\\n const navii = `https://navii-api.uxderrick.com/avatar/${encodeURIComponent(user.id)}?size=64&tileBg=auto`;\\n return (\\n"
+      - generic [ref=e194]:
+        - text: "\\n );\\n}\",\"vue\":\" \",\"svelte\":\" \\n\\n"
+        - 'img "{user.name}" [ref=e195]'
+        - text: "\",\"curl\":\"curl -fsS -o avatar.svg 'https://navii-api.uxderrick.com/avatar/__SEED__?size=64&tileBg=auto' || echo 'using local fallback'\",\"fetch\":\"const url = user.photoUrl ?? `https://navii-api.uxderrick.com/avatar/${encodeURIComponent(user.id)}?size=64&tileBg=auto`;\\nconst res = await fetch(url);\",\"url\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=64&tileBg=auto\"},\"group\":{\"html\":\""
+        - img "\\\"team\\\"" [ref=e196]
+        - text: "\",\"react\":\"function TeamStack({ members }) {\\n const ids = members.map(m => m.id).join(\\\",\\\");\\n const url = `https://navii-api.uxderrick.com/group?seeds=${ids}&size=64&overlap=0.32`;\\n return"
+        - 'img "{`${members.length}" [ref=e197]'
+        - text: ";\\n}\",\"next\":\"import Image from 'next/image';\\n\\nexport function TeamStack({ members }) {\\n const ids = members.map(m => m.id).join(\\\",\\\");\\n const url = `https://navii-api.uxderrick.com/group?seeds=${ids}&size=64&overlap=0.32`;\\n return"
+        - img "\\\"team\\\"" [ref=e198]
+        - text: ";\\n}\",\"vue\":\" \\n\\n \",\"svelte\":\" \\n\\n m.id).join(\\\",\\\")}&size=64&overlap=0.32`}\\n alt=\\\"team\\\"\\n/>\",\"curl\":\"curl -o team.svg 'https://navii-api.uxderrick.com/group?seeds=__SEED__,bob,carol,dave,eve&size=64&overlap=0.32'\",\"fetch\":\"const ids = members.map(m => m.id).join(\\\",\\\");\\nconst svg = await fetch(`https://navii-api.uxderrick.com/group?seeds=${ids}&size=64&overlap=0.32`).then(r => r.text());\",\"url\":\"GET https://navii-api.uxderrick.com/group?seeds=__SEED__,bob,carol,dave,eve&size=64&overlap=0.32\"},\"url\":{\"curl\":\"curl 'https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1'\",\"fetch\":\"await fetch('https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1');\",\"url\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1\",\"html\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1\",\"react\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1\",\"next\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1\",\"vue\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1\",\"svelte\":\"GET https://navii-api.uxderrick.com/avatar/__SEED__?size=320&animated=1\"}}; const PRIMARY_URL_RE = /https?:\\/\\/[^\\s'\"<>)]+/; function renderSnippet() { const uc = TEMPLATES[state.usecase] || TEMPLATES.profile; const tmpl = uc[state.framework] || uc.html || uc.url || ''; return tmpl.split('__SEED__').join(state.seed || 'alice@example.com'); } function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); } function span(cls, text) { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = text; return s; } /** * Position-based tokenizer. Each pattern stamps a class on character * positions; later passes only fill in unmarked positions. URLs override * string marks so query params get colored inside string literals. */ function tokenize(src) { const N = src.length; const marks = new Array(N).fill(null); const stamp = function (start, end, cls) { for (let i = start; i < end; i++) if (marks[i] === null) marks[i] = cls; }; const overwrite = function (start, end, cls) { for (let i = start; i < end; i++) marks[i] = cls; }; // Strings (incl. quotes) for (const m of src.matchAll(/'[^'\\n]*'|\"[^\"\\n]*\"|`[^`]*`/g)) { stamp(m.index, m.index + m[0].length, 'tk-str'); } // Comments (// or #) for (const m of src.matchAll(/(\\/\\/[^\\n]*|#[^\\n]*)/g)) { stamp(m.index, m.index + m[0].length, 'tk-comment'); } // HTML/JSX tags for (const m of src.matchAll(/<\\/?[a-zA-Z][\\w-]*|\\/>/g)) { stamp(m.index, m.index + m[0].length, 'tk-tag'); } // Attribute names (word followed by =, when not preceded by .) for (const m of src.matchAll(/\\b([a-zA-Z:][a-zA-Z\\d:_-]*)(?==)/g)) { const prev = src[m.index - 1]; if (prev === '.' || prev === '$') continue; stamp(m.index, m.index + m[1].length, 'tk-attr'); } // JS keywords for (const m of src.matchAll(/\\b(import|from|const|let|var|return|await|async|new|function|of|in|true|false|null)\\b/g)) { stamp(m.index, m.index + m[0].length, 'tk-keyword'); } // HTTP verbs at start of line for (const m of src.matchAll(/(?:^|\\n)(GET|POST|PUT|PATCH|DELETE)\\b/g)) { const off = m[0].length - m[1].length; overwrite(m.index + off, m.index + off + m[1].length, 'tk-verb'); } // URLs. Overwrite to give structure to URL inside strings for (const m of src.matchAll(/https?:\\/\\/[^\\s'\"<>)]+/g)) { const start = m.index; const end = start + m[0].length; // host portion: protocol + // + domain (until next /) const protoEnd = m[0].indexOf('//') + 2; const slashAfter = m[0].indexOf('/', protoEnd); const hostEnd = slashAfter < 0 ? end : start + slashAfter; overwrite(start, hostEnd, 'tk-host'); // path until ? or end const qIdx = m[0].indexOf('?'); const pathEndAbs = qIdx < 0 ? end : start + qIdx; overwrite(hostEnd, pathEndAbs, 'tk-path'); // query params if (qIdx >= 0) { for (const q of m[0].slice(qIdx).matchAll(/([?&])([a-zA-Z][\\w-]*)(=)([^&\\s'\"<>)]*)/g)) { let cur = start + qIdx + q.index; overwrite(cur, cur + q[1].length, 'tk-punct'); cur += q[1].length; overwrite(cur, cur + q[2].length, 'tk-key'); cur += q[2].length; overwrite(cur, cur + q[3].length, 'tk-punct'); cur += q[3].length; const isNum = /^-?\\d+(\\.\\d+)?$/.test(q[4]); overwrite(cur, cur + q[4].length, isNum ? 'tk-num' : 'tk-val'); } } } const out = []; let i = 0; while (i < N) { const cls = marks[i]; let j = i + 1; while (j < N && marks[j] === cls) j++; out.push({ cls: cls, text: src.slice(i, j) }); i = j; } return out; } function paintCode() { const src = input.value; clear(display); for (const tok of tokenize(src)) { if (tok.cls) display.appendChild(span(tok.cls, tok.text)); else display.appendChild(document.createTextNode(tok.text)); } clear(gutter); const lines = src.split('\\n').length; for (let i = 1; i <= lines; i++) { const b = document.createElement('b'); b.textContent = String(i); gutter.appendChild(b); } } function findFirstUrl(text) { const m = text.match(/https?:\\/\\/[^\\s'\"<>)]+/); return m ? m[0] : null; } function refreshPreview() { const url = findFirstUrl(input.value); if (!url) { wrap.classList.add('error'); return; } wrap.classList.remove('error'); try { const u = new URL(url); const isGroup = u.pathname === '/group'; if (!isGroup && !u.searchParams.has('size')) u.searchParams.set('size', '320'); live.src = u.toString(); } catch { live.src = url; } } function rebuild() { input.value = renderSnippet(); paintCode(); refreshPreview(); } function onInput() { paintCode(); clearTimeout(t); t = setTimeout(refreshPreview, 140); } input.addEventListener('input', onInput); input.addEventListener('scroll', function () { display.parentElement.scrollTop = input.scrollTop; gutter.scrollTop = input.scrollTop; }); input.addEventListener('keydown', function (e) { if (e.key === 'Tab') { e.preventDefault(); const s = input.selectionStart, e2 = input.selectionEnd; input.value = input.value.slice(0, s) + ' ' + input.value.slice(e2); input.selectionStart = input.selectionEnd = s + 2; onInput(); } }); usecases.addEventListener('click', function (ev) { const btn = ev.target.closest('button.preset'); if (!btn) return; const key = btn.getAttribute('data-usecase'); if (!key || !TEMPLATES[key]) return; state.usecase = key; document.querySelectorAll('.preset').forEach(b => b.classList.remove('active')); btn.classList.add('active'); rebuild(); }); frameworkSel.addEventListener('change', function () { state.framework = frameworkSel.value; rebuild(); }); let seedT = null; seedInput.addEventListener('input', function () { state.seed = seedInput.value.trim() || 'alice@example.com'; clearTimeout(seedT); seedT = setTimeout(rebuild, 140); }); copyBtn.addEventListener('click', async function () { try { await navigator.clipboard.writeText(input.value); copyBtn.textContent = 'copied'; copyBtn.classList.add('ok'); setTimeout(function () { copyBtn.textContent = 'copy'; copyBtn.classList.remove('ok'); }, 1400); } catch {} }); rebuild(); })();"

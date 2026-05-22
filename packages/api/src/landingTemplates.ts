@@ -423,4 +423,8 @@ export const TEMPLATES: TemplateMap = {
   },
 };
 
-export const TEMPLATES_JSON = JSON.stringify(TEMPLATES);
+// Escape `<` to its unicode form so substrings like "</script>" inside the
+// serialized JSON do not prematurely terminate the host <script> block when
+// this constant is inlined into landing.html. JSON.parse on the browser side
+// (or JS evaluation as an object literal) restores the original characters.
+export const TEMPLATES_JSON = JSON.stringify(TEMPLATES).replace(/</g, '\\u003c');
