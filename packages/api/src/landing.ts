@@ -203,30 +203,6 @@ export function landingHtml(): string {
   .editor-head .copy:hover { color: var(--ink); border-color: var(--muted-2); }
   .editor-head .copy.ok { color: var(--good); border-color: var(--good); }
 
-  .seed-bar {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px;
-    background: var(--bg-2);
-    border-bottom: 1px solid var(--line);
-  }
-  .seed-bar label {
-    color: var(--muted-2);
-    font: 11.5px ui-monospace, SFMono-Regular, Menlo, monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
-  .seed-bar input {
-    flex: 1; min-width: 0;
-    background: transparent;
-    border: 0;
-    outline: none;
-    color: var(--accent);
-    font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace;
-    padding: 4px 0;
-  }
-  .seed-bar input::placeholder { color: #52525b; }
-
   .editor-body { position: relative; display: grid; grid-template-columns: 48px 1fr; flex: 1; min-height: 240px; }
   .gutter {
     background: var(--bg-3);
@@ -389,7 +365,28 @@ export function landingHtml(): string {
   }
   .group-demo code .verb { color: var(--accent); }
 
-  /* ── api reference ── */
+  /* ── docs cards (landing pointer) ── */
+  .docs-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .docs-cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .docs-cards { grid-template-columns: 1fr; } }
+  .doc-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: border-color 0.18s ease, transform 0.18s ease;
+    display: block;
+    color: var(--ink);
+  }
+  .doc-card:hover { border-color: var(--accent); transform: translateY(-2px); color: var(--ink); }
+  .doc-card h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; }
+  .doc-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  /* ── api reference (legacy, unused; retained for safety) ── */
   .ref-endpoint {
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -510,7 +507,7 @@ export function landingHtml(): string {
     <div class="links">
       <a href="#cast">cast</a>
       <a href="#group">groups</a>
-      <a href="#reference">api</a>
+      <a href="/docs/quickstart">docs</a>
       <a href="https://github.com/uxderrick/navii">github</a>
     </div>
   </nav>
@@ -538,10 +535,6 @@ export function landingHtml(): string {
           <button class="copy" id="copy-btn" type="button">copy</button>
         </div>
       </div>
-      <div class="seed-bar">
-        <label for="seed-input">user id</label>
-        <input id="seed-input" type="text" value="alice@example.com" autocomplete="off" spellcheck="false" placeholder="user.id, email, uuid…" />
-      </div>
       <div class="editor-body">
         <div class="gutter" id="gutter"></div>
         <div class="code-area">
@@ -549,13 +542,14 @@ export function landingHtml(): string {
           <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="soft"></textarea>
         </div>
       </div>
-      <div class="editor-foot" id="usecases">
-        <button class="preset active" data-usecase="profile">profile card</button>
-        <button class="preset" data-usecase="team">team list</button>
-        <button class="preset" data-usecase="comment">comment row</button>
-        <button class="preset" data-usecase="fallback">photo fallback</button>
-        <button class="preset" data-usecase="group">group</button>
-        <button class="preset" data-usecase="url">just the URL</button>
+      <div class="editor-foot" id="presets">
+        <button class="preset" data-preset="basic">basic</button>
+        <button class="preset active" data-preset="palette">palette</button>
+        <button class="preset" data-preset="animated">animated</button>
+        <button class="preset" data-preset="tile">filled tile</button>
+        <button class="preset" data-preset="dark">dark tile</button>
+        <button class="preset" data-preset="png">PNG raster</button>
+        <button class="preset" data-preset="group">group</button>
       </div>
     </div>
 
@@ -586,118 +580,17 @@ export function landingHtml(): string {
   <hr class="rule" />
 
   <section id="reference">
-    <h2>api reference</h2>
-    <p class="blurb">No SDK, no auth, public CORS. <span>All endpoints return cacheable image content with 1-year <code>immutable</code> headers (HTML pages cache 5 min).</span></p>
+    <h2>docs</h2>
+    <p class="blurb">Full reference moved to <a href="/docs/quickstart" style="color:var(--accent)">/docs</a>. <span>Quickstart, concepts, parts catalog, HTTP API, SDK, deployment.</span></p>
 
-    <!-- /avatar/:seed -->
-    <article class="ref-endpoint">
-      <h3><span class="verb">GET</span> <span class="path">/avatar/:seed[.svg|.png]</span></h3>
-      <p class="desc">Returns a deterministic mascot avatar for the given seed. Same seed → same avatar, byte-for-byte. Append <code>.png</code> to the seed to receive a rasterized PNG instead of SVG.</p>
-
-      <div class="params-list">
-        <h4>path</h4>
-        <dl>
-          <dt>:seed</dt><dd class="type">string</dd><dd class="desc">Any unique identifier. Use a stable user id, UUID, or email. Avoid display names — collisions cause duplicate avatars.</dd>
-        </dl>
-
-        <h4>query</h4>
-        <dl>
-          <dt>size</dt>      <dd class="type">number</dd>  <dd class="desc">Output size in px. Default 96. Range 16–1024.</dd>
-          <dt>palette</dt>   <dd class="type">enum</dd>    <dd class="desc">Force a color family. indigo · mint · amber · sky · violet · cyan · rose · lime · peach · teal · sand · plum · coral · forest · slate · fuchsia · terracotta · navy · lavender · charcoal · butter · aqua</dd>
-          <dt>background</dt><dd class="type">enum</dd>    <dd class="desc">Scene fill. <code>none</code> · <code>solid</code> · <code>ring</code>. Default = seed-derived.</dd>
-          <dt>tileBg</dt>    <dd class="type">color</dd>   <dd class="desc">Opaque circular tile behind avatar. Any CSS color, e.g. <code>%23ffffff</code> (URL-encoded <code>#fff</code>), or <code>auto</code> to use the palette accent.</dd>
-          <dt>title</dt>     <dd class="type">string</dd>  <dd class="desc">Accessible label. Adds <code>role="img"</code> + <code>aria-label</code>.</dd>
-          <dt>animated</dt>  <dd class="type">0 | 1</dd>   <dd class="desc">Opt-in idle motion (float, blink, sway, twinkle). SVG only; PNG ignores. Respects <code>prefers-reduced-motion</code>.</dd>
-        </dl>
-      </div>
-
-      <div class="examples">
-        <h4>examples</h4>
-        ${avatarExample('basic',          \`${API_BASE}/avatar/alice\`,                                       'alice', 'size=64')}
-        ${avatarExample('animated',       \`${API_BASE}/avatar/alice?animated=1\`,                            'alice', 'size=64&animated=1')}
-        ${avatarExample('palette: violet', \`${API_BASE}/avatar/alice?palette=violet\`,                       'alice', 'size=64&palette=violet')}
-        ${avatarExample('filled tile (white)', \`${API_BASE}/avatar/alice?tileBg=%23ffffff\`,                  'alice', 'size=64&tileBg=%23ffffff')}
-        ${avatarExample('dark tile',       \`${API_BASE}/avatar/alice?tileBg=%230b0b0c\`,                      'alice', 'size=64&tileBg=%230b0b0c')}
-        ${avatarExample('with ring bg',    \`${API_BASE}/avatar/alice?background=ring\`,                       'alice', 'size=64&background=ring')}
-        ${avatarExample('PNG raster',      \`${API_BASE}/avatar/alice.png?size=256\`,                          'alice.png', 'size=64')}
-        ${avatarExample('big PNG',         \`${API_BASE}/avatar/alice.png?size=512&tileBg=auto\`,              'alice.png', 'size=64&tileBg=auto')}
-      </div>
-    </article>
-
-    <!-- /group -->
-    <article class="ref-endpoint">
-      <h3><span class="verb">GET</span> <span class="path">/group</span></h3>
-      <p class="desc">Renders multiple seeded avatars as a single horizontally-stacked SVG with optional overlap and a <code>+N</code> counter tile for overflow.</p>
-
-      <div class="params-list">
-        <h4>query</h4>
-        <dl>
-          <dt>seeds</dt>   <dd class="type">csv</dd>    <dd class="desc">Comma-separated list of seeds. Up to 50.</dd>
-          <dt>size</dt>    <dd class="type">number</dd> <dd class="desc">Per-tile size in px. Default 64. Range 16–256.</dd>
-          <dt>overlap</dt> <dd class="type">number</dd> <dd class="desc">Fraction each tile overlaps the previous. 0 = no overlap, 0.7 = heavy stack. Default 0.3.</dd>
-          <dt>max</dt>     <dd class="type">number</dd> <dd class="desc">Max tiles to render. Extra seeds collapse into a <code>+N</code> tile. Default = all.</dd>
-          <dt>ring</dt>    <dd class="type">color</dd>  <dd class="desc">Border color around each tile. Default white.</dd>
-          <dt>tileBg</dt>  <dd class="type">color</dd>  <dd class="desc">Opaque fill behind each avatar (prevents overlap show-through). Default white.</dd>
-          <dt>animated</dt><dd class="type">0 | 1</dd>  <dd class="desc">Per-avatar animation in the group.</dd>
-        </dl>
-      </div>
-
-      <div class="examples">
-        <h4>examples</h4>
-        ${groupExample('basic',    \`${API_BASE}/group?seeds=alice,bob,carol\`)}
-        ${groupExample('overlap',  \`${API_BASE}/group?seeds=alice,bob,carol,dave,eve&size=64&overlap=0.45\`)}
-        ${groupExample('with +N',  \`${API_BASE}/group?seeds=alice,bob,carol,dave,eve,frank,grace&size=56&max=4\`)}
-        ${groupExample('animated', \`${API_BASE}/group?seeds=alice,bob,carol,dave&size=72&animated=1\`)}
-      </div>
-    </article>
-
-    <!-- /gallery, /healthz, /api -->
-    <article class="ref-endpoint">
-      <h3><span class="verb">GET</span> <span class="path">/gallery</span></h3>
-      <p class="desc">Visual debug page — N seeded avatars in a grid. For browsing the cast, not for production embedding.</p>
-      <div class="params-list">
-        <h4>query</h4>
-        <dl>
-          <dt>count</dt>    <dd class="type">number</dd> <dd class="desc">How many tiles (1–500). Default 96.</dd>
-          <dt>size</dt>     <dd class="type">number</dd> <dd class="desc">Per-tile size. Default 96.</dd>
-          <dt>prefix</dt>   <dd class="type">string</dd> <dd class="desc">Seed prefix. Default <code>user</code>, so seeds become <code>user-0</code>, <code>user-1</code>, …</dd>
-          <dt>animated</dt> <dd class="type">0 | 1</dd>  <dd class="desc">Animate each tile.</dd>
-        </dl>
-      </div>
-    </article>
-
-    <article class="ref-endpoint">
-      <h3><span class="verb">GET</span> <span class="path">/healthz</span></h3>
-      <p class="desc">Liveness probe. Returns <code>{"ok":true,"pngCacheSize":N}</code>.</p>
-    </article>
-
-    <article class="ref-endpoint">
-      <h3><span class="verb">GET</span> <span class="path">/api</span></h3>
-      <p class="desc">Service metadata as JSON. Useful for clients that want to discover the endpoint surface programmatically.</p>
-    </article>
-
-    <article class="ref-endpoint">
-      <h3>headers</h3>
-      <p class="desc">All image responses set:</p>
-      <div class="params-list">
-        <dl>
-          <dt>cache-control</dt>          <dd class="type"></dd> <dd class="desc"><code>public, max-age=31536000, immutable</code> — safe to cache forever (seed + params fully determine the bytes).</dd>
-          <dt>access-control-allow-origin</dt><dd class="type"></dd><dd class="desc"><code>*</code> — embed anywhere.</dd>
-          <dt>content-type</dt>           <dd class="type"></dd> <dd class="desc"><code>image/svg+xml; charset=utf-8</code> for SVG, <code>image/png</code> for PNG.</dd>
-        </dl>
-      </div>
-    </article>
-
-    <article class="ref-endpoint">
-      <h3>rate limits</h3>
-      <p class="desc">Per-IP sliding window: 600 requests / minute on <code>/avatar/*</code>. Exceeds → HTTP 429 + <code>Retry-After</code> header. <code>/group</code>, <code>/gallery</code>, <code>/healthz</code> are unlimited.</p>
-    </article>
-
-    <article class="ref-endpoint">
-      <h3>determinism guarantee</h3>
-      <p class="desc">Same seed + same query params → byte-identical response. Forever. Safe to cache, safe to mirror, safe to depend on.</p>
-    </article>
-
+    <div class="docs-cards">
+      <a class="doc-card" href="/docs/quickstart"><h3>Quickstart</h3><p>Install + first avatar in 60 seconds.</p></a>
+      <a class="doc-card" href="/docs/concepts"><h3>Concepts</h3><p>Seeds, determinism, parts overview.</p></a>
+      <a class="doc-card" href="/docs/parts"><h3>Parts catalog</h3><p>Every variant value, rendered.</p></a>
+      <a class="doc-card" href="/docs/http-api"><h3>HTTP API</h3><p>Endpoints, params, errors, headers.</p></a>
+      <a class="doc-card" href="/docs/sdk-core"><h3>@navii/core</h3><p>Functions, types, composition.</p></a>
+      <a class="doc-card" href="/docs/sdk-react"><h3>@navii/react</h3><p>Component props + memoization.</p></a>
+    </div>
   </section>
 
   <hr class="rule" />
@@ -719,348 +612,62 @@ export function landingHtml(): string {
   const live    = document.getElementById('live');
   const wrap    = document.getElementById('preview-wrap');
   const copyBtn = document.getElementById('copy-btn');
-  const usecases = document.getElementById('usecases');
-  const seedInput = document.getElementById('seed-input');
-  const frameworkSel = document.getElementById('framework-select');
+  const presets = document.getElementById('presets');
   let t = null;
 
-  const state = { framework: 'html', usecase: 'profile', seed: 'alice@example.com' };
+  const frameworkSel = document.getElementById('framework-select');
+  const state = { framework: 'html', preset: 'palette' };
 
-  // Templates use the token <$> wherever they want a literal "$" in the
-  // emitted code (typically the start of a JS template-literal interpolation
-  // such as <$>{user.id}). A final .replace() converts the token before the
-  // snippet is shown. This avoids the outer TS template literal trying to
-  // interpret runtime interpolations as compile-time ones.
-  const DOLLAR = '<' + '$' + '>';
-  function emit(s) { return s.split(DOLLAR).join('$'); }
+  const PRESETS = {
+    basic:    { seed: 'alice@example.com', size: 320, params: {} },
+    animated: { seed: 'alice@example.com', size: 320, params: { animated: '1' } },
+    palette:  { seed: 'alice@example.com', size: 320, params: { palette: 'violet', animated: '1' } },
+    tile:     { seed: 'alice@example.com', size: 320, params: { tileBg: '#ffffff', animated: '1' } },
+    dark:     { seed: 'alice@example.com', size: 320, params: { tileBg: '#0b0b0c', animated: '1' } },
+    png:      { seed: 'alice@example.com', size: 320, ext: '.png', params: { tileBg: 'auto' } },
+    group:    { group: ['alice','bob','carol','dave','eve'], size: 80, params: { overlap: '0.32' } }
+  };
 
-  function avatarUrl(seed, opts) {
+  function buildUrl(p) {
     const u = new URL(API_BASE);
-    u.pathname = '/avatar/' + encodeURIComponent(seed);
-    for (const [k, v] of Object.entries(opts || {})) u.searchParams.set(k, v);
+    if (p.group) {
+      u.pathname = '/group';
+      u.searchParams.set('seeds', p.group.join(','));
+      if (p.size) u.searchParams.set('size', String(p.size));
+    } else {
+      u.pathname = '/avatar/' + encodeURIComponent(p.seed) + (p.ext || '');
+      if (p.size) u.searchParams.set('size', String(p.size));
+    }
+    for (const [k, v] of Object.entries(p.params || {})) u.searchParams.set(k, v);
     return u.toString();
   }
-  function groupUrlOf(seeds, opts) {
-    const u = new URL(API_BASE);
-    u.pathname = '/group';
-    u.searchParams.set('seeds', seeds.join(','));
-    for (const [k, v] of Object.entries(opts || {})) u.searchParams.set(k, v);
-    return u.toString();
-  }
 
-  const USECASES = {
-    profile: function (fw, seed) {
-      const url = avatarUrl(seed, { size: 96, tileBg: 'auto' });
-      if (fw === 'html') return [
-        '<div class="user-card">',
-        '  <img src="' + url + '" alt="' + seed + '" width="64" height="64" />',
-        '  <div>',
-        '    <strong>' + seed + '</strong>',
-        '    <span>Member</span>',
-        '  </div>',
-        '</div>'
-      ].join('\\n');
-      if (fw === 'react') return [
-        '// seed example: "' + seed + '"',
-        'function UserCard({ user }) {',
-        '  return (',
-        '    <div className="user-card">',
-        '      <img',
-        '        src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=96&tileBg=auto\`}',
-        '        alt={user.name}',
-        '        width={64}',
-        '        height={64}',
-        '      />',
-        '      <div>',
-        '        <strong>{user.name}</strong>',
-        '        <span>{user.email}</span>',
-        '      </div>',
-        '    </div>',
-        '  );',
-        '}'
-      ].join('\\n');
-      if (fw === 'next') return [
-        "import Image from 'next/image';",
-        '',
-        'export function UserCard({ user }) {',
-        '  return (',
-        '    <div className="user-card">',
-        '      <Image',
-        '        src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=96&tileBg=auto\`}',
-        '        alt={user.name}',
-        '        width={64}',
-        '        height={64}',
-        '        unoptimized',
-        '      />',
-        '      <strong>{user.name}</strong>',
-        '    </div>',
-        '  );',
-        '}'
-      ].join('\\n');
-      if (fw === 'vue') return [
-        '<template>',
-        '  <div class="user-card">',
-        '    <img',
-        '      :src="\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=96&tileBg=auto\`"',
-        '      :alt="user.name"',
-        '      width="64"',
-        '      height="64"',
-        '    />',
-        '    <strong>{{ user.name }}</strong>',
-        '  </div>',
-        '</template>'
-      ].join('\\n');
-      if (fw === 'svelte') return [
-        '<scr' + 'ipt>export let user;</scr' + 'ipt>',
-        '',
-        '<div class="user-card">',
-        '  <img',
-        '    src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=96&tileBg=auto\`}',
-        '    alt={user.name}',
-        '    width="64"',
-        '    height="64"',
-        '  />',
-        '  <strong>{user.name}</strong>',
-        '</div>'
-      ].join('\\n');
-      if (fw === 'curl') return "curl -o avatar.png \\\\\\n  '" + avatarUrl(seed, { size: 256, tileBg: 'auto' }) + "'";
-      if (fw === 'fetch') return [
-        "const userId = '" + seed + "';",
-        'const res = await fetch(\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(userId)}?size=96\`);',
-        'const svg = await res.text();'
-      ].join('\\n');
-      return 'GET ' + url;
+  const FRAMEWORKS = {
+    html: function (ctx) {
+      if (ctx.isGroup) return '<img src="' + ctx.url + '" alt="team" />';
+      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width="64"\\n  height="64"\\n/>';
     },
-
-    team: function (fw, seed) {
-      if (fw === 'html') return [
-        '<ul class="team">',
-        '  <li><img src="' + avatarUrl(seed, { size: 48 }) + '" alt="' + seed + '" /></li>',
-        '  <li><img src="' + avatarUrl('bob',   { size: 48 }) + '" alt="bob" /></li>',
-        '  <li><img src="' + avatarUrl('carol', { size: 48 }) + '" alt="carol" /></li>',
-        '</ul>'
-      ].join('\\n');
-      if (fw === 'react' || fw === 'next') return [
-        'const team = [',
-        "  { id: '" + seed + "', name: '" + seed.split('@')[0] + "' },",
-        "  { id: 'bob',   name: 'Bob' },",
-        "  { id: 'carol', name: 'Carol' },",
-        "  { id: 'dave',  name: 'Dave' },",
-        '];',
-        '',
-        'export function Team() {',
-        '  return (',
-        '    <ul className="team">',
-        '      {team.map(u => (',
-        '        <li key={u.id}>',
-        '          <img',
-        '            src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(u.id)}?size=48\`}',
-        '            alt={u.name}',
-        '          />',
-        '        </li>',
-        '      ))}',
-        '    </ul>',
-        '  );',
-        '}'
-      ].join('\\n');
-      if (fw === 'vue') return [
-        '<scr' + 'ipt setup>',
-        'const team = [',
-        "  { id: '" + seed + "', name: '" + seed.split('@')[0] + "' },",
-        "  { id: 'bob', name: 'Bob' },",
-        "  { id: 'carol', name: 'Carol' },",
-        '];',
-        '</scr' + 'ipt>',
-        '<template>',
-        '  <ul class="team">',
-        '    <li v-for="u in team" :key="u.id">',
-        '      <img',
-        '        :src="\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(u.id)}?size=48\`"',
-        '        :alt="u.name"',
-        '      />',
-        '    </li>',
-        '  </ul>',
-        '</template>'
-      ].join('\\n');
-      if (fw === 'svelte') return [
-        '<scr' + 'ipt>',
-        '  const team = [',
-        "    { id: '" + seed + "', name: '" + seed.split('@')[0] + "' },",
-        "    { id: 'bob', name: 'Bob' },",
-        '  ];',
-        '</scr' + 'ipt>',
-        '',
-        '<ul class="team">',
-        '  {#each team as u (u.id)}',
-        '    <li>',
-        '      <img',
-        '        src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(u.id)}?size=48\`}',
-        '        alt={u.name}',
-        '      />',
-        '    </li>',
-        '  {/each}',
-        '</ul>'
-      ].join('\\n');
-      if (fw === 'curl') return [
-        '# fetch each teammate in parallel',
-        "for id in '" + seed + "' bob carol dave; do",
-        '  curl -s -o "avatars/$id.svg" \\\\',
-        '    "' + API_BASE + '/avatar/$id?size=48"',
-        'done'
-      ].join('\\n');
-      if (fw === 'fetch') return [
-        "const team = ['" + seed + "', 'bob', 'carol', 'dave'];",
-        'const svgs = await Promise.all(team.map(id =>',
-        '  fetch(\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(id)}?size=48\`).then(r => r.text())',
-        '));'
-      ].join('\\n');
-      return 'GET ' + avatarUrl(seed, { size: 48 });
+    react: function (ctx) {
+      if (ctx.isGroup) return '<img src="' + ctx.url + '" alt="team" />';
+      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width={64}\\n  height={64}\\n/>';
     },
-
-    comment: function (fw, seed) {
-      const url = avatarUrl(seed, { size: 40 });
-      if (fw === 'html') return [
-        '<div class="comment">',
-        '  <img src="' + url + '" alt="' + seed + '" width="40" height="40" />',
-        '  <div>',
-        '    <strong>' + seed + '</strong>',
-        '    <p>Anyone seen the v0.7 deploy?</p>',
-        '  </div>',
-        '</div>'
-      ].join('\\n');
-      if (fw === 'react' || fw === 'next') return [
-        'export function Comment({ author, body }) {',
-        '  return (',
-        '    <article className="comment">',
-        '      <img',
-        '        src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(author.id)}?size=40\`}',
-        '        alt={author.name}',
-        '        width={40}',
-        '        height={40}',
-        '      />',
-        '      <div>',
-        '        <strong>{author.name}</strong>',
-        '        <p>{body}</p>',
-        '      </div>',
-        '    </article>',
-        '  );',
-        '}'
-      ].join('\\n');
-      if (fw === 'vue') return [
-        '<template>',
-        '  <article class="comment">',
-        '    <img :src="\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(author.id)}?size=40\`" :alt="author.name" />',
-        '    <div>',
-        '      <strong>{{ author.name }}</strong>',
-        '      <p>{{ body }}</p>',
-        '    </div>',
-        '  </article>',
-        '</template>'
-      ].join('\\n');
-      if (fw === 'svelte') return [
-        '<scr' + 'ipt>export let author, body;</scr' + 'ipt>',
-        '',
-        '<article class="comment">',
-        '  <img',
-        '    src={\`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(author.id)}?size=40\`}',
-        '    alt={author.name}',
-        '  />',
-        '  <strong>{author.name}</strong>',
-        '  <p>{body}</p>',
-        '</article>'
-      ].join('\\n');
-      if (fw === 'curl') return "curl -o avatar.svg '" + url + "'";
-      if (fw === 'fetch') return "const svg = await fetch('" + url + "').then(r => r.text());";
-      return 'GET ' + url;
+    next: function (ctx) {
+      return "import Image from 'next/image';\\n\\n<Image\\n  src=\\"" + ctx.url + "\\"\\n  alt=\\"" + ctx.seed + "\\"\\n  width={64}\\n  height={64}\\n  unoptimized\\n/>";
     },
-
-    fallback: function (fw, seed) {
-      const url = avatarUrl(seed, { size: 64 });
-      if (fw === 'html') return [
-        '<!-- Use Navii when the user has no photo -->',
-        '<img',
-        '  src="https://your-cdn/' + seed + '.jpg"',
-        '  onerror="this.src=' + "'" + url + "'" + '"',
-        '  alt="' + seed + '"',
-        '  width="64"',
-        '  height="64"',
-        '/>'
-      ].join('\\n');
-      if (fw === 'react' || fw === 'next') return [
-        'export function Avatar({ user }) {',
-        '  const navii = \`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=64&tileBg=auto\`;',
-        '  return (',
-        '    <img',
-        '      src={user.photoUrl ?? navii}',
-        '      alt={user.name}',
-        '      width={64}',
-        '      height={64}',
-        '    />',
-        '  );',
-        '}'
-      ].join('\\n');
-      if (fw === 'vue') return [
-        '<template>',
-        '  <img',
-        '    :src="user.photoUrl || \`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=64&tileBg=auto\`"',
-        '    :alt="user.name"',
-        '    width="64"',
-        '    height="64"',
-        '  />',
-        '</template>'
-      ].join('\\n');
-      if (fw === 'svelte') return [
-        '<scr' + 'ipt>',
-        '  export let user;',
-        '  $: navii = \`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=64&tileBg=auto\`;',
-        '</scr' + 'ipt>',
-        '',
-        '<img src={user.photoUrl || navii} alt={user.name} width="64" height="64" />'
-      ].join('\\n');
-      if (fw === 'curl') return "curl -fsS -o avatar.svg '" + url + "' || echo 'using local fallback'";
-      if (fw === 'fetch') return [
-        'const url = user.photoUrl ?? \`' + API_BASE + '/avatar/' + DOLLAR + '{encodeURIComponent(user.id)}?size=64\`;',
-        'const res = await fetch(url);'
-      ].join('\\n');
-      return 'GET ' + url;
+    vue: function (ctx) {
+      return '<template>\\n  <img\\n    src="' + ctx.url + '"\\n    alt="' + ctx.seed + '"\\n    width="64"\\n    height="64"\\n  />\\n</template>';
     },
-
-    group: function (fw, seed) {
-      const seeds = [seed, 'bob', 'carol', 'dave', 'eve'];
-      const url = groupUrlOf(seeds, { size: 64, overlap: '0.32' });
-      if (fw === 'html') return '<img src="' + url + '" alt="team" />';
-      if (fw === 'react' || fw === 'next') return [
-        'function TeamStack({ members }) {',
-        '  const ids = members.map(m => m.id).join(",");',
-        '  const url = \`' + API_BASE + '/group?seeds=' + DOLLAR + '{ids}&size=64&overlap=0.32\`;',
-        '  return <img src={url} alt={\`' + DOLLAR + '{members.length} members\`} />;',
-        '}'
-      ].join('\\n');
-      if (fw === 'vue') return [
-        '<template>',
-        '  <img :src="\`' + API_BASE + '/group?seeds=' + DOLLAR + "{seeds.join(',')}" + '&size=64&overlap=0.32\`" alt="team" />',
-        '</template>'
-      ].join('\\n');
-      if (fw === 'svelte') return [
-        '<scr' + 'ipt>export let members;</scr' + 'ipt>',
-        '<img',
-        '  src={\`' + API_BASE + '/group?seeds=' + DOLLAR + '{members.map(m => m.id).join(",")}&size=64&overlap=0.32\`}',
-        '  alt="team"',
-        '/>'
-      ].join('\\n');
-      if (fw === 'curl') return "curl -o team.svg '" + url + "'";
-      if (fw === 'fetch') return [
-        'const ids = members.map(m => m.id).join(",");',
-        'const svg = await fetch(\`' + API_BASE + '/group?seeds=' + DOLLAR + '{ids}&size=64&overlap=0.32\`).then(r => r.text());'
-      ].join('\\n');
-      return 'GET ' + url;
+    svelte: function (ctx) {
+      return '<img\\n  src="' + ctx.url + '"\\n  alt="' + ctx.seed + '"\\n  width="64"\\n  height="64"\\n/>';
     },
-
-    url: function (fw, seed) {
-      const url = avatarUrl(seed, { size: 320, animated: '1' });
-      if (fw === 'curl')  return "curl '" + url + "'";
-      if (fw === 'fetch') return "await fetch('" + url + "');";
-      return 'GET ' + url;
+    curl: function (ctx) {
+      return "curl -o avatar.svg \\\\\\n  '" + ctx.url + "'";
+    },
+    fetch: function (ctx) {
+      return "const res = await fetch('" + ctx.url + "');\\nconst svg = await res.text();";
+    },
+    url: function (ctx) {
+      return 'GET ' + ctx.url;
     }
   };
 
