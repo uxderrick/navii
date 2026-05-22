@@ -134,6 +134,14 @@ export function builderHtml(): string {
   }
   header.hero h1 em { font-style: normal; color: var(--accent); }
   header.hero p { color: var(--muted); margin: 0; max-width: 64ch; font-size: 15px; }
+  header.hero a.back {
+    display: inline-flex; align-items: center;
+    color: var(--muted-2);
+    font-size: 13px;
+    margin-bottom: 14px;
+    transition: color .15s;
+  }
+  header.hero a.back:hover { color: var(--ink); }
 
   /* layout */
   .builder {
@@ -296,17 +304,20 @@ export function builderHtml(): string {
 
   <nav class="top">
     <div class="brand">
-      <img src="${API_BASE}/avatar/navii?size=56" alt="navii" />
-      <span>navii</span>
+      <a href="/" style="display:flex; align-items:center; gap:10px; color:inherit;">
+        <img src="${API_BASE}/avatar/navii?size=56" alt="navii" />
+        <span>navii</span>
+      </a>
     </div>
     <div class="links">
-      <a href="/">home</a>
-      <a href="/docs">docs</a>
+      <a href="/#cast">cast</a>
+      <a href="/docs/quickstart">docs</a>
       <a href="https://github.com/uxderrick/navii">github</a>
     </div>
   </nav>
 
   <header class="hero">
+    <a class="back" href="/">← back</a>
     <h1>Builder — <em>mix any mascot.</em></h1>
     <p>Pick parts directly. No seed needed. Copy the URL or the React snippet to ship a specific mascot — brand logo, fixed avatar, hero illustration.</p>
   </header>
