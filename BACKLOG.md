@@ -7,6 +7,11 @@ Tracked work beyond the current scaffold. Ordered by impact, not priority — pi
 - [x] **More part variants** — _Progress: palette 16→22, body 5→8, eyes 6→10, mouth 6→10, accessory 4→7 (+glasses/eyepatch/mole), topper 8→12 (+headband/halo/crown/antlers). Antenna still at 5. Discrete space now 22.2M._ Further variants are nice-to-have but no longer a bottleneck.
 - [x] **Continuous params** — hue ±30°, body scale 0.92–1.08, eye gap ±2, mouth curvature 0.85–1.15, antenna tilt ±8°. Discrete × continuous = effectively unbounded.
 - [ ] **Compound accessories** — stack blush + freckles + sparkle on the same avatar. Currently single-pick.
+  - Implementation strategy: **opt-in flag** (`createAvatar(seed, { compound: true })`, `?compound=1`, `<Navii compound />`). Default off → existing seeds byte-identical. Builder UI defaults compound ON.
+  - Engine: independent roll per accessory family with a conflict guard (glasses ⊥ eyepatch, etc.). Z-order matters.
+  - Spec gains `accessories: AccessoryId[]` (used only when flag set); legacy `accessory: AccessoryId` stays as the single pick when flag off.
+  - Estimated cost: ~30 min code, no breaking change, no snapshot rebase.
+  - Promote to default in v1.0 major.
 - [ ] **Outfit slot** — collar / scarf / bowtie. New layer below face, anchored to body.
 
 ## Art polish (designer handoff)
