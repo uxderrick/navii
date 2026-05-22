@@ -1,0 +1,166 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - link "navii navii / docs" [ref=e4] [cursor=pointer]:
+      - /url: https://navii.uxderrick.com/
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+      - generic [ref=e7]: /
+      - generic [ref=e8]: docs
+    - generic [ref=e9]:
+      - link "landing" [ref=e10] [cursor=pointer]:
+        - /url: https://navii.uxderrick.com/
+      - link "github" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Start" [level=5] [ref=e15]
+        - link "Quickstart" [ref=e16] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - link "Concepts" [ref=e17] [cursor=pointer]:
+          - /url: /docs/concepts
+      - generic [ref=e18]:
+        - heading "Reference" [level=5] [ref=e19]
+        - link "Parts catalog" [ref=e20] [cursor=pointer]:
+          - /url: /docs/parts
+        - link "HTTP API" [ref=e21] [cursor=pointer]:
+          - /url: /docs/http-api
+      - generic [ref=e22]:
+        - heading "SDK" [level=5] [ref=e23]
+        - link "@usenavii/core" [ref=e24] [cursor=pointer]:
+          - /url: /docs/sdk-core
+        - link "@usenavii/react" [ref=e25] [cursor=pointer]:
+          - /url: /docs/sdk-react
+      - generic [ref=e26]:
+        - heading "Operate" [level=5] [ref=e27]
+        - link "Self-hosting" [ref=e28] [cursor=pointer]:
+          - /url: /docs/deployment
+        - link "Changelog" [ref=e29] [cursor=pointer]:
+          - /url: /docs/changelog
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Self-hosting" [level=1] [ref=e32]
+        - paragraph [ref=e33]: Navii ships a production-ready Docker image. Single-process Hono app, no database, in-memory PNG cache. Tested on Hetzner; portable to any Node runtime, Bun, Deno, or Cloudflare Workers (with the wasm raster).
+      - generic [ref=e34]:
+        - heading "Docker" [level=2] [ref=e35]
+        - generic [ref=e36]:
+          - code [ref=e38]: docker build -t navii-api packages/api docker run -p 8787:8787 navii-api
+          - button "Copy code" [ref=e39] [cursor=pointer]:
+            - img [ref=e40]
+            - generic [ref=e43]: copy
+        - paragraph [ref=e44]:
+          - text: "The Dockerfile is multi-stage: pnpm install + build in stage 1, slim runtime in stage 2. Fonts ("
+          - code [ref=e45]: fonts-dejavu-core
+          - text: ) are installed in the runtime image so
+          - code [ref=e46]: resvg-js
+          - text: renders text properly in PNG/OG output.
+      - generic [ref=e47]:
+        - heading "Environment variables" [level=2] [ref=e48]
+        - table [ref=e49]:
+          - rowgroup [ref=e50]:
+            - row "Var Default Description" [ref=e51]:
+              - columnheader "Var" [ref=e52]
+              - columnheader "Default" [ref=e53]
+              - columnheader "Description" [ref=e54]
+          - rowgroup [ref=e55]:
+            - row "PORT 8787 HTTP listen port." [ref=e56]:
+              - cell "PORT" [ref=e57]:
+                - code [ref=e58]: PORT
+              - cell "8787" [ref=e59]
+              - cell "HTTP listen port." [ref=e60]
+            - row "HOST 0.0.0.0 HTTP bind address." [ref=e61]:
+              - cell "HOST" [ref=e62]:
+                - code [ref=e63]: HOST
+              - cell "0.0.0.0" [ref=e64]
+              - cell "HTTP bind address." [ref=e65]
+            - row "RATE_LIMIT_PER_MIN 120 Per-IP rate limit on /avatar/*." [ref=e66]:
+              - cell "RATE_LIMIT_PER_MIN" [ref=e67]:
+                - code [ref=e68]: RATE_LIMIT_PER_MIN
+              - cell "120" [ref=e69]
+              - cell "Per-IP rate limit on /avatar/*." [ref=e70]:
+                - text: Per-IP rate limit on
+                - code [ref=e71]: /avatar/*
+                - text: .
+            - row "PNG_CACHE_SIZE 500 LRU capacity for rasterized PNG responses." [ref=e72]:
+              - cell "PNG_CACHE_SIZE" [ref=e73]:
+                - code [ref=e74]: PNG_CACHE_SIZE
+              - cell "500" [ref=e75]
+              - cell "LRU capacity for rasterized PNG responses." [ref=e76]
+            - row "TRUST_PROXY 0 Set to 1 behind a reverse proxy you control (Caddy/Nginx). Enables X-Forwarded-For reading for rate-limit IP attribution. Never enable behind raw CDN — clients could spoof IPs." [ref=e77]:
+              - cell "TRUST_PROXY" [ref=e78]:
+                - code [ref=e79]: TRUST_PROXY
+              - cell "0" [ref=e80]
+              - cell "Set to 1 behind a reverse proxy you control (Caddy/Nginx). Enables X-Forwarded-For reading for rate-limit IP attribution. Never enable behind raw CDN — clients could spoof IPs." [ref=e81]:
+                - text: Set to
+                - code [ref=e82]: "1"
+                - text: behind a reverse proxy you control (Caddy/Nginx). Enables
+                - code [ref=e83]: X-Forwarded-For
+                - text: reading for rate-limit IP attribution.
+                - strong [ref=e84]: Never enable behind raw CDN
+                - text: — clients could spoof IPs.
+            - row "NAVII_API_BASE https://navii-api.uxderrick.com Used in landing + docs HTML for absolute API URLs (e.g. cast images, OG image)." [ref=e85]:
+              - cell "NAVII_API_BASE" [ref=e86]:
+                - code [ref=e87]: NAVII_API_BASE
+              - cell "https://navii-api.uxderrick.com" [ref=e88]:
+                - code [ref=e89]: https://navii-api.uxderrick.com
+              - cell "Used in landing + docs HTML for absolute API URLs (e.g. cast images, OG image)." [ref=e90]
+            - row "NAVII_SITE_BASE https://navii.uxderrick.com Public site URL. Used in canonical + OpenGraph meta." [ref=e91]:
+              - cell "NAVII_SITE_BASE" [ref=e92]:
+                - code [ref=e93]: NAVII_SITE_BASE
+              - cell "https://navii.uxderrick.com" [ref=e94]:
+                - code [ref=e95]: https://navii.uxderrick.com
+              - cell "Public site URL. Used in canonical + OpenGraph meta." [ref=e96]
+      - generic [ref=e97]:
+        - heading "Reverse proxy" [level=2] [ref=e98]
+        - paragraph [ref=e99]:
+          - text: A sample
+          - code [ref=e100]: Caddyfile
+          - text: snippet lives at
+          - code [ref=e101]: deploy/Caddyfile.snippet
+          - text: ". It does the usual: TLS, gzip, forward to"
+          - code [ref=e102]: :8787
+          - text: ", set"
+          - code [ref=e103]: X-Forwarded-For
+          - text: .
+        - paragraph [ref=e104]:
+          - text: Per-domain routing (landing on
+          - code [ref=e105]: navii.uxderrick.com
+          - text: ", API on"
+          - code [ref=e106]: navii-api.uxderrick.com
+          - text: ) is purely DNS + proxy concern — the Hono app handles both transparently.
+      - generic [ref=e107]:
+        - heading "Health check" [level=2] [ref=e108]
+        - paragraph [ref=e109]:
+          - code [ref=e110]: GET /healthz
+          - text: returns
+          - code [ref=e111]: "{ \"ok\": true, \"pngCacheSize\": N }"
+          - text: . The Docker image declares a built-in
+          - code [ref=e112]: HEALTHCHECK
+          - text: that hits this endpoint every 30 s.
+      - generic [ref=e113]:
+        - heading "Resource notes" [level=2] [ref=e114]
+        - list [ref=e115]:
+          - listitem [ref=e116]: SVG generation is essentially free (~microseconds per avatar).
+          - listitem [ref=e117]: PNG raster is the expensive op — depends on size. ~10–40 ms for 256 px on a small VPS, dominated by resvg's text + filter pipeline.
+          - listitem [ref=e118]:
+            - text: In-process PNG cache (LRU) absorbs repeated hits. Default 500 entries; tune via
+            - code [ref=e119]: PNG_CACHE_SIZE
+            - text: .
+          - listitem [ref=e120]: For multi-replica horizontal scale, swap the rate-limit Map for Redis (current implementation is single-process).
+      - navigation [ref=e121]:
+        - link "← Previous @usenavii/react" [ref=e122] [cursor=pointer]:
+          - /url: /docs/sdk-react
+          - generic [ref=e123]: ← Previous
+          - generic [ref=e124]: "@usenavii/react"
+        - link "Next → Changelog" [ref=e125] [cursor=pointer]:
+          - /url: /docs/changelog
+          - generic [ref=e126]: Next →
+          - generic [ref=e127]: Changelog
+  - contentinfo [ref=e128]:
+    - generic [ref=e129]: navii · deterministic avatars · open source · MIT
+    - generic [ref=e130]:
+      - link "github" [ref=e131] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+      - text: ·
+      - link "/api" [ref=e132] [cursor=pointer]:
+        - /url: /api

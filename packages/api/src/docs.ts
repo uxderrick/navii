@@ -65,34 +65,61 @@ export function defaultDocSlug(): string {
 
 export function docsHtml(slug: string): string {
   const page = PAGES.find((p) => p.slug === slug);
-  if (!page) return shell('not found', notFound(), slug);
-  return shell(page.title, page.body(), slug);
+  if (!page) return shell('not found', notFound(), slug, 'Documentation page not found.');
+  return shell(page.title, page.body(), slug, page.summary);
+}
+
+/** All doc slugs — used by /sitemap.xml to advertise pages to crawlers. */
+export function docSlugs(): readonly string[] {
+  return PAGES.map((p) => p.slug);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // shell
 
-function shell(title: string, content: string, currentSlug: string): string {
+function shell(title: string, content: string, currentSlug: string, summary: string): string {
+  const pageTitle = `${escapeHtml(title)} — Navii docs`;
+  const desc = escapeHtml(summary);
+  const url = `${SITE_BASE}/docs/${currentSlug}`;
+  const ogImage = `${API_BASE}/og.png`;
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>${escapeHtml(title)} — Navii docs</title>
-<meta name="description" content="Navii documentation. ${escapeHtml(title)} — deterministic mascot avatars." />
+<title>${pageTitle}</title>
+<meta name="description" content="${desc}" />
 <meta name="theme-color" content="#0a0a0b" />
 <meta name="color-scheme" content="dark" />
 <meta name="robots" content="index, follow" />
-<link rel="canonical" href="${SITE_BASE}/docs/${currentSlug}" />
+<link rel="canonical" href="${url}" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="preconnect" href="${API_BASE}" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Navii docs" />
+<meta property="og:title" content="${pageTitle}" />
+<meta property="og:description" content="${desc}" />
+<meta property="og:url" content="${url}" />
+<meta property="og:image" content="${ogImage}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${pageTitle}" />
+<meta name="twitter:description" content="${desc}" />
+<meta name="twitter:image" content="${ogImage}" />
+
 ${styleBlock()}
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
 <div class="layout">
 
   <nav class="top">
@@ -113,7 +140,7 @@ ${styleBlock()}
       ${renderSidebar(currentSlug)}
     </aside>
 
-    <main class="content">
+    <main class="content" id="main-content" tabindex="-1">
       ${content}
 
       <nav class="pager">
@@ -301,7 +328,7 @@ function renderSidebar(currentSlug: string): string {
       const items = pages
         .map(
           (p) =>
-            `<a class="sb-item${p.slug === currentSlug ? ' active' : ''}" href="/docs/${p.slug}">${escapeHtml(p.title)}</a>`,
+            `<a class="sb-item${p.slug === currentSlug ? ' active' : ''}" href="/docs/${p.slug}"${p.slug === currentSlug ? ' aria-current="page"' : ''}>${escapeHtml(p.title)}</a>`,
         )
         .join('');
       return `<div class="sb-section"><h5>${escapeHtml(section)}</h5>${items}</div>`;
@@ -553,7 +580,7 @@ function pageHttpApi(): string {
       <h2 id="avatar">GET /avatar/:seed[.svg|.png]</h2>
       <p>Returns a deterministic mascot avatar for the given seed. Same seed → same avatar, byte-for-byte. Append <code>.png</code> to the seed to receive a rasterized PNG instead of SVG.</p>
 
-      <h4>Path</h4>
+      <h4 id="avatar-path">Path</h4>
       <table>
         <thead><tr><th>Param</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
@@ -561,7 +588,7 @@ function pageHttpApi(): string {
         </tbody>
       </table>
 
-      <h4>Query</h4>
+      <h4 id="avatar-query">Query</h4>
       <table>
         <thead><tr><th>Param</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
@@ -574,7 +601,7 @@ function pageHttpApi(): string {
         </tbody>
       </table>
 
-      <h4>Examples</h4>
+      <h4 id="avatar-examples">Examples</h4>
       <pre class="code"><code>${API_BASE}/avatar/alice
 ${API_BASE}/avatar/alice?palette=violet&amp;animated=1
 ${API_BASE}/avatar/alice?tileBg=%23ffffff
@@ -585,7 +612,7 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
       <h2 id="group">GET /group</h2>
       <p>Renders multiple seeded avatars as a single horizontally-stacked SVG with optional overlap and a <code>+N</code> counter tile for overflow.</p>
 
-      <h4>Query</h4>
+      <h4 id="group-query">Query</h4>
       <table>
         <thead><tr><th>Param</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
@@ -922,7 +949,7 @@ docker run -p 8787:8787 navii-api</code></pre>
         <tbody>
           <tr><td><code>PORT</code></td><td>8787</td><td>HTTP listen port.</td></tr>
           <tr><td><code>HOST</code></td><td>0.0.0.0</td><td>HTTP bind address.</td></tr>
-          <tr><td><code>RATE_LIMIT_PER_MIN</code></td><td>120</td><td>Per-IP rate limit on <code>/avatar/*</code>.</td></tr>
+          <tr><td><code>RATE_LIMIT_PER_MIN</code></td><td>120</td><td>Per-IP rate limit on <code>/avatar/*</code>. See <a href="/docs/rate-limits">Rate limits</a> for full details.</td></tr>
           <tr><td><code>PNG_CACHE_SIZE</code></td><td>500</td><td>LRU capacity for rasterized PNG responses.</td></tr>
           <tr><td><code>TRUST_PROXY</code></td><td>0</td><td>Set to <code>1</code> behind a reverse proxy you control (Caddy/Nginx). Enables <code>X-Forwarded-For</code> reading for rate-limit IP attribution. <strong>Never enable behind raw CDN</strong> — clients could spoof IPs.</td></tr>
           <tr><td><code>NAVII_API_BASE</code></td><td><code>https://navii-api.uxderrick.com</code></td><td>Used in landing + docs HTML for absolute API URLs (e.g. cast images, OG image).</td></tr>
@@ -958,12 +985,13 @@ function pageChangelog(): string {
   return `
     <header class="page-head">
       <h1>Changelog</h1>
-      <p class="lede">Pre-release scaffold. Version surface settles at <strong>v0.1</strong>. Below: dated highlights from current development.</p>
+      <p class="lede">Notable user-facing changes. For ops-relevant work (deploy, env vars, rate-limit defaults) see <a href="/docs/deployment">Self-hosting</a> + <a href="/docs/rate-limits">Rate limits</a>. For new endpoints see <a href="/docs/http-api">HTTP API</a>.</p>
     </header>
 
     <section>
       <h2 id="unreleased">Unreleased</h2>
       <ul>
+        <li>Dedicated <a href="/docs/rate-limits">/docs/rate-limits</a> page covering hosted quotas, cache rationale, and self-host tunables.</li>
         <li>Multi-page docs site at <code>/docs/*</code> with sticky sidebar nav.</li>
         <li>Full Open Graph + Twitter card + JSON-LD on landing.</li>
         <li>Favicon, apple-touch-icon, OG image endpoints.</li>
@@ -1010,7 +1038,7 @@ function styleBlock(): string {
   --bg-3: #18181b;
   --ink: #f5f5f5;
   --muted: #a1a1aa;
-  --muted-2: #71717a;
+  --muted-2: #a1a1aa;
   --line: #1f1f24;
   --accent: #c084fc;
   --accent-2: #a855f7;
@@ -1093,6 +1121,27 @@ nav.top .links a:hover { color: var(--ink); }
 }
 .sb-item:hover { color: var(--ink); background: var(--bg-2); }
 .sb-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(192, 132, 252, 0.07); }
+.sb-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* universal focus ring */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* skip to content link — hidden until focused */
+.skip-link {
+  position: absolute; top: 8px; left: 8px;
+  background: var(--bg-2); color: var(--ink);
+  border: 1px solid var(--accent);
+  padding: 8px 14px; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  transform: translateY(-200%);
+  transition: transform 0.15s;
+  z-index: 100;
+}
+.skip-link:focus { transform: translateY(0); outline: none; }
 
 /* content */
 .content { max-width: 760px; min-width: 0; }
@@ -1171,7 +1220,7 @@ pre.code code { background: transparent; border: 0; padding: 0; font-size: inher
   padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
-  opacity: 0;
+  opacity: 0.5;
   transition: opacity .15s, color .15s, border-color .15s, background .15s;
   font: 10.5px ui-monospace, SFMono-Regular, Menlo, monospace;
   text-transform: uppercase;
@@ -1182,7 +1231,8 @@ pre.code code { background: transparent; border: 0; padding: 0; font-size: inher
   z-index: 2;
 }
 .code-block:hover .copy-icon,
-.code-block:focus-within .copy-icon { opacity: 1; }
+.code-block:focus-within .copy-icon,
+.copy-icon:focus-visible { opacity: 1; }
 .copy-icon:hover { color: var(--ink); border-color: var(--muted-2); background: var(--bg-2); }
 .copy-icon.ok { color: var(--good); border-color: var(--good); opacity: 1; }
 .copy-icon svg { width: 12px; height: 12px; flex-shrink: 0; }

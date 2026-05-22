@@ -7,6 +7,7 @@ import { log } from './log.js';
 import { landingHtml } from './landing.js';
 import { builderHtml, parseBuildQuery, buildSpecToSvg } from './builder.js';
 import { renderCast, DEFAULT_CAST_SEEDS } from './cast.js';
+import { docSlugs } from './docs.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 
@@ -237,7 +238,12 @@ export function createApp(options: AppOptions = {}) {
   });
 
   app.get('/sitemap.xml', (c) => {
-    const urls = ['https://navii.uxderrick.com/', 'https://navii.uxderrick.com/#cast', 'https://navii.uxderrick.com/#reference'];
+    const SITE = 'https://navii.uxderrick.com';
+    const urls = [
+      `${SITE}/`,
+      `${SITE}/builder`,
+      ...docSlugs().map((s) => `${SITE}/docs/${s}`),
+    ];
     const body =
       `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
       urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n') +

@@ -1,0 +1,387 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - link "navii navii / docs" [ref=e4] [cursor=pointer]:
+      - /url: https://navii.uxderrick.com/
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+      - generic [ref=e7]: /
+      - generic [ref=e8]: docs
+    - generic [ref=e9]:
+      - link "landing" [ref=e10] [cursor=pointer]:
+        - /url: https://navii.uxderrick.com/
+      - link "github" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Start" [level=5] [ref=e15]
+        - link "Quickstart" [ref=e16] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - link "Concepts" [ref=e17] [cursor=pointer]:
+          - /url: /docs/concepts
+      - generic [ref=e18]:
+        - heading "Reference" [level=5] [ref=e19]
+        - link "Parts catalog" [ref=e20] [cursor=pointer]:
+          - /url: /docs/parts
+        - link "HTTP API" [ref=e21] [cursor=pointer]:
+          - /url: /docs/http-api
+      - generic [ref=e22]:
+        - heading "SDK" [level=5] [ref=e23]
+        - link "@usenavii/core" [ref=e24] [cursor=pointer]:
+          - /url: /docs/sdk-core
+        - link "@usenavii/react" [ref=e25] [cursor=pointer]:
+          - /url: /docs/sdk-react
+      - generic [ref=e26]:
+        - heading "Operate" [level=5] [ref=e27]
+        - link "Self-hosting" [ref=e28] [cursor=pointer]:
+          - /url: /docs/deployment
+        - link "Changelog" [ref=e29] [cursor=pointer]:
+          - /url: /docs/changelog
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - heading "HTTP API" [level=1] [ref=e32]
+        - paragraph [ref=e33]:
+          - text: Hosted at
+          - code [ref=e34]: https://navii-api.uxderrick.com
+          - text: . No auth, public CORS, fully cacheable. Plain text errors, image responses for everything else.
+      - generic [ref=e35]:
+        - heading "GET /avatar/:seed[.svg|.png]" [level=2] [ref=e36]
+        - paragraph [ref=e37]:
+          - text: Returns a deterministic mascot avatar for the given seed. Same seed → same avatar, byte-for-byte. Append
+          - code [ref=e38]: .png
+          - text: to the seed to receive a rasterized PNG instead of SVG.
+        - heading "Path" [level=4] [ref=e39]
+        - table [ref=e40]:
+          - rowgroup [ref=e41]:
+            - row "Param Type Description" [ref=e42]:
+              - columnheader "Param" [ref=e43]
+              - columnheader "Type" [ref=e44]
+              - columnheader "Description" [ref=e45]
+          - rowgroup [ref=e46]:
+            - row ":seed string Any unique identifier. Use a stable user id, UUID, or email. Avoid display names — see the seed rule." [ref=e47]:
+              - cell ":seed" [ref=e48]:
+                - code [ref=e49]: :seed
+              - cell "string" [ref=e50]
+              - cell "Any unique identifier. Use a stable user id, UUID, or email. Avoid display names — see the seed rule." [ref=e51]:
+                - text: Any unique identifier. Use a stable user id, UUID, or email. Avoid display names — see
+                - link "the seed rule" [ref=e52] [cursor=pointer]:
+                  - /url: /docs/concepts#seeds
+                - text: .
+        - heading "Query" [level=4] [ref=e53]
+        - table [ref=e54]:
+          - rowgroup [ref=e55]:
+            - row "Param Type Default Description" [ref=e56]:
+              - columnheader "Param" [ref=e57]
+              - columnheader "Type" [ref=e58]
+              - columnheader "Default" [ref=e59]
+              - columnheader "Description" [ref=e60]
+          - rowgroup [ref=e61]:
+            - row "size int 96 Output size in px. Clamped to 16–1024." [ref=e62]:
+              - cell "size" [ref=e63]:
+                - code [ref=e64]: size
+              - cell "int" [ref=e65]
+              - cell "96" [ref=e66]
+              - cell "Output size in px. Clamped to 16–1024." [ref=e67]
+            - row "palette enum seeded Force a color family. See palette catalog." [ref=e68]:
+              - cell "palette" [ref=e69]:
+                - code [ref=e70]: palette
+              - cell "enum" [ref=e71]
+              - cell "seeded" [ref=e72]
+              - cell "Force a color family. See palette catalog." [ref=e73]:
+                - text: Force a color family. See
+                - link "palette catalog" [ref=e74] [cursor=pointer]:
+                  - /url: /docs/parts#palette
+                - text: .
+            - row "background enum seeded none · solid · ring." [ref=e75]:
+              - cell "background" [ref=e76]:
+                - code [ref=e77]: background
+              - cell "enum" [ref=e78]
+              - cell "seeded" [ref=e79]
+              - cell "none · solid · ring." [ref=e80]:
+                - code [ref=e81]: none
+                - text: ·
+                - code [ref=e82]: solid
+                - text: ·
+                - code [ref=e83]: ring
+                - text: .
+            - row "tileBg color none Opaque circular fill behind avatar. Any CSS color (URL-encoded, e.g. %23ffffff) or auto to use the palette accent." [ref=e84]:
+              - cell "tileBg" [ref=e85]:
+                - code [ref=e86]: tileBg
+              - cell "color" [ref=e87]
+              - cell "none" [ref=e88]
+              - cell "Opaque circular fill behind avatar. Any CSS color (URL-encoded, e.g. %23ffffff) or auto to use the palette accent." [ref=e89]:
+                - text: Opaque circular fill behind avatar. Any CSS color (URL-encoded, e.g.
+                - code [ref=e90]: "%23ffffff"
+                - text: ) or
+                - code [ref=e91]: auto
+                - text: to use the palette accent.
+            - row "title string none Accessible label. Adds role=\"img\" + aria-label to the SVG root." [ref=e92]:
+              - cell "title" [ref=e93]:
+                - code [ref=e94]: title
+              - cell "string" [ref=e95]
+              - cell "none" [ref=e96]
+              - cell "Accessible label. Adds role=\"img\" + aria-label to the SVG root." [ref=e97]:
+                - text: Accessible label. Adds
+                - code [ref=e98]: role="img"
+                - text: +
+                - code [ref=e99]: aria-label
+                - text: to the SVG root.
+            - row "animated 0 / 1 0 Idle motion (float, blink, antenna sway, spark pulse, twinkle). SVG only — ignored for PNG. Honors prefers-reduced-motion." [ref=e100]:
+              - cell "animated" [ref=e101]:
+                - code [ref=e102]: animated
+              - cell "0 / 1" [ref=e103]
+              - cell "0" [ref=e104]
+              - cell "Idle motion (float, blink, antenna sway, spark pulse, twinkle). SVG only — ignored for PNG. Honors prefers-reduced-motion." [ref=e105]:
+                - text: Idle motion (float, blink, antenna sway, spark pulse, twinkle). SVG only — ignored for PNG. Honors
+                - code [ref=e106]: prefers-reduced-motion
+                - text: .
+        - heading "Examples" [level=4] [ref=e107]
+        - generic [ref=e108]:
+          - code [ref=e110]: https://navii-api.uxderrick.com/avatar/alice https://navii-api.uxderrick.com/avatar/alice?palette=violet&animated=1 https://navii-api.uxderrick.com/avatar/alice?tileBg=%23ffffff https://navii-api.uxderrick.com/avatar/alice.png?size=512&tileBg=auto
+          - button "Copy code" [ref=e111] [cursor=pointer]:
+            - img [ref=e112]
+            - generic [ref=e115]: copy
+      - generic [ref=e116]:
+        - heading "GET /group" [level=2] [ref=e117]
+        - paragraph [ref=e118]:
+          - text: Renders multiple seeded avatars as a single horizontally-stacked SVG with optional overlap and a
+          - code [ref=e119]: +N
+          - text: counter tile for overflow.
+        - heading "Query" [level=4] [ref=e120]
+        - table [ref=e121]:
+          - rowgroup [ref=e122]:
+            - row "Param Type Default Description" [ref=e123]:
+              - columnheader "Param" [ref=e124]
+              - columnheader "Type" [ref=e125]
+              - columnheader "Default" [ref=e126]
+              - columnheader "Description" [ref=e127]
+          - rowgroup [ref=e128]:
+            - row "seeds csv — Comma-separated seeds (up to 50). Required." [ref=e129]:
+              - cell "seeds" [ref=e130]:
+                - code [ref=e131]: seeds
+              - cell "csv" [ref=e132]
+              - cell "—" [ref=e133]
+              - cell "Comma-separated seeds (up to 50). Required." [ref=e134]
+            - row "size int 64 Per-tile size in px. Clamped to 16–256." [ref=e135]:
+              - cell "size" [ref=e136]:
+                - code [ref=e137]: size
+              - cell "int" [ref=e138]
+              - cell "64" [ref=e139]
+              - cell "Per-tile size in px. Clamped to 16–256." [ref=e140]
+            - row "overlap float 0.3 Fraction each tile overlaps the previous. 0 = no overlap, 0.7 = heavy stack." [ref=e141]:
+              - cell "overlap" [ref=e142]:
+                - code [ref=e143]: overlap
+              - cell "float" [ref=e144]
+              - cell "0.3" [ref=e145]
+              - cell "Fraction each tile overlaps the previous. 0 = no overlap, 0.7 = heavy stack." [ref=e146]
+            - row "max int all Max tiles to render. Extra seeds collapse into a +N tile." [ref=e147]:
+              - cell "max" [ref=e148]:
+                - code [ref=e149]: max
+              - cell "int" [ref=e150]
+              - cell "all" [ref=e151]
+              - cell "Max tiles to render. Extra seeds collapse into a +N tile." [ref=e152]:
+                - text: Max tiles to render. Extra seeds collapse into a
+                - code [ref=e153]: +N
+                - text: tile.
+            - 'row "ring color #ffffff Border color around each tile." [ref=e154]':
+              - cell "ring" [ref=e155]:
+                - code [ref=e156]: ring
+              - cell "color" [ref=e157]
+              - cell "#ffffff" [ref=e158]:
+                - code [ref=e159]: "#ffffff"
+              - cell "Border color around each tile." [ref=e160]
+            - 'row "tileBg color #ffffff Opaque fill behind each avatar (prevents overlap show-through)." [ref=e161]':
+              - cell "tileBg" [ref=e162]:
+                - code [ref=e163]: tileBg
+              - cell "color" [ref=e164]
+              - cell "#ffffff" [ref=e165]:
+                - code [ref=e166]: "#ffffff"
+              - cell "Opaque fill behind each avatar (prevents overlap show-through)." [ref=e167]
+            - row "animated 0 / 1 0 Per-avatar animation." [ref=e168]:
+              - cell "animated" [ref=e169]:
+                - code [ref=e170]: animated
+              - cell "0 / 1" [ref=e171]
+              - cell "0" [ref=e172]
+              - cell "Per-avatar animation." [ref=e173]
+        - paragraph [ref=e174]:
+          - strong [ref=e175]: "SDK-only:"
+          - code [ref=e176]: counterFill
+          - text: and
+          - code [ref=e177]: counterInk
+          - text: (the
+          - code [ref=e178]: +N
+          - text: tile's colors) are settable via
+          - code [ref=e179]: GroupOptions
+          - text: in
+          - code [ref=e180]: "@usenavii/core"
+          - text: but not yet wired to query params.
+      - generic [ref=e181]:
+        - heading "Utility endpoints" [level=2] [ref=e182]
+        - table [ref=e183]:
+          - rowgroup [ref=e184]:
+            - row "Path Description" [ref=e185]:
+              - columnheader "Path" [ref=e186]
+              - columnheader "Description" [ref=e187]
+          - rowgroup [ref=e188]:
+            - row "GET / Landing page with live playground." [ref=e189]:
+              - cell "GET /" [ref=e190]:
+                - code [ref=e191]: GET /
+              - cell "Landing page with live playground." [ref=e192]
+            - 'row "GET /api Service metadata as JSON. Returns { \"name\": \"navii\", \"version\": \"...\", \"endpoints\": {...} }." [ref=e193]':
+              - cell "GET /api" [ref=e194]:
+                - code [ref=e195]: GET /api
+              - 'cell "Service metadata as JSON. Returns { \"name\": \"navii\", \"version\": \"...\", \"endpoints\": {...} }." [ref=e196]':
+                - text: Service metadata as JSON. Returns
+                - code [ref=e197]: "{ \"name\": \"navii\", \"version\": \"...\", \"endpoints\": {...} }"
+                - text: .
+            - 'row "GET /healthz Liveness probe. Returns { \"ok\": true, \"pngCacheSize\": N }." [ref=e198]':
+              - cell "GET /healthz" [ref=e199]:
+                - code [ref=e200]: GET /healthz
+              - 'cell "Liveness probe. Returns { \"ok\": true, \"pngCacheSize\": N }." [ref=e201]':
+                - text: Liveness probe. Returns
+                - code [ref=e202]: "{ \"ok\": true, \"pngCacheSize\": N }"
+                - text: .
+            - row "GET /gallery HTML grid of N seeded avatars (visual debug)." [ref=e203]:
+              - cell "GET /gallery" [ref=e204]:
+                - code [ref=e205]: GET /gallery
+              - cell "HTML grid of N seeded avatars (visual debug)." [ref=e206]
+            - row "GET /favicon.svg Brand favicon. SVG." [ref=e207]:
+              - cell "GET /favicon.svg" [ref=e208]:
+                - code [ref=e209]: GET /favicon.svg
+              - cell "Brand favicon. SVG." [ref=e210]
+            - row "GET /apple-touch-icon.png 180×180 dark-tile icon for iOS home-screen." [ref=e211]:
+              - cell "GET /apple-touch-icon.png" [ref=e212]:
+                - code [ref=e213]: GET /apple-touch-icon.png
+              - cell "180×180 dark-tile icon for iOS home-screen." [ref=e214]
+            - row "GET /og.png 1200×630 Open Graph image. No params." [ref=e215]:
+              - cell "GET /og.png" [ref=e216]:
+                - code [ref=e217]: GET /og.png
+              - cell "1200×630 Open Graph image. No params." [ref=e218]
+            - row "GET /robots.txt, /sitemap.xml SEO essentials." [ref=e219]:
+              - cell "GET /robots.txt, /sitemap.xml" [ref=e220]:
+                - code [ref=e221]: GET /robots.txt
+                - text: ","
+                - code [ref=e222]: /sitemap.xml
+              - cell "SEO essentials." [ref=e223]
+      - generic [ref=e224]:
+        - heading "Response headers" [level=2] [ref=e225]
+        - paragraph [ref=e226]: "All image responses set:"
+        - list [ref=e227]:
+          - listitem [ref=e228]:
+            - code [ref=e229]: "cache-control: public, max-age=31536000, immutable"
+            - text: — safe to cache forever (seed + params fully determine bytes).
+          - listitem [ref=e230]:
+            - code [ref=e231]: "access-control-allow-origin: *"
+            - text: — embed anywhere, no preflight for
+            - code [ref=e232]: GET
+            - text: .
+          - listitem [ref=e233]:
+            - code [ref=e234]: "content-type: image/svg+xml; charset=utf-8"
+            - text: for SVG,
+            - code [ref=e235]: image/png
+            - text: for PNG,
+            - code [ref=e236]: application/json
+            - text: for
+            - code [ref=e237]: /api
+            - text: +
+            - code [ref=e238]: /healthz
+            - text: .
+        - paragraph [ref=e239]: "Rate-limited routes additionally emit:"
+        - list [ref=e240]:
+          - listitem [ref=e241]:
+            - code [ref=e242]: x-ratelimit-limit
+            - text: — max requests in the current window.
+          - listitem [ref=e243]:
+            - code [ref=e244]: x-ratelimit-remaining
+            - text: — remaining requests.
+          - listitem [ref=e245]:
+            - code [ref=e246]: x-ratelimit-reset
+            - text: — Unix epoch seconds when the window resets.
+          - listitem [ref=e247]:
+            - code [ref=e248]: retry-after
+            - text: — only on
+            - code [ref=e249]: "429"
+            - text: responses.
+      - generic [ref=e250]:
+        - heading "Errors" [level=2] [ref=e251]
+        - paragraph [ref=e252]: "Plain-text bodies. Status codes:"
+        - table [ref=e253]:
+          - rowgroup [ref=e254]:
+            - row "Status Meaning Body" [ref=e255]:
+              - columnheader "Status" [ref=e256]
+              - columnheader "Meaning" [ref=e257]
+              - columnheader "Body" [ref=e258]
+          - rowgroup [ref=e259]:
+            - row "400 Bad request seed required · seeds required (comma-separated)" [ref=e260]:
+              - cell "400" [ref=e261]
+              - cell "Bad request" [ref=e262]
+              - cell "seed required · seeds required (comma-separated)" [ref=e263]:
+                - code [ref=e264]: seed required
+                - text: ·
+                - code [ref=e265]: seeds required (comma-separated)
+            - row "429 Rate limited Rate limit exceeded" [ref=e266]:
+              - cell "429" [ref=e267]
+              - cell "Rate limited" [ref=e268]
+              - cell "Rate limit exceeded" [ref=e269]:
+                - code [ref=e270]: Rate limit exceeded
+            - 'row "501 Not implemented PNG rasterization unavailable: ... — server missing @resvg/resvg-js. SVG endpoint still works." [ref=e271]':
+              - cell "501" [ref=e272]
+              - cell "Not implemented" [ref=e273]
+              - 'cell "PNG rasterization unavailable: ... — server missing @resvg/resvg-js. SVG endpoint still works." [ref=e274]':
+                - code [ref=e275]: "PNG rasterization unavailable: ..."
+                - text: — server missing
+                - code [ref=e276]: "@resvg/resvg-js"
+                - text: . SVG endpoint still works.
+      - generic [ref=e277]:
+        - heading "Rate limits" [level=2] [ref=e278]
+        - paragraph [ref=e279]:
+          - text: Per-IP sliding window on
+          - code [ref=e280]: /avatar/*
+          - text: . Default
+          - strong [ref=e281]: 120 req/minute
+          - text: ; this deployment runs at 600/min. Configurable via
+          - code [ref=e282]: RATE_LIMIT_PER_MIN
+          - text: env var when self-hosting.
+          - code [ref=e283]: /group
+          - text: ","
+          - code [ref=e284]: /gallery
+          - text: ","
+          - code [ref=e285]: /healthz
+          - text: are unlimited.
+        - paragraph [ref=e286]:
+          - text: Exceeded → HTTP 429 +
+          - code [ref=e287]: retry-after
+          - text: header.
+      - generic [ref=e288]:
+        - heading "Seeds and URL encoding" [level=2] [ref=e289]
+        - paragraph [ref=e290]:
+          - text: Anything you can put in a URL path can be a seed. Seeds with
+          - code [ref=e291]: "@"
+          - text: ","
+          - code [ref=e292]: .
+          - text: ", or other URL-special chars work — just URL-encode them on the client (most browsers do this automatically inside"
+          - code [ref=e293]: <img src>
+          - text: ).
+        - generic [ref=e294]:
+          - code [ref=e296]: "raw: alice@example.com encoded: alice%40example.com"
+          - button "Copy code" [ref=e297] [cursor=pointer]:
+            - img [ref=e298]
+            - generic [ref=e301]: copy
+        - paragraph [ref=e302]: The server decodes back to the raw seed before hashing, so both URLs produce the same SVG. Empty seeds → 400.
+      - navigation [ref=e303]:
+        - link "← Previous Parts catalog" [ref=e304] [cursor=pointer]:
+          - /url: /docs/parts
+          - generic [ref=e305]: ← Previous
+          - generic [ref=e306]: Parts catalog
+        - link "Next → @usenavii/core" [ref=e307] [cursor=pointer]:
+          - /url: /docs/sdk-core
+          - generic [ref=e308]: Next →
+          - generic [ref=e309]: "@usenavii/core"
+  - contentinfo [ref=e310]:
+    - generic [ref=e311]: navii · deterministic avatars · open source · MIT
+    - generic [ref=e312]:
+      - link "github" [ref=e313] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+      - text: ·
+      - link "/api" [ref=e314] [cursor=pointer]:
+        - /url: /api

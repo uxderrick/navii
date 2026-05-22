@@ -1,0 +1,122 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - link "navii navii / docs" [ref=e4] [cursor=pointer]:
+      - /url: https://navii.uxderrick.com/
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+      - generic [ref=e7]: /
+      - generic [ref=e8]: docs
+    - generic [ref=e9]:
+      - link "landing" [ref=e10] [cursor=pointer]:
+        - /url: https://navii.uxderrick.com/
+      - link "github" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Start" [level=5] [ref=e15]
+        - link "Quickstart" [ref=e16] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - link "Concepts" [ref=e17] [cursor=pointer]:
+          - /url: /docs/concepts
+      - generic [ref=e18]:
+        - heading "Reference" [level=5] [ref=e19]
+        - link "Parts catalog" [ref=e20] [cursor=pointer]:
+          - /url: /docs/parts
+        - link "HTTP API" [ref=e21] [cursor=pointer]:
+          - /url: /docs/http-api
+      - generic [ref=e22]:
+        - heading "SDK" [level=5] [ref=e23]
+        - link "@usenavii/core" [ref=e24] [cursor=pointer]:
+          - /url: /docs/sdk-core
+        - link "@usenavii/react" [ref=e25] [cursor=pointer]:
+          - /url: /docs/sdk-react
+      - generic [ref=e26]:
+        - heading "Operate" [level=5] [ref=e27]
+        - link "Self-hosting" [ref=e28] [cursor=pointer]:
+          - /url: /docs/deployment
+        - link "Changelog" [ref=e29] [cursor=pointer]:
+          - /url: /docs/changelog
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Changelog" [level=1] [ref=e32]
+        - paragraph [ref=e33]:
+          - text: Pre-release scaffold. Version surface settles at
+          - strong [ref=e34]: v0.1
+          - text: ". Below: dated highlights from current development."
+      - generic [ref=e35]:
+        - heading "Unreleased" [level=2] [ref=e36]
+        - list [ref=e37]:
+          - listitem [ref=e38]:
+            - text: Multi-page docs site at
+            - code [ref=e39]: /docs/*
+            - text: with sticky sidebar nav.
+          - listitem [ref=e40]: Full Open Graph + Twitter card + JSON-LD on landing.
+          - listitem [ref=e41]: Favicon, apple-touch-icon, OG image endpoints.
+          - listitem [ref=e42]: Parts catalog visual page — every variant rendered.
+          - listitem [ref=e43]: Continuous tweaks documented (hueShift / bodyScale / eyeGapShift / mouthCurveScale / antennaTilt).
+      - generic [ref=e44]:
+        - heading "Recent" [level=2] [ref=e45]
+        - list [ref=e46]:
+          - listitem [ref=e47]: Livelier animations — float now bobs + tilts + squashes; double blink; antenna sway; stronger spark pulse; rotating sparkle twinkle.
+          - listitem [ref=e48]: "Cast expanded: 22 palettes, 8 bodies, 10 eyes, 10 mouths, 12 toppers, 7 accessories."
+          - listitem [ref=e49]:
+            - code [ref=e50]: renderGroup
+            - text: +
+            - code [ref=e51]: GroupOptions
+            - text: exported from
+            - code [ref=e52]: "@usenavii/core"
+            - text: .
+          - listitem [ref=e53]:
+            - text: Continuous params (
+            - code [ref=e54]: hueShift
+            - text: ","
+            - code [ref=e55]: bodyScale
+            - text: ", etc.) wired into"
+            - code [ref=e56]: selectAvatar
+            - text: +
+            - code [ref=e57]: renderAvatar
+            - text: .
+          - listitem [ref=e58]:
+            - text: Split-domain deploy — landing on
+            - code [ref=e59]: navii.uxderrick.com
+            - text: ", API on"
+            - code [ref=e60]: navii-api.uxderrick.com
+            - text: .
+          - listitem [ref=e61]: Default rate limit bumped to 600/min.
+          - listitem [ref=e62]:
+            - text: Single-avatar
+            - code [ref=e63]: tileBg
+            - text: option.
+      - generic [ref=e64]:
+        - heading "What's next" [level=2] [ref=e65]
+        - list [ref=e66]:
+          - listitem [ref=e67]:
+            - text: npm publish of
+            - code [ref=e68]: "@usenavii/core"
+            - text: +
+            - code [ref=e69]: "@usenavii/react"
+            - text: via tsup.
+          - listitem [ref=e70]:
+            - code [ref=e71]: "Navii.seed({ id, email, name, createdAt })"
+            - text: ergonomic seed composer.
+          - listitem [ref=e72]: Cloudflare Worker deploy (wasm raster).
+          - listitem [ref=e73]: React Native binding.
+          - listitem [ref=e74]:
+            - text: "CLI:"
+            - code [ref=e75]: npx navii alice
+            - text: .
+          - listitem [ref=e76]: Snapshot tests + perf bench.
+      - navigation [ref=e77]:
+        - link "← Previous Self-hosting" [ref=e78] [cursor=pointer]:
+          - /url: /docs/deployment
+          - generic [ref=e79]: ← Previous
+          - generic [ref=e80]: Self-hosting
+  - contentinfo [ref=e81]:
+    - generic [ref=e82]: navii · deterministic avatars · open source · MIT
+    - generic [ref=e83]:
+      - link "github" [ref=e84] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+      - text: ·
+      - link "/api" [ref=e85] [cursor=pointer]:
+        - /url: /api

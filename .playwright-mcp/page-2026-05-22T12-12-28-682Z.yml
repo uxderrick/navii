@@ -1,0 +1,120 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - link "navii navii / docs" [ref=e4] [cursor=pointer]:
+      - /url: https://navii.uxderrick.com/
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+      - generic [ref=e7]: /
+      - generic [ref=e8]: docs
+    - generic [ref=e9]:
+      - link "landing" [ref=e10] [cursor=pointer]:
+        - /url: https://navii.uxderrick.com/
+      - link "github" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Start" [level=5] [ref=e15]
+        - link "Quickstart" [ref=e16] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - link "Concepts" [ref=e17] [cursor=pointer]:
+          - /url: /docs/concepts
+      - generic [ref=e18]:
+        - heading "Reference" [level=5] [ref=e19]
+        - link "Parts catalog" [ref=e20] [cursor=pointer]:
+          - /url: /docs/parts
+        - link "HTTP API" [ref=e21] [cursor=pointer]:
+          - /url: /docs/http-api
+      - generic [ref=e22]:
+        - heading "SDK" [level=5] [ref=e23]
+        - link "@usenavii/core" [ref=e24] [cursor=pointer]:
+          - /url: /docs/sdk-core
+        - link "@usenavii/react" [ref=e25] [cursor=pointer]:
+          - /url: /docs/sdk-react
+      - generic [ref=e26]:
+        - heading "Operate" [level=5] [ref=e27]
+        - link "Self-hosting" [ref=e28] [cursor=pointer]:
+          - /url: /docs/deployment
+        - link "Changelog" [ref=e29] [cursor=pointer]:
+          - /url: /docs/changelog
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Quickstart" [level=1] [ref=e32]
+        - paragraph [ref=e33]: Three ways to render a deterministic Navii avatar. Pick the one that fits your stack — they all use the same engine, all produce the same SVG for the same seed.
+      - generic [ref=e34]:
+        - heading "Hosted (zero install)" [level=2] [ref=e35]
+        - paragraph [ref=e36]:
+          - text: Drop an
+          - code [ref=e37]: <img>
+          - text: tag. No build step, no SDK. Works in HTML, React, Vue, anywhere a URL fits.
+        - generic [ref=e38]:
+          - code [ref=e40]: <img src="https://navii-api.uxderrick.com/avatar/alice@example.com?size=96" />
+          - button "Copy code" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+            - generic [ref=e45]: copy
+        - paragraph [ref=e46]:
+          - text: Append
+          - code [ref=e47]: .png
+          - text: "to the seed if you need a raster image (emails, OG images, native apps):"
+        - generic [ref=e48]:
+          - code [ref=e50]: <img src="https://navii-api.uxderrick.com/avatar/alice@example.com.png?size=256" />
+          - button "Copy code" [ref=e51] [cursor=pointer]:
+            - img [ref=e52]
+            - generic [ref=e55]: copy
+      - generic [ref=e56]:
+        - heading "@usenavii/core (any JS runtime)" [level=2] [ref=e57]
+        - generic [ref=e58]:
+          - code [ref=e60]: npm i @usenavii/core
+          - button "Copy code" [ref=e61] [cursor=pointer]:
+            - img [ref=e62]
+            - generic [ref=e65]: copy
+        - generic [ref=e66]:
+          - code [ref=e68]: "import { createAvatar } from '@usenavii/core'; const svg = createAvatar(user.id, { size: 96 }); document.body.insertAdjacentHTML('beforeend', svg);"
+          - button "Copy code" [ref=e69] [cursor=pointer]:
+            - img [ref=e70]
+            - generic [ref=e73]: copy
+        - paragraph [ref=e74]: Pure TypeScript, no dependencies. Runs on Node, Bun, Deno, Cloudflare Workers, browsers — anywhere ES modules run.
+      - generic [ref=e75]:
+        - heading "@usenavii/react" [level=2] [ref=e76]
+        - generic [ref=e77]:
+          - code [ref=e79]: npm i @usenavii/react
+          - button "Copy code" [ref=e80] [cursor=pointer]:
+            - img [ref=e81]
+            - generic [ref=e84]: copy
+        - generic [ref=e85]:
+          - code [ref=e87]: "import { Navii } from '@usenavii/react'; <Navii seed={user.id} size={64} title={user.name} animated />"
+          - button "Copy code" [ref=e88] [cursor=pointer]:
+            - img [ref=e89]
+            - generic [ref=e92]: copy
+        - paragraph [ref=e93]:
+          - text: Memoized
+          - code [ref=e94]: <img src="data:image/svg+xml;...">
+          - text: — the SVG renders client-side and is treated as opaque image by the browser (no inline scripting surface).
+      - generic [ref=e95]:
+        - heading "Where to go next" [level=2] [ref=e96]
+        - list [ref=e97]:
+          - listitem [ref=e98]:
+            - link "Concepts" [ref=e99] [cursor=pointer]:
+              - /url: /docs/concepts
+            - text: — what "seed" means and why determinism matters.
+          - listitem [ref=e100]:
+            - link "Parts catalog" [ref=e101] [cursor=pointer]:
+              - /url: /docs/parts
+            - text: — every variant rendered, so you know what you're choosing from.
+          - listitem [ref=e102]:
+            - link "HTTP API" [ref=e103] [cursor=pointer]:
+              - /url: /docs/http-api
+            - text: — full endpoint reference for the hosted service.
+      - navigation [ref=e104]:
+        - link "Next → Concepts" [ref=e105] [cursor=pointer]:
+          - /url: /docs/concepts
+          - generic [ref=e106]: Next →
+          - generic [ref=e107]: Concepts
+  - contentinfo [ref=e108]:
+    - generic [ref=e109]: navii · deterministic avatars · open source · MIT
+    - generic [ref=e110]:
+      - link "github" [ref=e111] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+      - text: ·
+      - link "/api" [ref=e112] [cursor=pointer]:
+        - /url: /api

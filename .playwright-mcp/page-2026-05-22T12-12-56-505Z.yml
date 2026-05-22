@@ -1,0 +1,345 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - link "navii navii / docs" [ref=e4] [cursor=pointer]:
+      - /url: https://navii.uxderrick.com/
+      - img "navii" [ref=e5]
+      - generic [ref=e6]: navii
+      - generic [ref=e7]: /
+      - generic [ref=e8]: docs
+    - generic [ref=e9]:
+      - link "landing" [ref=e10] [cursor=pointer]:
+        - /url: https://navii.uxderrick.com/
+      - link "github" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Start" [level=5] [ref=e15]
+        - link "Quickstart" [ref=e16] [cursor=pointer]:
+          - /url: /docs/quickstart
+        - link "Concepts" [ref=e17] [cursor=pointer]:
+          - /url: /docs/concepts
+      - generic [ref=e18]:
+        - heading "Reference" [level=5] [ref=e19]
+        - link "Parts catalog" [ref=e20] [cursor=pointer]:
+          - /url: /docs/parts
+        - link "HTTP API" [ref=e21] [cursor=pointer]:
+          - /url: /docs/http-api
+      - generic [ref=e22]:
+        - heading "SDK" [level=5] [ref=e23]
+        - link "@usenavii/core" [ref=e24] [cursor=pointer]:
+          - /url: /docs/sdk-core
+        - link "@usenavii/react" [ref=e25] [cursor=pointer]:
+          - /url: /docs/sdk-react
+      - generic [ref=e26]:
+        - heading "Operate" [level=5] [ref=e27]
+        - link "Self-hosting" [ref=e28] [cursor=pointer]:
+          - /url: /docs/deployment
+        - link "Changelog" [ref=e29] [cursor=pointer]:
+          - /url: /docs/changelog
+    - main [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Parts catalog" [level=1] [ref=e32]
+        - paragraph [ref=e33]: Every variant value, rendered against a neutral base so you can see exactly what each one looks like. Same base spec, only the named part varies.
+      - generic [ref=e34]:
+        - heading "Palette 22" [level=2] [ref=e35]:
+          - text: Palette
+          - generic [ref=e36]: "22"
+        - paragraph [ref=e37]:
+          - text: Color families. Each palette defines five colors (body gradient, accent, ink, blush). Override via
+          - code [ref=e38]: "?palette=mint"
+          - text: on the HTTP API.
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - img [ref=e42]
+            - generic [ref=e60]: indigo
+          - generic [ref=e61]:
+            - img [ref=e63]
+            - generic [ref=e81]: mint
+          - generic [ref=e82]:
+            - img [ref=e84]
+            - generic [ref=e102]: amber
+          - generic [ref=e103]:
+            - img [ref=e105]
+            - generic [ref=e123]: sky
+          - generic [ref=e124]:
+            - img [ref=e126]
+            - generic [ref=e144]: violet
+          - generic [ref=e145]:
+            - img [ref=e147]
+            - generic [ref=e165]: cyan
+          - generic [ref=e166]:
+            - img [ref=e168]
+            - generic [ref=e186]: rose
+          - generic [ref=e187]:
+            - img [ref=e189]
+            - generic [ref=e207]: lime
+          - generic [ref=e208]:
+            - img [ref=e210]
+            - generic [ref=e228]: peach
+          - generic [ref=e229]:
+            - img [ref=e231]
+            - generic [ref=e249]: teal
+          - generic [ref=e250]:
+            - img [ref=e252]
+            - generic [ref=e270]: sand
+          - generic [ref=e271]:
+            - img [ref=e273]
+            - generic [ref=e291]: plum
+          - generic [ref=e292]:
+            - img [ref=e294]
+            - generic [ref=e312]: coral
+          - generic [ref=e313]:
+            - img [ref=e315]
+            - generic [ref=e333]: forest
+          - generic [ref=e334]:
+            - img [ref=e336]
+            - generic [ref=e354]: slate
+          - generic [ref=e355]:
+            - img [ref=e357]
+            - generic [ref=e375]: fuchsia
+          - generic [ref=e376]:
+            - img [ref=e378]
+            - generic [ref=e396]: terracotta
+          - generic [ref=e397]:
+            - img [ref=e399]
+            - generic [ref=e417]: navy
+          - generic [ref=e418]:
+            - img [ref=e420]
+            - generic [ref=e438]: lavender
+          - generic [ref=e439]:
+            - img [ref=e441]
+            - generic [ref=e459]: charcoal
+          - generic [ref=e460]:
+            - img [ref=e462]
+            - generic [ref=e480]: butter
+          - generic [ref=e481]:
+            - img [ref=e483]
+            - generic [ref=e501]: aqua
+      - generic [ref=e502]:
+        - heading "Body 8" [level=2] [ref=e503]:
+          - text: Body
+          - generic [ref=e504]: "8"
+        - paragraph [ref=e505]: Silhouette shape. Each has its own anchor table — eyes, mouth, antenna, and topper move to suit the silhouette.
+        - generic [ref=e506]:
+          - generic [ref=e507]:
+            - img [ref=e509]
+            - generic [ref=e527]: orb
+          - generic [ref=e528]:
+            - img [ref=e530]
+            - generic [ref=e548]: tall
+          - generic [ref=e549]:
+            - img [ref=e551]
+            - generic [ref=e569]: squat
+          - generic [ref=e570]:
+            - img [ref=e572]
+            - generic [ref=e590]: pear
+          - generic [ref=e591]:
+            - img [ref=e593]
+            - generic [ref=e611]: pebble
+          - generic [ref=e612]:
+            - img [ref=e614]
+            - generic [ref=e632]: dumpling
+          - generic [ref=e633]:
+            - img [ref=e635]
+            - generic [ref=e653]: taro
+          - generic [ref=e654]:
+            - img [ref=e656]
+            - generic [ref=e674]: wisp
+      - generic [ref=e675]:
+        - heading "Eyes 10" [level=2] [ref=e676]:
+          - text: Eyes
+          - generic [ref=e677]: "10"
+        - generic [ref=e678]:
+          - generic [ref=e679]:
+            - img [ref=e681]
+            - generic [ref=e701]: round
+          - generic [ref=e702]:
+            - img [ref=e704]
+            - generic [ref=e724]: wide
+          - generic [ref=e725]:
+            - img [ref=e727]
+            - generic [ref=e743]: squint
+          - generic [ref=e744]:
+            - img [ref=e746]
+            - generic [ref=e764]: wink
+          - generic [ref=e765]:
+            - img [ref=e767]
+            - generic [ref=e785]: sleepy
+          - generic [ref=e786]:
+            - img [ref=e788]
+            - generic [ref=e804]: star
+          - generic [ref=e805]:
+            - img [ref=e807]
+            - generic [ref=e823]: heart
+          - generic [ref=e824]:
+            - img [ref=e826]
+            - generic [ref=e846]: oval
+          - generic [ref=e847]:
+            - img [ref=e849]
+            - generic [ref=e865]: dot
+          - generic [ref=e866]:
+            - img [ref=e868]
+            - generic [ref=e888]: cross
+      - generic [ref=e889]:
+        - heading "Mouth 10" [level=2] [ref=e890]:
+          - text: Mouth
+          - generic [ref=e891]: "10"
+        - generic [ref=e892]:
+          - generic [ref=e893]:
+            - img [ref=e895]
+            - generic [ref=e913]: smile
+          - generic [ref=e914]:
+            - img [ref=e916]
+            - generic [ref=e934]: grin
+          - generic [ref=e935]:
+            - img [ref=e937]
+            - generic [ref=e956]: open
+          - generic [ref=e957]:
+            - img [ref=e959]
+            - generic [ref=e976]: flat
+          - generic [ref=e977]:
+            - img [ref=e979]
+            - generic [ref=e997]: smirk
+          - generic [ref=e998]:
+            - img [ref=e1000]
+            - generic [ref=e1018]: awe
+          - generic [ref=e1019]:
+            - img [ref=e1021]
+            - generic [ref=e1040]: tongue
+          - generic [ref=e1041]:
+            - img [ref=e1043]
+            - generic [ref=e1062]: tooth
+          - generic [ref=e1063]:
+            - img [ref=e1065]
+            - generic [ref=e1083]: wave
+          - generic [ref=e1084]:
+            - img [ref=e1086]
+            - generic [ref=e1104]: dot
+      - generic [ref=e1105]:
+        - heading "Antenna 5" [level=2] [ref=e1106]:
+          - text: Antenna
+          - generic [ref=e1107]: "5"
+        - paragraph [ref=e1108]:
+          - text: Mounts at the body's apex. When an antenna is present, the seed-picked topper is suppressed to avoid visual collision (except
+          - code [ref=e1109]: leaf
+          - text: ).
+        - generic [ref=e1110]:
+          - generic [ref=e1111]:
+            - img [ref=e1113]
+            - generic [ref=e1127]: none
+          - generic [ref=e1128]:
+            - img [ref=e1130]
+            - generic [ref=e1148]: classic
+          - generic [ref=e1149]:
+            - img [ref=e1151]
+            - generic [ref=e1169]: curl
+          - generic [ref=e1170]:
+            - img [ref=e1172]
+            - generic [ref=e1192]: double
+          - generic [ref=e1193]:
+            - img [ref=e1195]
+            - generic [ref=e1212]: spike
+      - generic [ref=e1213]:
+        - heading "Accessory 7" [level=2] [ref=e1214]:
+          - text: Accessory
+          - generic [ref=e1215]: "7"
+        - generic [ref=e1216]:
+          - generic [ref=e1217]:
+            - img [ref=e1219]
+            - generic [ref=e1237]: none
+          - generic [ref=e1238]:
+            - img [ref=e1240]
+            - generic [ref=e1260]: blush
+          - generic [ref=e1261]:
+            - img [ref=e1263]
+            - generic [ref=e1285]: freckles
+          - generic [ref=e1286]:
+            - img [ref=e1288]
+            - generic [ref=e1310]: sparkle
+          - generic [ref=e1311]:
+            - img [ref=e1313]
+            - generic [ref=e1335]: glasses
+          - generic [ref=e1336]:
+            - img [ref=e1338]
+            - generic [ref=e1359]: eyepatch
+          - generic [ref=e1360]:
+            - img [ref=e1362]
+            - generic [ref=e1381]: mole
+      - generic [ref=e1382]:
+        - heading "Background 3" [level=2] [ref=e1383]:
+          - text: Background
+          - generic [ref=e1384]: "3"
+        - paragraph [ref=e1385]:
+          - text: Scene fill behind the figure. Override via
+          - code [ref=e1386]: "?background=ring"
+          - text: .
+        - generic [ref=e1387]:
+          - generic [ref=e1388]:
+            - img [ref=e1390]
+            - generic [ref=e1406]: none
+          - generic [ref=e1407]:
+            - img [ref=e1409]
+            - generic [ref=e1426]: solid
+          - generic [ref=e1427]:
+            - img [ref=e1429]
+            - generic [ref=e1447]: ring
+      - generic [ref=e1448]:
+        - heading "Topper 12" [level=2] [ref=e1449]:
+          - text: Topper
+          - generic [ref=e1450]: "12"
+        - paragraph [ref=e1451]: Sits on top of the body. Suppressed when an antenna is also present.
+        - generic [ref=e1452]:
+          - generic [ref=e1453]:
+            - img [ref=e1455]
+            - generic [ref=e1469]: none
+          - generic [ref=e1470]:
+            - img [ref=e1472]
+            - generic [ref=e1490]: ears
+          - generic [ref=e1491]:
+            - img [ref=e1493]
+            - generic [ref=e1511]: roundEars
+          - generic [ref=e1512]:
+            - img [ref=e1514]
+            - generic [ref=e1529]: horn
+          - generic [ref=e1530]:
+            - img [ref=e1532]
+            - generic [ref=e1548]: horns
+          - generic [ref=e1549]:
+            - img [ref=e1551]
+            - generic [ref=e1566]: tuft
+          - generic [ref=e1567]:
+            - img [ref=e1569]
+            - generic [ref=e1586]: cap
+          - generic [ref=e1587]:
+            - img [ref=e1589]
+            - generic [ref=e1605]: leaf
+          - generic [ref=e1606]:
+            - img [ref=e1608]
+            - generic [ref=e1624]: headband
+          - generic [ref=e1625]:
+            - img [ref=e1627]
+            - generic [ref=e1643]: halo
+          - generic [ref=e1644]:
+            - img [ref=e1646]
+            - generic [ref=e1664]: crown
+          - generic [ref=e1665]:
+            - img [ref=e1667]
+            - generic [ref=e1683]: antlers
+      - navigation [ref=e1684]:
+        - link "← Previous Concepts" [ref=e1685] [cursor=pointer]:
+          - /url: /docs/concepts
+          - generic [ref=e1686]: ← Previous
+          - generic [ref=e1687]: Concepts
+        - link "Next → HTTP API" [ref=e1688] [cursor=pointer]:
+          - /url: /docs/http-api
+          - generic [ref=e1689]: Next →
+          - generic [ref=e1690]: HTTP API
+  - contentinfo [ref=e1691]:
+    - generic [ref=e1692]: navii · deterministic avatars · open source · MIT
+    - generic [ref=e1693]:
+      - link "github" [ref=e1694] [cursor=pointer]:
+        - /url: https://github.com/uxderrick/navii
+      - text: ·
+      - link "/api" [ref=e1695] [cursor=pointer]:
+        - /url: /api
