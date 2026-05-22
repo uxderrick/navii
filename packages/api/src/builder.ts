@@ -118,7 +118,18 @@ export function builderHtml(): string {
   .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
   /* nav */
-  nav.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  nav.top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 10, 11, 0.72);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--line);
+    margin: 0 -24px;
+  }
   nav.top .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
   nav.top .brand img { width: 28px; height: 28px; border-radius: 50%; }
   nav.top .links { display: flex; gap: 20px; font-size: 13px; color: var(--muted-2); }

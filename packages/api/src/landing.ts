@@ -16,8 +16,6 @@ const CAST_SEEDS: readonly string[] = [
   'yumi', 'cass', 'odi', 'hex', 'fae', 'rune',
 ];
 
-const GROUP_SEEDS = ['aria', 'milo', 'nova', 'kai', 'sage'];
-
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.uxderrick.com';
 const OG_IMAGE = `${API_BASE}/og.png`;
@@ -27,9 +25,6 @@ export function landingHtml(): string {
     (s) =>
       `<a class="tile" href="${API_BASE}/avatar/${s}?size=192&animated=1" title="${s}"><img src="${API_BASE}/avatar/${s}?size=160&animated=1" alt="${s}" loading="lazy" width="160" height="160" /><span>${s}</span></a>`,
   ).join('');
-
-  const groupPath = `/group?seeds=${GROUP_SEEDS.join(',')}&size=72&overlap=0.32`;
-  const groupUrl = `${API_BASE}${groupPath}`;
 
   return `<!doctype html>
 <html lang="en">
@@ -748,17 +743,6 @@ export function landingHtml(): string {
     <p class="cast-breakdown">22 palettes &times; 8 bodies &times; 10 eyes &times; 10 mouths &times; 5 antennas &times; 12 toppers &times; 7 accessories.</p>
     <p class="cast-foot">Continuous tweaks (hue, scale, eye gap, mouth curve, antenna tilt) make it effectively unlimited.</p>
     <div class="cast-grid">${tiles}</div>
-  </section>
-
-  <hr class="rule" />
-
-  <section id="group">
-    <h2>groups</h2>
-    <p class="blurb">For teams, threads, comments. Anywhere people gather. <span>Opaque tiles so overlap stays clean.</span></p>
-    <div class="group-demo">
-      <img src="${groupUrl}" alt="avatar group" />
-      <code><span class="verb">GET</span> ${API_BASE}${groupPath}</code>
-    </div>
   </section>
 
   <hr class="rule" />

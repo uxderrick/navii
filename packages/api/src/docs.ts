@@ -957,7 +957,18 @@ code, pre, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Con
 .layout { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
 /* top nav */
-nav.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid var(--line); margin-bottom: 36px; }
+nav.top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 10, 11, 0.72);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--line);
+  margin: 0 -24px 36px;
+}
 nav.top .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; }
 nav.top .brand img { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-2); }
 nav.top .brand .sep { color: var(--line); margin: 0 2px; }
