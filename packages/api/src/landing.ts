@@ -203,6 +203,11 @@ export function landingHtml(): string {
   .editor-head .copy:hover { color: var(--ink); border-color: var(--muted-2); }
   .editor-head .copy.ok { color: var(--good); border-color: var(--good); }
 
+  .seed-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg-2); border-bottom: 1px solid var(--line); }
+  .seed-bar label { color: var(--muted-2); font: 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  .seed-bar input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--accent); font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 4px 0; }
+  .seed-bar input::placeholder { color: #52525b; }
+
   .editor-body { position: relative; display: grid; grid-template-columns: 48px 1fr; flex: 1; min-height: 240px; }
   .gutter {
     background: var(--bg-3);
@@ -535,6 +540,10 @@ export function landingHtml(): string {
           <button class="copy" id="copy-btn" type="button">copy</button>
         </div>
       </div>
+      <div class="seed-bar">
+        <label for="seed-input">user id</label>
+        <input id="seed-input" type="text" value="alice@example.com" autocomplete="off" spellcheck="false" placeholder="user.id, email, uuid…" />
+      </div>
       <div class="editor-body">
         <div class="gutter" id="gutter"></div>
         <div class="code-area">
@@ -616,17 +625,21 @@ export function landingHtml(): string {
   let t = null;
 
   const frameworkSel = document.getElementById('framework-select');
-  const state = { framework: 'html', preset: 'palette' };
+  const seedInput = document.getElementById('seed-input');
+  const state = { framework: 'html', preset: 'palette', seed: 'alice@example.com' };
 
-  const PRESETS = {
-    basic:    { seed: 'alice@example.com', size: 320, params: {} },
-    animated: { seed: 'alice@example.com', size: 320, params: { animated: '1' } },
-    palette:  { seed: 'alice@example.com', size: 320, params: { palette: 'violet', animated: '1' } },
-    tile:     { seed: 'alice@example.com', size: 320, params: { tileBg: '#ffffff', animated: '1' } },
-    dark:     { seed: 'alice@example.com', size: 320, params: { tileBg: '#0b0b0c', animated: '1' } },
-    png:      { seed: 'alice@example.com', size: 320, ext: '.png', params: { tileBg: 'auto' } },
-    group:    { group: ['alice','bob','carol','dave','eve'], size: 80, params: { overlap: '0.32' } }
-  };
+  function currentPresets() {
+    const s = state.seed || 'alice@example.com';
+    return {
+      basic:    { seed: s, size: 320, params: {} },
+      animated: { seed: s, size: 320, params: { animated: '1' } },
+      palette:  { seed: s, size: 320, params: { palette: 'violet', animated: '1' } },
+      tile:     { seed: s, size: 320, params: { tileBg: '#ffffff', animated: '1' } },
+      dark:     { seed: s, size: 320, params: { tileBg: '#0b0b0c', animated: '1' } },
+      png:      { seed: s, size: 320, ext: '.png', params: { tileBg: 'auto' } },
+      group:    { group: [s, 'bob', 'carol', 'dave', 'eve'], size: 80, params: { overlap: '0.32' } }
+    };
+  }
 
   function buildUrl(p) {
     const u = new URL(API_BASE);
@@ -786,7 +799,8 @@ export function landingHtml(): string {
   }
 
   function rebuild() {
-    const p = PRESETS[state.preset];
+    const presetsMap = currentPresets();
+    const p = presetsMap[state.preset];
     const url = buildUrl(p);
     const ctx = {
       url: url,
@@ -824,7 +838,7 @@ export function landingHtml(): string {
     const btn = ev.target.closest('button.preset');
     if (!btn) return;
     const key = btn.getAttribute('data-preset');
-    if (!PRESETS[key]) return;
+    if (!currentPresets()[key]) return;
     state.preset = key;
     document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -834,6 +848,13 @@ export function landingHtml(): string {
   frameworkSel.addEventListener('change', function () {
     state.framework = frameworkSel.value;
     rebuild();
+  });
+
+  let seedT = null;
+  seedInput.addEventListener('input', function () {
+    state.seed = seedInput.value.trim() || 'alice@example.com';
+    clearTimeout(seedT);
+    seedT = setTimeout(rebuild, 140);
   });
 
   copyBtn.addEventListener('click', async function () {
