@@ -221,9 +221,9 @@ export function landingHtml(): string {
     margin: 0;
     padding: 16px 18px;
     font: 13.5px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    white-space: pre;
-    overflow-wrap: normal;
-    word-break: normal;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     tab-size: 2;
   }
   .code-area pre { color: var(--ink); background: transparent; pointer-events: none; min-height: 240px; }
@@ -518,7 +518,7 @@ export function landingHtml(): string {
         <div class="gutter" id="gutter"></div>
         <div class="code-area">
           <pre id="code-display"><code></code></pre>
-          <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
+          <textarea id="code-input" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="soft"></textarea>
         </div>
       </div>
       <div class="editor-foot" id="presets">
