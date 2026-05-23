@@ -33,3 +33,66 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: umami
+    restart: unless-stopped
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_APP_SECRET}
+    ports:
+      - "127.0.0.1:3001:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "768M"
+
+  umami-db:
+    image: postgres:16-alpine
+    container_name: umami-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+      POSTGRES_DB: umami
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256M"
+
+  log-shipper:
+    image: node:22-alpine
+    container_name: log-shipper
+    restart: unless-stopped
+    volumes:
+      - /var/log/caddy:/logs:ro
+      - ./shipper.mjs:/app/shipper.mjs:ro
+    environment:
+      UMAMI_URL: https://analytics.uxderrick.com/api/send
+      UMAMI_WEBSITE_ID: 9976751b-f339-414d-ab83-5cff4c953b8c
+      LOG_FILE: /logs/navii-api.log
+      HOSTNAME_OVERRIDE: navii-api.uxderrick.com
+      POLL_MS: "2000"
+    command: ["node", "/app/shipper.mjs"]
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "128M"
+
+volumes:
+  umami-db-data:
