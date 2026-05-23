@@ -64,6 +64,7 @@ It picks the most unique field automatically: `id` → `email` → `name + creat
 
 ```ts
 createAvatar(seed: string, options?: AvatarOptions): string
+random(options?: AvatarOptions): { svg: string; seed: string }
 selectAvatar(seed: string, options?: AvatarOptions): AvatarSpec
 renderAvatar(spec:  AvatarSpec, options?: AvatarOptions): string
 renderGroup(seeds:  string[],   options?: GroupOptions):  string
@@ -71,7 +72,7 @@ renderGroup(seeds:  string[],   options?: GroupOptions):  string
 seed(fields:  SeedFields): string         // pick most-unique field
 build(spec?:  BuildSpec, opts?): string   // manual mix-and-match (no seed)
 
-Navii.{ create, render, select, group, seed, build }
+Navii.{ create, random, render, select, group, seed, build }
 ```
 
 ### `AvatarOptions`
@@ -84,6 +85,22 @@ Navii.{ create, render, select, group, seed, build }
 | `tileBg`     | CSS color or `'auto'` (palette accent)                | none         |
 | `title`      | accessible label (sets `<title>` + `aria-label`)      | none         |
 | `animated`   | `boolean` — idle float / blink / sway / pulse / twinkle | `false`    |
+
+### `random()` — pick a seed for you
+
+For "spin again" UX, onboarding before the user picks an avatar, dev/demo seeding. Returns the chosen seed so you can persist it:
+
+```ts
+const { svg, seed } = Navii.random({ size: 96 });
+await db.users.update(user.id, { naviiSeed: seed });
+```
+
+Calling `random()` in a React render gives a new avatar every re-render. Stabilize with `useState`:
+
+```tsx
+const [{ seed }] = useState(() => Navii.random());
+return <Navii seed={seed} />;
+```
 
 ### `build()` — direct construction without a seed
 

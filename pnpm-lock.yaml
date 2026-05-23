@@ -46,7 +46,7 @@ importers:
   packages/react:
     dependencies:
       '@usenavii/core':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^0.4.0
         version: link:../core
     devDependencies:
       '@types/react':

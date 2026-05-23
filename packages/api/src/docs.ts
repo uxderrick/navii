@@ -1020,12 +1020,32 @@ function pageSdkCore(): string {
     <section>
       <h2 id="functions">Functions</h2>
       <pre class="code"><code>createAvatar(seed: string, options?: AvatarOptions): string
+random(options?: AvatarOptions): { svg: string; seed: string }
 selectAvatar(seed: string, options?: AvatarOptions): AvatarSpec
 renderAvatar(spec:  AvatarSpec, options?: AvatarOptions): string
 renderAvatarInner(spec: AvatarSpec, options?: AvatarOptions): string
 renderGroup(seeds:  string[], options?: GroupOptions): string</code></pre>
       <p><code>createAvatar</code> is the convenience composition of <code>selectAvatar</code> + <code>renderAvatar</code>. Use the split pair when you want to inspect or mutate the spec between picking and rendering.</p>
       <p><code>renderAvatarInner</code> emits the SVG body without an outer <code>&lt;svg&gt;</code> wrapper — useful when composing multiple avatars into one SVG document (this is how <code>renderGroup</code> works internally).</p>
+    </section>
+
+    <section>
+      <h2 id="random">Random avatars</h2>
+      <p><code>Navii.random()</code> picks a fresh seed for you and renders the avatar. Returns both the SVG and the chosen seed so you can <strong>persist it</strong> — saving the seed to the user's profile makes future renders stable.</p>
+
+      <pre class="code"><code>import { Navii } from '@usenavii/core';
+
+const { svg, seed } = Navii.random({ size: 96 });
+// persist the seed so the user's avatar is stable on next visit
+await db.users.update(user.id, { naviiSeed: seed });</code></pre>
+
+      <p>Use for "spin again" UX, lazy onboarding (assign an avatar before the user picks one), dev/demo seeding. Seed source: <code>crypto.randomUUID()</code> with a <code>Math.random()</code> fallback.</p>
+
+      <p class="note"><strong>React:</strong> stabilize the seed across re-renders with <code>useState</code>:</p>
+      <pre class="code"><code>const [{ seed }] = useState(() => Navii.random());
+return &lt;Navii seed={seed} /&gt;;</code></pre>
+
+      <p>Calling <code>Navii.random()</code> directly inside a render function (without <code>useState</code>/<code>useMemo</code>) gives you a new avatar on every re-render.</p>
     </section>
 
     <section>

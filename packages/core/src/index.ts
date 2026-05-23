@@ -47,6 +47,47 @@ export function createAvatar(seed: string, options: AvatarOptions = {}): string 
 }
 
 /**
+ * Generate a random avatar without supplying a seed.
+ *
+ * Picks a fresh UUID seed via `crypto.randomUUID()` (or a `Math.random()`
+ * fallback when WebCrypto is unavailable) and renders the avatar. The seed
+ * is returned alongside the SVG so callers can **persist it** — e.g. save
+ * to the user's profile so future renders are stable.
+ *
+ * Use for: "spin again" UX, dev/demo seeding, lazy onboarding flows where
+ * the user gets an avatar before picking one.
+ *
+ * Each call returns a different avatar — DO NOT call inline in a render
+ * function or the avatar will change every re-render. Stabilize with a
+ * `useState`/`useMemo` init or persist the returned seed:
+ *
+ * @example
+ * ```ts
+ * const { svg, seed } = Navii.random({ size: 96 });
+ * saveToProfile(user.id, { naviiSeed: seed });
+ * ```
+ *
+ * @example React
+ * ```tsx
+ * const [random] = useState(() => Navii.random());
+ * return <Navii seed={random.seed} />;
+ * ```
+ */
+export function random(options: AvatarOptions = {}): { svg: string; seed: string } {
+  const seed = randomSeed();
+  return { svg: createAvatar(seed, options), seed };
+}
+
+function randomSeed(): string {
+  const c = globalThis.crypto;
+  if (c && typeof c.randomUUID === 'function') return c.randomUUID();
+  return (
+    Math.random().toString(36).slice(2) +
+    Math.random().toString(36).slice(2)
+  );
+}
+
+/**
  * Convenience namespace — bundles every public function under one import.
  *
  * @example
@@ -61,6 +102,7 @@ export function createAvatar(seed: string, options: AvatarOptions = {}): string 
  */
 export const Navii = {
   create: createAvatar,
+  random,
   render: renderAvatar,
   select: selectAvatar,
   group: renderGroup,
