@@ -799,16 +799,16 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
 
     <section>
       <h2 id="random">GET /random[.png]</h2>
-      <p>Returns a 302 redirect to <code>/avatar/&lt;random-seed&gt;</code> with a freshly-generated UUID seed each request. The redirect target gets the usual immutable cache; the redirect itself is <code>cache-control: no-store</code> so every hit picks a new seed. Use for "spin again" UX, hero placeholders, demos.</p>
+      <p>Returns a fresh avatar inline — same URL, different avatar every refresh. Internally picks a new UUID seed per request and renders directly. <strong>No redirect.</strong> Point an <code>&lt;img src="/random"&gt;</code> at it and every page refresh swaps the avatar.</p>
 
       <h4 id="random-query">Query</h4>
-      <p>Any query string is passed through verbatim to the redirect target — so all <code>/avatar/:seed</code> params (<code>size</code>, <code>palette</code>, <code>background</code>, <code>tileBg</code>, <code>title</code>, <code>animated</code>) work on <code>/random</code> too.</p>
+      <p>All <code>/avatar/:seed</code> params apply (<code>size</code>, <code>palette</code>, <code>background</code>, <code>tileBg</code>, <code>title</code>, <code>animated</code>) — same semantics, same clamps, same enums.</p>
 
       <h4 id="random-headers">Response headers</h4>
       <ul>
-        <li><code>x-navii-seed</code> — the seed that was chosen (also visible in the <code>location</code> URL). Useful if you want to persist the chosen avatar.</li>
-        <li><code>cache-control: no-store</code> — the redirect itself is never cached.</li>
-        <li><code>access-control-expose-headers: x-navii-seed, location</code> — so browser JS can read both via <code>fetch()</code>.</li>
+        <li><code>x-navii-seed</code> — the seed that was chosen. Read it from a <code>fetch()</code> response if you want to persist the avatar (e.g. save to user profile so it's stable on next visit).</li>
+        <li><code>cache-control: no-store</code> — never cached by the browser or CDN. Refresh = new avatar.</li>
+        <li><code>access-control-allow-origin: *</code> + <code>access-control-expose-headers: x-navii-seed</code> — embed anywhere; cross-origin JS can read the seed header.</li>
       </ul>
 
       <h4 id="random-examples">Examples</h4>
@@ -816,7 +816,11 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
 ${API_BASE}/random?palette=mint&amp;size=128
 ${API_BASE}/random.png?size=256</code></pre>
 
-      <p class="note">For an <code>&lt;img&gt;</code> tag, just point <code>src</code> at <code>/random</code> — browsers follow the 302 transparently and cache the final URL.</p>
+      <p class="note"><strong>Persisting the chosen seed</strong> — useful for onboarding flows where the user gets an avatar without picking one, then keeps it forever:</p>
+      <pre class="code"><code>const res = await fetch('${API_BASE}/random');
+const seed = res.headers.get('x-navii-seed');
+const svg = await res.text();
+await db.users.update(user.id, { naviiSeed: seed });</code></pre>
     </section>
 
     <section>

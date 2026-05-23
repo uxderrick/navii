@@ -345,32 +345,68 @@ export function createApp(options: AppOptions = {}) {
   });
 
   /**
-   * GET /random, GET /random.png — redirect to /avatar/:seed with a fresh seed.
+   * GET /random, GET /random.png — render a fresh avatar inline (no redirect).
    *
-   * Hosted-only convenience for "spin again" UX, hero placeholders, demos.
-   * Returns 302 → /avatar/<uuid>[.png][?…passthrough] so the random seed
-   * bakes into a shareable URL and the cache headers on /avatar still apply.
-   * The /random response itself is `no-store` so each hit picks a new seed.
-   * The chosen seed is also surfaced via the `X-Navii-Seed` response header.
+   * The URL stays `/random` across refreshes; each request picks a new seed
+   * internally and returns the SVG/PNG directly. The chosen seed is surfaced
+   * via the `X-Navii-Seed` response header so callers can persist it.
+   *
+   * Caching: `cache-control: no-store` so browsers + CDNs never reuse the
+   * response. Refresh = new avatar.
+   *
+   * All `/avatar/:seed` query params are honored (size, palette, background,
+   * tileBg, title, animated). PNG path is NOT in-process cached — random
+   * seeds blow the cache.
    */
-  function randomRedirect(c: { req: { url: string } }, wantsPng: boolean): Response {
+  async function renderRandom(c: { req: { query(k: string): string | undefined } }, wantsPng: boolean): Promise<Response> {
     const seed = globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
-    const qs = c.req.url.split('?')[1];
-    const target = `/avatar/${seed}${wantsPng ? '.png' : ''}${qs ? '?' + qs : ''}`;
-    return new Response(null, {
-      status: 302,
-      headers: {
-        location: target,
-        'cache-control': 'no-store',
-        'access-control-allow-origin': '*',
-        'access-control-expose-headers': 'x-navii-seed, location',
-        'x-navii-seed': seed,
-      },
+
+    const size = clampInt(c.req.query('size'), 16, 1024, 96);
+    const paletteId = c.req.query('palette');
+    const background = c.req.query('background');
+    const title = c.req.query('title');
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    const tileBg = c.req.query('tileBg');
+
+    const avatarOpts: AvatarOptions = { size };
+    if (paletteId) avatarOpts.paletteId = paletteId;
+    if (background === 'ring' || background === 'solid' || background === 'none') {
+      avatarOpts.background = background;
+    }
+    if (title) avatarOpts.title = title;
+    if (animated && !wantsPng) avatarOpts.animated = true;
+    if (tileBg) avatarOpts.tileBg = tileBg;
+
+    const svg = createAvatar(seed, avatarOpts);
+
+    const commonHeaders = {
+      'cache-control': 'no-store',
+      'access-control-allow-origin': '*',
+      'access-control-expose-headers': 'x-navii-seed',
+      'x-navii-seed': seed,
+    };
+
+    if (wantsPng) {
+      try {
+        const png = await svgToPng(svg, size);
+        return new Response(png as BodyInit, {
+          status: 200,
+          headers: { ...commonHeaders, 'content-type': 'image/png' },
+        });
+      } catch (err) {
+        log.error({ err: (err as Error).message }, 'random png raster failed');
+        return new Response(`PNG rasterization unavailable: ${(err as Error).message}`, { status: 501 });
+      }
+    }
+
+    return new Response(svg, {
+      status: 200,
+      headers: { ...commonHeaders, 'content-type': 'image/svg+xml; charset=utf-8' },
     });
   }
 
-  app.get('/random', (c) => randomRedirect(c, false));
-  app.get('/random.png', (c) => randomRedirect(c, true));
+  app.get('/random', (c) => renderRandom(c, false));
+  app.get('/random.png', (c) => renderRandom(c, true));
 
   app.get('/avatar/:seed{.+}', async (c) => {
     const rawSeed = c.req.param('seed');

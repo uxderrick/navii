@@ -113,32 +113,42 @@ describe('api', () => {
     expect(res.status).toBe(200);
   });
 
-  it('GET /random redirects to /avatar/<seed> with no-store', async () => {
-    const res = await app.fetch(new Request('http://test/random?size=128&palette=mint'), undefined);
-    expect(res.status).toBe(302);
+  it('GET /random returns SVG inline with no-store + x-navii-seed', async () => {
+    const res = await get('/random?size=128&palette=mint');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('image/svg+xml');
     expect(res.headers.get('cache-control')).toBe('no-store');
-    const loc = res.headers.get('location') ?? '';
-    expect(loc.startsWith('/avatar/')).toBe(true);
-    expect(loc.endsWith('?size=128&palette=mint')).toBe(true);
+    expect(res.headers.get('access-control-allow-origin')).toBe('*');
     const seedHeader = res.headers.get('x-navii-seed') ?? '';
     expect(seedHeader.length).toBeGreaterThan(0);
-    expect(loc).toContain(seedHeader);
+    const body = await res.text();
+    expect(body.startsWith('<svg')).toBe(true);
+    expect(body).toContain('width="128"');
   });
 
-  it('GET /random picks a fresh seed each request', async () => {
+  it('GET /random picks a fresh seed AND fresh SVG bytes each request', async () => {
     const seeds = new Set<string>();
+    const bodies = new Set<string>();
     for (let i = 0; i < 5; i++) {
       const res = await get('/random');
       seeds.add(res.headers.get('x-navii-seed') ?? '');
+      bodies.add(await res.text());
     }
     expect(seeds.size).toBe(5);
+    expect(bodies.size).toBe(5);
   });
 
-  it('GET /random.png redirects to /avatar/<seed>.png', async () => {
-    const res = await get('/random.png?size=256');
-    expect(res.status).toBe(302);
-    const loc = res.headers.get('location') ?? '';
-    expect(loc).toMatch(/^\/avatar\/[^?]+\.png\?size=256$/);
+  it('GET /random.png returns PNG bytes inline', async () => {
+    const res = await get('/random.png?size=128');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toBe('image/png');
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    expect((res.headers.get('x-navii-seed') ?? '').length).toBeGreaterThan(0);
+    const buf = new Uint8Array(await res.arrayBuffer());
+    expect(buf.length).toBeGreaterThan(100);
+    // PNG signature
+    expect(buf[0]).toBe(0x89);
+    expect(buf[1]).toBe(0x50);
   });
 });
 
