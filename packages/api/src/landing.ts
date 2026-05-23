@@ -674,6 +674,9 @@ export function landingHtml(): string {
   footer.bottom a { color: var(--muted-2); }
   footer.bottom a:hover { color: var(--ink); }
 </style>
+
+<!-- analytics (umami, self-hosted) -->
+<script defer src="https://analytics.uxderrick.com/script.js" data-website-id="9adc73e7-ce4c-454c-bd2c-663eca5c9abe"></script>
 </head>
 <body>
 <div class="container">

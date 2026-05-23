@@ -312,6 +312,9 @@ export function builderHtml(): string {
   .out-body .attr { color: #93c5fd; }
   .out-body .str  { color: #fbbf24; }
 </style>
+
+<!-- analytics (umami, self-hosted) -->
+<script defer src="https://analytics.uxderrick.com/script.js" data-website-id="9adc73e7-ce4c-454c-bd2c-663eca5c9abe"></script>
 </head>
 <body>
 <div class="container">
