@@ -62,6 +62,7 @@ export function createApp(options: AppOptions = {}) {
       },
       endpoints: {
         avatar: '/avatar/:seed',
+        random: '/random',
         group: '/group?seeds=a,b,c',
         gallery: '/gallery',
         health: '/healthz',
@@ -342,6 +343,34 @@ export function createApp(options: AppOptions = {}) {
       return c.text(`PNG rasterization unavailable: ${(err as Error).message}`, 501);
     }
   });
+
+  /**
+   * GET /random, GET /random.png — redirect to /avatar/:seed with a fresh seed.
+   *
+   * Hosted-only convenience for "spin again" UX, hero placeholders, demos.
+   * Returns 302 → /avatar/<uuid>[.png][?…passthrough] so the random seed
+   * bakes into a shareable URL and the cache headers on /avatar still apply.
+   * The /random response itself is `no-store` so each hit picks a new seed.
+   * The chosen seed is also surfaced via the `X-Navii-Seed` response header.
+   */
+  function randomRedirect(c: { req: { url: string } }, wantsPng: boolean): Response {
+    const seed = globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+    const qs = c.req.url.split('?')[1];
+    const target = `/avatar/${seed}${wantsPng ? '.png' : ''}${qs ? '?' + qs : ''}`;
+    return new Response(null, {
+      status: 302,
+      headers: {
+        location: target,
+        'cache-control': 'no-store',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'x-navii-seed, location',
+        'x-navii-seed': seed,
+      },
+    });
+  }
+
+  app.get('/random', (c) => randomRedirect(c, false));
+  app.get('/random.png', (c) => randomRedirect(c, true));
 
   app.get('/avatar/:seed{.+}', async (c) => {
     const rawSeed = c.req.param('seed');

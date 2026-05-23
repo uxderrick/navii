@@ -798,6 +798,28 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
     </section>
 
     <section>
+      <h2 id="random">GET /random[.png]</h2>
+      <p>Returns a 302 redirect to <code>/avatar/&lt;random-seed&gt;</code> with a freshly-generated UUID seed each request. The redirect target gets the usual immutable cache; the redirect itself is <code>cache-control: no-store</code> so every hit picks a new seed. Use for "spin again" UX, hero placeholders, demos.</p>
+
+      <h4 id="random-query">Query</h4>
+      <p>Any query string is passed through verbatim to the redirect target — so all <code>/avatar/:seed</code> params (<code>size</code>, <code>palette</code>, <code>background</code>, <code>tileBg</code>, <code>title</code>, <code>animated</code>) work on <code>/random</code> too.</p>
+
+      <h4 id="random-headers">Response headers</h4>
+      <ul>
+        <li><code>x-navii-seed</code> — the seed that was chosen (also visible in the <code>location</code> URL). Useful if you want to persist the chosen avatar.</li>
+        <li><code>cache-control: no-store</code> — the redirect itself is never cached.</li>
+        <li><code>access-control-expose-headers: x-navii-seed, location</code> — so browser JS can read both via <code>fetch()</code>.</li>
+      </ul>
+
+      <h4 id="random-examples">Examples</h4>
+      <pre class="code"><code>${API_BASE}/random
+${API_BASE}/random?palette=mint&amp;size=128
+${API_BASE}/random.png?size=256</code></pre>
+
+      <p class="note">For an <code>&lt;img&gt;</code> tag, just point <code>src</code> at <code>/random</code> — browsers follow the 302 transparently and cache the final URL.</p>
+    </section>
+
+    <section>
       <h2 id="group">GET /group</h2>
       <p>Renders multiple seeded avatars as a single horizontally-stacked SVG with optional overlap and a <code>+N</code> counter tile for overflow.</p>
 

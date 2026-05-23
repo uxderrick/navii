@@ -112,6 +112,34 @@ describe('api', () => {
     const res = await get(`/group?seeds=${many}&size=24&max=50`);
     expect(res.status).toBe(200);
   });
+
+  it('GET /random redirects to /avatar/<seed> with no-store', async () => {
+    const res = await app.fetch(new Request('http://test/random?size=128&palette=mint'), undefined);
+    expect(res.status).toBe(302);
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    const loc = res.headers.get('location') ?? '';
+    expect(loc.startsWith('/avatar/')).toBe(true);
+    expect(loc.endsWith('?size=128&palette=mint')).toBe(true);
+    const seedHeader = res.headers.get('x-navii-seed') ?? '';
+    expect(seedHeader.length).toBeGreaterThan(0);
+    expect(loc).toContain(seedHeader);
+  });
+
+  it('GET /random picks a fresh seed each request', async () => {
+    const seeds = new Set<string>();
+    for (let i = 0; i < 5; i++) {
+      const res = await get('/random');
+      seeds.add(res.headers.get('x-navii-seed') ?? '');
+    }
+    expect(seeds.size).toBe(5);
+  });
+
+  it('GET /random.png redirects to /avatar/<seed>.png', async () => {
+    const res = await get('/random.png?size=256');
+    expect(res.status).toBe(302);
+    const loc = res.headers.get('location') ?? '';
+    expect(loc).toMatch(/^\/avatar\/[^?]+\.png\?size=256$/);
+  });
 });
 
 import { createApp } from '../src/app.js';
