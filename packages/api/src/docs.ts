@@ -390,6 +390,7 @@ function pageOverview(): string {
         <li>Comment threads, activity feeds, team rosters</li>
         <li>Empty states for any "person" in your UI</li>
         <li>Brand mascots / logo marks (use <a href="/docs/sdk-core">Navii.build</a> for direct construction)</li>
+        <li>"Spin again" / random pickers (<a href="/docs/recipes#random-onboarding"><code>/random</code></a> or <a href="/docs/sdk-core#random"><code>Navii.random()</code></a>)</li>
         <li>Email + OG images (PNG endpoint)</li>
       </ul>
       <p>Not for: app icons, illustrations, anything where a specific designer-drawn character is required.</p>
@@ -440,6 +441,21 @@ const s = Navii.seed({
 
 createAvatar(s);</code></pre>
       <p>Why it matters: <a href="/docs/concepts#seeds">the seed rule</a> says same seed = same avatar. If two users share a seed they share an avatar. <code>Navii.seed</code> picks the most-unique field automatically.</p>
+    </section>
+
+    <section>
+      <h2 id="random-onboarding">Random avatar on every refresh / onboarding</h2>
+      <p>For "spin again" UX, demo seeding, or auto-assigning an avatar before the user picks one — use <code>/random</code>. Same URL, different avatar every request. No redirect, no URL rewrite.</p>
+      <pre class="code"><code>&lt;img src="${API_BASE}/random?size=128" alt="" /&gt;</code></pre>
+      <p>Refresh the page → browser refetches <code>/random</code> → new avatar. The response is <code>Cache-Control: no-store</code> so nothing caches it.</p>
+      <p><strong>Onboarding flow — assign &amp; persist:</strong> grab the seed from the <code>X-Navii-Seed</code> header so the avatar is stable on next visit:</p>
+      <pre class="code"><code>const res = await fetch('${API_BASE}/random');
+const seed = res.headers.get('x-navii-seed');
+const svg = await res.text();
+
+await db.users.update(user.id, { naviiSeed: seed });
+// next time: render with /avatar/&lt;seed&gt; (immutable cache)</code></pre>
+      <p>Offline / non-HTTP? Use the SDK helper — <a href="/docs/sdk-core#random"><code>Navii.random()</code></a> returns the same <code>{ svg, seed }</code> shape.</p>
     </section>
 
     <section>
@@ -544,6 +560,8 @@ function pageQuickstart(): string {
       <pre class="code"><code>&lt;img src="${API_BASE}/avatar/alice@example.com?size=96" /&gt;</code></pre>
       <p>Append <code>.png</code> to the seed if you need a raster image (emails, OG images, native apps):</p>
       <pre class="code"><code>&lt;img src="${API_BASE}/avatar/alice@example.com.png?size=256" /&gt;</code></pre>
+      <p>Don't have a seed yet? <a href="/docs/recipes#random-onboarding"><code>/random</code></a> returns a fresh avatar each request — same URL, different avatar every refresh:</p>
+      <pre class="code"><code>&lt;img src="${API_BASE}/random?size=96" /&gt;</code></pre>
     </section>
 
     <section>

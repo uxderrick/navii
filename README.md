@@ -90,6 +90,12 @@ For PNG output (e.g. emails, OG images), append `.png`:
 <img src="https://navii-api.uxderrick.com/avatar/alice@example.com.png?size=256" />
 ```
 
+Don't have a seed yet? `/random` returns a fresh avatar each request — same URL, different avatar every refresh. Read the chosen seed from the `X-Navii-Seed` header if you want to persist it:
+
+```html
+<img src="https://navii-api.uxderrick.com/random?size=96" />
+```
+
 ---
 
 ## The seed: read this once
@@ -116,6 +122,7 @@ If your app *only* has a display name, compose a stable seed at signup time (e.g
 
 ```ts
 createAvatar(seed: string, options?: AvatarOptions): string
+random(options?: AvatarOptions): { svg: string; seed: string }
 selectAvatar(seed: string, options?: AvatarOptions): AvatarSpec
 renderAvatar(spec:  AvatarSpec, options?: AvatarOptions): string
 renderGroup(seeds:  string[],   options?: GroupOptions):  string
@@ -125,7 +132,7 @@ seed(fields:  SeedFields): string          // pick most-unique field
 build(spec?:  BuildSpec, opts?): string    // manual mix-and-match (no seed)
 
 // namespace bundle
-Navii.{ create, render, select, group, seed, build }
+Navii.{ create, random, render, select, group, seed, build }
 ```
 
 #### `Navii.seed({ id, email, name, createdAt })`
@@ -137,6 +144,22 @@ import { Navii } from '@usenavii/core';
 
 const s = Navii.seed({ id: user.id, email: user.email, name: user.name });
 const svg = Navii.create(s);
+```
+
+#### `Navii.random({ ...options })`
+
+Picks a fresh seed for you and renders the avatar. Returns `{ svg, seed }` so you can persist the seed (typical: save to user profile so the avatar is stable on next visit).
+
+```ts
+const { svg, seed } = Navii.random({ size: 96 });
+await db.users.update(user.id, { naviiSeed: seed });
+```
+
+In React, stabilize across re-renders with `useState`:
+
+```tsx
+const [{ seed }] = useState(() => Navii.random());
+return <Navii seed={seed} />;
 ```
 
 #### `Navii.build({ body, eyes, mouth, ... })`
@@ -199,6 +222,8 @@ Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated
 | `GET`  | `/api`                | JSON index of endpoints + version.     |
 | `GET`  | `/avatar/:seed`       | Single avatar as SVG.                  |
 | `GET`  | `/avatar/:seed.png`   | Same avatar rastered to PNG.           |
+| `GET`  | `/random`             | Fresh avatar each request, same URL. `no-store`. Chosen seed surfaced via `X-Navii-Seed` header. |
+| `GET`  | `/random.png`         | Same as `/random` but PNG.             |
 | `GET`  | `/group?seeds=a,b,c`  | Overlapping group as SVG.              |
 | `GET`  | `/gallery`            | HTML grid of seeded avatars (debug).   |
 | `GET`  | `/healthz`            | Liveness probe.                        |
