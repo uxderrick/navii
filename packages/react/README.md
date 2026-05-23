@@ -1,14 +1,14 @@
 # @usenavii/react
 
-**React binding for [Navii](https://navii.uxderrick.com) — deterministic mascot avatars.**
+**React binding for [Navii](https://navii.dev) — deterministic mascot avatars.**
 Drop a `<Navii seed={user.id} />` and every user has a face, no uploads.
 
 <p align="center">
-  <img src="https://navii-api.uxderrick.com/group?seeds=aria,milo,nova,kai,sage,eden,luna,rio,pip,wren,zane,iris&size=72&overlap=0.32&ring=%230a0a0b&tileBg=%23ffffff" alt="Navii cast" />
+  <img src="https://api.navii.dev/group?seeds=aria,milo,nova,kai,sage,eden,luna,rio,pip,wren,zane,iris&size=72&overlap=0.32&ring=%230a0a0b&tileBg=%23ffffff" alt="Navii cast" />
 </p>
 
-- [Live demo](https://navii.uxderrick.com)
-- [Docs](https://navii.uxderrick.com/docs)
+- [Live demo](https://navii.dev)
+- [Docs](https://navii.dev/docs)
 - [GitHub](https://github.com/uxderrick/navii)
 
 ## Install
@@ -104,7 +104,7 @@ function UserCard({ user }) {
 ```tsx
 <img
   src={user.photoUrl}
-  onError={(e) => { e.currentTarget.src = `https://navii-api.uxderrick.com/avatar/${encodeURIComponent(user.id)}`; }}
+  onError={(e) => { e.currentTarget.src = `https://api.navii.dev/avatar/${encodeURIComponent(user.id)}`; }}
 />
 ```
 

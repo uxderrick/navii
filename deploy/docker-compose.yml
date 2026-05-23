@@ -2,7 +2,7 @@
 #
 # Assumes host already runs a reverse proxy (Caddy/Nginx). API binds to
 # 127.0.0.1:8787 only — not exposed publicly. The host proxy forwards
-# https://navii-api.uxderrick.com → 127.0.0.1:8787.
+# https://api.navii.dev → 127.0.0.1:8787.
 #
 # Usage on the box:
 #   cd /opt/navii && docker compose pull && docker compose up -d
@@ -85,7 +85,7 @@ services:
       UMAMI_URL: https://analytics.uxderrick.com/api/send
       UMAMI_WEBSITE_ID: 9976751b-f339-414d-ab83-5cff4c953b8c
       LOG_FILE: /logs/navii-api.log
-      HOSTNAME_OVERRIDE: navii-api.uxderrick.com
+      HOSTNAME_OVERRIDE: api.navii.dev
       POLL_MS: "2000"
     command: ["node", "/app/shipper.mjs"]
     deploy:

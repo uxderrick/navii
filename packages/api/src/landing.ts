@@ -16,8 +16,8 @@ const CAST_SEEDS: readonly string[] = [
   'yumi', 'cass', 'odi', 'hex', 'fae', 'rune',
 ];
 
-const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
-const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.uxderrick.com';
+const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
+const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
 const OG_IMAGE = `${API_BASE}/og.png`;
 
 export function landingHtml(): string {

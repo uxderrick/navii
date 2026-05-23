@@ -12,8 +12,8 @@
 
 import { build, type BuildSpec, type AvatarOptions } from '@usenavii/core';
 
-const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
-const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.uxderrick.com';
+const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
+const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
 
 // ── enums duplicated here so we don't import the IDS arrays (avoids the
 //    weighted-with-duplicates TOPPER_IDS quirk and keeps the page self-contained).

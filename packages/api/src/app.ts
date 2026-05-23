@@ -55,7 +55,7 @@ export function createApp(options: AppOptions = {}) {
     c.json({
       name: 'navii',
       version: '0.2.0',
-      site: 'https://navii.uxderrick.com',
+      site: 'https://navii.dev',
       packages: {
         core: '@usenavii/core',
         react: '@usenavii/react',
@@ -228,7 +228,7 @@ export function createApp(options: AppOptions = {}) {
   });
 
   app.get('/robots.txt', (c) => {
-    const body = `User-agent: *\nAllow: /\nDisallow: /gallery\n\nSitemap: https://navii.uxderrick.com/sitemap.xml\n`;
+    const body = `User-agent: *\nAllow: /\nDisallow: /gallery\n\nSitemap: https://navii.dev/sitemap.xml\n`;
     return new Response(body, {
       status: 200,
       headers: {
@@ -239,7 +239,7 @@ export function createApp(options: AppOptions = {}) {
   });
 
   app.get('/sitemap.xml', (c) => {
-    const SITE = 'https://navii.uxderrick.com';
+    const SITE = 'https://navii.dev';
     const urls = [
       `${SITE}/`,
       `${SITE}/builder`,

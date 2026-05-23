@@ -11,7 +11,7 @@
  * landing page's <script> block. JSON encoding handles all escaping for us.
  */
 
-const API = 'https://navii-api.uxderrick.com';
+const API = 'https://api.navii.dev';
 const NL = '\n';
 
 type Framework = 'html' | 'react' | 'next' | 'vue' | 'svelte' | 'curl' | 'fetch' | 'url';

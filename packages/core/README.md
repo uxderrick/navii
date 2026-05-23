@@ -3,11 +3,11 @@
 **Deterministic mascot avatars from a seed.** Pure TypeScript engine. Same seed in → byte-identical SVG out, every time. No state, no uploads, no network.
 
 <p align="center">
-  <img src="https://navii-api.uxderrick.com/group?seeds=aria,milo,nova,kai,sage,eden,luna,rio,pip,wren,zane,iris&size=72&overlap=0.32&ring=%230a0a0b&tileBg=%23ffffff" alt="Navii cast" />
+  <img src="https://api.navii.dev/group?seeds=aria,milo,nova,kai,sage,eden,luna,rio,pip,wren,zane,iris&size=72&overlap=0.32&ring=%230a0a0b&tileBg=%23ffffff" alt="Navii cast" />
 </p>
 
-- [Live demo](https://navii.uxderrick.com) — interactive playground + cast
-- [Docs](https://navii.uxderrick.com/docs)
+- [Live demo](https://navii.dev) — interactive playground + cast
+- [Docs](https://navii.dev/docs)
 - [GitHub](https://github.com/uxderrick/navii)
 
 ## Install

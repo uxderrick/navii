@@ -32,8 +32,8 @@ import {
   PALETTES,
 } from '@usenavii/core/parts';
 
-const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://navii-api.uxderrick.com';
-const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.uxderrick.com';
+const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
+const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
 
 interface DocPage {
   slug: string;
@@ -957,7 +957,7 @@ function pageRateLimits(): string {
     </header>
 
     <section>
-      <h2 id="hosted">Hosted (<code>navii-api.uxderrick.com</code>)</h2>
+      <h2 id="hosted">Hosted (<code>api.navii.dev</code>)</h2>
       <table class="ref-table">
         <thead><tr><th>Route</th><th>Limit (per IP)</th><th>Window</th></tr></thead>
         <tbody>
@@ -1227,11 +1227,11 @@ docker run -p 8787:8787 navii-api</code></pre>
         <tbody>
           <tr><td><code>PORT</code></td><td>8787</td><td>HTTP listen port.</td></tr>
           <tr><td><code>HOST</code></td><td>0.0.0.0</td><td>HTTP bind address.</td></tr>
-          <tr><td><code>RATE_LIMIT_PER_MIN</code></td><td>120 <span style="color:var(--muted-2)">(engine) · 600 (hosted)</span></td><td>Per-IP rate limit on <code>/avatar/*</code>. Engine default is 120 if unset; the hosted deployment at <code>navii-api.uxderrick.com</code> runs 600. See <a href="/docs/rate-limits">Rate limits</a> for full details.</td></tr>
+          <tr><td><code>RATE_LIMIT_PER_MIN</code></td><td>120 <span style="color:var(--muted-2)">(engine) · 600 (hosted)</span></td><td>Per-IP rate limit on <code>/avatar/*</code>. Engine default is 120 if unset; the hosted deployment at <code>api.navii.dev</code> runs 600. See <a href="/docs/rate-limits">Rate limits</a> for full details.</td></tr>
           <tr><td><code>PNG_CACHE_SIZE</code></td><td>500</td><td>LRU capacity for rasterized PNG responses.</td></tr>
           <tr><td><code>TRUST_PROXY</code></td><td>0</td><td>Set to <code>1</code> behind a reverse proxy you control (Caddy/Nginx). Enables <code>X-Forwarded-For</code> reading for rate-limit IP attribution. <strong>Never enable behind raw CDN</strong> — clients could spoof IPs.</td></tr>
-          <tr><td><code>NAVII_API_BASE</code></td><td><code>https://navii-api.uxderrick.com</code></td><td>Used in landing + docs HTML for absolute API URLs (e.g. cast images, OG image).</td></tr>
-          <tr><td><code>NAVII_SITE_BASE</code></td><td><code>https://navii.uxderrick.com</code></td><td>Public site URL. Used in canonical + OpenGraph meta.</td></tr>
+          <tr><td><code>NAVII_API_BASE</code></td><td><code>https://api.navii.dev</code></td><td>Used in landing + docs HTML for absolute API URLs (e.g. cast images, OG image).</td></tr>
+          <tr><td><code>NAVII_SITE_BASE</code></td><td><code>https://navii.dev</code></td><td>Public site URL. Used in canonical + OpenGraph meta.</td></tr>
         </tbody>
       </table>
     </section>
@@ -1239,7 +1239,7 @@ docker run -p 8787:8787 navii-api</code></pre>
     <section>
       <h2 id="proxy">Reverse proxy</h2>
       <p>A sample <code>Caddyfile</code> snippet lives at <code>deploy/Caddyfile.snippet</code>. It does the usual: TLS, gzip, forward to <code>:8787</code>, set <code>X-Forwarded-For</code>.</p>
-      <p>Per-domain routing (landing on <code>navii.uxderrick.com</code>, API on <code>navii-api.uxderrick.com</code>) is purely DNS + proxy concern — the Hono app handles both transparently.</p>
+      <p>Per-domain routing (landing on <code>navii.dev</code>, API on <code>api.navii.dev</code>) is purely DNS + proxy concern — the Hono app handles both transparently.</p>
     </section>
 
     <section>

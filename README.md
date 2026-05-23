@@ -5,8 +5,8 @@
 **A face for every user.**
 Drop-in deterministic mascot avatars. No uploads, no blank gray circles, no state to manage.
 
-<a href="https://navii.uxderrick.com">
-  <img src="https://navii-api.uxderrick.com/cast.svg?animated=1&size=120" alt="Navii cast — 24 unique deterministic mascots" width="100%" />
+<a href="https://navii.dev">
+  <img src="https://api.navii.dev/cast.svg?animated=1&size=120" alt="Navii cast — 24 unique deterministic mascots" width="100%" />
 </a>
 
 ```
@@ -16,9 +16,9 @@ seed in  →  same avatar out, every time.
 [![npm](https://img.shields.io/npm/v/@usenavii/core?label=%40navii%2Fcore)](https://www.npmjs.com/package/@usenavii/core)
 [![npm](https://img.shields.io/npm/v/@usenavii/react?label=%40navii%2Freact)](https://www.npmjs.com/package/@usenavii/react)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Live demo](https://img.shields.io/badge/demo-navii.uxderrick.com-c084fc)](https://navii.uxderrick.com)
+[![Live demo](https://img.shields.io/badge/demo-navii.dev-c084fc)](https://navii.dev)
 
-[Live demo](https://navii.uxderrick.com) · [API playground](https://navii.uxderrick.com#playground) · [Gallery](https://navii-api.uxderrick.com/gallery) · [Docs](https://navii.uxderrick.com/docs)
+[Live demo](https://navii.dev) · [API playground](https://navii.dev#playground) · [Gallery](https://api.navii.dev/gallery) · [Docs](https://navii.dev/docs)
 
 </div>
 
@@ -81,19 +81,19 @@ import { Navii } from '@usenavii/react';
 ### `<img src>` via hosted endpoint
 
 ```html
-<img src="https://navii-api.uxderrick.com/avatar/alice@example.com?size=96" />
+<img src="https://api.navii.dev/avatar/alice@example.com?size=96" />
 ```
 
 For PNG output (e.g. emails, OG images), append `.png`:
 
 ```html
-<img src="https://navii-api.uxderrick.com/avatar/alice@example.com.png?size=256" />
+<img src="https://api.navii.dev/avatar/alice@example.com.png?size=256" />
 ```
 
 Don't have a seed yet? `/random` returns a fresh avatar each request — same URL, different avatar every refresh. Read the chosen seed from the `X-Navii-Seed` header if you want to persist it:
 
 ```html
-<img src="https://navii-api.uxderrick.com/random?size=96" />
+<img src="https://api.navii.dev/random?size=96" />
 ```
 
 ---

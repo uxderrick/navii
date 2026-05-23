@@ -7,7 +7,7 @@ host forwards traffic + handles TLS via Let's Encrypt.
 ## Prereqs on the box
 - Docker + Docker Compose v2
 - Caddy installed and managing the active `Caddyfile` (already in place)
-- DNS A record: `navii-api.uxderrick.com` → `204.168.183.130` ✅ done
+- DNS A record: `api.navii.dev` → `204.168.183.130` ✅ done
 
 ## 1. Build + push image
 
@@ -52,15 +52,15 @@ caddy validate --config /etc/caddy/Caddyfile
 systemctl reload caddy
 ```
 
-Caddy auto-issues a TLS cert for `navii-api.uxderrick.com` on first request.
+Caddy auto-issues a TLS cert for `api.navii.dev` on first request.
 
 ## 4. Verify
 
 ```sh
-curl -sI https://navii-api.uxderrick.com/healthz
-curl -sI 'https://navii-api.uxderrick.com/avatar/alice?size=128'
-curl -o /tmp/a.png 'https://navii-api.uxderrick.com/avatar/alice.png?size=256' && file /tmp/a.png
-open 'https://navii-api.uxderrick.com/gallery?count=96&size=128'
+curl -sI https://api.navii.dev/healthz
+curl -sI 'https://api.navii.dev/avatar/alice?size=128'
+curl -o /tmp/a.png 'https://api.navii.dev/avatar/alice.png?size=256' && file /tmp/a.png
+open 'https://api.navii.dev/gallery?count=96&size=128'
 ```
 
 ## Update flow (steady state)
@@ -80,7 +80,7 @@ ssh root@204.168.183.130 'cd /opt/navii && docker compose pull && docker compose
 Verify:
 
 ```sh
-curl -sI https://navii-api.uxderrick.com/healthz
+curl -sI https://api.navii.dev/healthz
 ```
 
 Notes:
