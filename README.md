@@ -284,7 +284,7 @@ This means: a backend can render the same avatar in Node that the browser render
 
 ## Roadmap
 
-Live backlog: [`BACKLOG.md`](./BACKLOG.md). Highlights:
+Highlights:
 
 - More part variants (more eyes, mouths, antennae)
 - Compound accessories + outfit slot
