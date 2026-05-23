@@ -306,6 +306,14 @@ pnpm dev:api        # hot-reload hosted endpoint on :8787
 
 ---
 
+## Changelog
+
+See [`CHANGELOG.md`](./CHANGELOG.md) for a per-version list of changes to `@usenavii/core` and `@usenavii/react`. Both packages ship in lockstep and follow [SemVer](https://semver.org).
+
+Release policy: published versions are never rewritten — any change after publish is a new patch (minimum). If a published version contains a critical bug, we publish the fix and mark the bad version deprecated, so `npm install` surfaces a warning with the upgrade target. Details in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
+---
+
 ## License
 
 MIT.

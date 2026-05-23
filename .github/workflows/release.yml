@@ -111,3 +111,50 @@ jobs:
           pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-notes:
+    name: github release notes
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: extract CHANGELOG section
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          VERSION="${TAG#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { capture = 1; next }
+            capture && /^## \[/ { exit }
+            capture && /^\[[^]]+\]:[[:space:]]/ { exit }
+            capture { print }
+          ' CHANGELOG.md > notes.md
+
+          # awk preserves trailing blank lines from the capture; trim them.
+          sed -i -e :a -e '/^$/{$d;N;ba' -e '}' notes.md || true
+
+          if [ ! -s notes.md ]; then
+            echo "::error::No CHANGELOG.md section found for version $VERSION"
+            exit 1
+          fi
+
+          echo "--- notes.md ---"
+          cat notes.md
+
+      - name: create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "release $TAG already exists — updating notes"
+            gh release edit "$TAG" --notes-file notes.md
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes-file notes.md
+          fi

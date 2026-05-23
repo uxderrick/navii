@@ -1,0 +1,48 @@
+name: deprecate
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to deprecate
+        type: choice
+        required: true
+        options:
+          - '@usenavii/core'
+          - '@usenavii/react'
+          - both
+      version:
+        description: Version (e.g. 0.4.0)
+        required: true
+      message:
+        description: Deprecation message shown by npm (empty string clears a prior deprecation)
+        required: true
+
+jobs:
+  deprecate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: npm deprecate
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PKG: ${{ inputs.package }}
+          VER: ${{ inputs.version }}
+          MSG: ${{ inputs.message }}
+        run: |
+          set -euo pipefail
+          deprecate_one() {
+            local name="$1"
+            echo "→ npm deprecate $name@$VER"
+            npm deprecate "$name@$VER" "$MSG"
+          }
+          if [ "$PKG" = "both" ]; then
+            deprecate_one "@usenavii/core"
+            deprecate_one "@usenavii/react"
+          else
+            deprecate_one "$PKG"
+          fi
