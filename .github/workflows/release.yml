@@ -88,6 +88,11 @@ jobs:
       - run: pnpm --filter '@usenavii/core' run build
       - run: pnpm --filter '@usenavii/react' run build
 
+      - name: stage CHANGELOG into each package
+        run: |
+          cp CHANGELOG.md packages/core/CHANGELOG.md
+          cp CHANGELOG.md packages/react/CHANGELOG.md
+
       - name: publish @usenavii/core
         working-directory: packages/core
         run: |
