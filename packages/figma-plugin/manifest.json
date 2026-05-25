@@ -6,7 +6,8 @@
   "ui": "dist/ui.html",
   "editorType": ["figma"],
   "networkAccess": {
-    "allowedDomains": ["https://api.navii.dev", "https://navii.dev"]
+    "allowedDomains": ["https://api.navii.dev", "https://navii.dev"],
+    "reasoning": "api.navii.dev renders avatar SVG/PNG for the seed the user types and verifies optional Pro license keys. navii.dev links to docs, privacy policy, and support."
   },
   "menu": [
     { "name": "Open Navii", "command": "open" }

@@ -10,6 +10,7 @@ import { renderCast, DEFAULT_CAST_SEEDS } from './cast.js';
 import { docSlugs } from './docs.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
+import { privacyHtml, supportHtml } from './legal.js';
 import { createLicenseRoutes } from './license.js';
 
 export interface AppOptions {
@@ -89,6 +90,26 @@ export function createApp(options: AppOptions = {}) {
       determinism: 'Same seed + same query → byte-identical response, forever. Safe to cache, safe to mirror.',
     }),
   );
+
+  app.get('/privacy', (c) => {
+    return new Response(privacyHtml(), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
+
+  app.get('/support', (c) => {
+    return new Response(supportHtml(), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
 
   app.get('/docs', (c) => c.redirect(`/docs/${defaultDocSlug()}`, 302));
 
@@ -255,6 +276,8 @@ export function createApp(options: AppOptions = {}) {
     const urls = [
       `${SITE}/`,
       `${SITE}/builder`,
+      `${SITE}/privacy`,
+      `${SITE}/support`,
       ...docSlugs().map((s) => `${SITE}/docs/${s}`),
     ];
     const body =

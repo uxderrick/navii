@@ -45,6 +45,24 @@ function persistRecent() {
 
 console.log('[navii] ui.ts loaded');
 
+// ---------- offline awareness ----------
+// `navigator.onLine` is best-effort (false negatives possible) but gives us a
+// fast, library-free way to short-circuit and notify the user instead of
+// failing silently when the avatar/license fetch would otherwise time out.
+function isOffline(): boolean {
+  return typeof navigator !== 'undefined' && navigator.onLine === false;
+}
+
+function notifyHost(message: string, error = false) {
+  parent.postMessage({ pluginMessage: { type: 'notify', message, error } }, '*');
+}
+
+function guardOnline(action: string): boolean {
+  if (!isOffline()) return true;
+  notifyHost(`You appear to be offline. ${action} needs a connection to api.navii.dev.`, true);
+  return false;
+}
+
 const seedState = {
   seedPaletteId: '' as string, // '' = auto
   background: '' as '' | 'none' | 'solid' | 'ring',
@@ -894,6 +912,7 @@ function doPrimary() {
   if (activeTab === 'seed') {
     const seed = $<HTMLInputElement>('seed-input').value.trim();
     if (!seed) return;
+    if (!guardOnline('Inserting a Navii')) return;
     pushRecent(seed);
     parent.postMessage({ pluginMessage: { type: 'insert', seed, options: currentSeedOptions() } }, '*');
   } else {
@@ -996,6 +1015,7 @@ function init() {
   // Primary + Fill random buttons
   $('primary-btn').addEventListener('click', doPrimary);
   $('fill-random-btn').addEventListener('click', () => {
+    if (!guardOnline('Filling random avatars')) return;
     const opts: AvatarOptions = {};
     if (seedState.seedPaletteId) opts.paletteId = seedState.seedPaletteId;
     if (seedState.background) opts.background = seedState.background;
@@ -1064,6 +1084,10 @@ function init() {
     const status = document.getElementById('modal-status');
     if (!key) {
       if (status) { status.textContent = 'Paste a license key first.'; status.className = 'modal-status err'; }
+      return;
+    }
+    if (isOffline()) {
+      if (status) { status.textContent = 'You are offline. License verification needs a connection.'; status.className = 'modal-status err'; }
       return;
     }
     if (status) { status.textContent = 'Verifying…'; status.className = 'modal-status'; }

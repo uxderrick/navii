@@ -6,6 +6,20 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-05-25
+
+Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (both remain at 0.4.0).
+
+### Added (API host)
+- `/privacy` — public privacy policy page covering avatar requests, license verification, and analytics.
+- `/support` — public support page with contact email, GitHub issues link, and console-capture instructions.
+- Both pages linked from landing + docs footers and listed in `/sitemap.xml`.
+
+### Added (Figma plugin)
+- `networkAccess.reasoning` in `manifest.json` explaining why `api.navii.dev` and `navii.dev` are allowlisted.
+- Offline pre-flight on insert, fill-random, and license-verify — surfaces a clear notification instead of failing silently when `navigator.onLine` is `false`.
+- `notify` message type so the UI iframe can push toasts through `figma.notify`.
+
 ## [0.4.0] - 2026-05-23
 
 ### Added
@@ -36,7 +50,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/uxderrick/navii/compare/v0.19.0...v0.20.0
 [0.4.0]: https://github.com/uxderrick/navii/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/uxderrick/navii/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/uxderrick/navii/compare/v0.2.0...v0.2.1

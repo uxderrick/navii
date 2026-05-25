@@ -51,6 +51,12 @@ type CopyUrlMsg = {
   options: AvatarOptions;
 };
 
+type NotifyMsg = {
+  type: 'notify';
+  message: string;
+  error?: boolean;
+};
+
 type Msg =
   | InsertMsg
   | InsertBuildMsg
@@ -60,6 +66,7 @@ type Msg =
   | LicenseClearMsg
   | ListVariablesMsg
   | CopyUrlMsg
+  | NotifyMsg
   | { type: 'close' };
 
 figma.showUI(__html__, { width: 760, height: 640, themeColors: true });
@@ -74,6 +81,7 @@ figma.ui.onmessage = async (msg: Msg) => {
     case 'license-clear':  return doLicenseClear();
     case 'list-variables': return doListVariables();
     case 'copy-url':       return doCopyUrl(msg);
+    case 'notify':         return figma.notify(msg.message, msg.error ? { error: true } : undefined);
     case 'close':          return figma.closePlugin();
   }
 };

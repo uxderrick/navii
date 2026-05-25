@@ -822,7 +822,7 @@ export function landingHtml(): string {
 
   <footer class="bottom">
     <div>navii · deterministic avatars · open source · MIT</div>
-    <div><a href="https://github.com/uxderrick/navii">github</a> · <a href="/api">/api</a></div>
+    <div><a href="/privacy">privacy</a> · <a href="/support">support</a> · <a href="https://github.com/uxderrick/navii">github</a> · <a href="/api">/api</a></div>
   </footer>
 
 </div>
