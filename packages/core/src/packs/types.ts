@@ -139,10 +139,13 @@ export type PackRegistry = Record<string, Pack>;
 
 /**
  * Subset of parts a pack restricts when a specific style hint is requested.
- * Only the parts most expressive of gender presentation are listed: outfit,
- * accessory, topper. Bodies + faces stay seed-driven.
+ * Outfit / accessory / topper are the most expressive of style presentation;
+ * eyes / mouth are optional overrides for packs whose look depends on facial
+ * expression (e.g. pastel/kawaii). Bodies stay seed-driven.
  */
 export interface StylePartSubset {
+  eyes?: readonly EyeStyleId[];
+  mouth?: readonly MouthStyleId[];
   outfit?: readonly OutfitId[];
   accessory?: readonly AccessoryId[];
   topper?: readonly TopperId[];

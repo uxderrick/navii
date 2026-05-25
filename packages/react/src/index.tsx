@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { createAvatar, type AvatarOptions } from '@usenavii/core';
+import { createAvatar, type AvatarOptions, type StyleHint } from '@usenavii/core';
 
-export interface NaviiProps extends AvatarOptions {
+export interface NaviiProps extends Omit<AvatarOptions, 'style'> {
   seed: string;
   className?: string;
+  /** Standard React inline styles applied to the rendered `<img>`. */
   style?: React.CSSProperties;
+  /** Engine-level style hint (masc / femme / neutral) — biases seeded picks. */
+  styleHint?: StyleHint;
   alt?: string;
 }
 
@@ -24,6 +27,7 @@ export function Navii({
   animated,
   className,
   style,
+  styleHint,
   alt,
 }: NaviiProps): React.ReactElement {
   const dataUri = React.useMemo(() => {
@@ -32,9 +36,10 @@ export function Navii({
     if (background !== undefined) opts.background = background;
     if (title !== undefined) opts.title = title;
     if (animated !== undefined) opts.animated = animated;
+    if (styleHint !== undefined) opts.style = styleHint;
     const svg = createAvatar(seed, opts);
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  }, [seed, size, paletteId, background, title, animated]);
+  }, [seed, size, paletteId, background, title, animated, styleHint]);
 
   return (
     <img

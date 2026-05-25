@@ -6,6 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-05-25
+
+### Fixed
+- `@usenavii/core`: `StylePartSubset` now includes `eyes` and `mouth` so pastel pack `styleHints` typecheck. No runtime change — pack already used these fields.
+- `@usenavii/react`: `NaviiProps` no longer collides with React's `style: CSSProperties`. Engine-level style hint moved to `styleHint?: 'masc' | 'femme' | 'neutral'`. Inline CSS via `style` still works.
+
 ## [0.20.0] - 2026-05-25
 
 Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (both remain at 0.4.0).
@@ -50,7 +56,8 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.20.1...HEAD
+[0.20.1]: https://github.com/uxderrick/navii/compare/v0.20.0...v0.20.1
 [0.20.0]: https://github.com/uxderrick/navii/compare/v0.19.0...v0.20.0
 [0.4.0]: https://github.com/uxderrick/navii/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/uxderrick/navii/compare/v0.2.1...v0.3.0
