@@ -1,7 +1,13 @@
 import type { AccessoryId, Palette } from '../types.js';
 import type { FaceAnchor } from './anchor.js';
 
-export function renderAccessory(id: AccessoryId, palette: Palette, anchor: FaceAnchor): string {
+export function renderAccessory(
+  id: AccessoryId,
+  palette: Palette,
+  anchor: FaceAnchor,
+  opts?: { strokeMul?: number },
+): string {
+  const sw = opts?.strokeMul ?? 1;
   switch (id) {
     case 'none':
       return '';
@@ -38,10 +44,11 @@ export function renderAccessory(id: AccessoryId, palette: Palette, anchor: FaceA
       const rx = anchor.cx + anchor.eyeOffset;
       const y = anchor.eyeY;
       const r = 6;
+      const gw = 1.2 * sw;
       return [
-        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="${palette.ink}" stroke-width="1.2" />`,
-        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="${palette.ink}" stroke-width="1.2" />`,
-        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="${palette.ink}" stroke-width="1.2" />`,
+        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="${palette.ink}" stroke-width="${gw}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="${palette.ink}" stroke-width="${gw}" />`,
+        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="${palette.ink}" stroke-width="${gw}" />`,
         // subtle lens fill
         `<circle cx="${lx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.18" />`,
         `<circle cx="${rx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.18" />`,
@@ -62,6 +69,22 @@ export function renderAccessory(id: AccessoryId, palette: Palette, anchor: FaceA
     case 'mole': {
       // Small beauty mark below left cheek
       return `<circle cx="${anchor.cx - anchor.cheekOffset * 0.6}" cy="${anchor.cheekY + 2}" r="0.9" fill="${palette.ink}" />`;
+    }
+
+    case 'earring': {
+      // Pair of small drop earrings — sit at the outer cheek edge, near jawline
+      const ex = anchor.cheekOffset + 4;
+      const ey = anchor.cheekY + 4;
+      const lx = anchor.cx - ex;
+      const rx = anchor.cx + ex;
+      return [
+        // Left earring — small stud + drop
+        `<circle cx="${lx}" cy="${ey}" r="${1.1 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
+        `<ellipse cx="${lx}" cy="${ey + 3.2}" rx="${1.3 * sw}" ry="${2 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
+        // Right earring
+        `<circle cx="${rx}" cy="${ey}" r="${1.1 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
+        `<ellipse cx="${rx}" cy="${ey + 3.2}" rx="${1.3 * sw}" ry="${2 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
+      ].join('');
     }
   }
 

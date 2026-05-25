@@ -34,33 +34,75 @@ const BODY_PATHS: Record<BodyShapeId, string> = {
 
   // Wisp — tall narrow body, slight bottom flare, ghost-like
   wisp: 'M50 12 C60 12 66 24 66 40 C66 60 74 78 70 90 C64 96 36 96 30 90 C26 78 34 60 34 40 C34 24 40 12 50 12 Z',
+
+  // Squircle — FULL-BLEED corporate plate. Fills entire viewport with tight
+  // corner radius (~4px). Reads as a tile / ID photo not a contained avatar.
+  // Pairs with `flat: true` packs (Office) — face floats on a wall of color.
+  squircle: 'M4 0 C2 0 0 2 0 4 C0 35 0 65 0 96 C0 98 2 100 4 100 C35 100 65 100 96 100 C98 100 100 98 100 96 C100 65 100 35 100 4 C100 2 98 0 96 0 C65 0 35 0 4 0 Z',
+
+  // Pumpkin — round, slightly wider than tall, with subtle horizontal "lobes"
+  // for the iconic carved-pumpkin gourd shape. Stem area kept clear at top.
+  pumpkin: 'M50 18 C70 18 86 30 86 52 C86 74 70 88 50 88 C30 88 14 74 14 52 C14 30 30 18 50 18 Z',
+
+  // Ghost — soft rounded top with wavy bottom hem (3 humps), evoking a sheet.
+  ghost: 'M50 12 C68 12 78 24 78 42 C78 60 80 76 80 88 L74 84 L68 90 L62 84 L56 90 L50 84 L44 90 L38 84 L32 90 L26 84 L20 88 C20 76 22 60 22 42 C22 24 32 12 50 12 Z',
+
+  // SkullHead — egg-ish shape, slight pinch at jaw for skull silhouette.
+  skullHead: 'M50 16 C68 16 80 30 80 50 C80 64 76 72 70 78 L68 86 L60 88 L60 82 L40 82 L40 88 L32 86 L30 78 C24 72 20 64 20 50 C20 30 32 16 50 16 Z',
 };
 
 export function bodyAnchor(id: BodyShapeId): FaceAnchor {
   return ANCHORS[id];
 }
 
-export function renderBodyDefs(_id: BodyShapeId, _palette: Palette, gradId: string): string {
+export function renderBodyDefs(
+  _id: BodyShapeId,
+  palette: Palette,
+  gradId: string,
+  opts?: { flat?: boolean },
+): string {
+  if (opts?.flat) {
+    // Flat mode: identical stop colors = solid fill, no 3D gloss.
+    return `<radialGradient id="${gradId}"><stop offset="0%" stop-color="${palette.bodyFrom}" /><stop offset="100%" stop-color="${palette.bodyFrom}" /></radialGradient>`;
+  }
   return `
 <radialGradient id="${gradId}" cx="42%" cy="32%" r="68%">
-  <stop offset="0%" stop-color="${_palette.bodyFrom}" />
-  <stop offset="100%" stop-color="${_palette.bodyTo}" />
+  <stop offset="0%" stop-color="${palette.bodyFrom}" />
+  <stop offset="100%" stop-color="${palette.bodyTo}" />
 </radialGradient>`.trim();
 }
 
-export function renderBody(id: BodyShapeId, palette: Palette, gradId: string): string {
+export function renderBody(
+  id: BodyShapeId,
+  palette: Palette,
+  gradId: string,
+  opts?: { flat?: boolean },
+): string {
   const d = BODY_PATHS[id];
   const a = ANCHORS[id];
+  const flat = opts?.flat === true;
   const outlineColor = withAlpha(palette.ink, 0.18);
 
-  return [
+  const parts: string[] = [];
+  if (!flat) {
     // Ground shadow — soft ellipse just below body, grounds the figure
-    `<ellipse cx="${a.cx}" cy="${a.groundY + 4}" rx="22" ry="2.6" fill="${palette.ink}" opacity="0.16" />`,
-    // Body fill
-    `<path d="${d}" fill="url(#${gradId})" stroke="${outlineColor}" stroke-width="0.7" />`,
+    parts.push(
+      `<ellipse cx="${a.cx}" cy="${a.groundY + 4}" rx="22" ry="2.6" fill="${palette.ink}" opacity="0.16" />`,
+    );
+  }
+  // Body fill — no stroke in flat mode (full-bleed bodies don't have room for it)
+  parts.push(
+    flat
+      ? `<path d="${d}" fill="url(#${gradId})" />`
+      : `<path d="${d}" fill="url(#${gradId})" stroke="${outlineColor}" stroke-width="0.7" />`,
+  );
+  if (!flat) {
     // Sheen — small light spot upper-left, scaled to body
-    `<ellipse cx="${a.cx - 12}" cy="${a.eyeY - 14}" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 ${a.cx - 12} ${a.eyeY - 14})" />`,
-  ].join('');
+    parts.push(
+      `<ellipse cx="${a.cx - 12}" cy="${a.eyeY - 14}" rx="11" ry="7" fill="#FFFFFF" opacity="0.22" transform="rotate(-18 ${a.cx - 12} ${a.eyeY - 14})" />`,
+    );
+  }
+  return parts.join('');
 }
 
 /** Inline rgba() from hex — keeps SVG self-contained. */

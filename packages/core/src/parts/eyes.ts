@@ -5,12 +5,18 @@ import type { FaceAnchor } from './anchor.js';
  * Eyes consume the FaceAnchor: position, gap, and vertical scale all flex
  * with the body silhouette. Style id determines shape only.
  */
-export function renderEyes(id: EyeStyleId, palette: Palette, anchor: FaceAnchor): string {
+export function renderEyes(
+  id: EyeStyleId,
+  palette: Palette,
+  anchor: FaceAnchor,
+  opts?: { strokeMul?: number },
+): string {
   const lx = anchor.cx - anchor.eyeOffset;
   const rx = anchor.cx + anchor.eyeOffset;
   const y = anchor.eyeY;
   const s = anchor.eyeScale;
   const ink = palette.ink;
+  const sw = opts?.strokeMul ?? 1;
 
   switch (id) {
     case 'round':
@@ -35,8 +41,8 @@ export function renderEyes(id: EyeStyleId, palette: Palette, anchor: FaceAnchor)
 
     case 'squint':
       return [
-        arc(lx - 4.5, y, lx, y - 3.5, lx + 4.5, y, ink, 1.8),
-        arc(rx - 4.5, y, rx, y - 3.5, rx + 4.5, y, ink, 1.8),
+        arc(lx - 4.5, y, lx, y - 3.5, lx + 4.5, y, ink, 1.8 * sw),
+        arc(rx - 4.5, y, rx, y - 3.5, rx + 4.5, y, ink, 1.8 * sw),
       ].join('');
 
     case 'wink':
@@ -44,17 +50,17 @@ export function renderEyes(id: EyeStyleId, palette: Palette, anchor: FaceAnchor)
         sclera(lx, y, 4 * s, 4.5 * s),
         pupil(lx, y, 2.2 * s, ink),
         glint(lx + 1, y - 1),
-        arc(rx - 4, y, rx, y - 3.5, rx + 4, y, ink, 1.8),
+        arc(rx - 4, y, rx, y - 3.5, rx + 4, y, ink, 1.8 * sw),
       ].join('');
 
     case 'sleepy':
       return [
         // Heavier upper lid — half-closed
-        `<path d="M${lx - 4} ${y - 0.5} Q${lx} ${y + 2} ${lx + 4} ${y - 0.5}" stroke="${ink}" stroke-width="1.7" stroke-linecap="round" fill="none" />`,
-        `<path d="M${rx - 4} ${y - 0.5} Q${rx} ${y + 2} ${rx + 4} ${y - 0.5}" stroke="${ink}" stroke-width="1.7" stroke-linecap="round" fill="none" />`,
+        `<path d="M${lx - 4} ${y - 0.5} Q${lx} ${y + 2} ${lx + 4} ${y - 0.5}" stroke="${ink}" stroke-width="${1.7 * sw}" stroke-linecap="round" fill="none" />`,
+        `<path d="M${rx - 4} ${y - 0.5} Q${rx} ${y + 2} ${rx + 4} ${y - 0.5}" stroke="${ink}" stroke-width="${1.7 * sw}" stroke-linecap="round" fill="none" />`,
         // tiny visible pupils
-        `<circle cx="${lx}" cy="${y + 0.5}" r="0.9" fill="${ink}" />`,
-        `<circle cx="${rx}" cy="${y + 0.5}" r="0.9" fill="${ink}" />`,
+        `<circle cx="${lx}" cy="${y + 0.5}" r="${0.9 * sw}" fill="${ink}" />`,
+        `<circle cx="${rx}" cy="${y + 0.5}" r="${0.9 * sw}" fill="${ink}" />`,
       ].join('');
 
     case 'star':
@@ -75,15 +81,15 @@ export function renderEyes(id: EyeStyleId, palette: Palette, anchor: FaceAnchor)
       ].join('');
 
     case 'dot':
-      // Minimal dot eyes
+      // Minimal dot eyes — scale radius by sw so bold-stroke packs get bigger dots
       return [
-        `<circle cx="${lx}" cy="${y}" r="${1.4 * s}" fill="${ink}" />`,
-        `<circle cx="${rx}" cy="${y}" r="${1.4 * s}" fill="${ink}" />`,
+        `<circle cx="${lx}" cy="${y}" r="${1.4 * s * sw}" fill="${ink}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${1.4 * s * sw}" fill="${ink}" />`,
       ].join('');
 
     case 'cross':
       // X eyes (cartoon "knocked out" — works for laughing too)
-      return [crossEye(lx, y, ink), crossEye(rx, y, ink)].join('');
+      return [crossEye(lx, y, ink, sw), crossEye(rx, y, ink, sw)].join('');
   }
 }
 
@@ -93,9 +99,9 @@ function heartEye(cx: number, cy: number, color: string): string {
   return `<path d="M${cx} ${cy + s * 1.4} L${cx - s * 1.8} ${cy - s * 0.2} A${s} ${s} 0 0 1 ${cx} ${cy - s * 0.6} A${s} ${s} 0 0 1 ${cx + s * 1.8} ${cy - s * 0.2} Z" fill="${color}" />`;
 }
 
-function crossEye(cx: number, cy: number, color: string): string {
+function crossEye(cx: number, cy: number, color: string, sw: number = 1): string {
   const s = 2.4;
-  return `<g stroke="${color}" stroke-width="1.6" stroke-linecap="round"><line x1="${cx - s}" y1="${cy - s}" x2="${cx + s}" y2="${cy + s}" /><line x1="${cx - s}" y1="${cy + s}" x2="${cx + s}" y2="${cy - s}" /></g>`;
+  return `<g stroke="${color}" stroke-width="${1.6 * sw}" stroke-linecap="round"><line x1="${cx - s}" y1="${cy - s}" x2="${cx + s}" y2="${cy + s}" /><line x1="${cx - s}" y1="${cy + s}" x2="${cx + s}" y2="${cy - s}" /></g>`;
 }
 
 function sclera(cx: number, cy: number, rx: number, ry: number): string {

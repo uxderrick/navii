@@ -57,13 +57,27 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
     eyeOffset: baseAnchor.eyeOffset + (spec.eyeGapShift ?? 0),
   };
 
+  const strokeMul = spec.featureStroke ?? 1;
   const antennaSvg = renderAntenna(spec.antenna, anchor, spec.palette);
-  const accessorySvg = renderAccessory(spec.accessory, spec.palette, anchor);
+  const accessorySvg = renderAccessory(spec.accessory, spec.palette, anchor, { strokeMul });
 
-  const bodyMarkup = renderBody(spec.body, spec.palette, gradId);
-  const bodyTransform = transformBody(spec.bodyScale ?? 1, anchor);
+  const flat = spec.flat === true;
+  const glow = spec.glow === true;
+  const glowId = `navii-glow-${id}`;
+  const bodyMarkup = renderBody(spec.body, spec.palette, gradId, { flat });
+  // Flat-mode bodies (e.g. full-bleed Office squircle) ignore the seeded
+  // bodyScale so they don't clip out of the viewport or pull in from edges.
+  const effectiveBodyScale = flat ? 1 : (spec.bodyScale ?? 1);
+  const bodyTransform = transformBody(effectiveBodyScale, anchor);
   const bodyFilter = spec.hueShift && spec.hueShift !== 0 ? ` filter="url(#${hueId})"` : '';
   const bodyWrapped = `<g${bodyTransform}${bodyFilter}><g class="body">${bodyMarkup}</g></g>`;
+
+  // Glow layer — duplicate body path, blurred + brightened, painted BEHIND the
+  // sharp body. Creates the cyberpunk halo for Neon. Uses palette.bodyFrom as
+  // the glow color so it picks up each palette's signature hue.
+  const glowLayer = glow
+    ? `<g${bodyTransform} filter="url(#${glowId})" opacity="0.85"><g class="body-glow">${bodyMarkup.replace(/fill="url\(#[^"]+\)"/g, `fill="${spec.palette.bodyFrom}"`)}</g></g>`
+    : '';
 
   const antennaWrapped = antennaSvg
     ? `<g${transformAntenna(spec.antennaTilt ?? 0, anchor)}><g class="antenna">${antennaSvg}</g></g>`
@@ -74,15 +88,26 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
 
   const outfitSvg = renderOutfit(spec.outfit ?? 'none', anchor, spec.palette);
 
+  // Pack-level opaque plate overrides the seeded background entirely. Used by
+  // Office to force a pure-white ID-badge backdrop regardless of seed.
+  const packPlate = spec.bgColor
+    ? `<rect x="0" y="0" width="100" height="100" fill="${spec.bgColor}" />`
+    : '';
+  const backgroundMarkup = spec.bgColor
+    ? '' // pack plate replaces the seeded background
+    : renderBackground(spec.background, spec.palette, bgOverride);
+
   const parts = [
     tileCircle,
-    renderBackground(spec.background, spec.palette, bgOverride),
+    packPlate,
+    backgroundMarkup,
+    glowLayer,
     bodyWrapped,
     // outfit sits on the body but below the face, so face features stay readable
     outfitSvg,
     renderTopper(spec.topper, anchor, spec.palette),
-    wrap('eyes', renderEyes(spec.eyes, spec.palette, anchor)),
-    renderMouth(spec.mouth, spec.palette, anchor, spec.mouthCurveScale ?? 1),
+    wrap('eyes', renderEyes(spec.eyes, spec.palette, anchor, { strokeMul })),
+    renderMouth(spec.mouth, spec.palette, anchor, spec.mouthCurveScale ?? 1, { strokeMul }),
     antennaWrapped,
     accessorySvg && spec.accessory === 'sparkle'
       ? wrap('sparkle', accessorySvg)
@@ -90,9 +115,12 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
   ].join('');
 
   const defs = [
-    renderBodyDefs(spec.body, spec.palette, gradId),
+    renderBodyDefs(spec.body, spec.palette, gradId, { flat }),
     spec.hueShift && spec.hueShift !== 0
       ? `<filter id="${hueId}" color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="${spec.hueShift}" /></filter>`
+      : '',
+    glow
+      ? `<filter id="${glowId}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4" /></filter>`
       : '',
   ].join('');
 

@@ -5,6 +5,13 @@ export { renderAvatar, renderAvatarInner } from './render.js';
 export { renderGroup, type GroupOptions } from './group.js';
 export { seed, type SeedFields } from './seed.js';
 export { build, type BuildSpec } from './build.js';
+export {
+  BUILT_IN_PACKS,
+  PACK_REGISTRY,
+  resolvePacks,
+  type Pack,
+  type PackRegistry,
+} from './packs/index.js';
 
 import { selectAvatar } from './select.js';
 import { renderAvatar } from './render.js';

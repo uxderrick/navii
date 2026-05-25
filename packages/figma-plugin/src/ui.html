@@ -1,0 +1,1452 @@
+<style>
+  :root {
+    --bg: var(--figma-color-bg, #ffffff);
+    --bg-secondary: var(--figma-color-bg-secondary, #f5f5f5);
+    --bg-tertiary: var(--figma-color-bg-tertiary, #eaeaea);
+    --bg-hover: var(--figma-color-bg-hover, #ececec);
+    --fg: var(--figma-color-text, #111111);
+    --fg-secondary: var(--figma-color-text-secondary, #767676);
+    --fg-tertiary: var(--figma-color-text-tertiary, #aaaaaa);
+    --border: var(--figma-color-border, #e6e6e6);
+    --border-strong: var(--figma-color-border-strong, #cccccc);
+    --accent: var(--figma-color-bg-brand, #6366f1);
+    --accent-hover: var(--figma-color-bg-brand-hover, #5048d8);
+    --accent-text: var(--figma-color-text-onbrand, #ffffff);
+    --radius: 6px;
+    --radius-sm: 4px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
+  body {
+    font: 11px/1.4 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .tab {
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: var(--fg-secondary);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--fg); }
+  .tab.active { color: var(--fg); border-bottom-color: var(--accent); }
+
+  /* BODY -> two columns */
+  .body { flex: 1; overflow: hidden; }
+  .panel { display: none; height: 100%; }
+  .panel.active { display: flex; }
+
+  .col-left {
+    width: 340px;
+    flex-shrink: 0;
+    padding: 20px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg-secondary);
+  }
+  .col-right {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .col-right::-webkit-scrollbar { width: 6px; }
+  .col-right::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+  /* PREVIEW */
+  .preview-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4px 0 8px;
+  }
+  .preview {
+    width: 300px; height: 300px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, transparent 60%),
+      linear-gradient(135deg, var(--bg) 0%, var(--bg-tertiary) 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.03),
+      0 8px 24px rgba(0,0,0,0.06);
+  }
+  .preview svg { width: 78%; height: 78%; }
+  .nav-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 32px; height: 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--fg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .nav-arrow:hover { background: var(--bg-hover); }
+  .nav-arrow.prev { left: 4px; }
+  .nav-arrow.next { right: 4px; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 16px; }
+  .section:last-child { margin-bottom: 0; }
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  /* SEED INPUT */
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input {
+    flex: 1;
+    padding: 8px 36px 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    height: 32px;
+  }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .input-suffix {
+    position: absolute; right: 4px;
+    width: 24px; height: 24px;
+    border: none; background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--fg-secondary);
+  }
+  .input-suffix:hover { background: var(--bg-hover); color: var(--fg); }
+
+  /* PALETTE SWATCHES */
+  .swatch-row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+  }
+  .swatch {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch.active {
+    border-color: var(--fg);
+    box-shadow: 0 0 0 2px var(--bg);
+  }
+  .swatch.auto {
+    background: conic-gradient(from 0deg, #ef4444, #f59e0b, #84cc16, #14b8a6, #3b82f6, #a855f7, #ec4899, #ef4444);
+  }
+
+  /* SEGMENTED CONTROL */
+  .seg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .seg-label { width: 84px; color: var(--fg-secondary); }
+  .seg {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 2px;
+    gap: 2px;
+  }
+  .seg-opt {
+    padding: 4px 0;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: var(--fg-secondary);
+    font: inherit;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .seg-opt.active {
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* SLIDER */
+  .slider-wrap { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    outline: none;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+  .slider-val { width: 44px; text-align: right; color: var(--fg-secondary); }
+
+  /* RECENT CHIPS */
+  .recent-strip {
+    display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .recent-strip::-webkit-scrollbar { display: none; }
+  .recent-chip {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .recent-chip svg { width: 100%; height: 100%; }
+  .recent-chip:hover { border-color: var(--accent); }
+  .recent-empty {
+    color: var(--fg-tertiary);
+    font-size: 10px;
+    padding: 8px 0;
+  }
+
+  /* VISUAL PICKER ROWS */
+  .picker-row { margin-bottom: 16px; }
+  .picker-row-label {
+    font-size: 10px;
+    color: var(--fg-secondary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .picker-row-value { color: var(--fg); font-weight: 500; }
+  .picker-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 6px;
+  }
+  .picker-thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .picker-thumb svg { width: 100%; height: 100%; }
+  .picker-thumb:hover { border-color: var(--border-strong); }
+  .picker-thumb.active { border-color: var(--accent); }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+    background: var(--bg);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    background: var(--bg-secondary);
+    color: var(--fg);
+    font: inherit;
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--bg-tertiary); }
+  .btn.primary {
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn .kbd {
+    margin-left: 8px;
+    padding: 1px 5px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 3px;
+    font-size: 9px;
+    opacity: 0.85;
+  }
+
+  /* URL BAR — styled like an input */
+  .url-bar {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--fg);
+    min-width: 0;
+    height: 32px;
+  }
+  .url-bar.show { display: flex; }
+  .url-bar:focus-within { border-color: var(--accent); }
+  .url-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .snippet-select {
+    border: none; background: transparent;
+    color: var(--fg-secondary);
+    font: inherit; font-size: 10px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: ui-monospace, monospace;
+    flex-shrink: 0;
+  }
+  .snippet-select:hover { background: var(--bg-hover); color: var(--fg); }
+  .snippet-select:focus { outline: none; }
+  .url-copy {
+    border: none; background: transparent;
+    color: var(--fg-secondary); cursor: pointer;
+    padding: 2px 4px; border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .url-copy:hover { background: var(--bg-hover); color: var(--fg); }
+
+  /* PRO BADGE / UPGRADE PILL (top-right) */
+  .pro-pill {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #fff;
+    letter-spacing: 0.04em;
+  }
+  .pro-pill.unlocked {
+    background: var(--bg-secondary);
+    color: var(--fg);
+    border-color: var(--border);
+    cursor: default;
+  }
+  .pro-pill .dot { width: 4px; height: 4px; border-radius: 50%; background: #fff; }
+  .pro-pill.unlocked .dot { background: #16a34a; }
+
+  /* UPGRADE MODAL — redesigned */
+  .upgrade-modal {
+    max-width: 380px !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  .upgrade-cast {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(99,102,241,0.18) 0%, transparent 55%),
+      radial-gradient(circle at 80% 70%, rgba(168,85,247,0.18) 0%, transparent 55%),
+      var(--bg-secondary);
+    padding: 24px 24px 16px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .upgrade-cast .cast-tile {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    animation: cast-float 3.6s ease-in-out infinite;
+  }
+  .upgrade-cast .cast-tile svg { width: 100%; height: 100%; }
+  .upgrade-cast .cast-tile:nth-child(1) { animation-delay: 0s; }
+  .upgrade-cast .cast-tile:nth-child(2) { animation-delay: 0.2s; }
+  .upgrade-cast .cast-tile:nth-child(3) { animation-delay: 0.4s; }
+  .upgrade-cast .cast-tile:nth-child(4) { animation-delay: 0.6s; }
+  .upgrade-cast .cast-tile:nth-child(5) { animation-delay: 0.1s; }
+
+  .upgrade-title {
+    margin: 18px 24px 4px;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .upgrade-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .upgrade-price-amt {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .upgrade-price-tag {
+    font-size: 11px;
+    color: var(--fg-secondary);
+  }
+
+  .upgrade-features {
+    list-style: none;
+    padding: 0 24px;
+    margin: 0 0 20px;
+  }
+  .upgrade-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .upgrade-feat-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+  }
+  .upgrade-feat-name {
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 1px;
+  }
+  .upgrade-feat-desc {
+    color: var(--fg-secondary);
+    line-height: 1.4;
+    font-size: 11px;
+  }
+
+  .upgrade-cta {
+    background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    padding: 12px !important;
+    width: calc(100% - 48px);
+    margin: 0 24px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  .upgrade-cta:hover {
+    background: linear-gradient(135deg, #5048d8, #9333ea) !important;
+  }
+
+  .upgrade-key-link {
+    text-align: center;
+    padding: 14px 24px 24px;
+  }
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 4px;
+  }
+  .link-btn:hover { color: var(--fg); }
+
+  /* OLD UPGRADE MODAL (kept for layout — superseded by upgrade-modal class) */
+  .modal-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--bg);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 440px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+  .modal h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .modal p.lead {
+    color: var(--fg-secondary);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .modal-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+  }
+  .modal-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 11px;
+  }
+  .modal-features li::before {
+    content: '✓';
+    color: var(--accent);
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .modal-actions .btn { flex: 1; padding: 10px; }
+  .modal-key-section {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .modal-key-section .section-label { margin-bottom: 6px; }
+  .modal-key-row {
+    display: flex;
+    gap: 6px;
+  }
+  .modal-key-row input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-family: ui-monospace, monospace;
+    height: 32px;
+  }
+  .modal-key-row .btn { padding: 0 14px; }
+  .modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+  }
+  .modal-close:hover { background: var(--bg-hover); color: var(--fg); }
+  .modal-wrap { position: relative; }
+  .modal-status {
+    font-size: 10px;
+    margin-top: 8px;
+    min-height: 14px;
+  }
+  .modal-status.ok { color: #16a34a; }
+  .modal-status.err { color: #dc2626; }
+
+  /* BRAND VARIABLE PICKER MODAL */
+  .var-list {
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 12px 0;
+  }
+  .var-list::-webkit-scrollbar { width: 6px; }
+  .var-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  .var-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    background: transparent;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    width: 100%;
+    text-align: left;
+    color: var(--fg);
+    font: inherit;
+  }
+  .var-row:last-child { border-bottom: none; }
+  .var-row:hover { background: var(--bg-hover); }
+  .var-row .var-chip {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .var-row .var-name { flex: 1; min-width: 0; }
+  .var-row .var-name-text {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .var-row .var-collection {
+    color: var(--fg-tertiary);
+    font-size: 10px;
+  }
+  .var-row .var-hex {
+    color: var(--fg-secondary);
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+  }
+  .var-empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--fg-tertiary);
+    line-height: 1.5;
+  }
+  .var-libraries {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    font-size: 10px;
+    color: var(--fg-secondary);
+    line-height: 1.5;
+  }
+  .var-libraries b { color: var(--fg); }
+  .var-libraries ul {
+    margin: 4px 0 0;
+    padding-left: 16px;
+  }
+
+  /* Brand groups (collapsible) */
+  .brand-group { margin-bottom: 8px; }
+  .brand-group:last-child { margin-bottom: 0; }
+  .brand-group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 6px 0;
+    cursor: pointer;
+    color: var(--fg-secondary);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: left;
+  }
+  .brand-group-header:hover { color: var(--fg); }
+  .brand-group-header .chev {
+    width: 12px; height: 12px;
+    transition: transform 0.15s;
+    flex-shrink: 0;
+  }
+  .brand-group.collapsed .chev { transform: rotate(-90deg); }
+  .brand-group-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .brand-group-count {
+    color: var(--fg-tertiary);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .brand-group-body { padding-top: 2px; }
+  .brand-group.collapsed .brand-group-body { display: none; }
+
+  /* Sub-group inside a collection (by name prefix, e.g. color/primary) */
+  .brand-subgroup { margin-top: 6px; }
+  .brand-subgroup-label {
+    color: var(--fg-tertiary);
+    font-size: 9.5px;
+    font-family: ui-monospace, monospace;
+    margin-bottom: 3px;
+    padding-left: 2px;
+  }
+
+  /* Brand color picker row */
+  .brand-color-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .brand-color-row input[type="color"] {
+    width: 36px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    cursor: pointer;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .brand-color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  .brand-color-row input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+  }
+  .brand-color-row #brand-hex-input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-family: ui-monospace, monospace;
+    height: 32px;
+    text-transform: uppercase;
+  }
+  .brand-color-row .btn {
+    height: 32px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Brand swatch — always present at end of palette grid. */
+  .swatch.brand-add {
+    background: var(--bg-secondary);
+    border: 2px dashed var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-secondary);
+  }
+  .swatch.brand-add:hover { border-color: var(--accent); color: var(--accent); }
+  .swatch.brand-add svg { width: 14px; height: 14px; }
+  .swatch.brand-set { border: 2px solid transparent; }
+  .swatch.brand-locked::after {
+    content: '🔒';
+    position: absolute;
+    font-size: 8px;
+    bottom: -2px;
+    right: -2px;
+    background: var(--bg);
+    border-radius: 50%;
+    padding: 1px 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .swatch.brand-locked,
+  .swatch.brand-add {
+    position: relative;
+  }
+  .section-label { display: flex; align-items: center; }
+  .section-label .link-btn {
+    text-decoration: none;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  /* Lock badge on premium swatches/buttons */
+  .lock-badge {
+    position: relative;
+  }
+  .lock-badge::after {
+    content: '🔒';
+    position: absolute;
+    top: -2px; right: -2px;
+    font-size: 9px;
+    background: var(--bg);
+    border-radius: 50%;
+    padding: 1px 3px;
+  }
+
+  /* "Brand" pill action in palette section */
+  .brand-action {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .brand-action button {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px dashed var(--border-strong);
+    background: transparent;
+    color: var(--fg-secondary);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .brand-action button:hover {
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+  .brand-action button.pro::after {
+    content: 'Pro';
+    font-size: 8px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 4px;
+  }
+
+  /* ONBOARDING OVERLAY — confetti + cast then hero + live seed */
+  .onboarding {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 22% 18%, rgba(99,102,241,0.32) 0%, transparent 55%),
+      radial-gradient(circle at 78% 82%, rgba(168,85,247,0.28) 0%, transparent 55%),
+      radial-gradient(circle at 50% 50%, rgba(244,114,182,0.14) 0%, transparent 60%),
+      var(--bg);
+  }
+  .onboarding.show { display: block; }
+
+  .onb-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .confetti-bit {
+    position: absolute;
+    width: 8px; height: 14px;
+    border-radius: 2px;
+    top: -24px;
+    opacity: 0;
+    animation: confetti-fall 1800ms cubic-bezier(0.25, 0.5, 0.35, 1) forwards;
+  }
+  @keyframes confetti-fall {
+    0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+    8%   { opacity: 1; }
+    100% { opacity: 0; transform: translateY(720px) rotate(720deg); }
+  }
+  .onb-cast {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: repeat(4, 76px);
+    gap: 12px;
+  }
+  .cast-tile {
+    width: 76px; height: 76px;
+    border-radius: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.5) translateY(28px);
+    animation: cast-drop 600ms cubic-bezier(0.34, 1.56, 0.5, 1) forwards;
+  }
+  @keyframes cast-drop {
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .cast-tile svg { width: 100%; height: 100%; }
+  .onboarding.stage-2 .cast-tile {
+    animation: none;
+    opacity: 0.55;
+    transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, 0deg)) scale(0.55);
+    transition: transform 900ms cubic-bezier(0.5, 0, 0.2, 1), opacity 700ms ease;
+  }
+  .onboarding.stage-2 .cast-tile:hover {
+    opacity: 0.9;
+    transform: translate(var(--tx, 0), var(--ty, 0)) rotate(0deg) scale(0.7);
+    cursor: pointer;
+  }
+  .onb-hero-wrap {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% - 10px)) scale(0.55);
+    display: flex; flex-direction: column; align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms 250ms ease, transform 700ms 250ms cubic-bezier(0.34, 1.56, 0.5, 1);
+  }
+  .onboarding.stage-2 .onb-hero-wrap {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 10px)) scale(1);
+    pointer-events: auto;
+  }
+  .onb-bubble {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    position: relative;
+    max-width: 320px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .onb-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -7px; left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px; height: 12px;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .onb-bubble strong { color: var(--accent); font-weight: 700; }
+  .onb-hero {
+    width: 180px; height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    filter: drop-shadow(0 14px 32px rgba(0,0,0,0.18));
+  }
+  .onb-hero svg { width: 100%; height: 100%; }
+
+  .onb-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
+    padding: 0 24px;
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 130px));
+    animation: onb-text-in 700ms 700ms cubic-bezier(0.4, 0.8, 0.2, 1) forwards;
+    transition: transform 700ms cubic-bezier(0.4, 0.8, 0.2, 1), opacity 400ms;
+  }
+  @keyframes onb-text-in {
+    from { opacity: 0; transform: translate(-50%, calc(-50% - 110px)); }
+    to   { opacity: 1; transform: translate(-50%, calc(-50% - 160px)); }
+  }
+  .onboarding.stage-2 .onb-text {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -250px);
+  }
+  .onb-text h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .onb-text .onb-lead {
+    color: var(--fg-secondary);
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .onb-input-wrap {
+    position: absolute;
+    bottom: 110px; left: 50%;
+    width: 320px;
+    transform: translateX(-50%) translateY(24px);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms 600ms ease, transform 600ms 600ms cubic-bezier(0.34, 1.4, 0.5, 1);
+  }
+  .onboarding.stage-2 .onb-input-wrap {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .onb-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+  }
+  .onb-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
+  }
+  .onb-hint { color: var(--fg-tertiary); font-size: 11px; }
+
+  .onboarding-actions {
+    position: absolute;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; align-items: center; gap: 10px;
+    opacity: 0;
+    animation: onb-fade-in 500ms 1100ms ease forwards;
+  }
+  @keyframes onb-fade-in { to { opacity: 1; } }
+  .onboarding-skip {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    font: inherit;
+    cursor: pointer;
+    padding: 10px 14px;
+  }
+  .onboarding-skip:hover { color: var(--fg); }
+
+  /* PACKS PANEL */
+  .packs-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .active-packs-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 32px;
+  }
+  .active-pack-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 10px;
+    color: var(--fg);
+  }
+  .active-pack-chip .x {
+    cursor: pointer;
+    opacity: 0.6;
+    margin-left: 2px;
+  }
+  .active-pack-chip .x:hover { opacity: 1; }
+  .active-pack-empty {
+    color: var(--fg-tertiary);
+    font-size: 10px;
+    padding: 6px 0;
+  }
+
+  .pack-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .pack-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: var(--fg);
+    transition: border-color 0.15s, transform 0.05s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pack-card:hover { border-color: var(--border-strong); }
+  .pack-card.active {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.06));
+  }
+  .pack-card-emoji {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .pack-card-info { flex: 1; min-width: 0; }
+  .pack-card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  .pack-card-title .badge {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    color: var(--fg-secondary);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pack-card-title .badge.soon { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; }
+  .pack-card-desc {
+    color: var(--fg-secondary);
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .pack-card-toggle {
+    flex-shrink: 0;
+    width: 36px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    position: relative;
+    transition: background 0.15s;
+  }
+  .pack-card-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.15s;
+  }
+  .pack-card.active .pack-card-toggle {
+    background: var(--accent);
+  }
+  .pack-card.active .pack-card-toggle::after {
+    transform: translateX(14px);
+  }
+  .pack-card.locked {
+    cursor: pointer;
+  }
+  .pack-card.locked .pack-card-toggle {
+    background: var(--bg-tertiary);
+    position: relative;
+  }
+  .pack-card.locked .pack-card-toggle::after {
+    content: '🔒';
+    background: transparent;
+    box-shadow: none;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pack-card.coming {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  /* HINT (fill panel) */
+  .hint {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 12px;
+    color: var(--fg-secondary);
+    line-height: 1.5;
+  }
+  .hint b { color: var(--fg); }
+
+  /* LEFT-COL TITLE (build/fill) */
+  .col-title { font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+  .col-subtitle { color: var(--fg-secondary); margin-bottom: 12px; }
+</style>
+
+<link rel="icon" type="image/svg+xml" href="https://api.navii.dev/avatar/navii?size=56" />
+
+<!-- ONBOARDING -->
+<div class="onboarding" id="onboarding">
+  <div class="onb-confetti" id="onb-confetti"></div>
+  <div class="onb-cast" id="onb-cast"></div>
+  <div class="onb-hero-wrap">
+    <div class="onb-bubble" id="onb-bubble">Hi, I'm <strong>Navii</strong></div>
+    <div class="onb-hero" id="onb-hero"></div>
+  </div>
+  <div class="onb-text">
+    <h1 id="onb-title">Meet the cast.</h1>
+    <p class="onb-lead" id="onb-lead">Same seed → same mascot. Forever.</p>
+  </div>
+  <div class="onb-input-wrap">
+    <input type="text" class="onb-input" id="onb-seed" placeholder="Type any name…" maxlength="32" autocomplete="off" spellcheck="false" />
+    <span class="onb-hint">Try your name. Or your cat's. Or "tsormed".</span>
+  </div>
+  <div class="onboarding-actions">
+    <button class="btn primary" id="onboarding-start">Drop me in →</button>
+    <button class="onboarding-skip" id="onboarding-skip">Skip intro</button>
+  </div>
+</div>
+
+<!-- PRO PILL -->
+<button class="pro-pill" id="pro-pill" title="Unlock Navii Pro">
+  <span class="dot"></span>
+  <span id="pro-pill-label">Upgrade</span>
+</button>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" data-panel="seed">Seed</button>
+  <button class="tab" data-panel="build">Build</button>
+  <button class="tab" data-panel="packs">Packs</button>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-overlay" id="upgrade-modal">
+  <div class="modal-wrap">
+    <div class="modal upgrade-modal">
+      <button class="modal-close" id="modal-close" title="Close">×</button>
+
+      <!-- Floating cast hero -->
+      <div class="upgrade-cast" id="upgrade-cast"></div>
+
+      <h2 class="upgrade-title">Navii Pro</h2>
+      <div class="upgrade-price">
+        <span class="upgrade-price-amt">$5</span>
+        <span class="upgrade-price-tag">one-time · lifetime</span>
+      </div>
+
+      <ul class="upgrade-features">
+        <li>
+          <span class="upgrade-feat-icon">🎨</span>
+          <div>
+            <div class="upgrade-feat-name">Brand mode</div>
+            <div class="upgrade-feat-desc">Pull Figma color variables → custom palette in one click.</div>
+          </div>
+        </li>
+        <li>
+          <span class="upgrade-feat-icon">🎁</span>
+          <div>
+            <div class="upgrade-feat-name">Premium packs</div>
+            <div class="upgrade-feat-desc">Halloween, Winter, Neon themed bundles. New packs added over time.</div>
+          </div>
+        </li>
+        <li>
+          <span class="upgrade-feat-icon">⭐</span>
+          <div>
+            <div class="upgrade-feat-name">Saved mascots</div>
+            <div class="upgrade-feat-desc">Name + reuse any avatar build across files.</div>
+          </div>
+        </li>
+        <li>
+          <span class="upgrade-feat-icon">💬</span>
+          <div>
+            <div class="upgrade-feat-name">Priority support</div>
+            <div class="upgrade-feat-desc">Direct channel for bugs + feature requests.</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="modal-actions">
+        <button class="btn primary upgrade-cta" id="modal-buy">
+          Buy now — $5
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-left:6px"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>
+
+      <div class="upgrade-key-link">
+        <button class="link-btn" id="modal-have-key">Already have a key?</button>
+      </div>
+
+      <div class="modal-key-section" id="modal-key-section" style="display: none;">
+        <div class="modal-key-row">
+          <input id="modal-key-input" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" />
+          <button class="btn primary" id="modal-key-verify">Verify</button>
+        </div>
+        <div class="modal-status" id="modal-status"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SEED PANEL -->
+  <div class="panel active" id="panel-seed">
+    <div class="col-left">
+      <div class="preview-wrap">
+        <button class="nav-arrow prev" id="prev-btn" title="Previous random">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="preview" id="preview-seed"></div>
+        <button class="nav-arrow next" id="next-btn" title="Next random">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div>
+        <div class="section-label">Seed</div>
+        <div class="input-wrap">
+          <input class="input" id="seed-input" placeholder="alice@example.com" />
+          <button class="input-suffix" id="roll-btn" title="Random">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="16" r="1.2" fill="currentColor"/><circle cx="16" cy="16" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <div class="url-bar show" id="url-bar" style="margin-top: 8px;">
+          <select class="snippet-select" id="snippet-select" title="Snippet format">
+            <option value="url">URL</option>
+            <option value="html">HTML</option>
+            <option value="react">React</option>
+            <option value="vue">Vue</option>
+            <option value="swift">Swift</option>
+            <option value="curl">cURL</option>
+          </select>
+          <span class="url-text" id="url-text"></span>
+          <button class="url-copy" id="url-copy" title="Copy">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-right">
+      <div class="section">
+        <div class="section-label">Palette</div>
+        <div class="swatch-row" id="palette-swatches"></div>
+      </div>
+
+      <!-- Free users: upgrade CTA -->
+      <div class="section" id="free-brand-section" style="display: none;">
+        <div class="brand-action">
+          <button id="brand-open-btn" class="pro" title="Pull team colors automatically (Pro)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            Brand palette
+          </button>
+        </div>
+      </div>
+
+      <!-- Pro users: auto-fetched team colors (grouped by collection) -->
+      <div class="section" id="pro-brand-section" style="display: none;">
+        <div class="section-label">
+          Your brand palette
+          <span id="brand-count-tag" style="margin-left:6px; color: var(--fg-tertiary); font-weight:400; text-transform:none; letter-spacing:0;"></span>
+        </div>
+        <div id="brand-groups"></div>
+        <div id="brand-empty" style="display:none; color: var(--fg-tertiary); font-size: 10px; padding: 4px 0;">
+          No variables or styles in this file. Use the custom palette below.
+        </div>
+      </div>
+
+      <!-- Pro users: custom palette via color picker / hex -->
+      <div class="section" id="pro-custom-section" style="display: none;">
+        <div class="section-label">Custom palette</div>
+        <div class="brand-color-row">
+          <input type="color" id="brand-color-picker" value="#6366F1" title="Pick a color" />
+          <input id="brand-hex-input" placeholder="#6366F1" value="#6366F1" autocomplete="off" />
+          <button class="btn primary" id="brand-hex-apply">Apply</button>
+        </div>
+        <div class="modal-status" id="brand-status"></div>
+      </div>
+      <div class="section">
+        <div class="seg-row">
+          <div class="seg-label">Background</div>
+          <div class="seg" id="bg-seg">
+            <button class="seg-opt active" data-bg="">Auto</button>
+            <button class="seg-opt" data-bg="solid">Solid</button>
+            <button class="seg-opt" data-bg="ring">Ring</button>
+          </div>
+        </div>
+        <div class="seg-row">
+          <div class="seg-label">Size</div>
+          <div class="slider-wrap">
+            <input type="range" class="slider" id="size-slider" min="32" max="512" step="16" value="96" />
+            <div class="slider-val" id="size-val">96px</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Recent</div>
+        <div class="recent-strip" id="recent">
+          <div class="recent-empty">No recent yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PACKS PANEL -->
+  <div class="panel" id="panel-packs">
+    <div class="col-left">
+      <div class="preview-wrap">
+        <div class="preview" id="preview-packs"></div>
+      </div>
+      <div>
+        <div class="col-title">Premium packs</div>
+        <div class="col-subtitle">Themed bundles of palettes and parts. Toggle one or more on — your seeds will pull from the extended pool.</div>
+      </div>
+      <div>
+        <div class="section-label">Active packs</div>
+        <div class="active-packs-row" id="active-packs-row">
+          <span class="active-pack-empty">None active.</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-right">
+      <div class="section-label" style="margin-bottom: 10px;">Available packs</div>
+      <div class="pack-grid" id="pack-grid"></div>
+    </div>
+  </div>
+
+  <!-- BUILD PANEL -->
+  <div class="panel" id="panel-build">
+    <div class="col-left">
+      <div class="preview-wrap">
+        <div class="preview" id="preview-build"></div>
+      </div>
+      <div>
+        <div class="section-label">Palette</div>
+        <div class="swatch-row" id="b-palette-swatches"></div>
+      </div>
+      <div>
+        <div class="col-subtitle">Pick each part manually. No seed needed.</div>
+      </div>
+    </div>
+    <div class="col-right">
+      <div id="build-pickers"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <button class="btn primary" id="primary-btn" title="With selection → fill shapes. No selection → insert new avatar at viewport.">Insert avatar<span class="kbd">⌘↵</span></button>
+  <button class="btn" id="fill-random-btn" title="Each selected shape gets a unique random avatar (seed = shape id)">Fill random</button>
+</div>
+
+<!-- script injected by build.mjs -->

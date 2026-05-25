@@ -91,5 +91,24 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
         `<circle cx="${cx}" cy="${cy + 7}" r="1.6" fill="${accent}" stroke="${ink}" stroke-width="0.5" />`,
         `<circle cx="${cx}" cy="${cy + 7}" r="0.7" fill="${palette.blush}" />`,
       ].join('');
+
+    case 'tie':
+      // Necktie — small knot at neckline + tapered blade hanging below.
+      // Dressy / corporate signal. Uses palette.bodyTo as tie color, palette.accent
+      // as the shirt collar peek behind it.
+      {
+        const knotTop = cy - 3;
+        const knotBot = cy + 1;
+        return [
+          // Shirt-collar peek behind the tie (so tie reads as worn over a shirt)
+          `<path d="M${cx - 11} ${cy - 2} L${cx - 3} ${knotBot} L${cx + 3} ${knotBot} L${cx + 11} ${cy - 2} L${cx + 6} ${cy + 6} L${cx - 6} ${cy + 6} Z" fill="${accent}" stroke="${ink}" stroke-width="0.55" />`,
+          // Knot — small trapezoid centered
+          `<path d="M${cx - 3.2} ${knotTop} L${cx + 3.2} ${knotTop} L${cx + 2.4} ${knotBot} L${cx - 2.4} ${knotBot} Z" fill="${palette.bodyTo}" stroke="${ink}" stroke-width="0.5" />`,
+          // Blade — narrower at top, widens, then pointed tip at bottom
+          `<path d="M${cx - 2.4} ${knotBot} L${cx + 2.4} ${knotBot} L${cx + 3.4} ${cy + 6} L${cx + 2.8} ${cy + 12} L${cx} ${cy + 15} L${cx - 2.8} ${cy + 12} L${cx - 3.4} ${cy + 6} Z" fill="${palette.bodyTo}" stroke="${ink}" stroke-width="0.5" />`,
+          // Subtle highlight stripe down the blade
+          `<path d="M${cx} ${knotBot + 0.5} L${cx} ${cy + 13.5}" stroke="${ink}" stroke-width="0.35" opacity="0.35" />`,
+        ].join('');
+      }
   }
 }

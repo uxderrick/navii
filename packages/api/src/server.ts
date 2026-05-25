@@ -5,6 +5,8 @@ import { log } from './log.js';
 const port = Number.parseInt(process.env['PORT'] ?? '8787', 10);
 const host = process.env['HOST'] ?? '0.0.0.0';
 
+const gumroadProductPermalink = process.env['GUMROAD_PRODUCT_PERMALINK'];
+
 const app = createApp({
   rateLimit: {
     windowMs: 60_000,
@@ -14,6 +16,7 @@ const app = createApp({
     max: Number.parseInt(process.env['PNG_CACHE_SIZE'] ?? '500', 10),
   },
   trustProxy: process.env['TRUST_PROXY'] === '1',
+  ...(gumroadProductPermalink ? { gumroadProductPermalink } : {}),
 });
 
 const server = serve({ fetch: app.fetch, port, hostname: host }, ({ port: p }) => {

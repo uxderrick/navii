@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>Navii — Pack Preview</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --card: #ffffff;
+    --border: #e7e5e4;
+    --fg: #0c0a09;
+    --fg-secondary: #57534e;
+    --accent: #6366f1;
+    --accent-grad: linear-gradient(135deg, #6366f1, #a855f7);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    padding: 40px 24px 80px;
+  }
+  header { max-width: 1100px; margin: 0 auto 32px; }
+  h1 {
+    font-size: 32px; font-weight: 700; margin: 0 0 8px;
+    background: var(--accent-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sub { color: var(--fg-secondary); margin: 0 0 16px; }
+  .controls {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .controls label { font-size: 12px; color: var(--fg-secondary); }
+  .controls input[type=text] {
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+    font: inherit; font-size: 13px; min-width: 220px;
+  }
+  .controls .seeds-input { min-width: 300px; }
+  .controls button {
+    padding: 6px 12px; background: var(--fg); color: white; border: none;
+    border-radius: 6px; cursor: pointer; font: inherit; font-size: 12px;
+  }
+  .controls button:hover { background: #44403c; }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  .pack {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  }
+  .pack-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .pack-emoji {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #f5f4f1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .pack-title { font-size: 18px; font-weight: 700; margin: 0; }
+  .pack-desc { color: var(--fg-secondary); font-size: 13px; margin: 4px 0 18px; }
+  .pack-meta { font-size: 11px; color: var(--fg-secondary); margin-bottom: 14px; }
+  .pack-meta b { color: var(--fg); }
+  .pack-meta code {
+    background: #f5f4f1; padding: 1px 5px; border-radius: 4px;
+    font-family: ui-monospace, monospace; font-size: 10px;
+  }
+
+  .palettes {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px; margin-bottom: 22px;
+  }
+  .palette-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px;
+    background: #fdfdfc;
+  }
+  .palette-card .pid {
+    font-family: ui-monospace, monospace; font-size: 11px;
+    color: var(--fg-secondary); margin-bottom: 8px; word-break: break-all;
+  }
+  .palette-card .row { display: flex; gap: 4px; }
+  .palette-card .chip {
+    flex: 1; height: 18px; border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .avatar-grid { display: grid; gap: 14px; }
+  .seed-row {
+    display: grid;
+    grid-template-columns: 80px repeat(auto-fill, minmax(96px, 1fr));
+    gap: 12px; align-items: center;
+  }
+  .seed-label {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--fg-secondary);
+    text-align: right; padding-right: 6px;
+  }
+  .avatar-cell {
+    aspect-ratio: 1;
+    background: #f8f7f4;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .avatar-cell svg { width: 86%; height: 86%; }
+  .avatar-cell .tag {
+    position: absolute; bottom: 2px; left: 2px; right: 2px;
+    font-size: 8px; font-family: ui-monospace, monospace;
+    color: var(--fg-secondary);
+    background: rgba(255,255,255,0.92);
+    padding: 1px 4px; border-radius: 3px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-align: center;
+  }
+
+  .spread-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+  }
+  .spread-grid .tag {
+    position: absolute; bottom: 3px; left: 3px;
+    font-size: 9px; font-family: ui-monospace, monospace;
+    color: var(--fg);
+    background: rgba(255,255,255,0.85);
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  .section-h {
+    font-size: 11px; font-weight: 600; color: var(--fg-secondary);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin: 4px 0 10px;
+  }
+
+  .baseline { background: #f5f4f1; }
+
+  /* === Tab nav === */
+  .tabs {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    margin: 24px 0 20px;
+    position: sticky; top: 0;
+    background: var(--bg);
+    padding: 10px 0; z-index: 10;
+  }
+  .tab {
+    padding: 8px 14px; font-size: 13px; cursor: pointer;
+    border: 1px solid transparent; background: transparent;
+    color: var(--fg-secondary);
+    border-radius: 8px; font: inherit; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .tab:hover { background: #f0eeea; color: var(--fg); }
+  .tab.active {
+    background: var(--fg); color: white;
+    border-color: var(--fg);
+  }
+  .tab .em { font-size: 14px; }
+
+  /* === Showcase grid (all packs at a glance) === */
+  .showcase {
+    background: white; border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px;
+  }
+  .showcase-title {
+    font-size: 22px; font-weight: 700; margin: 0 0 6px;
+  }
+  .showcase-sub { color: var(--fg-secondary); margin: 0 0 24px; font-size: 13px; }
+  .pack-row {
+    margin-bottom: 24px;
+  }
+  .pack-row:last-child { margin-bottom: 0; }
+  .pack-row-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .pack-row-head .em { font-size: 22px; }
+  .pack-row-head .name {
+    font-size: 15px; font-weight: 700; color: var(--fg);
+  }
+  .pack-row-head .id-code {
+    font-family: ui-monospace, monospace; font-size: 10px;
+    background: #f5f4f1; padding: 2px 6px; border-radius: 4px;
+    color: var(--fg-secondary);
+  }
+  .pack-row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+  }
+  .pack-row-cell {
+    aspect-ratio: 1;
+    background: #f8f7f4;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .pack-row-cell svg { display: block; width: 100%; height: 100%; }
+
+  /* === Real-world use-case mocks === */
+  .usecases {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px; margin-top: 6px;
+  }
+  .uc {
+    background: #fbfbfa; border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; font-size: 13px;
+  }
+  .uc-title {
+    font-size: 11px; font-weight: 600; color: var(--fg-secondary);
+    text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 12px;
+  }
+
+  /* Team list / Slack sidebar */
+  .uc-team .row {
+    display: flex; align-items: center; gap: 10px; padding: 6px 0;
+  }
+  .uc-team .row + .row { border-top: 1px solid #eee9; }
+  .uc-team .av { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
+  .uc-team .av svg { display: block; width: 100%; height: 100%; }
+  .uc-team .name { font-weight: 600; color: var(--fg); }
+  .uc-team .role { color: var(--fg-secondary); font-size: 11px; }
+  .uc-team .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-left: auto; flex: 0 0 auto; }
+
+  /* Inbox row */
+  .uc-inbox .row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 0;
+  }
+  .uc-inbox .row + .row { border-top: 1px solid #eee9; }
+  .uc-inbox .av { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
+  .uc-inbox .av svg { display: block; width: 100%; height: 100%; }
+  .uc-inbox .meta { flex: 1; min-width: 0; }
+  .uc-inbox .from { font-weight: 600; color: var(--fg); }
+  .uc-inbox .sub { color: var(--fg-secondary); font-size: 12px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .uc-inbox .time { color: var(--fg-secondary); font-size: 11px; flex: 0 0 auto; }
+
+  /* Profile card */
+  .uc-profile { display: flex; gap: 14px; align-items: flex-start; }
+  .uc-profile .av { width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex: 0 0 auto; }
+  .uc-profile .av svg { display: block; width: 100%; height: 100%; }
+  .uc-profile .name { font-size: 16px; font-weight: 700; color: var(--fg); margin: 0; }
+  .uc-profile .title { color: var(--fg-secondary); margin: 2px 0 6px; font-size: 12px; }
+  .uc-profile .tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .uc-profile .pill {
+    font-size: 10px; padding: 2px 8px; background: #eee; border-radius: 99px;
+    color: #555;
+  }
+
+  /* Avatar stack (X people viewing) */
+  .uc-stack .stack-row { display: flex; align-items: center; gap: 10px; }
+  .uc-stack .stack { display: flex; }
+  .uc-stack .stack .av {
+    width: 36px; height: 36px; border-radius: 8px; overflow: hidden;
+    margin-left: -8px; border: 2px solid #fbfbfa; box-shadow: 0 0 0 1px #0001;
+  }
+  .uc-stack .stack .av:first-child { margin-left: 0; }
+  .uc-stack .stack .av svg { display: block; width: 100%; height: 100%; }
+  .uc-stack .more {
+    width: 36px; height: 36px; border-radius: 8px; margin-left: -8px;
+    background: #e7e5e4; color: #57534e; display: flex;
+    align-items: center; justify-content: center; font-size: 11px;
+    font-weight: 600; border: 2px solid #fbfbfa;
+  }
+  .uc-stack .label { color: var(--fg-secondary); font-size: 12px; }
+
+  /* Comment thread */
+  .uc-comments .comment { display: flex; gap: 10px; padding: 8px 0; }
+  .uc-comments .comment + .comment { border-top: 1px solid #eee9; }
+  .uc-comments .av { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
+  .uc-comments .av svg { display: block; width: 100%; height: 100%; }
+  .uc-comments .bubble { flex: 1; }
+  .uc-comments .who { font-weight: 600; color: var(--fg); font-size: 12px; }
+  .uc-comments .when { color: var(--fg-secondary); font-size: 10px; margin-left: 6px; }
+  .uc-comments .msg { color: #44403c; font-size: 12px; margin-top: 2px; line-height: 1.4; }
+
+  /* Org chart node */
+  .uc-org { display: flex; gap: 16px; justify-content: center; align-items: flex-start; }
+  .uc-org .node {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: white; border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; min-width: 110px;
+  }
+  .uc-org .av { width: 48px; height: 48px; border-radius: 10px; overflow: hidden; }
+  .uc-org .av svg { display: block; width: 100%; height: 100%; }
+  .uc-org .name { font-weight: 600; font-size: 12px; color: var(--fg); }
+  .uc-org .role { color: var(--fg-secondary); font-size: 10px; }
+
+  /* Calendar invite */
+  .uc-cal .row { display: flex; gap: 10px; align-items: center; padding: 6px 0; }
+  .uc-cal .row + .row { border-top: 1px solid #eee9; }
+  .uc-cal .av { width: 28px; height: 28px; border-radius: 6px; overflow: hidden; flex: 0 0 auto; }
+  .uc-cal .av svg { display: block; width: 100%; height: 100%; }
+  .uc-cal .name { font-size: 12px; color: var(--fg); flex: 1; }
+  .uc-cal .status {
+    font-size: 10px; padding: 2px 7px; border-radius: 99px;
+    background: #e0f2fe; color: #0369a1; font-weight: 600;
+  }
+  .uc-cal .status.maybe { background: #fef3c7; color: #92400e; }
+  .uc-cal .status.no { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Navii · Pack Preview</h1>
+  <p class="sub">All 6 premium packs side-by-side. Each pack shows: its palettes, sample avatars across multiple seeds (forced into each palette), and a random spread (seeds choose randomly from base 22 + this pack).</p>
+
+  <div class="controls">
+    <label>Seeds:</label>
+    <input class="seeds-input" id="seeds-input" type="text" value="alice, milo, nova, kai, sage, eden" />
+    <button id="apply-btn">Apply</button>
+    <label style="margin-left: 12px;">
+      <input type="checkbox" id="animated" checked /> animated
+    </label>
+  </div>
+</header>
+
+<div class="container">
+  <section class="pack baseline">
+    <div class="pack-head">
+      <h2 class="pack-title">Baseline (no pack)</h2>
+    </div>
+    <p class="pack-desc">For visual reference — these are the seeds rendered against the base 22-palette pool only.</p>
+    <div class="spread-grid" id="baseline-spread"></div>
+  </section>
+
+  <div class="tabs" id="tab-bar"></div>
+  <div id="packs"></div>
+</div>
+
+<script type="module">
+  // Dynamic import with timestamp = bypass browser ESM cache so edits in
+  // ../packages/core/dist/index.js show up immediately on reload.
+  const { createAvatar, BUILT_IN_PACKS } = await import(`../packages/core/dist/index.js?t=${Date.now()}`);
+
+  // Sanity check — if office pack here doesn't have flat:true AND the muted
+  // palette colors, the browser is serving a stale dist. Hard-reload.
+  const _office = BUILT_IN_PACKS.find((p) => p.id === 'office');
+  const _firstHex = _office?.palettes?.[0]?.bodyFrom;
+  console.log('[Navii preview] office pack loaded:', {
+    flat: _office?.flat,
+    bgColor: _office?.bgColor,
+    paletteExclusive: _office?.paletteExclusive,
+    firstPalette: _office?.palettes?.[0],
+    bodyPicks: _office?.picks?.body,
+    featureStroke: _office?.featureStroke,
+  });
+  // Expected first muted-grey hex for office:graphite — bump when palette changes
+  const EXPECTED_OFFICE_HEX = '#989BA2';
+  if (!_office?.flat || _firstHex !== EXPECTED_OFFICE_HEX) {
+    document.body.insertAdjacentHTML('afterbegin',
+      '<div style="background:#fee;color:#900;padding:12px;font:14px monospace;">' +
+      `STALE DIST — expected office:graphite bodyFrom=${EXPECTED_OFFICE_HEX} but got ${_firstHex}. ` +
+      'Hard-reload (Cmd+Shift+R). If persists: DevTools → Application → Service Workers → Unregister, then Clear storage.' +
+      '</div>');
+  }
+
+  const $ = (id) => document.getElementById(id);
+
+  function el(tag, opts = {}) {
+    const e = document.createElement(tag);
+    if (opts.className) e.className = opts.className;
+    if (opts.text) e.textContent = opts.text;
+    if (opts.title) e.title = opts.title;
+    if (opts.style) Object.assign(e.style, opts.style);
+    return e;
+  }
+  function clearNode(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+  // Parse SVG string → DOM element via DOMParser (safe; trusted source).
+  function parseSvg(svgString) {
+    const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+    const svg = doc.documentElement;
+    if (svg.tagName.toLowerCase() === 'svg') {
+      return document.importNode(svg, true);
+    }
+    return null;
+  }
+
+  function parseSeeds() {
+    return $('seeds-input').value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  function avatarCell(svgString, tagText) {
+    const cell = el('div', { className: 'avatar-cell' });
+    const svg = parseSvg(svgString);
+    if (svg) cell.appendChild(svg);
+    if (tagText) {
+      const tag = el('div', { className: 'tag', text: tagText });
+      cell.appendChild(tag);
+    }
+    return cell;
+  }
+
+  function renderBaseline(seeds, animated) {
+    const root = $('baseline-spread');
+    clearNode(root);
+    for (const seed of seeds) {
+      root.appendChild(avatarCell(createAvatar(seed, { size: 96, animated }), seed));
+    }
+  }
+
+  function renderPaletteCard(p) {
+    const card = el('div', { className: 'palette-card' });
+    card.appendChild(el('div', { className: 'pid', text: p.id }));
+    const row = el('div', { className: 'row' });
+    for (const c of [p.bodyFrom, p.bodyTo, p.accent, p.ink, p.blush]) {
+      const chip = el('div', { className: 'chip', title: c });
+      chip.style.background = c;
+      row.appendChild(chip);
+    }
+    card.appendChild(row);
+    return card;
+  }
+
+  function renderPack(pack, seeds, animated) {
+    const section = el('section', { className: 'pack' });
+
+    // Head
+    const head = el('div', { className: 'pack-head' });
+    head.appendChild(el('h2', { className: 'pack-title', text: pack.name }));
+    section.appendChild(head);
+    section.appendChild(el('p', { className: 'pack-desc', text: pack.description }));
+
+    // Real-world use-case mocks — the only thing shown per pack now. Each
+    // pack's USE_CASES entry drives the scenes (team list, inbox, profile, etc).
+    if (USE_CASES[pack.id]) {
+      section.appendChild(renderPackUseCases(pack, animated));
+    } else {
+      // Fallback for packs without scene data yet — show a small spread so
+      // the tab isn't empty.
+      const spread = el('div', { className: 'spread-grid' });
+      for (const seed of seeds) {
+        const cell = el('div', { className: 'avatar-cell' });
+        const svg = parseSvg(createAvatar(seed, { size: 96, animated, packs: [pack.id] }));
+        if (svg) cell.appendChild(svg);
+        cell.appendChild(el('div', { className: 'tag', text: seed }));
+        spread.appendChild(cell);
+      }
+      section.appendChild(spread);
+    }
+
+    return section;
+  }
+
+  // -- Use-case helpers --
+  function avEl(seed, animated, pack, style) {
+    const wrap = el('div', { className: 'av' });
+    const opts = { size: 96, animated, packs: [pack.id] };
+    if (style) opts.style = style;
+    const svg = parseSvg(createAvatar(seed, opts));
+    if (svg) wrap.appendChild(svg);
+    return wrap;
+  }
+
+  // Generic scene builders — each reads from a `data` object supplied per
+  // pack. Add a new pack by populating USE_CASES[pack.id] with the same
+  // shape and these builders render it.
+  const SCENE_BUILDERS = {
+    team: buildTeam,
+    inbox: buildInbox,
+    profile: buildProfile,
+    stack: buildStack,
+    comments: buildComments,
+    org: buildOrg,
+    cal: buildCalendar,
+  };
+
+  function renderPackUseCases(pack, animated) {
+    const scenes = USE_CASES[pack.id];
+    const root = el('div', { className: 'usecases' });
+    for (const scene of scenes) {
+      const build = SCENE_BUILDERS[scene.type];
+      if (!build) continue;
+      root.appendChild(build(pack, scene.data, animated));
+    }
+    return root;
+  }
+
+  function buildTeam(pack, data, animated) {
+    const card = el('div', { className: 'uc uc-team' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    for (const p of data.items) {
+      const row = el('div', { className: 'row' });
+      row.appendChild(avEl(p.seed, animated, pack, p.style));
+      const meta = el('div');
+      meta.appendChild(el('div', { className: 'name', text: p.name }));
+      meta.appendChild(el('div', { className: 'role', text: p.role }));
+      row.appendChild(meta);
+      row.appendChild(el('div', { className: 'dot', title: 'online' }));
+      card.appendChild(row);
+    }
+    return card;
+  }
+
+  function buildInbox(pack, data, animated) {
+    const card = el('div', { className: 'uc uc-inbox' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    for (const m of data.items) {
+      const row = el('div', { className: 'row' });
+      row.appendChild(avEl(m.seed, animated, pack, m.style));
+      const meta = el('div', { className: 'meta' });
+      meta.appendChild(el('div', { className: 'from', text: m.from }));
+      meta.appendChild(el('div', { className: 'sub', text: m.subj }));
+      row.appendChild(meta);
+      row.appendChild(el('div', { className: 'time', text: m.time }));
+      card.appendChild(row);
+    }
+    return card;
+  }
+
+  function buildProfile(pack, data, animated) {
+    const card = el('div', { className: 'uc' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    const wrap = el('div', { className: 'uc-profile' });
+    wrap.appendChild(avEl(data.seed, animated, pack, data.style));
+    const body = el('div');
+    body.appendChild(el('p', { className: 'name', text: data.name }));
+    body.appendChild(el('p', { className: 'title', text: data.subtitle }));
+    const tags = el('div', { className: 'tags' });
+    for (const t of data.tags ?? []) {
+      tags.appendChild(el('span', { className: 'pill', text: t }));
+    }
+    body.appendChild(tags);
+    wrap.appendChild(body);
+    card.appendChild(wrap);
+    return card;
+  }
+
+  function buildStack(pack, data, animated) {
+    const card = el('div', { className: 'uc uc-stack' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    const row = el('div', { className: 'stack-row' });
+    const stack = el('div', { className: 'stack' });
+    for (const c of data.items) {
+      stack.appendChild(avEl(c.seed, animated, pack, c.style));
+    }
+    if (data.more) {
+      const more = el('div', { className: 'more', text: data.more });
+      stack.appendChild(more);
+    }
+    row.appendChild(stack);
+    row.appendChild(el('div', { className: 'label', text: data.label }));
+    card.appendChild(row);
+    return card;
+  }
+
+  function buildComments(pack, data, animated) {
+    const card = el('div', { className: 'uc uc-comments' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    for (const c of data.items) {
+      const wrap = el('div', { className: 'comment' });
+      wrap.appendChild(avEl(c.seed, animated, pack, c.style));
+      const bubble = el('div', { className: 'bubble' });
+      const head = el('div');
+      head.appendChild(el('span', { className: 'who', text: c.who }));
+      head.appendChild(el('span', { className: 'when', text: c.when }));
+      bubble.appendChild(head);
+      bubble.appendChild(el('div', { className: 'msg', text: c.msg }));
+      wrap.appendChild(bubble);
+      card.appendChild(wrap);
+    }
+    return card;
+  }
+
+  function buildOrg(pack, data, animated) {
+    const card = el('div', { className: 'uc' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    const org = el('div', { className: 'uc-org' });
+    for (const n of data.items) {
+      const node = el('div', { className: 'node' });
+      node.appendChild(avEl(n.seed, animated, pack, n.style));
+      node.appendChild(el('div', { className: 'name', text: n.name }));
+      node.appendChild(el('div', { className: 'role', text: n.role }));
+      org.appendChild(node);
+    }
+    card.appendChild(org);
+    return card;
+  }
+
+  function buildCalendar(pack, data, animated) {
+    const card = el('div', { className: 'uc uc-cal' });
+    card.appendChild(el('h3', { className: 'uc-title', text: data.title }));
+    for (const g of data.items) {
+      const row = el('div', { className: 'row' });
+      row.appendChild(avEl(g.seed, animated, pack, g.style));
+      row.appendChild(el('div', { className: 'name', text: g.name }));
+      const s = el('div', { className: `status ${g.cls ?? ''}`, text: g.status });
+      row.appendChild(s);
+      card.appendChild(row);
+    }
+    return card;
+  }
+
+  // ===== Per-pack use-case data =====
+  const USE_CASES = {
+    'office': officeUseCases(),
+    'office-bright': officeBrightUseCases(),
+    'halloween': halloweenUseCases(),
+    'pastel': pastelUseCases(),
+    'neon': neonUseCases(),
+    'mono': monoUseCases(),
+    'earth': earthUseCases(),
+  };
+
+  function officeUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Team list (sidebar)',
+        items: [
+          { seed: 'sarah-chen', name: 'Sarah Chen', role: 'Engineering Lead', style: 'femme' },
+          { seed: 'marcus-wright', name: 'Marcus Wright', role: 'Product Manager', style: 'masc' },
+          { seed: 'aisha-okafor', name: 'Aisha Okafor', role: 'Senior Designer', style: 'femme' },
+          { seed: 'david-park', name: 'David Park', role: 'Data Scientist', style: 'masc' },
+        ],
+      }},
+      { type: 'inbox', data: {
+        title: 'Inbox',
+        items: [
+          { seed: 'helen-novak', from: 'Helen Novak', subj: 'Q3 financial review — minor revisions', time: '9:42a', style: 'femme' },
+          { seed: 'james-iverson', from: 'James Iverson', subj: 'Re: Vendor contract amendment', time: '8:15a', style: 'masc' },
+          { seed: 'priya-rao', from: 'Priya Rao', subj: 'Board deck draft (v3)', time: 'Yest', style: 'femme' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Profile card',
+        seed: 'elena-fischer', name: 'Elena Fischer',
+        subtitle: 'VP, Operations · Acme Industries',
+        tags: ['Strategy', 'M&A', 'GTM'], style: 'femme',
+      }},
+      { type: 'stack', data: {
+        title: 'Collaborators viewing',
+        items: [
+          { seed: 't-yamamoto', style: 'masc' },
+          { seed: 'r-mensah', style: 'femme' },
+          { seed: 'c-villanueva', style: 'neutral' },
+          { seed: 'a-fitzgerald', style: 'femme' },
+        ],
+        more: '+7', label: '11 people on this doc',
+      }},
+      { type: 'comments', data: {
+        title: 'Comment thread',
+        items: [
+          { seed: 'gabriel-ortiz', who: 'Gabriel Ortiz', when: '2h ago', style: 'masc',
+            msg: "I'd push the Q4 forecast a week — finance hasn't signed off on the OpEx restatement yet." },
+          { seed: 'mira-kowalski', who: 'Mira Kowalski', when: '1h ago', style: 'femme',
+            msg: 'Agreed. Looping in @claire from accounting to confirm timing.' },
+          { seed: 'claire-bennett', who: 'Claire Bennett', when: '12m ago', style: 'femme',
+            msg: 'Confirmed — restatement clears EOD Thursday. Forecast safe to publish Friday.' },
+        ],
+      }},
+      { type: 'org', data: {
+        title: 'Org chart',
+        items: [
+          { seed: 'lucia-romero', name: 'Lucia Romero', role: 'CEO', style: 'femme' },
+          { seed: 'oliver-tan', name: 'Oliver Tan', role: 'COO', style: 'masc' },
+          { seed: 'naomi-bryant', name: 'Naomi Bryant', role: 'CFO', style: 'femme' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Calendar invite — Q4 Planning',
+        items: [
+          { seed: 'erik-johansson', name: 'Erik Johansson', status: 'Going', cls: '', style: 'masc' },
+          { seed: 'noor-aziz', name: 'Noor Aziz', status: 'Maybe', cls: 'maybe', style: 'femme' },
+          { seed: 'frank-tremblay', name: 'Frank Tremblay', status: 'Declined', cls: 'no', style: 'masc' },
+          { seed: 'yuki-tanaka', name: 'Yuki Tanaka', status: 'Going', cls: '', style: 'neutral' },
+        ],
+      }},
+    ];
+  }
+
+  function officeBrightUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Design team',
+        items: [
+          { seed: 'maya-rivers', name: 'Maya Rivers', role: 'Head of Brand', style: 'femme' },
+          { seed: 'theo-blanc', name: 'Theo Blanc', role: 'Creative Lead', style: 'masc' },
+          { seed: 'riley-park', name: 'Riley Park', role: 'Motion Designer', style: 'neutral' },
+          { seed: 'jules-okoye', name: 'Jules Okoye', role: 'Product Designer', style: 'femme' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Profile card',
+        seed: 'aria-sterling', name: 'Aria Sterling',
+        subtitle: 'Head of Brand · Spark Co.',
+        tags: ['Branding', 'Visual Identity', 'AdOps'], style: 'femme',
+      }},
+      { type: 'stack', data: {
+        title: 'Active in this file',
+        items: [
+          { seed: 'zoe-kim', style: 'femme' },
+          { seed: 'diego-cruz', style: 'masc' },
+          { seed: 'ava-blake', style: 'femme' },
+          { seed: 'sky-patel', style: 'neutral' },
+        ],
+        more: '+8', label: '12 designers in this file',
+      }},
+      { type: 'comments', data: {
+        title: 'Figma comments',
+        items: [
+          { seed: 'casey-lin', who: 'Casey Lin', when: '20m ago', style: 'neutral',
+            msg: 'The cta on the right is competing with the hero — try reducing weight or shifting position.' },
+          { seed: 'jordan-mei', who: 'Jordan Mei', when: '8m ago', style: 'femme',
+            msg: 'Good call. Bumping it down to secondary and re-aligning to the grid.' },
+          { seed: 'rae-osei', who: 'Rae Osei', when: '2m ago', style: 'femme',
+            msg: 'Way better. Approving the system-pages flow.' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Calendar — Brand workshop',
+        items: [
+          { seed: 'quinn-blake', name: 'Quinn Blake', status: 'Going', cls: '', style: 'neutral' },
+          { seed: 'levi-ashford', name: 'Levi Ashford', status: 'Going', cls: '', style: 'masc' },
+          { seed: 'iris-tanaka', name: 'Iris Tanaka', status: 'Maybe', cls: 'maybe', style: 'femme' },
+          { seed: 'ren-aoki', name: 'Ren Aoki', status: 'Going', cls: '', style: 'neutral' },
+        ],
+      }},
+    ];
+  }
+
+  function halloweenUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Costume contest leaderboard',
+        items: [
+          { seed: 'vampira', name: 'Vampira', role: '#1 · Classic Vamp', style: 'femme' },
+          { seed: 'wraith-x', name: 'Wraith-X', role: '#2 · Shadow Knight', style: 'masc' },
+          { seed: 'hex-bones', name: 'Hex Bones', role: '#3 · Skeleton Bride', style: 'femme' },
+          { seed: 'ghoul-bro', name: 'Ghoul Bro', role: '#4 · Pumpkin King', style: 'masc' },
+        ],
+      }},
+      { type: 'inbox', data: {
+        title: 'Trick-or-Treat RSVPs',
+        items: [
+          { seed: 'morticia-lake', from: 'Morticia Lake', subj: 'Bringing the caramel apples 🍎', time: '7:13p', style: 'femme' },
+          { seed: 'casper-blue', from: 'Casper Blue', subj: 'Costume swap idea?', time: '6:02p', style: 'masc' },
+          { seed: 'igor-redd', from: 'Igor Redd', subj: 'Re: Haunted house map', time: 'Mon', style: 'masc' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Spook profile',
+        seed: 'severin-crow', name: 'Severin Crow',
+        subtitle: 'Haunt Master · Spooky Manor',
+        tags: ['Tricks', 'Treats', 'Mischief'], style: 'masc',
+      }},
+      { type: 'stack', data: {
+        title: 'Trick-or-treaters at the door',
+        items: [
+          { seed: 'jack-lantern', style: 'masc' },
+          { seed: 'witchy-mae', style: 'femme' },
+          { seed: 'bones-felix', style: 'neutral' },
+          { seed: 'cinder-nyx', style: 'femme' },
+        ],
+        more: '+12', label: '16 kids on the porch',
+      }},
+      { type: 'comments', data: {
+        title: 'Haunted house chat',
+        items: [
+          { seed: 'pumpkin-jane', who: 'Pumpkin Jane', when: '1h ago', style: 'femme',
+            msg: 'Who turned off the corridor lights again?? The strobe was the whole vibe.' },
+          { seed: 'hex-malone', who: 'Hex Malone', when: '45m ago', style: 'femme',
+            msg: 'Igor tripped the breaker carrying the smoke machine. Resetting now.' },
+          { seed: 'spectre-vox', who: 'Spectre Vox', when: '8m ago', style: 'masc',
+            msg: 'Back up. The screams are immaculate tonight 👻' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Calendar — Halloween Bash',
+        items: [
+          { seed: 'morgana-grim', name: 'Morgana Grim', status: 'Going', cls: '', style: 'femme' },
+          { seed: 'bram-stoker', name: 'Bram Stoker', status: 'Going', cls: '', style: 'masc' },
+          { seed: 'lilith-hex', name: 'Lilith Hex', status: 'Maybe', cls: 'maybe', style: 'femme' },
+          { seed: 'cael-shadow', name: 'Cael Shadow', status: 'Declined', cls: 'no', style: 'masc' },
+        ],
+      }},
+    ];
+  }
+
+  function pastelUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Friends list',
+        items: [
+          { seed: 'mochi-soft', name: 'Mochi', role: 'Bestie · streak 42', style: 'femme' },
+          { seed: 'pip-bean', name: 'Pip', role: 'Daydreamer · streak 19', style: 'neutral' },
+          { seed: 'luna-tea', name: 'Luna', role: 'Sticker queen · streak 31', style: 'femme' },
+          { seed: 'sora-clouds', name: 'Sora', role: 'Doodle pal · streak 12', style: 'masc' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Profile',
+        seed: 'strawberry-tanaka', name: 'Strawberry Tanaka',
+        subtitle: 'Daydreamer · Cozy Café',
+        tags: ['Stickers', 'Boba', 'Naps'], style: 'femme',
+      }},
+      { type: 'stack', data: {
+        title: 'Friends online',
+        items: [
+          { seed: 'bunbun', style: 'femme' },
+          { seed: 'daisy-cloud', style: 'femme' },
+          { seed: 'kiwi-pal', style: 'neutral' },
+          { seed: 'milky-tea', style: 'femme' },
+        ],
+        more: '+9', label: '13 friends sparkling',
+      }},
+      { type: 'comments', data: {
+        title: 'Cute chat',
+        items: [
+          { seed: 'mochi-soft', who: 'Mochi', when: '5m ago', style: 'femme',
+            msg: 'Picnic in the meadow this Sunday?? bringing the strawberry cake 🍓' },
+          { seed: 'pip-bean', who: 'Pip', when: '3m ago', style: 'neutral',
+            msg: 'YES omg I will bring the picnic blanket and matcha cookies!!' },
+          { seed: 'sora-clouds', who: 'Sora', when: '1m ago', style: 'masc',
+            msg: 'count me in!! bringing the bubble tea ✨' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Birthday party — Mochi turns 8',
+        items: [
+          { seed: 'bunbun', name: 'Bunbun', status: 'Going', cls: '', style: 'femme' },
+          { seed: 'sora-clouds', name: 'Sora', status: 'Going', cls: '', style: 'masc' },
+          { seed: 'pip-bean', name: 'Pip', status: 'Going', cls: '', style: 'neutral' },
+          { seed: 'luna-tea', name: 'Luna', status: 'Maybe', cls: 'maybe', style: 'femme' },
+        ],
+      }},
+    ];
+  }
+
+  function neonUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Esports roster — CYBR.GG',
+        items: [
+          { seed: 'phantom-zero', name: 'Phantom_Zero', role: 'IGL · 2.3 KDA', style: 'masc' },
+          { seed: 'vortex-19', name: 'Vortex19', role: 'Entry · 1.8 KDA', style: 'femme' },
+          { seed: 'riot-byte', name: 'Riot.Byte', role: 'Support · 1.1 KDA', style: 'neutral' },
+          { seed: 'cipher-77', name: 'Cipher77', role: 'AWPer · 1.9 KDA', style: 'masc' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Player profile',
+        seed: 'synthwave-x', name: 'Synthwave',
+        subtitle: 'Main Tank · CYBR.GG',
+        tags: ['Diamond II', 'Twitch', 'Apex'], style: 'neutral',
+      }},
+      { type: 'stack', data: {
+        title: 'In voice chat',
+        items: [
+          { seed: 'pulse-09', style: 'masc' },
+          { seed: 'glitch-fae', style: 'femme' },
+          { seed: 'wraith-mx', style: 'neutral' },
+          { seed: 'neon-flux', style: 'femme' },
+        ],
+        more: '+11', label: '15 players in lobby',
+      }},
+      { type: 'comments', data: {
+        title: 'Match comms',
+        items: [
+          { seed: 'phantom-zero', who: 'Phantom_Zero', when: '00:02', style: 'masc',
+            msg: 'Push B long, smokes are ready. I want flashes on the door.' },
+          { seed: 'vortex-19', who: 'Vortex19', when: '00:04', style: 'femme',
+            msg: 'Flash out. Going in, hold the trade.' },
+          { seed: 'riot-byte', who: 'Riot.Byte', when: '00:09', style: 'neutral',
+            msg: 'Plant default. I got picks watching CT rotation 🔥' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Tournament bracket — Saturday',
+        items: [
+          { seed: 'phantom-zero', name: 'Phantom_Zero', status: 'Locked in', cls: '', style: 'masc' },
+          { seed: 'vortex-19', name: 'Vortex19', status: 'Locked in', cls: '', style: 'femme' },
+          { seed: 'cipher-77', name: 'Cipher77', status: 'Tentative', cls: 'maybe', style: 'masc' },
+          { seed: 'riot-byte', name: 'Riot.Byte', status: 'Locked in', cls: '', style: 'neutral' },
+        ],
+      }},
+    ];
+  }
+
+  function monoUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Authors',
+        items: [
+          { seed: 'calder-meir', name: 'Calder Meir', role: 'Essays · weekly', style: 'masc' },
+          { seed: 'maren-hale', name: 'Maren Hale', role: 'Long reads · monthly', style: 'femme' },
+          { seed: 'iris-okeefe', name: 'Iris O\'Keefe', role: 'Criticism · bi-weekly', style: 'femme' },
+          { seed: 'theo-vance', name: 'Theo Vance', role: 'Notes · daily', style: 'masc' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Author profile',
+        seed: 'hadley-mercer', name: 'Hadley Mercer',
+        subtitle: 'Essayist · The Quiet Letter',
+        tags: ['Letters', 'Memoir', 'Poetics'], style: 'neutral',
+      }},
+      { type: 'stack', data: {
+        title: 'Subscribers reading now',
+        items: [
+          { seed: 'aldous-pen', style: 'masc' },
+          { seed: 'rye-lambert', style: 'neutral' },
+          { seed: 'pinn-marsh', style: 'femme' },
+          { seed: 'cass-rowe', style: 'femme' },
+        ],
+        more: '+14', label: '18 subscribers on this issue',
+      }},
+      { type: 'comments', data: {
+        title: 'Letters to the editor',
+        items: [
+          { seed: 'calder-meir', who: 'Calder Meir', when: 'Tue', style: 'masc',
+            msg: 'The opening paragraph is doing too much work for the thesis. Trim the historical aside.' },
+          { seed: 'maren-hale', who: 'Maren Hale', when: 'Wed', style: 'femme',
+            msg: 'Agreed. The piece sharpens once you drop the third quote and let the close breathe.' },
+          { seed: 'iris-okeefe', who: 'Iris O\'Keefe', when: 'Thu', style: 'femme',
+            msg: 'Sending revised draft tonight. Keeping it under 1400 words this time.' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Manuscript review — Friday',
+        items: [
+          { seed: 'alden-mark', name: 'Alden Mark', status: 'Confirmed', cls: '', style: 'masc' },
+          { seed: 'sloane-piers', name: 'Sloane Piers', status: 'Confirmed', cls: '', style: 'femme' },
+          { seed: 'rye-lambert', name: 'Rye Lambert', status: 'Tentative', cls: 'maybe', style: 'neutral' },
+        ],
+      }},
+    ];
+  }
+
+  function earthUseCases() {
+    return [
+      { type: 'team', data: {
+        title: 'Yoga Flow — class roster',
+        items: [
+          { seed: 'anaya-river', name: 'Anaya River', role: 'Vinyasa · 6:30 AM', style: 'femme' },
+          { seed: 'soren-meadow', name: 'Soren Meadow', role: 'Hatha · 8:00 AM', style: 'masc' },
+          { seed: 'lila-grove', name: 'Lila Grove', role: 'Restorative · 10 AM', style: 'femme' },
+          { seed: 'magnus-fern', name: 'Magnus Fern', role: 'Power · 12 PM', style: 'masc' },
+        ],
+      }},
+      { type: 'profile', data: {
+        title: 'Teacher profile',
+        seed: 'river-solene', name: 'River Solene',
+        subtitle: 'Mindfulness Guide · Still Waters Studio',
+        tags: ['Breathwork', 'Meditation', 'Sound bath'], style: 'femme',
+      }},
+      { type: 'stack', data: {
+        title: 'In the studio now',
+        items: [
+          { seed: 'wren-moss', style: 'femme' },
+          { seed: 'bay-cedar', style: 'masc' },
+          { seed: 'atlas-pine', style: 'neutral' },
+          { seed: 'sage-clover', style: 'femme' },
+        ],
+        more: '+6', label: '10 students in class',
+      }},
+      { type: 'comments', data: {
+        title: 'Sangha check-in',
+        items: [
+          { seed: 'anaya-river', who: 'Anaya River', when: 'Mon', style: 'femme',
+            msg: 'Day 7 of the 30-day breath challenge — pranayama is finally clicking. Anyone else?' },
+          { seed: 'soren-meadow', who: 'Soren Meadow', when: 'Mon', style: 'masc',
+            msg: 'Just hit day 12. The 4-7-8 cycle before bed has fixed my sleep entirely.' },
+          { seed: 'lila-grove', who: 'Lila Grove', when: 'Tue', style: 'femme',
+            msg: 'Loving the journal prompts. Sat under the willow this morning and just breathed. 🌿' },
+        ],
+      }},
+      { type: 'cal', data: {
+        title: 'Sunday retreat — Forest Meditation',
+        items: [
+          { seed: 'wren-moss', name: 'Wren Moss', status: 'Going', cls: '', style: 'femme' },
+          { seed: 'bay-cedar', name: 'Bay Cedar', status: 'Going', cls: '', style: 'masc' },
+          { seed: 'sage-clover', name: 'Sage Clover', status: 'Maybe', cls: 'maybe', style: 'femme' },
+          { seed: 'atlas-pine', name: 'Atlas Pine', status: 'Going', cls: '', style: 'neutral' },
+        ],
+      }},
+    ];
+  }
+
+  // Active tab — read from URL hash (so reloads land on the same pack),
+  // fall back to "showcase" (combined grid of all packs).
+  const SHOWCASE_TAB_ID = '__showcase';
+  function readActiveTabFromHash() {
+    const h = location.hash.replace(/^#/, '');
+    if (h === 'showcase') return SHOWCASE_TAB_ID;
+    if (h && BUILT_IN_PACKS.some((p) => p.id === h)) return h;
+    return SHOWCASE_TAB_ID;
+  }
+  let activeTabId = readActiveTabFromHash();
+
+  function tabHashFor(id) {
+    return id === SHOWCASE_TAB_ID ? 'showcase' : id;
+  }
+
+  function renderTabs() {
+    const bar = $('tab-bar');
+    clearNode(bar);
+    // Showcase tab first
+    const showBtn = el('button', { className: 'tab' });
+    showBtn.appendChild(document.createTextNode('All packs'));
+    if (activeTabId === SHOWCASE_TAB_ID) showBtn.classList.add('active');
+    showBtn.addEventListener('click', () => {
+      if (activeTabId === SHOWCASE_TAB_ID) return;
+      activeTabId = SHOWCASE_TAB_ID;
+      history.replaceState(null, '', '#showcase');
+      renderAll();
+      $('tab-bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    bar.appendChild(showBtn);
+    // Per-pack tabs
+    for (const pack of BUILT_IN_PACKS) {
+      const btn = el('button', { className: 'tab' });
+      btn.appendChild(document.createTextNode(pack.name));
+      if (pack.id === activeTabId) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        if (activeTabId === pack.id) return;
+        activeTabId = pack.id;
+        history.replaceState(null, '', `#${pack.id}`);
+        renderAll();
+        $('tab-bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      bar.appendChild(btn);
+    }
+  }
+
+  // Combined showcase grid — one row per pack with 6 sample avatars.
+  // Uses thematic seeds + style hints to capture the pack's identity.
+  function renderShowcase(animated) {
+    const section = el('section', { className: 'showcase' });
+    section.appendChild(el('h2', { className: 'showcase-title', text: 'All packs at a glance' }));
+    section.appendChild(el('p', {
+      className: 'showcase-sub',
+      text: 'One row per pack — six seeded avatars each, mixed style hints. Screenshot-ready.',
+    }));
+
+    const SHOWCASE_SEEDS = {
+      'office':        [['sarah-chen','femme'],['marcus-wright','masc'],['aisha-okafor','femme'],['david-park','masc'],['elena-fischer','femme'],['oliver-tan','masc']],
+      'office-bright': [['maya-rivers','femme'],['theo-blanc','masc'],['riley-park','neutral'],['jules-okoye','femme'],['aria-sterling','femme'],['diego-cruz','masc']],
+      'halloween':     [['vampira','femme'],['wraith-x','masc'],['hex-bones','femme'],['ghoul-bro','masc'],['morgana-grim','femme'],['bram-stoker','masc']],
+      'pastel':        [['mochi-soft','femme'],['pip-bean','neutral'],['luna-tea','femme'],['sora-clouds','masc'],['bunbun','femme'],['kiwi-pal','neutral']],
+      'neon':          [['phantom-zero','masc'],['vortex-19','femme'],['cipher-77','masc'],['riot-byte','neutral'],['synthwave-x','neutral'],['glitch-fae','femme']],
+      'mono':          [['hadley-mercer','neutral'],['calder-meir','masc'],['maren-hale','femme'],['iris-okeefe','femme'],['theo-vance','masc'],['rye-lambert','neutral']],
+      'earth':         [['anaya-river','femme'],['soren-meadow','masc'],['lila-grove','femme'],['magnus-fern','masc'],['river-solene','femme'],['atlas-pine','neutral']],
+    };
+
+    for (const pack of BUILT_IN_PACKS) {
+      const row = el('div', { className: 'pack-row' });
+      const head = el('div', { className: 'pack-row-head' });
+      head.appendChild(el('span', { className: 'name', text: pack.name }));
+      head.appendChild(el('span', { className: 'id-code', text: pack.id }));
+      row.appendChild(head);
+
+      const grid = el('div', { className: 'pack-row-grid' });
+      const seeds = SHOWCASE_SEEDS[pack.id] ?? [];
+      for (const [seed, style] of seeds) {
+        const cell = el('div', { className: 'pack-row-cell' });
+        const opts = { size: 96, animated, packs: [pack.id] };
+        if (style) opts.style = style;
+        const svg = parseSvg(createAvatar(seed, opts));
+        if (svg) cell.appendChild(svg);
+        grid.appendChild(cell);
+      }
+      row.appendChild(grid);
+      section.appendChild(row);
+    }
+    return section;
+  }
+
+  function renderAll() {
+    const seeds = parseSeeds();
+    const animated = $('animated').checked;
+    renderBaseline(seeds, animated);
+    renderTabs();
+    const root = $('packs');
+    clearNode(root);
+    if (activeTabId === SHOWCASE_TAB_ID) {
+      root.appendChild(renderShowcase(animated));
+      return;
+    }
+    const active = BUILT_IN_PACKS.find((p) => p.id === activeTabId);
+    if (active) root.appendChild(renderPack(active, seeds, animated));
+  }
+
+  // React to back/forward navigation that changes the hash.
+  window.addEventListener('hashchange', () => {
+    const id = readActiveTabFromHash();
+    if (id !== activeTabId) {
+      activeTabId = id;
+      renderAll();
+    }
+  });
+  void tabHashFor;
+
+  $('apply-btn').addEventListener('click', renderAll);
+  $('animated').addEventListener('change', renderAll);
+  renderAll();
+</script>
+
+</body>
+</html>

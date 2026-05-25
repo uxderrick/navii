@@ -9,3 +9,6 @@ coverage
 .env.local
 .vercel
 .wrangler
+
+# private notes — monetization, strategy, brainstorms
+docs/private/

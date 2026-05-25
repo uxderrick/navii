@@ -10,11 +10,18 @@ import { renderCast, DEFAULT_CAST_SEEDS } from './cast.js';
 import { docSlugs } from './docs.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
+import { createLicenseRoutes } from './license.js';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
   cache?: { max: number };
   trustProxy?: boolean;
+  /**
+   * Gumroad product permalink (e.g. "navii-pro"). Required for /license/verify
+   * to forward checks to Gumroad's verify API. If omitted, the license route
+   * is not mounted.
+   */
+  gumroadProductPermalink?: string;
 }
 
 /**
@@ -39,6 +46,11 @@ export function createApp(options: AppOptions = {}) {
       '/avatar/*',
       rateLimit({ ...options.rateLimit, trustProxy: options.trustProxy === true }),
     );
+  }
+
+  // License verification (proxy to Gumroad). Only mounted when configured.
+  if (options.gumroadProductPermalink) {
+    app.route('/', createLicenseRoutes({ productPermalink: options.gumroadProductPermalink }));
   }
 
   app.get('/', (c) => {

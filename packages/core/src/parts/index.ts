@@ -23,6 +23,9 @@ import type {
 export const BODY_IDS: readonly BodyShapeId[] = [
   'orb', 'tall', 'squat', 'pear', 'pebble',
   'dumpling', 'taro', 'wisp',
+  // NOTE: 'squircle' is intentionally NOT in the base pool — pack-only body so
+  // existing seeds keep their original picks (no determinism shift). Packs can
+  // opt-in via `picks.body: ['squircle']`.
 ];
 export const EYE_IDS: readonly EyeStyleId[] = [
   'round', 'wide', 'squint', 'wink', 'sleepy', 'star',
@@ -45,5 +48,5 @@ export const TOPPER_IDS: readonly TopperId[] = [
 ];
 export const OUTFIT_IDS: readonly OutfitId[] = [
   // 'none' weighted heavy — most avatars stay plain-chested
-  'none', 'none', 'none', 'collar', 'scarf', 'bowtie', 'sunflower', 'necklace',
+  'none', 'none', 'none', 'collar', 'scarf', 'bowtie', 'sunflower', 'necklace', 'tie',
 ];

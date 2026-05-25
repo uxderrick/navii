@@ -90,4 +90,37 @@ export const ANCHORS: Record<BodyShapeId, FaceAnchor> = {
     groundY: 94,
     cheekY: 53, cheekOffset: 12,
   },
+  // Squircle — FULL-BLEED. Body fills 0-100, face composed as ID portrait:
+  // upper-third eye line, lower-third mouth, generous cheek/eye spread.
+  squircle: {
+    cx: 50, eyeY: 44, eyeOffset: 13, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 8,
+    groundY: 98,
+    cheekY: 52, cheekOffset: 24,
+  },
+  // Pumpkin — round body w/ slight horizontal lobing. Face mid-low, stem on top.
+  pumpkin: {
+    cx: 50, eyeY: 52, eyeOffset: 11, eyeScale: 1.0,
+    mouthY: 66, mouthSpan: 9,
+    topperX: 50, topperY: 18,
+    groundY: 88,
+    cheekY: 60, cheekOffset: 20,
+  },
+  // Ghost — tall wavy silhouette. Face high (under the "hood"), wavy hem below.
+  ghost: {
+    cx: 50, eyeY: 42, eyeOffset: 8, eyeScale: 1.05,
+    mouthY: 54, mouthSpan: 6,
+    topperX: 50, topperY: 12,
+    groundY: 92,
+    cheekY: 50, cheekOffset: 14,
+  },
+  // SkullHead — slightly elongated egg w/ deep eye sockets.
+  skullHead: {
+    cx: 50, eyeY: 50, eyeOffset: 10, eyeScale: 1.0,
+    mouthY: 70, mouthSpan: 7,
+    topperX: 50, topperY: 16,
+    groundY: 90,
+    cheekY: 60, cheekOffset: 16,
+  },
 };
