@@ -136,6 +136,7 @@ ${styleBlock()}
     </a>
     <div class="links">
       <a href="${SITE_BASE}/">landing</a>
+      <a href="/blog">blog</a>
       <a href="https://github.com/uxderrick/navii">github</a>
     </div>
   </nav>

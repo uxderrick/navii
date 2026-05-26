@@ -13,6 +13,7 @@ import { renderCast, DEFAULT_CAST_SEEDS } from './cast.js';
 import { docSlugs } from './docs.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
+import { blogIndexHtml, blogReleaseHtml, blogReleaseVersions } from './blog.js';
 import { privacyHtml, supportHtml } from './legal.js';
 import { createLicenseRoutes } from './license.js';
 import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
@@ -231,6 +232,44 @@ export function createApp(options: AppOptions = {}) {
     });
   });
 
+  // /blog — release timeline parsed from CHANGELOG.md.
+  // Index lists minor+ releases only; per-release pages accept any version.
+  app.get('/blog', (c) => {
+    return new Response(blogIndexHtml(), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
+
+  app.get('/blog/:version', (c) => {
+    const raw = c.req.param('version');
+    // Accept both `v0.23.0` and `0.23.0` forms.
+    const version = raw.startsWith('v') ? raw.slice(1) : raw;
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
+      return new Response('Not found', {
+        status: 404,
+        headers: { 'content-type': 'text/plain; charset=utf-8' },
+      });
+    }
+    const result = blogReleaseHtml(version);
+    if (!result.ok) {
+      return new Response(blogIndexHtml(), {
+        status: 404,
+        headers: { 'content-type': 'text/html; charset=utf-8' },
+      });
+    }
+    return new Response(result.html, {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  });
+
   app.get('/cast.svg', (c) => {
     const rawSeeds = c.req.query('seeds');
     const seeds = rawSeeds
@@ -409,7 +448,9 @@ export function createApp(options: AppOptions = {}) {
       `${SITE}/builder`,
       `${SITE}/privacy`,
       `${SITE}/support`,
+      `${SITE}/blog`,
       ...docSlugs().map((s) => `${SITE}/docs/${s}`),
+      ...blogReleaseVersions().map((v) => `${SITE}/blog/v${v}`),
     ];
     const body =
       `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
@@ -649,6 +690,11 @@ export function createApp(options: AppOptions = {}) {
     const seeds = Array.from({ length: count }, (_, i) => `${prefix}-${i}`);
     return c.html(renderGallery(seeds, size, animated));
   });
+
+  // Catch-all — any URL that didn't match a route redirects to the landing
+  // page. Avoids needing a styled 404 surface and keeps every dead link
+  // pointing somewhere useful.
+  app.notFound((c) => c.redirect('/', 302));
 
   return app;
 }

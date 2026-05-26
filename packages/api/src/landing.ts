@@ -728,6 +728,7 @@ export function landingHtml(): string {
     </div>
     <div class="links">
       <a href="/docs/quickstart">docs</a>
+      <a href="/blog">blog</a>
       <a href="https://github.com/uxderrick/navii">github</a>
     </div>
   </nav>

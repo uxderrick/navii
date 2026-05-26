@@ -47,6 +47,9 @@ RUN apt-get update \
 WORKDIR /app
 COPY --from=build /out /app
 COPY packages/api/public /app/public
+# /blog renders directly from CHANGELOG.md at request time. dist/blog.js looks
+# for the file at ../CHANGELOG.md relative to itself, so place it at /app/.
+COPY CHANGELOG.md /app/CHANGELOG.md
 
 # Drop privileges
 USER node
