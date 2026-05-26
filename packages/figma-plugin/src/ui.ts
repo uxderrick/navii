@@ -67,7 +67,26 @@ const seedState = {
   seedPaletteId: '' as string, // '' = auto
   background: '' as '' | 'none' | 'solid' | 'ring',
   size: 96,
+  // Style hint biases pack picks toward masc/femme/neutral (only takes effect
+  // when at least one enabled pack declares styleHints).
+  style: '' as '' | 'masc' | 'femme' | 'neutral',
 };
+
+// ---------- style-hint persistence ----------
+const STYLE_STORAGE_KEY = 'navii.style';
+try {
+  const raw = localStorage.getItem(STYLE_STORAGE_KEY);
+  if (raw === 'masc' || raw === 'femme' || raw === 'neutral') {
+    seedState.style = raw;
+  }
+} catch { /* noop */ }
+
+function persistStyle() {
+  try {
+    if (seedState.style) localStorage.setItem(STYLE_STORAGE_KEY, seedState.style);
+    else localStorage.removeItem(STYLE_STORAGE_KEY);
+  } catch { /* noop */ }
+}
 
 const buildSpec: BuildSpec = {
   palette: 'indigo',
@@ -146,7 +165,11 @@ function currentSeedOptions(): AvatarOptions {
     opts.paletteId = seedState.seedPaletteId;
   }
   const packs = getEnabledPackIds();
-  if (packs.length > 0) opts.packs = packs;
+  if (packs.length > 0) {
+    opts.packs = packs;
+    // Style hint only meaningful when at least one pack active.
+    if (seedState.style) opts.style = seedState.style;
+  }
   return opts;
 }
 
@@ -328,7 +351,10 @@ function pushRecent(seed: string) {
 
 // ---------- snippet generation ----------
 const API_BASE = 'https://api.navii.dev';
-const GUMROAD_PURCHASE_URL = 'https://uxderrick.gumroad.com/l/navii-pro';
+// Checkout URL. Points at our own /checkout route (powered by @polar-sh/hono)
+// which redirects to Polar with the product preselected. Lets us swap payment
+// providers later without re-publishing the plugin.
+const POLAR_PURCHASE_URL = `${API_BASE}/checkout`;
 
 // ---------- Brand palette (Pro) ----------
 //
@@ -906,6 +932,48 @@ function togglePack(id: string) {
   renderPackGrid();
   renderPacksHero();
   renderSeedPreview();
+  renderStyleHintRow();
+}
+
+function setStyleHint(value: '' | 'masc' | 'femme' | 'neutral') {
+  seedState.style = value;
+  persistStyle();
+  renderStyleHintRow();
+  renderPacksHero();
+  renderSeedPreview();
+}
+
+function renderStyleHintRow() {
+  const row = document.getElementById('style-hint-row');
+  const help = document.getElementById('style-hint-help');
+  if (!row) return;
+  const hasPack = getEnabledPackIds().length > 0;
+  const pills = Array.from(row.querySelectorAll<HTMLDivElement>('.style-pill'));
+  for (const pill of pills) {
+    const val = pill.getAttribute('data-style') ?? '';
+    pill.classList.toggle('active', val === seedState.style);
+    pill.classList.toggle('disabled', !hasPack && val !== '');
+  }
+  if (help) {
+    help.textContent = hasPack
+      ? 'Bias seeded picks toward this expression. Packs without hints ignore it.'
+      : 'Bias picks toward a gender expression. Enable a pack first.';
+  }
+}
+
+function bindStyleHintHandlers() {
+  const row = document.getElementById('style-hint-row');
+  if (!row) return;
+  const pills = Array.from(row.querySelectorAll<HTMLDivElement>('.style-pill'));
+  for (const pill of pills) {
+    pill.addEventListener('click', () => {
+      const hasPack = getEnabledPackIds().length > 0;
+      const val = (pill.getAttribute('data-style') ?? '') as '' | 'masc' | 'femme' | 'neutral';
+      // Block masc/femme/neutral when no pack enabled (Auto always allowed)
+      if (!hasPack && val !== '') return;
+      setStyleHint(val);
+    });
+  }
 }
 
 function doPrimary() {
@@ -1072,7 +1140,7 @@ function init() {
     if ((e.target as HTMLElement).id === 'upgrade-modal') closeUpgradeModal();
   });
   $('modal-buy').addEventListener('click', () => {
-    window.open(GUMROAD_PURCHASE_URL, '_blank');
+    window.open(POLAR_PURCHASE_URL, '_blank');
   });
   $('modal-have-key').addEventListener('click', () => {
     const sec = document.getElementById('modal-key-section');
@@ -1205,6 +1273,8 @@ function init() {
   renderRecent();
   renderPackGrid();
   renderPacksHero();
+  bindStyleHintHandlers();
+  renderStyleHintRow();
 }
 
 function renderOnboardingCast() {

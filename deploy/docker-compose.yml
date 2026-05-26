@@ -20,6 +20,14 @@ services:
       RATE_LIMIT_PER_MIN: "600"
       PNG_CACHE_SIZE: "1000"
       LOG_LEVEL: "info"
+      # Polar.sh — keep blank in compose so they pull from /opt/navii/.env
+      POLAR_ORGANIZATION_ID: ${POLAR_ORGANIZATION_ID:-}
+      POLAR_PRODUCT_ID: ${POLAR_PRODUCT_ID:-}
+      POLAR_BENEFIT_ID: ${POLAR_BENEFIT_ID:-}
+      POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN:-}
+      POLAR_SUCCESS_URL: ${POLAR_SUCCESS_URL:-}
+      POLAR_WEBHOOK_SECRET: ${POLAR_WEBHOOK_SECRET:-}
+      POLAR_SERVER: ${POLAR_SERVER:-production}
     ports:
       - "127.0.0.1:8787:8787"
     deploy:

@@ -60,12 +60,18 @@
     flex-direction: column;
     gap: 16px;
     background: var(--bg-secondary);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    min-height: 0; /* allows flex child to scroll */
   }
+  .col-left::-webkit-scrollbar { width: 6px; }
+  .col-left::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
   .col-right {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
     scrollbar-width: thin;
+    min-height: 0;
   }
   .col-right::-webkit-scrollbar { width: 6px; }
   .col-right::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
@@ -1062,6 +1068,43 @@
     margin-left: 2px;
   }
   .active-pack-chip .x:hover { opacity: 1; }
+
+  /* Style-hint pill row */
+  .style-hint-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .style-pill {
+    padding: 5px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .style-pill:hover {
+    background: #f0eeea;
+    color: var(--fg);
+  }
+  .style-pill.active {
+    background: var(--fg);
+    color: white;
+    border-color: var(--fg);
+  }
+  .style-pill.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .style-hint-help {
+    font-size: 10px;
+    color: var(--fg-tertiary);
+    margin-top: 4px;
+  }
+
   .active-pack-empty {
     color: var(--fg-tertiary);
     font-size: 10px;
@@ -1414,6 +1457,16 @@
         <div class="active-packs-row" id="active-packs-row">
           <span class="active-pack-empty">None active.</span>
         </div>
+      </div>
+      <div>
+        <div class="section-label">Style hint</div>
+        <div class="style-hint-row" id="style-hint-row">
+          <div class="style-pill" data-style="">Auto</div>
+          <div class="style-pill" data-style="masc">Masc</div>
+          <div class="style-pill" data-style="femme">Femme</div>
+          <div class="style-pill" data-style="neutral">Neutral</div>
+        </div>
+        <div class="style-hint-help" id="style-hint-help">Bias picks toward a gender expression. Enable a pack first.</div>
       </div>
     </div>
     <div class="col-right">

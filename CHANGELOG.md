@@ -6,6 +6,48 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-05-26
+
+### Added (`@usenavii/core` 0.5.0)
+- **Pack overhaul** — all 7 packs given distinct visual identities via new render flags (`flat`, `bgColor`, `featureStroke`, `paletteExclusive`, `glow`). Each pack now reads as a different illustration system, not just a recoloring.
+- **New body shapes** (pack-only, base seeds unchanged): `squircle` (full-bleed corporate tile), `pumpkin`, `ghost`, `skullHead`.
+- **New mouth styles** (pack-only): `jagged` (carved-pumpkin grin), `fangs` (vampire teeth).
+- **New toppers**: `witchHat`, `pumpkinStem`, `ghostSheet`, `bob`, `bun`, `ponytail`.
+- **New accessory**: `earring` (palette-themed stud + drop pair).
+- **New outfit**: `tie` (corporate necktie — knot + tapered blade).
+- **`Pack.glow`** flag emits an outer-glow SVG filter behind the body (Gaussian blur tinted by palette). Used by Neon.
+- **`AvatarSpec.flat` / `bgColor` / `featureStroke` / `glow`** — render directives the engine reads to alter body/face rendering per enabled pack.
+- **`featureStroke` multiplier** scales stroke widths on eyes, mouth, glasses uniformly. Office bumps to 1.35, Neon 1.5, Mono down to 1.15 (delicate).
+- **New `office-bright` pack** — vivid sibling of Office for marketing/design teams.
+
+### Changed (`@usenavii/core` 0.5.0)
+- Pack picks now **authoritative** — `resolvePartPool` no longer intersects against base pool, so packs can introduce ids unknown to the base (e.g. Office's squircle). Type system enforces validity.
+- Office, Halloween, Pastel, Neon, Mono, Earth packs reauthored with theme-cohesive picks, style hints, and exclusive palette pools.
+- Office uses full-bleed squircle + white plate + necktie outfits + bolder strokes for ID-badge look.
+- Halloween uses pumpkin/ghost/skullHead bodies + jagged/fangs mouths + witchHat/stem/sheet toppers + dark night plate.
+- Neon emits an outer glow halo via SVG filter behind the body.
+- Mono switched to full-bleed squircle (was contained orb) for editorial tile look.
+
+### Added (API host)
+- **Polar.sh license verification** — `POST /license/verify` now proxies to Polar's `/v1/customer-portal/license-keys/validate` (replaces Gumroad). Validates `status === 'granted'`, expiry, and optional benefit-id match.
+- **`GET /checkout`** — redirects to Polar checkout w/ configured product preselected. Powered by `@polar-sh/hono`.
+- **`GET /portal`** — Polar customer portal proxy (license re-fetch, refund request).
+- **`POST /polar/webhooks`** — signature-verified webhook receiver, logs events.
+- New env vars: `POLAR_ORGANIZATION_ID`, `POLAR_PRODUCT_ID`, `POLAR_BENEFIT_ID`, `POLAR_ACCESS_TOKEN`, `POLAR_SUCCESS_URL`, `POLAR_WEBHOOK_SECRET`, `POLAR_SERVER`.
+- Compose file wires all Polar vars from `/opt/navii/.env`.
+- 8 new license unit tests w/ fetch mock covering granted/revoked/expired/wrong-product/upstream-error paths.
+
+### Changed (API host)
+- Privacy page swapped Gumroad references for Polar.sh.
+- `AppOptions` renamed `gumroadProductPermalink` → `polarOrganizationId` + related Polar fields.
+
+### Added (Figma plugin)
+- **Style hint pill row** in Packs panel — Auto / Masc / Femme / Neutral toggle. Persisted via `navii.style` localStorage. Disabled when no pack active.
+- Plugin checkout URL now points at `${API_BASE}/checkout` (instead of hardcoded Gumroad link), letting us swap payment providers without re-publishing.
+
+### Fixed (Figma plugin)
+- Left column in Packs panel was not scrollable when content overflowed (e.g. with new Style hint section). Added `overflow-y: auto` + `min-height: 0` to `.col-left`.
+
 ## [0.21.2] - 2026-05-26
 
 ### Changed (API host)
@@ -77,7 +119,11 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.20.1...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.0...HEAD
+[0.22.0]: https://github.com/uxderrick/navii/compare/v0.21.2...v0.22.0
+[0.21.2]: https://github.com/uxderrick/navii/compare/v0.21.1...v0.21.2
+[0.21.1]: https://github.com/uxderrick/navii/compare/v0.21.0...v0.21.1
+[0.21.0]: https://github.com/uxderrick/navii/compare/v0.20.1...v0.21.0
 [0.20.1]: https://github.com/uxderrick/navii/compare/v0.20.0...v0.20.1
 [0.20.0]: https://github.com/uxderrick/navii/compare/v0.19.0...v0.20.0
 [0.4.0]: https://github.com/uxderrick/navii/compare/v0.3.0...v0.4.0

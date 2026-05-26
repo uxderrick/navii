@@ -15,17 +15,55 @@ import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 import { privacyHtml, supportHtml } from './legal.js';
 import { createLicenseRoutes } from './license.js';
+import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
   cache?: { max: number };
   trustProxy?: boolean;
   /**
-   * Gumroad product permalink (e.g. "navii-pro"). Required for /license/verify
-   * to forward checks to Gumroad's verify API. If omitted, the license route
-   * is not mounted.
+   * Polar.sh organization UUID. Required for /license/verify to validate keys
+   * against Polar's license-key benefit. If omitted, the license route is
+   * not mounted.
    */
-  gumroadProductPermalink?: string;
+  polarOrganizationId?: string;
+  /**
+   * Optional: Polar benefit UUID for the license-key benefit. When set,
+   * keys for any other benefit are rejected (defense-in-depth so a key
+   * issued for a different product can't unlock Navii).
+   */
+  polarBenefitId?: string;
+  /**
+   * Optional: override Polar API base URL. Defaults to https://api.polar.sh.
+   * Useful for tests or self-hosted Polar instances.
+   */
+  polarApiBase?: string;
+  /**
+   * Polar API access token (Organization Access Token from Polar dashboard).
+   * Required for /checkout and /portal routes which proxy to Polar's API.
+   * License-key validation does NOT need this token (public endpoint).
+   */
+  polarAccessToken?: string;
+  /**
+   * Polar product UUID — used as default product for /checkout when no
+   * `products` query param is supplied. Maps to the Navii Pro product.
+   */
+  polarProductId?: string;
+  /**
+   * Where Polar redirects after successful checkout. Should include
+   * `{CHECKOUT_ID}` placeholder if you want to capture the checkout id.
+   * Example: https://navii.dev/thanks?checkout_id={CHECKOUT_ID}
+   */
+  polarSuccessUrl?: string;
+  /**
+   * Polar webhook signing secret — verifies inbound webhook payloads.
+   * Required to mount /polar/webhooks route.
+   */
+  polarWebhookSecret?: string;
+  /**
+   * Polar server environment — 'production' (default) or 'sandbox' for tests.
+   */
+  polarServer?: 'production' | 'sandbox';
 }
 
 /**
@@ -52,9 +90,57 @@ export function createApp(options: AppOptions = {}) {
     );
   }
 
-  // License verification (proxy to Gumroad). Only mounted when configured.
-  if (options.gumroadProductPermalink) {
-    app.route('/', createLicenseRoutes({ productPermalink: options.gumroadProductPermalink }));
+  // License verification (proxy to Polar.sh). Only mounted when configured.
+  if (options.polarOrganizationId) {
+    app.route('/', createLicenseRoutes({
+      organizationId: options.polarOrganizationId,
+      ...(options.polarBenefitId ? { benefitId: options.polarBenefitId } : {}),
+      ...(options.polarApiBase ? { apiBase: options.polarApiBase } : {}),
+    }));
+  }
+
+  // Polar-hosted checkout — redirects to Polar's checkout page with the
+  // configured product preselected. Mounted only when an access token is set.
+  if (options.polarAccessToken) {
+    const checkoutOpts: Parameters<typeof Checkout>[0] = {
+      accessToken: options.polarAccessToken,
+      ...(options.polarSuccessUrl ? { successUrl: options.polarSuccessUrl } : {}),
+      ...(options.polarServer ? { server: options.polarServer } : {}),
+    };
+    app.get('/checkout', (c) => {
+      // If caller didn't specify ?products=, fall back to configured productId.
+      const hasProduct = c.req.query('products') || c.req.query('productId');
+      if (!hasProduct && options.polarProductId) {
+        const url = new URL(c.req.url);
+        url.searchParams.set('products', options.polarProductId);
+        return c.redirect(url.pathname + url.search, 302);
+      }
+      return Checkout(checkoutOpts)(c);
+    });
+
+    // Customer Portal — buyers manage orders, re-fetch their license key,
+    // request refunds. Customer ID must be supplied via signed token /
+    // header / cookie. For Navii we keep it simple: redirect with
+    // ?customer_id=... that callers pass in.
+    app.get('/portal', (c) => {
+      const customerId = c.req.query('customer_id') ?? '';
+      return CustomerPortal({
+        accessToken: options.polarAccessToken!,
+        getCustomerId: async () => customerId,
+        ...(options.polarServer ? { server: options.polarServer } : {}),
+      })(c);
+    });
+  }
+
+  // Webhooks — license-key grant/revoke events from Polar. Useful for logging
+  // sales, future analytics. Signature-verified by @polar-sh/hono.
+  if (options.polarWebhookSecret) {
+    app.post('/polar/webhooks', Webhooks({
+      webhookSecret: options.polarWebhookSecret,
+      onPayload: async (payload: unknown) => {
+        log.info({ event: (payload as { type?: string }).type }, 'polar webhook');
+      },
+    }));
   }
 
   app.get('/', (c) => {

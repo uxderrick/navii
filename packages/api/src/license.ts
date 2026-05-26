@@ -1,41 +1,49 @@
 /**
- * License verification endpoint.
+ * License verification endpoint — Polar.sh backend.
  *
- * Architecture (intentionally stateless — Gumroad is source of truth):
+ * Architecture (stateless — Polar is source of truth):
  *
- *   buyer → Gumroad checkout → Gumroad emails a license key
+ *   buyer → Polar checkout → Polar emails a license key
  *     → buyer pastes key into plugin
- *     → plugin POSTs { key, email } to /license/verify
- *     → server proxies to Gumroad's /v2/licenses/verify
+ *     → plugin POSTs { key } to /license/verify
+ *     → server proxies to Polar's customer-portal validate endpoint
  *     → returns { ok, plan, purchaseId } to plugin
  *     → plugin caches result in figma.clientStorage (re-verifies every 24h)
  *
- * No database. No signing keys. No webhook handling. Gumroad's license-key
- * feature gives us free issuance, refund tracking, and chargeback handling.
+ * No database. No signing keys. No webhook handling. Polar's license-key
+ * benefit gives us free issuance, refund/revocation tracking, expiry, and
+ * activation/usage limits if we want them later.
  *
  * Env vars:
- *   GUMROAD_PRODUCT_PERMALINK   — short product slug from Gumroad URL
- *   (none required for unit tests — mock the upstream fetch)
+ *   POLAR_ORGANIZATION_ID  — UUID of your Polar org (required)
+ *   POLAR_BENEFIT_ID       — UUID of the license-key benefit (optional;
+ *                            if set, we reject keys for any other benefit)
+ *   POLAR_API_BASE         — override base URL for testing (optional)
  */
 
 import { Hono } from 'hono';
 import { log } from './log.js';
 
-const GUMROAD_VERIFY_URL = 'https://api.gumroad.com/v2/licenses/verify';
+const DEFAULT_POLAR_BASE = 'https://api.polar.sh';
 
-interface GumroadVerifyResponse {
-  success: boolean;
-  uses?: number;
-  purchase?: {
-    id: string;
-    email: string;
-    refunded?: boolean;
-    chargebacked?: boolean;
-    disputed?: boolean;
-    license_key?: string;
-    product_permalink?: string;
-  };
-  message?: string;
+interface PolarValidateResponse {
+  id?: string;
+  organization_id?: string;
+  user_id?: string;
+  customer_id?: string;
+  benefit_id?: string;
+  key?: string;
+  display_key?: string;
+  /** `granted` = active, `revoked` / `disabled` = not active. */
+  status?: 'granted' | 'revoked' | 'disabled';
+  limit_activations?: number | null;
+  usage?: number;
+  limit_usage?: number | null;
+  validations?: number;
+  last_validated_at?: string | null;
+  expires_at?: string | null;
+  // Error response shape (Polar returns 4xx with detail string)
+  detail?: string | { msg: string }[];
 }
 
 export interface LicenseVerifyResult {
@@ -46,8 +54,19 @@ export interface LicenseVerifyResult {
   reason?: string;
 }
 
-export function createLicenseRoutes(opts: { productPermalink: string }) {
+export interface LicenseRouteOptions {
+  /** Polar organization UUID — `POLAR_ORGANIZATION_ID`. */
+  organizationId: string;
+  /** Optional: only accept keys for this benefit (license-key product). */
+  benefitId?: string;
+  /** Override API base for tests. */
+  apiBase?: string;
+}
+
+export function createLicenseRoutes(opts: LicenseRouteOptions) {
   const router = new Hono();
+  const apiBase = (opts.apiBase ?? DEFAULT_POLAR_BASE).replace(/\/+$/, '');
+  const validateUrl = `${apiBase}/v1/customer-portal/license-keys/validate`;
 
   router.post('/license/verify', async (c) => {
     let body: { key?: string; email?: string };
@@ -62,62 +81,67 @@ export function createLicenseRoutes(opts: { productPermalink: string }) {
       return c.json<LicenseVerifyResult>({ ok: false, reason: 'missing_key' }, 400);
     }
 
-    const upstreamBody = new URLSearchParams({
-      product_permalink: opts.productPermalink,
-      license_key: key,
-      // Don't tick the use count on every re-verify — plugins re-check every 24h.
-      increment_uses_count: 'false',
-    });
-
     let upstream: Response;
     try {
-      upstream = await fetch(GUMROAD_VERIFY_URL, {
+      upstream = await fetch(validateUrl, {
         method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: upstreamBody,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          organization_id: opts.organizationId,
+          key,
+        }),
       });
     } catch (err) {
-      log.warn({ err: String(err) }, 'license: upstream fetch failed');
+      log.warn({ err: String(err) }, 'license: polar fetch failed');
       return c.json<LicenseVerifyResult>({ ok: false, reason: 'upstream_unreachable' }, 502);
     }
 
-    let data: GumroadVerifyResponse;
+    let data: PolarValidateResponse;
     try {
-      data = (await upstream.json()) as GumroadVerifyResponse;
+      data = (await upstream.json()) as PolarValidateResponse;
     } catch {
       return c.json<LicenseVerifyResult>({ ok: false, reason: 'upstream_invalid' }, 502);
     }
 
-    if (!data.success || !data.purchase) {
+    // Polar returns 4xx with { detail } on invalid keys / unknown org / etc.
+    if (!upstream.ok) {
+      const reason = typeof data.detail === 'string'
+        ? data.detail
+        : Array.isArray(data.detail) && data.detail[0]?.msg
+        ? data.detail[0].msg
+        : 'invalid_key';
+      return c.json<LicenseVerifyResult>({ ok: false, reason }, 401);
+    }
+
+    // Defensive: even on 200, status may not be 'granted'.
+    if (data.status !== 'granted') {
       return c.json<LicenseVerifyResult>(
-        { ok: false, reason: data.message ?? 'invalid_key' },
+        { ok: false, reason: data.status ?? 'invalid_status' },
         401,
       );
     }
 
-    const purchase = data.purchase;
-    if (purchase.refunded || purchase.chargebacked || purchase.disputed) {
-      return c.json<LicenseVerifyResult>(
-        { ok: false, reason: 'revoked' },
-        401,
-      );
+    // Expiry — Polar returns ISO string or null. Treat past dates as revoked.
+    if (data.expires_at) {
+      const expiry = new Date(data.expires_at).getTime();
+      if (Number.isFinite(expiry) && expiry < Date.now()) {
+        return c.json<LicenseVerifyResult>({ ok: false, reason: 'expired' }, 401);
+      }
     }
 
-    if (body.email && body.email.toLowerCase().trim() !== purchase.email.toLowerCase()) {
-      // Email mismatch — buyers occasionally paste the wrong email.
-      // Not fatal; warn but accept (Gumroad already validated the key itself).
+    // Optional product gating — reject keys for a different benefit if set.
+    if (opts.benefitId && data.benefit_id && data.benefit_id !== opts.benefitId) {
       log.info(
-        { provided: body.email, actual: purchase.email },
-        'license: email mismatch (accepted)',
+        { expected: opts.benefitId, actual: data.benefit_id },
+        'license: benefit mismatch',
       );
+      return c.json<LicenseVerifyResult>({ ok: false, reason: 'wrong_product' }, 401);
     }
 
-    return c.json<LicenseVerifyResult>({
-      ok: true,
-      plan: 'pro',
-      purchaseId: purchase.id,
-      email: purchase.email,
-    });
+    const result: LicenseVerifyResult = { ok: true, plan: 'pro' };
+    // Polar key id is stable per-purchase; doubles as our purchaseId.
+    if (data.id) result.purchaseId = data.id;
+    return c.json<LicenseVerifyResult>(result);
   });
 
   return router;

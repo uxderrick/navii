@@ -5,7 +5,16 @@ import { log } from './log.js';
 const port = Number.parseInt(process.env['PORT'] ?? '8787', 10);
 const host = process.env['HOST'] ?? '0.0.0.0';
 
-const gumroadProductPermalink = process.env['GUMROAD_PRODUCT_PERMALINK'];
+const polarOrganizationId = process.env['POLAR_ORGANIZATION_ID'];
+const polarBenefitId = process.env['POLAR_BENEFIT_ID'];
+const polarApiBase = process.env['POLAR_API_BASE'];
+const polarAccessToken = process.env['POLAR_ACCESS_TOKEN'];
+const polarProductId = process.env['POLAR_PRODUCT_ID'];
+const polarSuccessUrl = process.env['POLAR_SUCCESS_URL'];
+const polarWebhookSecret = process.env['POLAR_WEBHOOK_SECRET'];
+const polarServerEnv = process.env['POLAR_SERVER'];
+const polarServer: 'production' | 'sandbox' | undefined =
+  polarServerEnv === 'sandbox' || polarServerEnv === 'production' ? polarServerEnv : undefined;
 
 const app = createApp({
   rateLimit: {
@@ -16,7 +25,14 @@ const app = createApp({
     max: Number.parseInt(process.env['PNG_CACHE_SIZE'] ?? '500', 10),
   },
   trustProxy: process.env['TRUST_PROXY'] === '1',
-  ...(gumroadProductPermalink ? { gumroadProductPermalink } : {}),
+  ...(polarOrganizationId ? { polarOrganizationId } : {}),
+  ...(polarBenefitId ? { polarBenefitId } : {}),
+  ...(polarApiBase ? { polarApiBase } : {}),
+  ...(polarAccessToken ? { polarAccessToken } : {}),
+  ...(polarProductId ? { polarProductId } : {}),
+  ...(polarSuccessUrl ? { polarSuccessUrl } : {}),
+  ...(polarWebhookSecret ? { polarWebhookSecret } : {}),
+  ...(polarServer ? { polarServer } : {}),
 });
 
 const server = serve({ fetch: app.fetch, port, hostname: host }, ({ port: p }) => {

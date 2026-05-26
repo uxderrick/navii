@@ -67,12 +67,12 @@ function privacyBody(): string {
   <p>Seeds are processed in-memory to generate the SVG/PNG response. The rendered image is cached at the CDN edge by URL hash. We do not log seeds together with IP addresses or any other identifier that would let us recover who requested what. Access logs are kept for up to 30 days for abuse detection and aggregate traffic counts, then rotated out.</p>
 
   <h3>Pro licenses</h3>
-  <p>If you upgrade, payment is processed by Gumroad — see <a href="https://gumroad.com/privacy" rel="noopener">Gumroad's privacy policy</a>. Navii receives:</p>
+  <p>If you upgrade, payment is processed by Polar.sh — see <a href="https://polar.sh/legal/privacy" rel="noopener">Polar's privacy policy</a>. Navii receives:</p>
   <ul>
-    <li>The license key (returned by Gumroad).</li>
+    <li>The license key (returned by Polar).</li>
     <li>The email you optionally enter when verifying inside the plugin.</li>
   </ul>
-  <p>These are sent to <code>POST /license/verify</code>, forwarded to Gumroad's verification API, and the result is cached for 24 hours in your local Figma <code>clientStorage</code>. We do not maintain a separate user database. To remove the cached license, click <em>Sign out</em> in the plugin's Pro modal.</p>
+  <p>These are sent to <code>POST /license/verify</code>, forwarded to Polar's license-key validation API, and the result is cached for 24 hours in your local Figma <code>clientStorage</code>. We do not maintain a separate user database. To remove the cached license, click <em>Sign out</em> in the plugin's Pro modal.</p>
 
   <h3>Website analytics</h3>
   <p>The public marketing site at <code>navii.dev</code> uses self-hosted Umami for aggregate page-view counts. No cross-site tracking, no fingerprinting, no third-party ad networks. The Figma plugin itself does not load any analytics.</p>
