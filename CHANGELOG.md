@@ -6,7 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
-## [0.23.3] - 2026-05-26
+## [0.23.4] - 2026-05-26
+
+### Fixed (API tests)
+- `license/verify` "route not mounted" test expected `404` but the app's catchall `notFound` handler returns `302 → /`. Test updated to match actual behavior. v0.23.3 release pipeline failed on this stale expectation; v0.23.4 reships the `/blog` timeline with the fix.
+
+## [0.23.3] - 2026-05-26 (yanked — test pipeline failed)
 
 ### Added (API host)
 - **`/blog` — release timeline.** New page parses `CHANGELOG.md` at request time, surfaces minor+ releases (`x.y.0`) only, links to GitHub release notes per entry. Per-release permalinks at `/blog/v<x.y.z>`. Hero avatar per release derived from the version string. Sitemap includes every release URL. Linked from landing + docs nav.
