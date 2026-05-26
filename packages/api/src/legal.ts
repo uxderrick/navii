@@ -7,7 +7,7 @@
  */
 
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
-const SUPPORT_EMAIL = process.env['NAVII_SUPPORT_EMAIL'] ?? 'tsormed@gmail.com';
+const SUPPORT_EMAIL = process.env['NAVII_SUPPORT_EMAIL'] ?? 'support@navii.dev';
 const GITHUB_URL = 'https://github.com/uxderrick/navii';
 const GITHUB_ISSUES_URL = 'https://github.com/uxderrick/navii/issues';
 const LAST_UPDATED = '2026-05-25';

@@ -6,6 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-05-26
+
+### Changed (API host)
+- Support email switched from `tsormed@gmail.com` to `support@navii.dev` (ImprovMX free-tier forward → tsormed@gmail.com).
+
 ## [0.22.0] - 2026-05-26
 
 ### Added (`@usenavii/core` 0.5.0)
@@ -119,7 +124,8 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.1...HEAD
+[0.22.1]: https://github.com/uxderrick/navii/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/uxderrick/navii/compare/v0.21.2...v0.22.0
 [0.21.2]: https://github.com/uxderrick/navii/compare/v0.21.1...v0.21.2
 [0.21.1]: https://github.com/uxderrick/navii/compare/v0.21.0...v0.21.1
