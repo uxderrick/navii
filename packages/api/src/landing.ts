@@ -482,6 +482,39 @@ export function landingHtml(): string {
     .cast-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
   }
 
+  /* ── logos (built with) — minimal row ── */
+  .logos-section { margin: 0; padding: 8px 0; text-align: center; }
+  .logos-section .eyebrow {
+    font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted-2);
+    margin: 0 0 20px;
+  }
+  .logos-rows { display: flex; flex-direction: column; gap: 32px; }
+  .logos-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 40px 56px;
+  }
+  @media (max-width: 540px) {
+    .logos-rows { gap: 24px; }
+    .logos-row { gap: 28px 36px; }
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--muted-2);
+    opacity: 0.7;
+    transition: opacity .18s ease, color .18s ease;
+  }
+  .logo:hover { opacity: 1; color: var(--ink); }
+  .logo svg { height: 22px; width: auto; display: block; fill: currentColor; }
+  .logo img { height: 28px; width: auto; display: block; object-fit: contain; }
+  .logo img.lg { height: 44px; }
+
   /* ── install (playground) section ── */
   .install-section { margin: 56px 0 0; }
   .install-cta { display: flex; justify-content: flex-start; margin-top: 20px; }
@@ -703,6 +736,48 @@ export function landingHtml(): string {
 
   <section id="cast" class="cast-section">
     <div class="cast-grid-bleed"><div class="cast-grid">${tiles}</div></div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="trusted" class="logos-section">
+    <p class="eyebrow">built with navii</p>
+    <div class="logos-rows">
+    <div class="logos-row">
+      <a class="logo" href="https://visitzelos.com/" target="_blank" rel="noopener" aria-label="Zelos">
+        <svg viewBox="0 0 128.7 43.7" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M0,39.93v-.87l16.24-22.79H1.48v-4.96h23.56v.9l-16.22,22.76h15.42v4.96H0Z"/><path fill="currentColor" d="M51.67,26.91h2.76c.21-3.43-.19-6.39-1.21-8.88-1.02-2.49-2.55-4.41-4.6-5.76-2.05-1.35-4.53-2.03-7.45-2.03s-5.24.63-7.34,1.88c-2.1,1.25-3.74,3.03-4.92,5.33-1.18,2.3-1.76,5.01-1.76,8.14,0,2.95.6,5.54,1.79,7.78,1.19,2.24,2.86,3.97,5.01,5.22,2.15,1.25,4.64,1.87,7.49,1.87s5.29-.7,7.55-2.11c2.26-1.4,3.95-3.39,5.06-5.95l-5.43-1.72c-.71,1.47-1.69,2.59-2.95,3.38-1.26.79-2.76,1.18-4.49,1.18-2.63,0-4.65-.86-6.04-2.58-1.15-1.42-1.82-3.34-2.02-5.74h18.56ZM35.14,17.77c1.4-1.75,3.48-2.62,6.25-2.62,2.51,0,4.38.79,5.6,2.38.92,1.2,1.51,2.88,1.76,5.06h-15.51c.29-1.99.92-3.6,1.9-4.82Z"/><path fill="currentColor" d="M60.89,39.66V.71h5.54v38.95h-5.54Z"/><path fill="currentColor" d="M117.1,40.19c-3.48,0-6.32-.77-8.51-2.31-2.19-1.54-3.53-3.7-4.03-6.49l5.67-.88c.35,1.48,1.17,2.65,2.45,3.51,1.28.86,2.87,1.28,4.78,1.28,1.73,0,3.09-.35,4.07-1.06.98-.71,1.47-1.68,1.47-2.91,0-.72-.17-1.31-.52-1.76-.34-.45-1.06-.88-2.16-1.28-1.1-.41-2.76-.91-5.01-1.51-2.46-.64-4.4-1.32-5.84-2.05-1.44-.73-2.46-1.59-3.07-2.57-.61-.98-.91-2.17-.91-3.56,0-1.73.46-3.24,1.38-4.53.92-1.29,2.21-2.29,3.88-2.99s3.63-1.06,5.87-1.06,4.14.34,5.86,1.03c1.71.69,3.1,1.67,4.16,2.93,1.06,1.26,1.7,2.74,1.91,4.44l-5.67,1.03c-.19-1.38-.84-2.46-1.93-3.26-1.1-.79-2.52-1.23-4.27-1.3-1.68-.07-3.04.21-4.08.83-1.04.63-1.56,1.49-1.56,2.58,0,.64.2,1.18.6,1.62.4.44,1.17.87,2.32,1.27,1.15.41,2.84.89,5.09,1.46,2.4.62,4.31,1.3,5.72,2.05,1.41.75,2.42,1.64,3.03,2.68.61,1.03.91,2.28.91,3.75,0,2.83-1.03,5.04-3.09,6.65-2.06,1.61-4.9,2.41-8.52,2.41Z"/><path fill="currentColor" d="M102.27,30.69v-.07s-6.48-19.38-6.48-19.38l-.03-.07c-.44-1-1.44-2.14-3.6-1.85h0c-.36.05-1.71.31-8.15,1.6-1.16.23-2.01.4-2.09.42l-.24.04c-1.16.18-2.92.46-3.89.78-1.32.43-1.78,1.56-2.16,2.47-1.09,2.64-2.04,5.43-2.96,8.12-.78,2.28-1.59,4.65-2.47,6.89l-.04.1v.1c-.09.75-.1,1.87.8,2.85l13.16,10.23.09.06c.59.34,1.14.47,1.64.47.78,0,1.45-.31,1.99-.63,2.35-1.39,4.66-3.06,6.9-4.68,2.07-1.5,4.21-3.05,6.36-4.35l.14-.11c.83-.83,1.16-1.8,1-2.98ZM74.14,30.12c.08-.59,1.39-2.04,2.25-3,.75-.84,1.46-1.63,1.84-2.25,0,0,0,0,0,0,.07-.01.11,0,.14,0l4.56,13.38s-.09-.06-.14-.09c-1.42-.93-2.84-2.13-4.22-3.3-1.29-1.09-2.63-2.23-4-3.16-.17-.15-.57-.55-.43-1.57ZM86.13,38.59l-4.62-13.96s.05-.04.07-.05c.03.01.09.03.13.05.04.02.09.04.13.05l15.58,7.2c.12.08.17.19.19.27.03.11.02.23-.02.34l-9.51,6.6c-.36.24-.77.31-1.13.2-.34-.1-.63-.35-.81-.71ZM98.28,28.81c-.16.11-.37.1-.59-.02-2.47-1.24-5.06-2.37-7.56-3.46-2.45-1.07-4.99-2.18-7.39-3.38-.08-.04-.17-.08-.26-.12-.19-.09-.54-.26-.62-.34.79-.64,4.56-3.33,7.36-5.32,2.02-1.44,3.33-2.37,4.18-2.99l5.08,15.23c0,.23-.12.34-.2.39ZM80.08,19.13c-.08.03-.14-.05-.15-.05h0c-.16-.37-.58-2.7-.61-3.2-.05-.64.09-.88.77-1.27l9.09-1.89-9.1,6.4ZM77.01,19.18l.03.17c.14.7.28,1.37.28,2l-1.91,2.38,1.59-4.54Z"/></svg>
+      </a>
+      <a class="logo" href="https://play.salifuandmaster.com/" target="_blank" rel="noopener" aria-label="Unwrapped">
+        <img src="https://play.salifuandmaster.com/ui/brand/unwrapped-logo.png" alt="Unwrapped" loading="lazy" />
+      </a>
+      <a class="logo" href="https://sortagame.netlify.app/" target="_blank" rel="noopener" aria-label="Sorta">
+        <img class="lg" src="/logos/sorta.png" alt="Sorta" loading="lazy" />
+      </a>
+      <a class="logo" href="https://piply.ai/" target="_blank" rel="noopener" aria-label="Piply">
+        <img class="lg" src="/logos/piply.png" alt="Piply" loading="lazy" />
+      </a>
+      <a class="logo" href="https://stacx-creator.netlify.app/" target="_blank" rel="noopener" aria-label="Stacx">
+        <img class="lg" src="/logos/stacx.png" alt="Stacx" loading="lazy" />
+      </a>
+    </div>
+    <div class="logos-row">
+      <a class="logo" href="https://geniusbudget.app/" target="_blank" rel="noopener" aria-label="Genius Budget">
+        <img class="lg" src="/logos/genius.png" alt="Genius Budget" loading="lazy" />
+      </a>
+      <a class="logo" href="https://clerra.app/" aria-label="Clerra">
+        <img src="/logos/clerra.svg" alt="Clerra" loading="lazy" />
+      </a>
+      <a class="logo" href="https://fleetlinq.online/" aria-label="Brand">
+        <img class="lg" src="/logos/brand.webp" alt="Brand" loading="lazy" />
+      </a>
+      <a class="logo" href="https://soma-me-zeta.vercel.app/" aria-label="Brand">
+        <img class="lg" src="/logos/van.svg" alt="Brand" loading="lazy" />
+      </a>
+      <a class="logo" href="https://jedevent.com/" aria-label="JED Events">
+        <img class="lg" src="/logos/jed.webp" alt="JED Events" loading="lazy" />
+      </a>
+    </div>
+    </div>
   </section>
 
   <hr class="rule" />

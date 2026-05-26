@@ -1,4 +1,7 @@
 import { Hono } from 'hono';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
 import { createAvatar, renderGroup, type AvatarOptions, type GroupOptions } from '@usenavii/core';
 import { svgToPng } from './raster.js';
 import { rateLimit, type RateLimitOptions } from './middleware/rateLimit.js';
@@ -231,6 +234,36 @@ export function createApp(options: AppOptions = {}) {
         'cache-control': 'public, max-age=86400, immutable',
       },
     });
+  });
+
+  app.get('/logos/:file', async (c) => {
+    const file = c.req.param('file');
+    if (!/^[a-z0-9][a-z0-9_-]*\.(png|svg|jpg|jpeg|webp)$/i.test(file)) {
+      return c.text('not found', 404);
+    }
+    const here = dirname(fileURLToPath(import.meta.url));
+    const root = resolve(here, '..', 'public', 'logos');
+    const full = join(root, file);
+    if (!full.startsWith(root + '/')) return c.text('not found', 404);
+    try {
+      const buf = await readFile(full);
+      const ext = file.split('.').pop()!.toLowerCase();
+      const ct =
+        ext === 'svg' ? 'image/svg+xml; charset=utf-8' :
+        ext === 'png' ? 'image/png' :
+        ext === 'webp' ? 'image/webp' :
+        'image/jpeg';
+      return new Response(new Uint8Array(buf) as BodyInit, {
+        status: 200,
+        headers: {
+          'content-type': ct,
+          'cache-control': 'public, max-age=86400, immutable',
+          'access-control-allow-origin': '*',
+        },
+      });
+    } catch {
+      return c.text('not found', 404);
+    }
   });
 
   app.get('/og.svg', (c) =>

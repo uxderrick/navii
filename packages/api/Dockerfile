@@ -46,6 +46,7 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY --from=build /out /app
+COPY packages/api/public /app/public
 
 # Drop privileges
 USER node
