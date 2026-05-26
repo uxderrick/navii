@@ -180,6 +180,18 @@ export function createApp(options: AppOptions = {}) {
     }),
   );
 
+  app.get('/thanks', (c) => {
+    const checkoutId = c.req.query('checkout_id') ?? c.req.query('checkoutId') ?? '';
+    const customerToken = c.req.query('customer_session_token') ?? '';
+    return new Response(thanksHtml(checkoutId, customerToken), {
+      status: 200,
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'no-store',
+      },
+    });
+  });
+
   app.get('/privacy', (c) => {
     return new Response(privacyHtml(), {
       status: 200,
@@ -632,6 +644,80 @@ export function createApp(options: AppOptions = {}) {
   });
 
   return app;
+}
+
+/**
+ * Post-purchase confirmation page. Polar redirects buyers here after
+ * successful checkout with `checkout_id` and `customer_session_token` query
+ * params. The session token is one-time-use and authenticates the buyer for
+ * the customer portal — we hand it back via a deep link.
+ *
+ * License key arrives separately via email; we don't have it on this redirect.
+ */
+function thanksHtml(checkoutId: string, customerSessionToken: string): string {
+  const cid = checkoutId.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 64);
+  const portalUrl = customerSessionToken
+    ? `https://polar.sh/customer-portal?customer_session_token=${encodeURIComponent(customerSessionToken)}`
+    : '';
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Thanks — Navii Pro</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#0a0a0b" />
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 0; min-height: 100vh; background: #0a0a0b; color: #f5f5f4;
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    display: grid; place-items: center; padding: 24px; }
+  .card { max-width: 560px; width: 100%; background: #161618; border: 1px solid #2a2a2d;
+    border-radius: 16px; padding: 36px 32px; }
+  h1 { font-size: 28px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .sub { color: #a1a1aa; margin: 0 0 28px; }
+  h2 { font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    color: #a1a1aa; margin: 24px 0 10px; }
+  ol { margin: 0; padding-left: 22px; color: #e4e4e7; }
+  ol li { margin: 6px 0; }
+  code { background: #27272a; padding: 2px 6px; border-radius: 4px; font-size: 13px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;
+    border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none;
+    border: 1px solid transparent; }
+  .btn.primary { background: #f5f5f4; color: #09090b; }
+  .btn.primary:hover { background: #fafafa; }
+  .btn.ghost { background: transparent; color: #d4d4d8; border-color: #2a2a2d; }
+  .btn.ghost:hover { background: #1f1f23; }
+  .checkout-id { color: #71717a; font-size: 12px; margin-top: 24px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+  .check { color: #34d399; font-size: 40px; line-height: 1; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="check">✓</div>
+    <h1>Payment received.</h1>
+    <p class="sub">Welcome to Navii Pro — lifetime access, all packs, all SDKs as they ship.</p>
+
+    <h2>Next steps</h2>
+    <ol>
+      <li>Check your email — Polar just sent a message with your <strong>license key</strong> (subject: "Your Navii Pro license").</li>
+      <li>Open Figma → run the <strong>Navii</strong> plugin.</li>
+      <li>Click <strong>Upgrade</strong> → paste the license key into the modal.</li>
+      <li>All premium packs unlock instantly.</li>
+    </ol>
+
+    <div class="row">
+      <a class="btn primary" href="https://www.figma.com/community/plugin/1640037999835658823">Open plugin in Figma</a>
+      ${portalUrl ? `<a class="btn ghost" href="${portalUrl}" rel="noopener">Manage purchase</a>` : ''}
+    </div>
+
+    ${cid ? `<p class="checkout-id">Checkout ID: ${cid}</p>` : ''}
+  </div>
+</body>
+</html>`;
 }
 
 function stripExt(s: string): string {

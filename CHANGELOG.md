@@ -6,6 +6,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.22.2] - 2026-05-26
+
+### Added (API host)
+- `GET /thanks` — post-purchase confirmation page Polar redirects buyers to after successful checkout. Confirms payment, points them to their email for the license key, and links to the Polar customer portal via the one-time `customer_session_token` query param.
+
+### Fixed (API host)
+- Buyers hit a 404 at `https://navii.dev/thanks` after paying because no route existed yet.
+
 ## [0.22.1] - 2026-05-26
 
 ### Changed (API host)
@@ -124,7 +132,8 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.1...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.2...HEAD
+[0.22.2]: https://github.com/uxderrick/navii/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/uxderrick/navii/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/uxderrick/navii/compare/v0.21.2...v0.22.0
 [0.21.2]: https://github.com/uxderrick/navii/compare/v0.21.1...v0.21.2
