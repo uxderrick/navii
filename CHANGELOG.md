@@ -6,7 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
-## [0.23.0] - 2026-05-26
+## [0.23.1] - 2026-05-26
+
+### Fixed (release)
+- `@usenavii/react` workspace dep on `@usenavii/core` updated to `^0.6.0` — v0.23.0 release workflow failed pnpm install with `ERR_PNPM_NO_MATCHING_VERSION_INSIDE_WORKSPACE` because the workspace spec was stuck at `^0.5.0`. v0.23.1 reships the v0.23.0 feature set (mood overlay + runtime palette injection) with the dep bump.
+
+## [0.23.0] - 2026-05-26 (yanked — release pipeline failed)
 
 ### Added (`@usenavii/core` 0.6.0, `@usenavii/react` 0.6.0)
 - **`AvatarOptions.mood`** — new `MoodId = 'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'`. Overrides seed-derived eyes + mouth with a curated pair: `happy` → wide + smile, `serious` → squint + flat, `sleepy` → sleepy + dot, `wink` → wink + smirk. Same seed + same mood = byte-identical render. Different mood on the same seed shares body / palette / topper. Bypasses pack pick constraints by design (the mood IS the override). `neutral` (or undefined) preserves prior behavior.
