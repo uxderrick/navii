@@ -518,6 +518,7 @@ export function landingHtml(): string {
   }
   .logo:hover { opacity: 1; color: var(--ink); }
   .logo svg { height: 22px; width: auto; display: block; fill: currentColor; }
+  .logo svg.lg { height: 36px; }
   .logo img { height: 28px; width: auto; display: block; object-fit: contain; }
   .logo img.lg { height: 44px; }
 
@@ -784,6 +785,9 @@ export function landingHtml(): string {
       </a>
       <a class="logo" href="https://gollyexpress.com/" target="_blank" rel="noopener" aria-label="Golly Express">
         <img class="lg" src="/logos/golly.png" alt="Golly Express" loading="lazy" />
+      </a>
+      <a class="logo" href="https://ui.elorm.xyz/" target="_blank" rel="noopener" aria-label="Elorm UI">
+        <svg class="lg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 22L22 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </a>
     </div>
     </div>

@@ -6,6 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.22.5] - 2026-05-26
+
+### Added (API host)
+- Elorm UI logo (inline SVG, `currentColor`) in the landing "built with navii" wall, sized via new `.logo svg.lg` rule.
+
 ## [0.22.4] - 2026-05-26
 
 ### Fixed (Figma plugin)
