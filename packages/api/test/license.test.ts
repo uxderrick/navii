@@ -113,6 +113,8 @@ describe('license/verify — Polar backend', () => {
   it('route is not mounted when polarOrganizationId is omitted', async () => {
     const app = createApp(); // no Polar org configured
     const res = await postVerify(app, { key: 'whatever' });
-    expect(res.status).toBe(404);
+    // Unmounted routes fall through to the catch-all 302 redirect to '/'.
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toBe('/');
   });
 });
