@@ -68,6 +68,26 @@ export function createLicenseRoutes(opts: LicenseRouteOptions) {
   const apiBase = (opts.apiBase ?? DEFAULT_POLAR_BASE).replace(/\/+$/, '');
   const validateUrl = `${apiBase}/v1/customer-portal/license-keys/validate`;
 
+  // CORS — Figma plugin iframe sends `Origin: null`, so allow all origins.
+  // This route only accepts a license key (no cookies/auth/sensitive data),
+  // so wide-open CORS is safe. Middleware adds headers to every response
+  // (incl. CORS preflight on OPTIONS).
+  router.use('/license/verify', async (c, next) => {
+    if (c.req.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'access-control-allow-origin': '*',
+          'access-control-allow-methods': 'POST, OPTIONS',
+          'access-control-allow-headers': 'content-type',
+          'access-control-max-age': '86400',
+        },
+      });
+    }
+    await next();
+    c.res.headers.set('access-control-allow-origin', '*');
+  });
+
   router.post('/license/verify', async (c) => {
     let body: { key?: string; email?: string };
     try {
