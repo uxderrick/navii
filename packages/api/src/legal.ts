@@ -52,7 +52,7 @@ function privacyBody(): string {
   <ul>
     <li>Navii does not require an account. No sign-up, no tracking cookie, no analytics inside the Figma plugin.</li>
     <li>Seeds you type (names, emails, IDs) are sent to <code>api.navii.dev</code> only when you click <strong>Insert</strong> or <strong>Fill</strong>. They are used to render the avatar and are never stored, logged with PII, or shared with third parties.</li>
-    <li>If you buy Navii Pro, your purchase is handled by Gumroad. Navii only receives a license key, used for verification.</li>
+    <li>If you buy Navii Pro, your purchase is handled by Polar.sh. Navii only receives a license key, used for verification.</li>
   </ul>
 </section>
 
@@ -92,7 +92,7 @@ function privacyBody(): string {
   <h2>Sub-processors</h2>
   <ul>
     <li><strong>Hetzner</strong> (Germany) — hosting for <code>api.navii.dev</code> and <code>navii.dev</code>.</li>
-    <li><strong>Gumroad</strong> — payment processing and license verification for Navii Pro.</li>
+    <li><strong>Polar.sh</strong> — payment processing and license verification for Navii Pro.</li>
     <li><strong>Cloudflare</strong> — DNS and edge caching for static avatar responses.</li>
   </ul>
 </section>
@@ -147,7 +147,7 @@ function supportBody(): string {
 
 <section>
   <h2>Pro license issues</h2>
-  <p>Lost your license key, need a refund, or changed email? Email <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> with your Gumroad order number.</p>
+  <p>Lost your license key, need a refund, or changed email? Email <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> with your Polar.sh order number.</p>
 </section>
 
 <section>

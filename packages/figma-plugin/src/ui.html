@@ -1,19 +1,24 @@
 <style>
+  /* Force LIGHT MODE everywhere — ignore Figma's dark theme tokens so the
+     plugin always reads as a calm light surface, like the onboarding screen.
+     If the user ever wants to opt back into Figma's theme, restore the
+     `var(--figma-color-*, ...)` chain. */
   :root {
-    --bg: var(--figma-color-bg, #ffffff);
-    --bg-secondary: var(--figma-color-bg-secondary, #f5f5f5);
-    --bg-tertiary: var(--figma-color-bg-tertiary, #eaeaea);
-    --bg-hover: var(--figma-color-bg-hover, #ececec);
-    --fg: var(--figma-color-text, #111111);
-    --fg-secondary: var(--figma-color-text-secondary, #767676);
-    --fg-tertiary: var(--figma-color-text-tertiary, #aaaaaa);
-    --border: var(--figma-color-border, #e6e6e6);
-    --border-strong: var(--figma-color-border-strong, #cccccc);
-    --accent: var(--figma-color-bg-brand, #6366f1);
-    --accent-hover: var(--figma-color-bg-brand-hover, #5048d8);
-    --accent-text: var(--figma-color-text-onbrand, #ffffff);
-    --radius: 6px;
-    --radius-sm: 4px;
+    --bg: #FFFFFF;
+    --bg-secondary: #F8F6F2;
+    --bg-tertiary: #ECE7DE;
+    --bg-hover: #F2EFE8;
+    --fg: #1A1A1A;
+    --fg-secondary: #6B6B6B;
+    --fg-tertiary: #9C9C9C;
+    --border: #ECE7DE;
+    --border-strong: #D8D2C7;
+    --accent: #6366F1;
+    --accent-hover: #5048D8;
+    --accent-text: #FFFFFF;
+    --radius: 10px;
+    --radius-sm: 7px;
+    --radius-lg: 14px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
@@ -29,11 +34,11 @@
   .tabs {
     display: flex;
     border-bottom: 1px solid var(--border);
-    padding: 0 12px;
+    padding: 0 10px;
     flex-shrink: 0;
   }
   .tab {
-    padding: 10px 16px;
+    padding: 8px 12px;
     background: transparent;
     border: none;
     color: var(--fg-secondary);
@@ -52,13 +57,13 @@
   .panel.active { display: flex; }
 
   .col-left {
-    width: 340px;
+    width: 290px;
     flex-shrink: 0;
-    padding: 20px;
+    padding: 14px;
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     background: var(--bg-secondary);
     overflow-y: auto;
     scrollbar-width: thin;
@@ -68,7 +73,7 @@
   .col-left::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
   .col-right {
     flex: 1;
-    padding: 16px;
+    padding: 12px;
     overflow-y: auto;
     scrollbar-width: thin;
     min-height: 0;
@@ -83,19 +88,20 @@
     padding: 4px 0 8px;
   }
   .preview {
-    width: 300px; height: 300px;
+    width: 240px; height: 240px;
     background:
       radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, transparent 60%),
       linear-gradient(135deg, var(--bg) 0%, var(--bg-tertiary) 100%);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 18px;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
     box-shadow:
       0 1px 2px rgba(0,0,0,0.03),
-      0 8px 24px rgba(0,0,0,0.06);
+      0 6px 18px rgba(0,0,0,0.06);
   }
-  .preview svg { width: 78%; height: 78%; }
+  .preview svg { width: 82%; height: 82%; }
+
   .nav-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
     width: 32px; height: 32px;
@@ -112,28 +118,33 @@
   .nav-arrow.next { right: 4px; }
 
   /* SECTIONS */
-  .section { margin-bottom: 16px; }
+  .section { margin-bottom: 12px; }
   .section:last-child { margin-bottom: 0; }
+  /* Right column controls breathe more — they're already laid out in a single
+     vertical scroll, so extra space helps separate logical groups (palette,
+     brand, mood, background, size, recent). */
+  .col-right .section { margin-bottom: 20px; }
+  .col-right .section:last-child { margin-bottom: 0; }
   .section-label {
     font-size: 10px;
     font-weight: 600;
     color: var(--fg-secondary);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   /* SEED INPUT */
   .input-wrap { position: relative; display: flex; align-items: center; }
   .input {
     flex: 1;
-    padding: 8px 36px 8px 10px;
+    padding: 6px 32px 6px 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg);
     color: var(--fg);
     font: inherit;
-    height: 32px;
+    height: 30px;
   }
   .input:focus { outline: none; border-color: var(--accent); }
   .input-suffix {
@@ -262,7 +273,7 @@
   .picker-thumb {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--bg-secondary);
     border: 2px solid transparent;
     cursor: pointer;
@@ -284,8 +295,39 @@
     align-items: center;
     gap: 12px;
   }
+  .usage-chip {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--fg-secondary);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    display: inline-flex; align-items: center;
+    gap: 4px;
+    cursor: default;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .usage-chip.low {
+    color: #B45309;
+    background: #FEF3C7;
+    border-color: #FCD34D;
+  }
+  .usage-chip.out {
+    color: white;
+    background: var(--accent);
+    border-color: var(--accent);
+    cursor: pointer;
+  }
+  .usage-chip.pro {
+    color: #047857;
+    background: #D1FAE5;
+    border-color: #6EE7B7;
+  }
   .btn {
-    padding: 10px 20px;
+    padding: 8px 16px;
     border: none;
     background: var(--bg-secondary);
     color: var(--fg);
@@ -368,9 +410,9 @@
     font-size: 10px;
     font-weight: 600;
     cursor: pointer;
-    border: 1px solid transparent;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    color: #fff;
+    border: 1px solid #E0A800;
+    background: #FFD700;
+    color: #2A1F00;
     letter-spacing: 0.04em;
   }
   .pro-pill.unlocked {
@@ -379,14 +421,17 @@
     border-color: var(--border);
     cursor: default;
   }
-  .pro-pill .dot { width: 4px; height: 4px; border-radius: 50%; background: #fff; }
+  .pro-pill .dot { width: 4px; height: 4px; border-radius: 50%; background: #2A1F00; }
   .pro-pill.unlocked .dot { background: #16a34a; }
 
-  /* UPGRADE MODAL — redesigned */
+  /* UPGRADE MODAL — redesigned, height-constrained */
   .upgrade-modal {
     max-width: 380px !important;
     padding: 0 !important;
     overflow: hidden;
+    max-height: calc(100vh - 48px); /* leaves overlay padding */
+    display: flex;
+    flex-direction: column;
   }
   .upgrade-cast {
     background:
@@ -400,7 +445,7 @@
   }
   .upgrade-cast .cast-tile {
     width: 44px; height: 44px;
-    border-radius: 10px;
+    border-radius: 14px;
     background: var(--bg);
     border: 1px solid var(--border);
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
@@ -415,26 +460,253 @@
   .upgrade-cast .cast-tile:nth-child(4) { animation-delay: 0.6s; }
   .upgrade-cast .cast-tile:nth-child(5) { animation-delay: 0.1s; }
 
-  .upgrade-title {
-    margin: 18px 24px 4px;
-    font-size: 22px;
-    font-weight: 700;
+  /* Buy view layout: header + carousel body + pinned footer.
+     The wrapping .upgrade-modal carries the max-height + flex column. */
+  .modal-view-buy {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .upgrade-header {
+    flex-shrink: 0;
+    padding-bottom: 4px;
+  }
+  .upgrade-footer {
+    flex-shrink: 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--bg-secondary);
+    background: var(--bg);
+  }
+  .upgrade-footer-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 24px 18px;
+    gap: 12px;
+  }
+  .upgrade-footer-meta .link-btn { padding: 4px 0; }
+
+  /* Full-modal carousel — each slide is a complete page (hero+features OR
+     comparison+CTA), navigated via Next button + dots. */
+  .upgrade-slides {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+  .upgrade-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Page nav row — dots on the left, Next/Buy CTA on the right */
+  .upgrade-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 24px 8px;
+    margin-top: auto; /* push nav to the bottom of the slide */
+  }
+  .upgrade-page-nav .upgrade-cta {
+    margin: 0;
+    width: auto;
+    flex: 1;
+    padding: 12px 18px !important;
+  }
+  .upgrade-dots {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .upgrade-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .upgrade-dot:hover { transform: scale(1.2); }
+  .upgrade-dot.active {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+
+  /* Back link on subsequent pages */
+  .upgrade-back {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 14px 24px 4px;
+    margin-right: auto;
+    transition: color 0.12s;
+  }
+  .upgrade-back:hover { color: var(--fg); }
+
+  /* Tighter heading for inner pages */
+  .upgrade-title-sm { font-size: 16px !important; margin-bottom: 14px !important; }
+  .upgrade-eyebrow-tight { margin-top: 4px !important; }
+
+  .upgrade-eyebrow {
+    margin: 18px 24px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-secondary);
     text-align: center;
   }
-  .upgrade-price {
+  .upgrade-title {
+    margin: 0 24px 4px;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+    color: var(--fg);
+  }
+  .upgrade-sub {
+    margin: 0 24px 12px;
+    font-size: 11px;
+    color: var(--fg-secondary);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .upgrade-section-label {
+    margin: 0 24px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-secondary);
+  }
+
+  /* Additive Free + Pro stack (replaces X/✓ table — converts better) */
+  .upgrade-stacks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 4px 24px 0;
+  }
+  .upgrade-stack {
+    background: var(--bg-secondary);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .upgrade-stack-free {
     display: flex;
     align-items: baseline;
-    justify-content: center;
     gap: 8px;
-    margin-bottom: 18px;
+    padding: 8px 14px;
   }
+  .upgrade-stack-free .upgrade-stack-title { margin: 0; flex-shrink: 0; }
+  .upgrade-stack-summary {
+    font-size: 11px;
+    color: var(--fg-secondary);
+    line-height: 1.4;
+  }
+  .upgrade-stack-pro {
+    background: linear-gradient(135deg, rgba(99,102,241,0.09), rgba(168,85,247,0.06));
+  }
+  .upgrade-stack-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--fg-secondary);
+    margin-bottom: 8px;
+  }
+  .upgrade-stack-pro .upgrade-stack-title { color: var(--accent); }
+  .upgrade-stack-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .upgrade-stack-list li {
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--fg);
+    padding-left: 16px;
+    position: relative;
+  }
+  .upgrade-stack-list li::before {
+    content: '';
+    position: absolute;
+    left: 2px; top: 5px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+  .upgrade-stack-pro .upgrade-stack-list li::before {
+    background: var(--accent);
+  }
+  .upgrade-stack-list li strong { font-weight: 700; color: var(--fg); }
+
+  /* Free vs Pro mini comparison (kept for legacy, no longer rendered) */
+  .upgrade-compare {
+    margin: 0 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .upgrade-compare-head, .upgrade-compare-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--fg);
+  }
+  .upgrade-compare-row + .upgrade-compare-row,
+  .upgrade-compare-head + .upgrade-compare-row {
+    border-top: 1px solid var(--bg-secondary);
+  }
+  .upgrade-compare-head {
+    background: var(--bg-secondary);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-secondary);
+    padding: 6px 12px;
+  }
+  .upgrade-compare-col {
+    text-align: center;
+    color: var(--fg-secondary);
+  }
+  .upgrade-compare-col.is-pro {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .upgrade-compare .upgrade-check { color: #16a34a; font-weight: 700; }
+  .upgrade-compare .upgrade-x { color: var(--fg-tertiary); }
+
+  .upgrade-trust {
+    font-size: 10px;
+    color: var(--fg-tertiary);
+  }
+  .upgrade-trust .dot { opacity: 0.6; }
   .upgrade-price-amt {
     font-size: 28px;
     font-weight: 800;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--fg);
   }
   .upgrade-price-tag {
     font-size: 11px;
@@ -444,20 +716,30 @@
   .upgrade-features {
     list-style: none;
     padding: 0 24px;
-    margin: 0 0 20px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
   .upgrade-features li {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     padding: 6px 0;
   }
+  .upgrade-features li + li { border-top: 1px solid var(--bg-secondary); }
   .upgrade-feat-icon {
-    font-size: 16px;
     flex-shrink: 0;
-    width: 22px;
-    text-align: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .upgrade-feat-icon svg { display: block; width: 100%; height: 100%; }
   .upgrade-feat-name {
     font-weight: 600;
     font-size: 12px;
@@ -470,8 +752,8 @@
   }
 
   .upgrade-cta {
-    background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-    color: white !important;
+    background: var(--fg) !important;
+    color: #FFFFFF !important;
     font-weight: 700 !important;
     padding: 12px !important;
     width: calc(100% - 48px);
@@ -479,14 +761,19 @@
     display: flex !important;
     align-items: center;
     justify-content: center;
+    transition: background 0.12s, transform 0.06s, box-shadow 0.12s !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.08);
   }
   .upgrade-cta:hover {
-    background: linear-gradient(135deg, #5048d8, #9333ea) !important;
+    background: #000 !important;
+    transform: translateY(-0.5px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1), 0 6px 18px rgba(0,0,0,0.12);
   }
+  .upgrade-cta:active { transform: translateY(0); }
 
   .upgrade-key-link {
     text-align: center;
-    padding: 14px 24px 24px;
+    padding: 12px 24px 22px;
   }
   .link-btn {
     background: none;
@@ -513,7 +800,7 @@
   .modal-overlay.show { display: flex; }
   .modal {
     background: var(--bg);
-    border-radius: 12px;
+    border-radius: 16px;
     width: 100%;
     max-width: 440px;
     padding: 24px;
@@ -553,39 +840,112 @@
     margin-top: 16px;
   }
   .modal-actions .btn { flex: 1; padding: 10px; }
-  .modal-key-section {
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
-  }
-  .modal-key-section .section-label { margin-bottom: 6px; }
-  .modal-key-row {
+
+  /* Buy/key view swap: when modal has [data-view="key"], hide the buy panel
+     and show the focused key panel (and vice versa). */
+  .upgrade-modal[data-view="key"] .modal-view-buy { display: none; }
+  .upgrade-modal[data-view="buy"] .modal-view-key { display: none; }
+
+  /* Focused key-entry view */
+  .modal-view-key {
     display: flex;
-    gap: 6px;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 28px 28px;
+    text-align: center;
   }
-  .modal-key-row input {
-    flex: 1;
-    padding: 8px 10px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+  .modal-key-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .modal-key-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--fg);
+    margin: 0;
+  }
+  .modal-key-sub {
+    font-size: 12px;
+    color: var(--fg-secondary);
+    line-height: 1.4;
+    margin: 0 0 4px;
+    max-width: 320px;
+  }
+  .modal-key-input-big {
+    width: 100%;
+    max-width: 340px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
     background: var(--bg);
     color: var(--fg);
     font: inherit;
-    font-family: ui-monospace, monospace;
-    height: 32px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .modal-key-row .btn { padding: 0 14px; }
+  .modal-key-input-big::placeholder { color: var(--fg-tertiary); letter-spacing: 0.06em; }
+  .modal-key-input-big:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
+  }
+  .modal-key-verify-big {
+    width: 100%;
+    max-width: 340px;
+    padding: 12px;
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.06s;
+  }
+  .modal-key-verify-big:hover { background: #000; transform: translateY(-0.5px); }
+  .modal-key-verify-big:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+  .modal-key-back {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    text-decoration: underline;
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin-top: 2px;
+  }
+  .modal-key-back:hover { color: var(--fg); }
+  .modal-view-key .modal-status { font-size: 11px; min-height: 14px; }
+  .modal-view-key .modal-status.err { color: #C0392B; }
+  .modal-view-key .modal-status.ok { color: #047857; }
   .modal-close {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: none;
+    z-index: 5;
+    background: rgba(255,255,255,0.75);
     border: none;
     color: var(--fg-secondary);
     font-size: 18px;
+    line-height: 1;
     cursor: pointer;
-    padding: 4px 8px;
-    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+    pointer-events: auto;
   }
   .modal-close:hover { background: var(--bg-hover); color: var(--fg); }
   .modal-wrap { position: relative; }
@@ -721,6 +1081,32 @@
     gap: 6px;
     align-items: center;
   }
+  .brand-multi-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .brand-multi-row #brand-multi-input {
+    flex: 1; min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-family: ui-monospace, monospace;
+    height: 32px;
+  }
+  .brand-multi-row #brand-multi-input:focus {
+    outline: none;
+    border-color: var(--border-strong);
+  }
+  .brand-multi-help {
+    font-size: 10px;
+    color: var(--fg-tertiary);
+    margin-top: 6px;
+  }
   .brand-color-row input[type="color"] {
     width: 36px;
     height: 32px;
@@ -833,151 +1219,91 @@
   .brand-action button.pro::after {
     content: 'Pro';
     font-size: 8px;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    color: white;
+    background: #FFD700;
+    color: #2A1F00;
     padding: 1px 5px;
     border-radius: 4px;
     margin-left: 4px;
   }
 
-  /* ONBOARDING OVERLAY — confetti + cast then hero + live seed */
+  /* ONBOARDING — everything sits directly on a warm cream background.
+     No card, no container — calm, open, minimal. */
   .onboarding {
     display: none;
     position: absolute;
     inset: 0;
     z-index: 100;
     overflow: hidden;
+    color: var(--fg);
     background:
-      radial-gradient(circle at 22% 18%, rgba(99,102,241,0.32) 0%, transparent 55%),
-      radial-gradient(circle at 78% 82%, rgba(168,85,247,0.28) 0%, transparent 55%),
-      radial-gradient(circle at 50% 50%, rgba(244,114,182,0.14) 0%, transparent 60%),
-      var(--bg);
+      radial-gradient(circle at 18% 14%, rgba(99,102,241,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 82% 86%, rgba(244,114,182,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 50% 50%, rgba(250,204,21,0.06) 0%, transparent 60%),
+      #FAF7F2;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
   }
-  .onboarding.show { display: block; }
+  .onboarding.show { display: flex; }
 
-  .onb-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-  .confetti-bit {
-    position: absolute;
-    width: 8px; height: 14px;
-    border-radius: 2px;
-    top: -24px;
+  /* No card — direct stack on the background */
+  .onb-stack {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
     opacity: 0;
-    animation: confetti-fall 1800ms cubic-bezier(0.25, 0.5, 0.35, 1) forwards;
+    transform: translateY(6px);
+    animation: onb-stack-in 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
-  @keyframes confetti-fall {
-    0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
-    8%   { opacity: 1; }
-    100% { opacity: 0; transform: translateY(720px) rotate(720deg); }
+  @keyframes onb-stack-in {
+    to { opacity: 1; transform: translateY(0); }
   }
-  .onb-cast {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    display: grid;
-    grid-template-columns: repeat(4, 76px);
-    gap: 12px;
-  }
-  .cast-tile {
-    width: 76px; height: 76px;
-    border-radius: 16px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    opacity: 0;
-    transform: scale(0.5) translateY(28px);
-    animation: cast-drop 600ms cubic-bezier(0.34, 1.56, 0.5, 1) forwards;
-  }
-  @keyframes cast-drop {
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .cast-tile svg { width: 100%; height: 100%; }
-  .onboarding.stage-2 .cast-tile {
-    animation: none;
-    opacity: 0.55;
-    transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, 0deg)) scale(0.55);
-    transition: transform 900ms cubic-bezier(0.5, 0, 0.2, 1), opacity 700ms ease;
-  }
-  .onboarding.stage-2 .cast-tile:hover {
-    opacity: 0.9;
-    transform: translate(var(--tx, 0), var(--ty, 0)) rotate(0deg) scale(0.7);
-    cursor: pointer;
-  }
-  .onb-hero-wrap {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, calc(-50% - 10px)) scale(0.55);
-    display: flex; flex-direction: column; align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 500ms 250ms ease, transform 700ms 250ms cubic-bezier(0.34, 1.56, 0.5, 1);
-  }
-  .onboarding.stage-2 .onb-hero-wrap {
-    opacity: 1;
-    transform: translate(-50%, calc(-50% - 10px)) scale(1);
-    pointer-events: auto;
-  }
-  .onb-bubble {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 8px 16px;
-    border-radius: 18px;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 18px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    position: relative;
-    max-width: 320px;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .onb-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -7px; left: 50%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 12px; height: 12px;
-    background: var(--bg);
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .onb-bubble strong { color: var(--accent); font-weight: 700; }
+
+  /* Hero — naked avatar with subtle drop shadow, no tile/frame */
   .onb-hero {
     width: 180px; height: 180px;
     display: flex; align-items: center; justify-content: center;
-    filter: drop-shadow(0 14px 32px rgba(0,0,0,0.18));
+    filter: drop-shadow(0 12px 28px rgba(28, 25, 23, 0.12));
+    transition: transform 350ms cubic-bezier(0.34, 1.56, 0.5, 1);
   }
   .onb-hero svg { width: 100%; height: 100%; }
+  .onb-hero.pulse { animation: onb-hero-pulse 260ms cubic-bezier(0.34, 1.56, 0.5, 1); }
+  @keyframes onb-hero-pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
 
-  .onb-text {
-    position: absolute;
-    top: 50%; left: 50%;
-    text-align: center;
-    width: 100%;
-    max-width: 420px;
-    padding: 0 24px;
+  /* Cast strip — small thumbnails as raw avatars (no tile background) */
+  .onb-cast-strip {
+    display: flex;
+    gap: 8px;
+    margin-top: -4px;
+  }
+  .onb-cast-strip .mini-tile {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
     opacity: 0;
-    transform: translate(-50%, calc(-50% - 130px));
-    animation: onb-text-in 700ms 700ms cubic-bezier(0.4, 0.8, 0.2, 1) forwards;
-    transition: transform 700ms cubic-bezier(0.4, 0.8, 0.2, 1), opacity 400ms;
+    filter: drop-shadow(0 2px 6px rgba(28, 25, 23, 0.06));
+    animation: onb-mini-in 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
-  @keyframes onb-text-in {
-    from { opacity: 0; transform: translate(-50%, calc(-50% - 110px)); }
-    to   { opacity: 1; transform: translate(-50%, calc(-50% - 160px)); }
+  .onb-cast-strip .mini-tile svg { width: 100%; height: 100%; }
+  @keyframes onb-mini-in {
+    to { opacity: 0.78; }
   }
-  .onboarding.stage-2 .onb-text {
-    animation: none;
-    opacity: 1;
-    transform: translate(-50%, -250px);
-  }
+
+  /* Copy */
+  .onb-text { text-align: center; padding: 0 6px; }
   .onb-text h1 {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 700;
     margin: 0 0 6px;
     letter-spacing: -0.02em;
+    color: var(--fg);
   }
   .onb-text .onb-lead {
     color: var(--fg-secondary);
@@ -986,58 +1312,76 @@
     line-height: 1.5;
   }
 
+  /* Input — sits on the background, soft inner shadow look via border */
   .onb-input-wrap {
-    position: absolute;
-    bottom: 110px; left: 50%;
-    width: 320px;
-    transform: translateX(-50%) translateY(24px);
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 500ms 600ms ease, transform 600ms 600ms cubic-bezier(0.34, 1.4, 0.5, 1);
-  }
-  .onboarding.stage-2 .onb-input-wrap {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
   }
   .onb-input {
     width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--bg);
+    padding: 11px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.85);
     color: var(--fg);
     font: inherit;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    backdrop-filter: blur(6px);
   }
+  .onb-input::placeholder { color: var(--fg-tertiary); }
   .onb-input:focus {
     outline: none;
     border-color: var(--accent);
+    background: #FFFFFF;
     box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
   }
-  .onb-hint { color: var(--fg-tertiary); font-size: 11px; }
-
-  .onboarding-actions {
-    position: absolute;
-    bottom: 32px; left: 50%;
-    transform: translateX(-50%);
-    display: flex; align-items: center; gap: 10px;
-    opacity: 0;
-    animation: onb-fade-in 500ms 1100ms ease forwards;
+  .onb-hint {
+    color: var(--fg-tertiary);
+    font-size: 10px;
+    text-align: center;
+    letter-spacing: 0.01em;
   }
-  @keyframes onb-fade-in { to { opacity: 1; } }
+
+  /* Actions */
+  .onboarding-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .onb-btn-primary {
+    padding: 10px 20px;
+    background: var(--fg);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform 0.08s, background 0.12s;
+  }
+  .onb-btn-primary:hover { background: #000; transform: translateY(-0.5px); }
   .onboarding-skip {
     background: none;
     border: none;
     color: var(--fg-secondary);
     font: inherit;
+    font-size: 12px;
     cursor: pointer;
-    padding: 10px 14px;
+    padding: 10px 12px;
+    border-radius: 12px;
   }
-  .onboarding-skip:hover { color: var(--fg); }
+  .onboarding-skip:hover {
+    color: var(--fg);
+    background: rgba(0,0,0,0.04);
+  }
 
   /* PACKS PANEL */
   .packs-hero {
@@ -1054,14 +1398,23 @@
   .active-pack-chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
+    gap: 6px;
+    padding: 3px 8px 3px 3px;
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 999px;
     font-size: 10px;
     color: var(--fg);
   }
+  .active-pack-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .active-pack-thumb svg { display: block; width: 100%; height: 100%; }
   .active-pack-chip .x {
     cursor: pointer;
     opacity: 0.6;
@@ -1111,42 +1464,522 @@
     padding: 6px 0;
   }
 
+  /* === Pack tiles (grid) === */
   .pack-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
   }
+  .pack-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    background: var(--bg);
+    border: 1px solid var(--bg-secondary);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.06s;
+    overflow: hidden;
+  }
+  .pack-tile:hover { border-color: var(--border); }
+  .pack-tile:active { transform: scale(0.98); }
+  .pack-tile.active {
+    border-color: #10B981; /* emerald — clear "on" signal */
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.18);
+    background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02));
+  }
+  /* Locked (Pro-only) packs render at FULL fidelity — free users see exactly
+     what they're missing. The paywall fires only on Enable click. */
+  .pack-tile.locked { cursor: pointer; }
+  .pack-tile.coming { opacity: 0.55; cursor: not-allowed; }
+  .pack-tile-thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  .pack-tile-thumb svg { display: block; width: 100%; height: 100%; }
+  .pack-tile-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg);
+    text-align: center;
+    line-height: 1.25;
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  .pack-tile-count {
+    font-weight: 500;
+    color: var(--fg-tertiary);
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    margin-left: 4px;
+  }
+  .pack-tile-check {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #10B981;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    line-height: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .pack-tile.active .pack-tile-check { display: inline-flex; }
+  .pack-tile-badge {
+    position: absolute;
+    top: 6px; left: 6px;
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: #FFD700;
+    color: #2A1F00;
+  }
+
+  /* === Pack detail modal === */
+  .pack-modal-card {
+    background: var(--bg);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pack-modal-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pack-modal-hero {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pack-modal-hero svg { width: 100%; height: 100%; }
+  .pack-modal-titles { flex: 1; min-width: 0; }
+  .pack-modal-name { font-size: 15px; font-weight: 700; color: var(--fg); }
+  .pack-modal-desc {
+    font-size: 11px;
+    color: var(--fg-secondary);
+    line-height: 1.45;
+    margin-top: 2px;
+  }
+  .pack-modal-count {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--fg-secondary);
+    font-family: ui-monospace, monospace;
+    cursor: default;
+  }
+  .pack-modal-samples {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+  .pack-modal-sample {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pack-modal-sample svg { width: 100%; height: 100%; }
+  .pack-modal-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 4px 0 0;
+    width: 100%;
+  }
+  .pack-modal-style-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding-top: 2px;
+  }
+  .pack-modal-style-label {
+    font-size: 10px;
+    color: var(--fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+  }
+  .pack-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .pack-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--fg-secondary);
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+  .pack-modal-close:hover { color: var(--fg); background: var(--bg-secondary); }
+  .pack-modal-toggle {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    font: inherit;
+    font-weight: 600;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .pack-modal-toggle.enable {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .pack-modal-toggle.enable:hover { background: #000; }
+  .pack-modal-toggle.disable {
+    background: #FEE2E2;
+    color: #991B1B;
+  }
+  .pack-modal-toggle.disable:hover { background: #FECACA; }
+  /* Locked-Pro state — visually distinct from enable/disable, hints at upsell */
+  .pack-modal-toggle.locked {
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  .pack-modal-toggle.locked:hover { background: var(--accent-hover); }
+  .pack-modal-toggle.locked::before {
+    content: '✦';
+    margin-right: 6px;
+  }
+
+  /* === Mascots panel === */
+  /* Mascot action modal — clicked on a library card */
+  .mascot-action-modal {
+    width: 360px;
+    max-width: 92vw;
+    background: var(--bg);
+    color: var(--fg);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    position: relative;
+    display: flex; flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .mascot-action-head {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .mascot-action-buttons {
+    display: grid; grid-template-columns: 1fr; gap: 6px;
+  }
+  .action-btn {
+    text-align: left;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    cursor: pointer;
+    color: var(--fg);
+    font: inherit;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .action-btn:hover {
+    border-color: var(--accent);
+    background: var(--bg);
+  }
+  .action-btn-title {
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  .action-btn-sub {
+    font-size: 10px;
+    color: var(--fg-secondary);
+  }
+  .action-btn.danger { color: #B91C1C; }
+  .action-btn.danger:hover {
+    border-color: #DC2626;
+    background: #FEF2F2;
+  }
+  .action-btn.danger .action-btn-sub { color: #DC2626; opacity: 0.7; }
+
+  /* Save Mascot modal */
+  .save-mascot-modal {
+    width: 360px;
+    max-width: 92vw;
+    background: var(--bg);
+    color: var(--fg);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    position: relative;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .save-mascot-head {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .save-mascot-thumb {
+    width: 64px; height: 64px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .save-mascot-thumb svg { width: 100%; height: 100%; }
+  .save-mascot-title {
+    font-size: 14px; font-weight: 700; color: var(--fg);
+    margin-bottom: 2px;
+  }
+  .save-mascot-sub { color: var(--fg-secondary); font-size: 11px; }
+  .save-mascot-body { display: flex; flex-direction: column; gap: 6px; }
+  .save-mascot-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+  }
+  .save-mascot-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .save-mascot-status {
+    font-size: 10px;
+    color: var(--fg-tertiary);
+    min-height: 12px;
+  }
+  .save-mascot-status.err { color: #B91C1C; }
+  .save-mascot-status.ok { color: #047857; }
+  .save-mascot-actions {
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+
+  /* "Add to library" inline link — looks subtle, behaves like a button */
+  .add-to-library-link {
+    margin-top: 8px;
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+    color: var(--fg-secondary);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .add-to-library-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--bg);
+  }
+  .add-to-library-link svg { flex-shrink: 0; }
+
+  /* Mascots panel — full-width gallery (no left/right split) */
+  .col-full {
+    flex: 1;
+    padding: 16px 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    min-height: 0;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .col-full::-webkit-scrollbar { width: 6px; }
+  .col-full::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  .mascots-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px;
+  }
+  .mascots-head .col-title { font-size: 14px; font-weight: 700; }
+  .mascots-head .col-subtitle { color: var(--fg-secondary); margin-top: 2px; }
+  .mascots-head .btn.primary { flex-shrink: 0; }
+
+  .mascots-save-row { display: flex; gap: 6px; }
+  .mascot-name-input {
+    flex: 1; min-width: 0;
+    padding: 6px 10px;
+    font: inherit; font-size: 12px;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .mascot-name-input:focus {
+    outline: none;
+    border-color: var(--border-strong);
+  }
+  .mascots-save-help {
+    font-size: 10px;
+    color: var(--fg-tertiary);
+    margin-top: 6px;
+  }
+  .mascot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 10px;
+  }
+  .mascot-empty {
+    grid-column: 1 / -1;
+    padding: 24px;
+    color: var(--fg-tertiary);
+    font-size: 12px;
+    text-align: center;
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+  }
+  .mascot-card {
+    position: relative;
+    display: flex; flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit; color: var(--fg);
+    text-align: left;
+  }
+  .mascot-card:hover { border-color: var(--border-strong); }
+  .mascot-card-thumb {
+    aspect-ratio: 1;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mascot-card-thumb svg { display: block; width: 100%; height: 100%; }
+  .mascot-card-name {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mascot-card-meta {
+    font-size: 9px;
+    color: var(--fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mascot-card-del {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; background: rgba(0,0,0,0.55); color: white;
+    border-radius: 50%;
+    font-size: 12px; line-height: 1; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .mascot-card:hover .mascot-card-del { opacity: 1; }
+  .mascot-card-del:hover { background: rgba(220, 38, 38, 0.85); }
+  /* Pack wrap — holds the card row + expanded style-hint pills */
+  .pack-card-wrap {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--bg-secondary);
+    border-radius: var(--radius);
+    background: var(--bg);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .pack-card-wrap:hover { border-color: var(--border); }
+  .pack-card-wrap.active {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(168,85,247,0.05));
+  }
+
   .pack-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px;
-    background: var(--bg);
-    border: 1px solid var(--border);
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
     border-radius: var(--radius);
     cursor: pointer;
     text-align: left;
     font: inherit;
     color: var(--fg);
-    transition: border-color 0.15s, transform 0.05s;
+    transition: transform 0.05s;
     position: relative;
     overflow: hidden;
+    width: 100%;
   }
-  .pack-card:hover { border-color: var(--border-strong); }
-  .pack-card.active {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.06));
+
+  /* Style hints expand only when wrap is active */
+  .pack-style-hints {
+    display: none;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 12px 10px;
+  }
+  .pack-card-wrap.active .pack-style-hints { display: flex; }
+  .pack-style-hints .style-pill {
+    padding: 3px 9px;
+    font-size: 10px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .pack-style-hints .style-pill:hover {
+    background: var(--bg);
+    color: var(--fg);
+  }
+  .pack-style-hints .style-pill.active {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
   }
   .pack-card-emoji {
     width: 40px; height: 40px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--bg-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    overflow: hidden;
     flex-shrink: 0;
   }
+  .pack-card-emoji svg { display: block; width: 100%; height: 100%; }
   .pack-card-info { flex: 1; min-width: 0; }
   .pack-card-title {
     display: flex;
@@ -1166,7 +1999,7 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
-  .pack-card-title .badge.soon { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; }
+  .pack-card-title .badge.soon { background: var(--accent); color: var(--accent-text); }
   .pack-card-desc {
     color: var(--fg-secondary);
     font-size: 10px;
@@ -1237,25 +2070,31 @@
 
 <link rel="icon" type="image/svg+xml" href="https://api.navii.dev/avatar/navii?size=56" />
 
-<!-- ONBOARDING -->
+<!-- ONBOARDING — no card, everything direct on background -->
 <div class="onboarding" id="onboarding">
-  <div class="onb-confetti" id="onb-confetti"></div>
-  <div class="onb-cast" id="onb-cast"></div>
-  <div class="onb-hero-wrap">
-    <div class="onb-bubble" id="onb-bubble">Hi, I'm <strong>Navii</strong></div>
+  <div class="onb-stack">
     <div class="onb-hero" id="onb-hero"></div>
-  </div>
-  <div class="onb-text">
-    <h1 id="onb-title">Meet the cast.</h1>
-    <p class="onb-lead" id="onb-lead">Same seed → same mascot. Forever.</p>
-  </div>
-  <div class="onb-input-wrap">
-    <input type="text" class="onb-input" id="onb-seed" placeholder="Type any name…" maxlength="32" autocomplete="off" spellcheck="false" />
-    <span class="onb-hint">Try your name. Or your cat's. Or "tsormed".</span>
-  </div>
-  <div class="onboarding-actions">
-    <button class="btn primary" id="onboarding-start">Drop me in →</button>
-    <button class="onboarding-skip" id="onboarding-skip">Skip intro</button>
+    <div class="onb-cast-strip" id="onb-cast"></div>
+    <div class="onb-text">
+      <h1 id="onb-title">Meet your mascot.</h1>
+      <p class="onb-lead" id="onb-lead">Type a name below — the face above changes live. Same seed always returns the same mascot.</p>
+    </div>
+    <div class="onb-input-wrap">
+      <input
+        type="text"
+        class="onb-input"
+        id="onb-seed"
+        placeholder="Type any name…"
+        maxlength="32"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <span class="onb-hint">Try your name, your team's, or "navii".</span>
+    </div>
+    <div class="onboarding-actions">
+      <button class="onb-btn-primary" id="onboarding-start">Drop me in →</button>
+      <button class="onboarding-skip" id="onboarding-skip">Skip</button>
+    </div>
   </div>
 </div>
 
@@ -1270,71 +2109,180 @@
   <button class="tab active" data-panel="seed">Seed</button>
   <button class="tab" data-panel="build">Build</button>
   <button class="tab" data-panel="packs">Packs</button>
+  <button class="tab" data-panel="mascots">My Library</button>
+</div>
+
+<!-- PACK DETAIL MODAL -->
+<div class="modal-overlay" id="pack-modal">
+  <div class="pack-modal-card" id="pack-modal-card"></div>
+</div>
+
+<!-- MASCOT ACTION MODAL -->
+<div class="modal-overlay" id="mascot-action-modal">
+  <div class="modal-wrap">
+    <div class="modal mascot-action-modal">
+      <button class="modal-close" id="mascot-action-close" title="Close">×</button>
+      <div class="mascot-action-head">
+        <div class="save-mascot-thumb" id="mascot-action-thumb"></div>
+        <div>
+          <div class="save-mascot-title" id="mascot-action-name">Mascot</div>
+          <div class="save-mascot-sub" id="mascot-action-mode">seed mode</div>
+        </div>
+      </div>
+      <div class="mascot-action-buttons">
+        <button class="action-btn" data-action="insert" title="Place a new SVG node at the viewport center">
+          <div class="action-btn-title">Insert</div>
+          <div class="action-btn-sub">Drop a new node on canvas</div>
+        </button>
+        <button class="action-btn" data-action="fill" title="Image-fill the selected shapes (select first)">
+          <div class="action-btn-title">Fill selection</div>
+          <div class="action-btn-sub">Image-fill the selected shapes</div>
+        </button>
+        <button class="action-btn" data-action="edit" title="Open in Build tab to tweak parts">
+          <div class="action-btn-title">Edit</div>
+          <div class="action-btn-sub">Open in Build to tweak parts</div>
+        </button>
+        <button class="action-btn danger" data-action="delete" title="Remove from library">
+          <div class="action-btn-title">Delete</div>
+          <div class="action-btn-sub">Remove from your library</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE MASCOT MODAL -->
+<div class="modal-overlay" id="save-mascot-modal">
+  <div class="modal-wrap">
+    <div class="modal save-mascot-modal">
+      <button class="modal-close" id="save-mascot-close" title="Close">×</button>
+      <div class="save-mascot-head">
+        <div class="save-mascot-thumb" id="save-mascot-thumb"></div>
+        <div>
+          <div class="save-mascot-title">Add to library</div>
+          <div class="save-mascot-sub">Saves the avatar shown in the current tab.</div>
+        </div>
+      </div>
+      <div class="save-mascot-body">
+        <input type="text" id="save-mascot-name" class="save-mascot-input" placeholder="Name this mascot (e.g. Acme Bot, Sarah CFO)" maxlength="48" autocomplete="off" />
+        <div class="save-mascot-status" id="save-mascot-status"></div>
+      </div>
+      <div class="save-mascot-actions">
+        <button class="btn" id="save-mascot-cancel">Cancel</button>
+        <button class="btn primary" id="save-mascot-submit">Save</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- UPGRADE MODAL -->
 <div class="modal-overlay" id="upgrade-modal">
   <div class="modal-wrap">
-    <div class="modal upgrade-modal">
+    <div class="modal upgrade-modal" id="upgrade-modal-card" data-view="buy">
       <button class="modal-close" id="modal-close" title="Close">×</button>
 
-      <!-- Floating cast hero -->
-      <div class="upgrade-cast" id="upgrade-cast"></div>
+      <!-- BUY VIEW — full-modal carousel (page 1 hero, page 2 comparison) -->
+      <div class="modal-view-buy">
+        <div class="upgrade-slides" id="upgrade-slides">
 
-      <h2 class="upgrade-title">Navii Pro</h2>
-      <div class="upgrade-price">
-        <span class="upgrade-price-amt">$5</span>
-        <span class="upgrade-price-tag">one-time · lifetime</span>
-      </div>
+          <!-- PAGE 1: hero + features + Next -->
+          <div class="upgrade-slide">
+            <div class="upgrade-cast" id="upgrade-cast"></div>
+            <div class="upgrade-eyebrow">Navii Pro · $10 one-time</div>
+            <h2 class="upgrade-title">The full cast.<br/>Yours forever.</h2>
+            <p class="upgrade-sub">One purchase. No subscription. For life.</p>
 
-      <ul class="upgrade-features">
-        <li>
-          <span class="upgrade-feat-icon">🎨</span>
-          <div>
-            <div class="upgrade-feat-name">Brand mode</div>
-            <div class="upgrade-feat-desc">Pull Figma color variables → custom palette in one click.</div>
+            <div class="upgrade-section-label">What you unlock</div>
+            <ul class="upgrade-features">
+              <li data-seed="brand-aria">
+                <span class="upgrade-feat-icon"></span>
+                <div>
+                  <div class="upgrade-feat-name">Brand mode</div>
+                  <div class="upgrade-feat-desc">Pull Figma color variables → custom palette in one click.</div>
+                </div>
+              </li>
+              <li data-seed="pack-halloween">
+                <span class="upgrade-feat-icon"></span>
+                <div>
+                  <div class="upgrade-feat-name">All future packs, free</div>
+                  <div class="upgrade-feat-desc">7 themed bundles today (Office, Halloween, Pastel, Neon, Mono, Earth, Office Bright). Buy once — every new pack lands in your library.</div>
+                </div>
+              </li>
+              <li data-seed="mascot-acme">
+                <span class="upgrade-feat-icon"></span>
+                <div>
+                  <div class="upgrade-feat-name">Saved library</div>
+                  <div class="upgrade-feat-desc">Name + reuse any mascot build across every Figma file.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="upgrade-page-nav">
+              <button class="btn primary upgrade-cta upgrade-next" data-target-slide="1">
+                Next
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-left:6px"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+            </div>
           </div>
-        </li>
-        <li>
-          <span class="upgrade-feat-icon">🎁</span>
-          <div>
-            <div class="upgrade-feat-name">Premium packs</div>
-            <div class="upgrade-feat-desc">Halloween, Winter, Neon themed bundles. New packs added over time.</div>
-          </div>
-        </li>
-        <li>
-          <span class="upgrade-feat-icon">⭐</span>
-          <div>
-            <div class="upgrade-feat-name">Saved mascots</div>
-            <div class="upgrade-feat-desc">Name + reuse any avatar build across files.</div>
-          </div>
-        </li>
-        <li>
-          <span class="upgrade-feat-icon">💬</span>
-          <div>
-            <div class="upgrade-feat-name">Priority support</div>
-            <div class="upgrade-feat-desc">Direct channel for bugs + feature requests.</div>
-          </div>
-        </li>
-      </ul>
 
-      <div class="modal-actions">
-        <button class="btn primary upgrade-cta" id="modal-buy">
-          Buy now — $5
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-left:6px"><polyline points="9 6 15 12 9 18"/></svg>
-        </button>
-      </div>
+          <!-- PAGE 2: comparison + Buy CTA + key link + trust -->
+          <div class="upgrade-slide">
+            <button class="upgrade-back" data-target-slide="0" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right:4px"><polyline points="15 18 9 12 15 6"/></svg>
+              Back
+            </button>
 
-      <div class="upgrade-key-link">
-        <button class="link-btn" id="modal-have-key">Already have a key?</button>
-      </div>
+            <div class="upgrade-eyebrow upgrade-eyebrow-tight">What's in the box</div>
+            <h2 class="upgrade-title upgrade-title-sm">Free, plus a lot more.</h2>
 
-      <div class="modal-key-section" id="modal-key-section" style="display: none;">
-        <div class="modal-key-row">
-          <input id="modal-key-input" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" />
-          <button class="btn primary" id="modal-key-verify">Verify</button>
+            <div class="upgrade-stacks">
+              <div class="upgrade-stack upgrade-stack-free">
+                <span class="upgrade-stack-title">Free</span>
+                <span class="upgrade-stack-summary">22 palettes · 8 bodies · builder · random/seed</span>
+              </div>
+              <div class="upgrade-stack upgrade-stack-pro">
+                <div class="upgrade-stack-title">Pro — everything in Free, plus</div>
+                <ul class="upgrade-stack-list">
+                  <li><strong>+7 themed packs today</strong>, plus every future pack — Office, Halloween, Pastel, Neon, Mono, Earth, Office Bright (75 palettes total)</li>
+                  <li><strong>Pack-only bodies</strong> — pumpkin, ghost, squircle, skull</li>
+                  <li><strong>Brand mode</strong> — pull Figma color variables → custom palette in one click</li>
+                  <li><strong>Unlimited saved library</strong> — name + reuse mascots across files</li>
+                  <li><strong>Premium packs everywhere</strong> — same license unlocks packs in the API + future iOS/Flutter/RN SDKs</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="upgrade-page-nav">
+              <button class="btn primary upgrade-cta" id="modal-buy">
+                Buy now — $10
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-left:6px"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+            </div>
+
+            <div class="upgrade-footer-meta">
+              <button class="link-btn" id="modal-have-key">Already have a key?</button>
+              <span class="upgrade-trust">14-day refund · Polar</span>
+            </div>
+          </div>
+
         </div>
-        <div class="modal-status" id="modal-status"></div>
+      </div><!-- /modal-view-buy -->
+
+      <!-- KEY VIEW: focused input + verify + buy-instead link -->
+      <div class="modal-view-key">
+        <div class="modal-key-eyebrow">Activate Navii Pro</div>
+        <h2 class="modal-key-title">Paste your license key</h2>
+        <p class="modal-key-sub">From your purchase confirmation email. Verified once and cached on this device for 24 hours.</p>
+        <input
+          class="modal-key-input-big"
+          id="modal-key-input"
+          placeholder="NAVII-XXXX-XXXX-XXXX-XXXX-XXXX"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="modal-key-verify-big" id="modal-key-verify">Verify key</button>
+        <div class="modal-status" id="modal-status" aria-live="polite"></div>
+        <button class="modal-key-back" id="modal-key-back" type="button">Don't have a key? Buy one →</button>
       </div>
     </div>
   </div>
@@ -1362,6 +2310,10 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="16" r="1.2" fill="currentColor"/><circle cx="16" cy="16" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
           </button>
         </div>
+        <button class="add-to-library-link" id="seed-add-to-library" title="Save the current avatar to your library">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to library
+        </button>
         <div class="url-bar show" id="url-bar" style="margin-top: 8px;">
           <select class="snippet-select" id="snippet-select" title="Snippet format">
             <option value="url">URL</option>
@@ -1415,6 +2367,22 @@
           <button class="btn primary" id="brand-hex-apply">Apply</button>
         </div>
         <div class="modal-status" id="brand-status"></div>
+        <div class="brand-multi-row">
+          <input id="brand-multi-input" placeholder="Paste 2–5 hex codes (e.g. #6366F1 #1E1B4B #FFFFFF)" autocomplete="off" />
+          <button class="btn" id="brand-multi-apply" title="Parse hex codes and apply as brand palette">Import</button>
+        </div>
+        <div class="brand-multi-help">Order: body · ink · accent · blush. Missing fields auto-derive.</div>
+      </div>
+      <div class="section">
+        <div class="section-label">Mood</div>
+        <div class="style-hint-row" id="mood-row">
+          <div class="style-pill active" data-mood="">Auto</div>
+          <div class="style-pill" data-mood="happy">Happy</div>
+          <div class="style-pill" data-mood="serious">Serious</div>
+          <div class="style-pill" data-mood="sleepy">Sleepy</div>
+          <div class="style-pill" data-mood="wink">Wink</div>
+        </div>
+        <div class="style-hint-help">Override seed-derived face to convey an expression.</div>
       </div>
       <div class="section">
         <div class="seg-row">
@@ -1458,16 +2426,6 @@
           <span class="active-pack-empty">None active.</span>
         </div>
       </div>
-      <div>
-        <div class="section-label">Style hint</div>
-        <div class="style-hint-row" id="style-hint-row">
-          <div class="style-pill" data-style="">Auto</div>
-          <div class="style-pill" data-style="masc">Masc</div>
-          <div class="style-pill" data-style="femme">Femme</div>
-          <div class="style-pill" data-style="neutral">Neutral</div>
-        </div>
-        <div class="style-hint-help" id="style-hint-help">Bias picks toward a gender expression. Enable a pack first.</div>
-      </div>
     </div>
     <div class="col-right">
       <div class="section-label" style="margin-bottom: 10px;">Available packs</div>
@@ -1487,10 +2445,30 @@
       </div>
       <div>
         <div class="col-subtitle">Pick each part manually. No seed needed.</div>
+        <button class="add-to-library-link" id="build-add-to-library" title="Save the current custom avatar to your library" style="margin-top: 8px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to library
+        </button>
       </div>
     </div>
     <div class="col-right">
       <div id="build-pickers"></div>
+    </div>
+  </div>
+
+  <!-- MASCOTS PANEL -->
+  <div class="panel" id="panel-mascots">
+    <div class="col-full">
+      <div class="mascots-head">
+        <div>
+          <div class="col-title">My library</div>
+          <div class="col-subtitle">Saved mascots. Click any to load into Seed or Build. Stored locally on this device.</div>
+        </div>
+        <button class="btn primary" id="mascot-add-from-tab" title="Save the current avatar (configured in Seed or Build) to your library.">+ Add to library</button>
+      </div>
+      <div class="mascot-grid" id="mascot-grid">
+        <div class="mascot-empty">No mascots yet. Configure an avatar in Seed or Build, then click <strong>+ Add to library</strong>.</div>
+      </div>
     </div>
   </div>
 
@@ -1500,6 +2478,9 @@
 <div class="footer">
   <button class="btn primary" id="primary-btn" title="With selection → fill shapes. No selection → insert new avatar at viewport.">Insert avatar<span class="kbd">⌘↵</span></button>
   <button class="btn" id="fill-random-btn" title="Each selected shape gets a unique random avatar (seed = shape id)">Fill random</button>
+  <div class="usage-chip" id="usage-chip" title="Daily insert budget. Upgrade to Pro for unlimited.">
+    <span id="usage-chip-text">—</span>
+  </div>
 </div>
 
 <!-- script injected by build.mjs -->

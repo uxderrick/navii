@@ -4,7 +4,7 @@
  * Posts messages to main thread (code.ts) to mutate the Figma document.
  */
 
-import { createAvatar, build as buildAvatar, BUILT_IN_PACKS } from '@usenavii/core';
+import { createAvatar, build as buildAvatar, BUILT_IN_PACKS, selectAvatar } from '@usenavii/core';
 import type { AvatarOptions, BuildSpec, Pack } from '@usenavii/core';
 
 // ---------- constants ----------
@@ -70,6 +70,9 @@ const seedState = {
   // Style hint biases pack picks toward masc/femme/neutral (only takes effect
   // when at least one enabled pack declares styleHints).
   style: '' as '' | 'masc' | 'femme' | 'neutral',
+  // Mood overrides seed-derived eyes + mouth with a curated pair conveying
+  // an expression. '' (Auto) = leave seed-derived.
+  mood: '' as '' | 'happy' | 'serious' | 'sleepy' | 'wink',
 };
 
 // ---------- style-hint persistence ----------
@@ -88,6 +91,22 @@ function persistStyle() {
   } catch { /* noop */ }
 }
 
+// ---------- mood persistence ----------
+const MOOD_STORAGE_KEY = 'navii.mood';
+try {
+  const raw = localStorage.getItem(MOOD_STORAGE_KEY);
+  if (raw === 'happy' || raw === 'serious' || raw === 'sleepy' || raw === 'wink') {
+    seedState.mood = raw;
+  }
+} catch { /* noop */ }
+
+function persistMood() {
+  try {
+    if (seedState.mood) localStorage.setItem(MOOD_STORAGE_KEY, seedState.mood);
+    else localStorage.removeItem(MOOD_STORAGE_KEY);
+  } catch { /* noop */ }
+}
+
 const buildSpec: BuildSpec = {
   palette: 'indigo',
   body: 'orb',
@@ -98,7 +117,23 @@ const buildSpec: BuildSpec = {
   topper: 'none',
 };
 
-let activeTab: 'seed' | 'build' | 'packs' = 'seed';
+let activeTab: 'seed' | 'build' | 'packs' | 'mascots' = 'seed';
+
+// ---------- Mascot presets ----------
+interface MascotPresetUI {
+  id: string;
+  name: string;
+  mode: 'seed' | 'build';
+  seed?: string;
+  buildSpec?: BuildSpec;
+  packs?: string[];
+  style?: 'masc' | 'femme' | 'neutral';
+  mood?: 'happy' | 'serious' | 'sleepy' | 'wink';
+  paletteId?: string;
+  background?: 'none' | 'solid' | 'ring';
+  createdAt: number;
+}
+let presets: MascotPresetUI[] = [];
 
 // ---------- Packs state ----------
 const PACKS_STORAGE_KEY = 'navii.enabled-packs';
@@ -170,6 +205,8 @@ function currentSeedOptions(): AvatarOptions {
     // Style hint only meaningful when at least one pack active.
     if (seedState.style) opts.style = seedState.style;
   }
+  // Mood applies regardless of packs — it overrides face features directly.
+  if (seedState.mood) opts.mood = seedState.mood;
   return opts;
 }
 
@@ -180,8 +217,23 @@ function renderSeedPreview() {
   updateUrlText();
 }
 
+/**
+ * Compose AvatarOptions for the Build flow. When the user selects the brand
+ * swatch in the Build palette grid, inject the brand Palette object via
+ * `options.palette` — core's `build()` honors that as an override of
+ * `spec.palette` (which is just a string id).
+ */
+function currentBuildOptions(size = 200, animated = true): AvatarOptions {
+  const opts: AvatarOptions = { size };
+  if (animated) opts.animated = true;
+  if (buildSpec.palette === 'brand' && brandPalette && isPaid()) {
+    opts.palette = brandPalette;
+  }
+  return opts;
+}
+
 function renderBuildPreview() {
-  setSvgPreview($('preview-build'), buildAvatar(buildSpec, { size: 200, animated: true }));
+  setSvgPreview($('preview-build'), buildAvatar(buildSpec, currentBuildOptions(200, true)));
 }
 
 function renderRecent() {
@@ -491,6 +543,8 @@ function updateProPill() {
 function openUpgradeModal() {
   const modal = document.getElementById('upgrade-modal');
   if (modal) modal.classList.add('show');
+  // Always open on the buy view — the key view is a deliberate next step.
+  setUpgradeModalView('buy');
   // Populate cast w/ animated mini Naviis on open.
   const cast = document.getElementById('upgrade-cast');
   if (cast && cast.children.length === 0) {
@@ -502,6 +556,30 @@ function openUpgradeModal() {
       cast.appendChild(tile);
     }
   }
+  // Populate feature icons with mini avatars (replaces emoji glyphs). Each
+  // <li data-seed="..."> gets a tiny seeded avatar so the row reads as Navii
+  // itself rather than generic emoji art.
+  const featureLis = Array.from(document.querySelectorAll<HTMLLIElement>('.upgrade-features li'));
+  for (const li of featureLis) {
+    const icon = li.querySelector<HTMLElement>('.upgrade-feat-icon');
+    if (!icon || icon.firstChild) continue; // already populated
+    const seed = li.getAttribute('data-seed') || 'navii';
+    setSvgPreview(icon, createAvatar(seed, { size: 28 }));
+  }
+  // Reset carousel to slide 0 on each open.
+  setUpgradeCarouselSlide(0);
+}
+
+let upgradeCarouselSlide = 0;
+function setUpgradeCarouselSlide(idx: number) {
+  upgradeCarouselSlide = idx;
+  const slides = document.getElementById('upgrade-slides');
+  if (slides) slides.style.transform = `translateX(${-idx * 100}%)`;
+  const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.upgrade-dot'));
+  for (const d of dots) {
+    const i = Number.parseInt(d.getAttribute('data-slide') ?? '0', 10);
+    d.classList.toggle('active', i === idx);
+  }
 }
 
 function closeUpgradeModal() {
@@ -509,8 +587,23 @@ function closeUpgradeModal() {
   if (modal) modal.classList.remove('show');
   const status = document.getElementById('modal-status');
   if (status) { status.textContent = ''; status.className = 'modal-status'; }
-  const keySection = document.getElementById('modal-key-section');
-  if (keySection) keySection.style.display = 'none';
+  // Reset to buy view so next open starts clean.
+  setUpgradeModalView('buy');
+}
+
+function setUpgradeModalView(view: 'buy' | 'key') {
+  const card = document.getElementById('upgrade-modal-card');
+  if (card) card.setAttribute('data-view', view);
+  if (view === 'key') {
+    const input = document.getElementById('modal-key-input') as HTMLInputElement | null;
+    if (input) {
+      // Defer focus past the layout swap.
+      setTimeout(() => input.focus(), 60);
+    }
+  } else {
+    const status = document.getElementById('modal-status');
+    if (status) { status.textContent = ''; status.className = 'modal-status'; }
+  }
 }
 
 function setLicenseStatus(s: LicenseStatus) {
@@ -542,6 +635,66 @@ function fetchBrandColors() {
   if (!isPaid() || brandColorsFetched) return;
   brandColorsFetched = true;
   parent.postMessage({ pluginMessage: { type: 'list-variables' } }, '*');
+}
+
+/**
+ * Parse hex codes from arbitrary pasted text. Accepts `#ABC`, `#AABBCC`,
+ * `AABBCC`, with any whitespace, commas, semicolons between them. Returns up
+ * to `max` normalized uppercase `#RRGGBB` strings in source order.
+ *
+ * Uses String.replace callback (no matchAll → keeps es2019 lib happy).
+ */
+function parseHexes(text: string, max = 5): string[] {
+  const out: string[] = [];
+  text.replace(/#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g, (_match, raw: string) => {
+    if (out.length >= max) return _match;
+    let h = raw;
+    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+    const norm = `#${h.toUpperCase()}`;
+    if (!out.includes(norm)) out.push(norm);
+    return _match;
+  });
+  return out;
+}
+
+/**
+ * Build a brand palette from up to 5 hex codes pasted together.
+ * Order: body (primary) · ink · accent · blush · (5th ignored). Missing
+ * fields auto-derive from `body`.
+ */
+function deriveMultiHexPalette(hexes: string[], label: string): BrandPalette {
+  const primary = hexes[0]!;
+  const derived = derivePalette(primary, label);
+  return {
+    ...derived,
+    ...(hexes[1] ? { ink: hexes[1] } : {}),
+    ...(hexes[2] ? { accent: hexes[2] } : {}),
+    ...(hexes[3] ? { blush: hexes[3] } : {}),
+  };
+}
+
+function applyBrandFromMultiHex(text: string) {
+  const hexes = parseHexes(text);
+  const status = document.getElementById('brand-status');
+  if (hexes.length === 0) {
+    if (status) {
+      status.textContent = 'No hex codes found. Try "#6366F1 #1E1B4B #FFFFFF".';
+      status.className = 'modal-status err';
+    }
+    return;
+  }
+  const label = hexes.length === 1 ? hexes[0]! : `Custom (${hexes.length})`;
+  brandPalette = deriveMultiHexPalette(hexes, label);
+  persistBrandPalette(brandPalette);
+  seedState.seedPaletteId = 'brand';
+  renderSeedPalettes();
+  renderBuildPalettes();
+  renderSeedPreview();
+  renderBuildPreview();
+  if (status) {
+    status.textContent = `Applied ${hexes.length} hex code${hexes.length === 1 ? '' : 's'}.`;
+    status.className = 'modal-status ok';
+  }
 }
 
 function applyBrandFromHex(hex: string, label: string) {
@@ -808,7 +961,7 @@ function copyText(text: string): boolean {
   return ok;
 }
 
-function setActiveTab(tab: 'seed' | 'build' | 'packs') {
+function setActiveTab(tab: 'seed' | 'build' | 'packs' | 'mascots') {
   activeTab = tab;
   document.querySelectorAll('.tab').forEach((t) => {
     t.classList.toggle('active', (t as HTMLElement).dataset.panel === tab);
@@ -821,13 +974,21 @@ function setActiveTab(tab: 'seed' | 'build' | 'packs') {
     seed: 'Insert avatar',
     build: 'Insert custom',
     packs: 'Insert avatar',
+    mascots: 'Insert avatar',
   };
-  btn.innerHTML = `${labels[tab]}<span class="kbd">⌘↵</span>`;
+  // Build button content as text + safe child node (avoid innerHTML XSS surface)
+  clear(btn);
+  btn.appendChild(document.createTextNode(labels[tab]));
+  const kbd = document.createElement('span');
+  kbd.className = 'kbd';
+  kbd.textContent = '⌘↵';
+  btn.appendChild(kbd);
   // Fill random only applies in Seed mode (Build mode = one specific spec).
   $('fill-random-btn').style.display = tab === 'seed' ? '' : 'none';
   $('url-bar').classList.remove('show');
-  // Refresh packs hero preview when entering the tab.
+  // Refresh panel content when entering its tab.
   if (tab === 'packs') renderPacksHero();
+  if (tab === 'mascots') renderMascotGrid();
 }
 
 // ---------- Packs UI ----------
@@ -854,11 +1015,12 @@ function renderPacksHero() {
         if (!pack) continue;
         const chip = document.createElement('span');
         chip.className = 'active-pack-chip';
-        const chipEmoji = document.createElement('span');
-        chipEmoji.textContent = pack.emoji ?? '✦';
+        const chipThumb = document.createElement('span');
+        chipThumb.className = 'active-pack-thumb';
+        setSvgPreview(chipThumb, createAvatar(pack.id, { size: 18, packs: [pack.id] }));
         const chipName = document.createElement('span');
         chipName.textContent = pack.name;
-        chip.appendChild(chipEmoji);
+        chip.appendChild(chipThumb);
         chip.appendChild(chipName);
         const x = document.createElement('span');
         x.className = 'x';
@@ -873,63 +1035,234 @@ function renderPacksHero() {
 }
 
 function renderPackGrid() {
+  // Renders the Packs tab right-pane as a grid of square tiles. Each tile is
+  // a thumbnail + name. Clicking opens a modal where the user explicitly
+  // enables/disables the pack after seeing sample avatars. Active state =
+  // emerald ring + checkmark badge.
   const grid = document.getElementById('pack-grid');
   if (!grid) return;
   clear(grid);
 
   for (const pack of BUILT_IN_PACKS) {
-    const card = document.createElement('button');
     const available = isPackAvailable(pack);
     const active = enabledPackIds.has(pack.id);
     const locked = !isPaid();
 
-    card.className = 'pack-card';
-    if (active) card.classList.add('active');
-    if (locked) card.classList.add('locked');
-    if (!available) card.classList.add('coming');
+    const tile = document.createElement('button');
+    tile.className = 'pack-tile';
+    if (active) tile.classList.add('active');
+    if (locked) tile.classList.add('locked');
+    if (!available) tile.classList.add('coming');
 
-    const emoji = document.createElement('div');
-    emoji.className = 'pack-card-emoji';
-    emoji.textContent = pack.emoji ?? '✦';
-
-    const info = document.createElement('div');
-    info.className = 'pack-card-info';
-    const title = document.createElement('div');
-    title.className = 'pack-card-title';
-    const titleName = document.createElement('span');
-    titleName.textContent = pack.name;
-    title.appendChild(titleName);
+    // Coming-soon badge (top-left)
     if (!available) {
       const days = Math.max(0, Math.ceil((new Date(pack.unlockDate!).getTime() - Date.now()) / 86_400_000));
       const badge = document.createElement('span');
-      badge.className = 'badge soon';
-      badge.textContent = days === 0 ? 'Coming soon' : `In ${days}d`;
-      title.appendChild(badge);
+      badge.className = 'pack-tile-badge';
+      badge.textContent = days === 0 ? 'Soon' : `${days}d`;
+      tile.appendChild(badge);
     }
-    const desc = document.createElement('div');
-    desc.className = 'pack-card-desc';
-    desc.textContent = pack.description;
-    info.appendChild(title);
-    info.appendChild(desc);
 
-    const toggle = document.createElement('div');
-    toggle.className = 'pack-card-toggle';
+    // Active checkmark (top-right) — CSS hides unless .pack-tile.active
+    const check = document.createElement('span');
+    check.className = 'pack-tile-check';
+    check.textContent = '✓';
+    tile.appendChild(check);
 
-    card.appendChild(emoji);
-    card.appendChild(info);
-    card.appendChild(toggle);
+    const thumb = document.createElement('div');
+    thumb.className = 'pack-tile-thumb';
+    setSvgPreview(thumb, createAvatar(pack.id, { size: 80, packs: [pack.id] }));
+    tile.appendChild(thumb);
 
-    card.addEventListener('click', () => {
-      if (locked) {
-        openUpgradeModal();
-        return;
-      }
-      if (!available) return; // soon — no-op
-      togglePack(pack.id);
+    const name = document.createElement('div');
+    name.className = 'pack-tile-name';
+    name.textContent = pack.name;
+    // Inline avatar-count badge — sits right after the name so designers
+    // see the combinatorial size at a glance without opening details.
+    const countSpan = document.createElement('span');
+    countSpan.className = 'pack-tile-count';
+    countSpan.textContent = formatCount(countPackCombos(pack));
+    countSpan.title = `${countPackCombos(pack).toLocaleString('en-US')} unique avatars`;
+    name.appendChild(document.createTextNode(' '));
+    name.appendChild(countSpan);
+    tile.appendChild(name);
+
+    // Always open the details modal on click — even for locked (free) users.
+    // We want free users to SEE what they're missing (samples, count, style
+    // hints). The paywall fires only when they actually try to enable.
+    tile.addEventListener('click', () => {
+      if (!available) return; // 'coming soon' packs stay inert
+      openPackModal(pack);
     });
 
-    grid.appendChild(card);
+    grid.appendChild(tile);
   }
+}
+
+/**
+ * Opens a detail modal for a pack. Shows pack hero + description, six sample
+ * avatars rendered with this pack enabled, an optional style-hint pill row,
+ * and an Enable/Disable button. The user explicitly confirms the pack toggle
+ * — no surprise activation from clicking the tile.
+ */
+/**
+ * Combinatorial count of distinct avatars a pack can produce.
+ * Multiplies the unique picks per slot. Falls back to base pool size for
+ * any slot the pack doesn't constrain. Outfit defaults to 1 (just 'none')
+ * when undeclared, since base avatars don't draw outfits from seed.
+ */
+function countPackCombos(pack: Pack): number {
+  const uniq = <T,>(arr: readonly T[] | undefined): number =>
+    arr ? new Set(arr).size : 0;
+  const palettes = pack.palettes?.length ?? 0;
+  const body = uniq(pack.picks?.body) || BODY_IDS.length;
+  const eyes = uniq(pack.picks?.eyes) || EYE_IDS.length;
+  const mouth = uniq(pack.picks?.mouth) || MOUTH_IDS.length;
+  const antenna = uniq(pack.picks?.antenna) || ANTENNA_IDS.length;
+  const accessory = uniq(pack.picks?.accessory) || ACCESSORY_IDS.length;
+  const topper = uniq(pack.picks?.topper) || TOPPER_IDS.length;
+  // Base palettes still apply when not exclusive.
+  const palettePool = pack.paletteExclusive ? palettes : palettes + PALETTE_IDS.length;
+  // Background defaults to ['none','solid','ring'] = 3.
+  const background = uniq(pack.picks?.background) || 3;
+  // Outfit defaults to just 'none' when pack doesn't declare it (base seeds
+  // never wear outfits — they're a builder-only opt-in).
+  const outfit = uniq(pack.picks?.outfit) || 1;
+  return palettePool * body * eyes * mouth * antenna * accessory * topper * background * outfit;
+}
+
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}K`;
+  return n.toLocaleString('en-US');
+}
+
+function openPackModal(pack: Pack) {
+  const overlay = document.getElementById('pack-modal');
+  const card = document.getElementById('pack-modal-card');
+  if (!overlay || !card) return;
+  clear(card);
+
+  // --- Head: hero + name + desc ---
+  const head = document.createElement('div');
+  head.className = 'pack-modal-head';
+
+  const hero = document.createElement('div');
+  hero.className = 'pack-modal-hero';
+  setSvgPreview(hero, createAvatar(pack.id, { size: 56, packs: [pack.id] }));
+  head.appendChild(hero);
+
+  const titles = document.createElement('div');
+  titles.className = 'pack-modal-titles';
+  const name = document.createElement('div');
+  name.className = 'pack-modal-name';
+  name.textContent = pack.name;
+  const desc = document.createElement('div');
+  desc.className = 'pack-modal-desc';
+  desc.textContent = pack.description;
+  const count = document.createElement('div');
+  count.className = 'pack-modal-count';
+  count.textContent = `${formatCount(countPackCombos(pack))} unique avatars`;
+  count.title = 'Distinct combinations of palette × body × face × topper × outfit (within this pack\'s pool).';
+  titles.appendChild(name);
+  titles.appendChild(desc);
+  titles.appendChild(count);
+  head.appendChild(titles);
+  card.appendChild(head);
+
+  // --- Twelve sample avatars (2 rows × 6) — broader variety than 6 ---
+  const samples = document.createElement('div');
+  samples.className = 'pack-modal-samples';
+  const sampleSeeds = [
+    'ari', 'milo', 'nova', 'kai', 'sage', 'eden',
+    'luna', 'rio', 'wren', 'pip', 'zane', 'iris',
+  ];
+  for (const seed of sampleSeeds) {
+    const cell = document.createElement('div');
+    cell.className = 'pack-modal-sample';
+    const opts: AvatarOptions = { size: 48, packs: [pack.id] };
+    if (seedState.style) opts.style = seedState.style;
+    setSvgPreview(cell, createAvatar(seed, opts));
+    samples.appendChild(cell);
+  }
+  card.appendChild(samples);
+
+  // --- Style hints row (only when pack declares styleHints) ---
+  if (pack.styleHints) {
+    // Divider above the style row so the section reads as a separate group
+    const divider = document.createElement('hr');
+    divider.className = 'pack-modal-divider';
+    card.appendChild(divider);
+    const styleRow = document.createElement('div');
+    styleRow.className = 'pack-modal-style-row';
+    const label = document.createElement('span');
+    label.className = 'pack-modal-style-label';
+    label.textContent = 'Style';
+    styleRow.appendChild(label);
+    const styles: Array<{ val: '' | 'masc' | 'femme' | 'neutral'; label: string }> = [
+      { val: '',        label: 'Auto' },
+      { val: 'masc',    label: 'Masc' },
+      { val: 'femme',   label: 'Femme' },
+      { val: 'neutral', label: 'Neutral' },
+    ];
+    for (const s of styles) {
+      const pill = document.createElement('div');
+      pill.className = 'style-pill';
+      if (s.val === seedState.style) pill.classList.add('active');
+      pill.textContent = s.label;
+      pill.addEventListener('click', () => {
+        setStyleHint(s.val);
+        // Re-open modal so pills + sample avatars reflect the new hint.
+        openPackModal(pack);
+      });
+      styleRow.appendChild(pill);
+    }
+    card.appendChild(styleRow);
+  }
+
+  // --- Actions: Close + Enable/Disable ---
+  const actions = document.createElement('div');
+  actions.className = 'pack-modal-actions';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'pack-modal-close';
+  closeBtn.textContent = 'Close';
+  closeBtn.addEventListener('click', () => closePackModal());
+  actions.appendChild(closeBtn);
+
+  const toggleBtn = document.createElement('button');
+  const isActive = enabledPackIds.has(pack.id);
+  const locked = !isPaid();
+  toggleBtn.className = `pack-modal-toggle ${isActive ? 'disable' : 'enable'}`;
+  if (locked && !isActive) toggleBtn.classList.add('locked');
+  // Label hints at the paywall for free users so the click is informed.
+  toggleBtn.textContent = isActive
+    ? 'Disable pack'
+    : locked
+    ? 'Unlock with Pro'
+    : 'Enable pack';
+  toggleBtn.addEventListener('click', () => {
+    if (locked && !isActive) {
+      closePackModal();
+      openUpgradeModal();
+      return;
+    }
+    togglePack(pack.id);
+    closePackModal();
+  });
+  actions.appendChild(toggleBtn);
+
+  card.appendChild(actions);
+
+  overlay.classList.add('show');
+}
+
+function closePackModal() {
+  const overlay = document.getElementById('pack-modal');
+  if (!overlay) return;
+  overlay.classList.remove('show');
+  const card = document.getElementById('pack-modal-card');
+  if (card) clear(card);
 }
 
 function togglePack(id: string) {
@@ -939,52 +1272,53 @@ function togglePack(id: string) {
   renderPackGrid();
   renderPacksHero();
   renderSeedPreview();
-  renderStyleHintRow();
 }
 
 function setStyleHint(value: '' | 'masc' | 'femme' | 'neutral') {
   seedState.style = value;
   persistStyle();
-  renderStyleHintRow();
+  // Re-render pack grid so each active pack's pill row reflects the new
+  // global style hint.
+  renderPackGrid();
   renderPacksHero();
   renderSeedPreview();
 }
 
-function renderStyleHintRow() {
-  const row = document.getElementById('style-hint-row');
-  const help = document.getElementById('style-hint-help');
+// ---------- Mood pill row ----------
+function setMood(value: '' | 'happy' | 'serious' | 'sleepy' | 'wink') {
+  seedState.mood = value;
+  persistMood();
+  renderMoodRow();
+  renderSeedPreview();
+  renderPacksHero();
+}
+
+function renderMoodRow() {
+  const row = document.getElementById('mood-row');
   if (!row) return;
-  const hasPack = getEnabledPackIds().length > 0;
   const pills = Array.from(row.querySelectorAll<HTMLDivElement>('.style-pill'));
   for (const pill of pills) {
-    const val = pill.getAttribute('data-style') ?? '';
-    pill.classList.toggle('active', val === seedState.style);
-    pill.classList.toggle('disabled', !hasPack && val !== '');
-  }
-  if (help) {
-    help.textContent = hasPack
-      ? 'Bias seeded picks toward this expression. Packs without hints ignore it.'
-      : 'Bias picks toward a gender expression. Enable a pack first.';
+    const val = pill.getAttribute('data-mood') ?? '';
+    pill.classList.toggle('active', val === seedState.mood);
   }
 }
 
-function bindStyleHintHandlers() {
-  const row = document.getElementById('style-hint-row');
+function bindMoodHandlers() {
+  const row = document.getElementById('mood-row');
   if (!row) return;
   const pills = Array.from(row.querySelectorAll<HTMLDivElement>('.style-pill'));
   for (const pill of pills) {
     pill.addEventListener('click', () => {
-      const hasPack = getEnabledPackIds().length > 0;
-      const val = (pill.getAttribute('data-style') ?? '') as '' | 'masc' | 'femme' | 'neutral';
-      // Block masc/femme/neutral when no pack enabled (Auto always allowed)
-      if (!hasPack && val !== '') return;
-      setStyleHint(val);
+      const val = (pill.getAttribute('data-mood') ?? '') as
+        | '' | 'happy' | 'serious' | 'sleepy' | 'wink';
+      setMood(val);
     });
   }
 }
 
 function doPrimary() {
-  if (activeTab === 'seed') {
+  if (activeTab === 'seed' || activeTab === 'packs' || activeTab === 'mascots') {
+    // Mascots/Packs tabs reuse the seed flow — primary inserts the current seed.
     const seed = $<HTMLInputElement>('seed-input').value.trim();
     if (!seed) return;
     if (!guardOnline('Inserting a Navii')) return;
@@ -996,11 +1330,181 @@ function doPrimary() {
   }
 }
 
-// Build mode primary: rasterize PNG up-front so main thread can either fill
-// the current selection or place a new SVG node depending on what's selected.
-async function doBuildPrimary() {
-  const svg = buildAvatar(buildSpec, { size: 200 });
-  const svgLarge = buildAvatar(buildSpec, { size: 512 });
+// ---------- Mascot presets UI ----------
+function uuid(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  // Figma sandbox sometimes lacks crypto.randomUUID — fall back to time + rand
+  return `m_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function requestPresets() {
+  parent.postMessage({ pluginMessage: { type: 'preset-list' } }, '*');
+}
+
+function captureCurrentAvatar(name: string): MascotPresetUI {
+  const id = uuid();
+  const createdAt = Date.now();
+  const enabledPacks = getEnabledPackIds();
+  if (activeTab === 'build') {
+    return {
+      id, name, mode: 'build',
+      buildSpec: { ...buildSpec },
+      ...(enabledPacks.length > 0 ? { packs: enabledPacks } : {}),
+      ...(seedState.style ? { style: seedState.style } : {}),
+      createdAt,
+    };
+  }
+  // Default: seed mode capture (Seed / Packs / Mascots tabs all use seed input)
+  const seed = $<HTMLInputElement>('seed-input').value.trim() || 'alice';
+  return {
+    id, name, mode: 'seed',
+    seed,
+    ...(enabledPacks.length > 0 ? { packs: enabledPacks } : {}),
+    ...(seedState.style ? { style: seedState.style } : {}),
+    ...(seedState.mood ? { mood: seedState.mood } : {}),
+    ...(seedState.seedPaletteId && seedState.seedPaletteId !== 'brand'
+      ? { paletteId: seedState.seedPaletteId } : {}),
+    ...(seedState.background ? { background: seedState.background } : {}),
+    createdAt,
+  };
+}
+
+function renderMascotPreviewSvg(p: MascotPresetUI): string {
+  if (p.mode === 'build' && p.buildSpec) {
+    return buildAvatar(p.buildSpec, { size: 96 });
+  }
+  const seed = p.seed || 'alice';
+  const opts: AvatarOptions = { size: 96 };
+  if (p.packs && p.packs.length > 0) opts.packs = p.packs;
+  if (p.style) opts.style = p.style;
+  if (p.mood) opts.mood = p.mood;
+  if (p.paletteId) opts.paletteId = p.paletteId;
+  if (p.background) opts.background = p.background;
+  return createAvatar(seed, opts);
+}
+
+function renderMascotGrid() {
+  const grid = document.getElementById('mascot-grid');
+  if (!grid) return;
+  clear(grid);
+  if (presets.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'mascot-empty';
+    empty.textContent = 'No mascots yet. Configure an avatar in Seed or Build, name it on the left, then click Save.';
+    grid.appendChild(empty);
+    return;
+  }
+  for (const p of presets) {
+    const card = document.createElement('div');
+    card.className = 'mascot-card';
+    card.title = `${p.name} · ${p.mode}`;
+
+    const thumb = document.createElement('div');
+    thumb.className = 'mascot-card-thumb';
+    setSvgPreview(thumb, renderMascotPreviewSvg(p));
+    card.appendChild(thumb);
+
+    const name = document.createElement('div');
+    name.className = 'mascot-card-name';
+    name.textContent = p.name;
+    card.appendChild(name);
+
+    const meta = document.createElement('div');
+    meta.className = 'mascot-card-meta';
+    meta.textContent = p.mode;
+    card.appendChild(meta);
+
+    const del = document.createElement('button');
+    del.className = 'mascot-card-del';
+    del.title = 'Delete';
+    del.textContent = '×';
+    del.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      if (!confirm(`Delete mascot "${p.name}"?`)) return;
+      parent.postMessage({ pluginMessage: { type: 'preset-delete', id: p.id } }, '*');
+    });
+    card.appendChild(del);
+
+    card.addEventListener('click', () => openMascotActionModal(p));
+    grid.appendChild(card);
+  }
+}
+
+// ---------- Mascot action modal (Insert / Fill / Edit / Delete) ----------
+let actionTarget: MascotPresetUI | null = null;
+
+function openMascotActionModal(p: MascotPresetUI) {
+  actionTarget = p;
+  const overlay = document.getElementById('mascot-action-modal');
+  if (!overlay) return;
+  const thumb = document.getElementById('mascot-action-thumb');
+  if (thumb) setSvgPreview(thumb, renderMascotPreviewSvg(p));
+  const nameEl = document.getElementById('mascot-action-name');
+  if (nameEl) nameEl.textContent = p.name;
+  const modeEl = document.getElementById('mascot-action-mode');
+  if (modeEl) modeEl.textContent = `${p.mode} mode` + (p.packs?.length ? ` · ${p.packs.length} pack${p.packs.length === 1 ? '' : 's'}` : '');
+  overlay.classList.add('show');
+}
+
+function closeMascotActionModal() {
+  const overlay = document.getElementById('mascot-action-modal');
+  if (overlay) overlay.classList.remove('show');
+  actionTarget = null;
+}
+
+function handleMascotAction(action: 'insert' | 'fill' | 'edit' | 'delete') {
+  const p = actionTarget;
+  if (!p) return;
+  if (action === 'delete') {
+    if (!confirm(`Delete mascot "${p.name}"?`)) return;
+    parent.postMessage({ pluginMessage: { type: 'preset-delete', id: p.id } }, '*');
+    closeMascotActionModal();
+    return;
+  }
+  if (action === 'edit') {
+    closeMascotActionModal();
+    editMascot(p);
+    return;
+  }
+  if (action === 'insert' || action === 'fill') {
+    if (!guardOnline('Inserting a Navii')) return;
+    insertMascot(p, action);
+    closeMascotActionModal();
+    return;
+  }
+}
+
+/**
+ * Insert/fill a mascot. For seed presets, sends a regular `insert` msg with
+ * captured options. For build presets, renders SVG locally + posts an
+ * `insert-build` msg so the main thread can image-fill (PNG) or place node.
+ */
+function insertMascot(p: MascotPresetUI, force: 'insert' | 'fill') {
+  if (p.mode === 'build' && p.buildSpec) {
+    void doBuildInsertFromPreset(p, force);
+    return;
+  }
+  // Seed mode — reconstruct options from preset fields.
+  const seed = p.seed || 'alice';
+  const opts: AvatarOptions = { size: 96 };
+  if (p.packs && p.packs.length > 0) opts.packs = p.packs;
+  if (p.style) opts.style = p.style;
+  if (p.mood) opts.mood = p.mood;
+  if (p.paletteId) opts.paletteId = p.paletteId;
+  if (p.background) opts.background = p.background;
+  pushRecent(seed);
+  parent.postMessage({
+    pluginMessage: { type: 'insert', seed, options: opts, force },
+  }, '*');
+}
+
+async function doBuildInsertFromPreset(p: MascotPresetUI, force: 'insert' | 'fill') {
+  if (!p.buildSpec) return;
+  const opts = currentBuildOptionsFromSpec(p.buildSpec, p);
+  const svg = buildAvatar(p.buildSpec, { ...opts, size: 200 });
+  const svgLarge = buildAvatar(p.buildSpec, { ...opts, size: 512 });
   let bytes: Uint8Array | undefined;
   try {
     bytes = await rasterizeSvgToPng(svgLarge, 512);
@@ -1008,7 +1512,262 @@ async function doBuildPrimary() {
     console.error('[navii] rasterize failed', err);
   }
   parent.postMessage({
-    pluginMessage: { type: 'insert-build', spec: buildSpec, options: { size: 200 }, svg, bytes },
+    pluginMessage: {
+      type: 'insert-build',
+      spec: p.buildSpec,
+      options: { ...opts, size: 200 },
+      svg, bytes, force,
+    },
+  }, '*');
+}
+
+function currentBuildOptionsFromSpec(_spec: BuildSpec, _preset: MascotPresetUI): AvatarOptions {
+  // Build presets don't currently capture brand palette — keep simple.
+  return { size: 200 };
+}
+
+/**
+ * Edit a preset — materializes the spec (running selectAvatar for seed
+ * presets) and loads into Build tab's manual pickers.
+ */
+function editMascot(p: MascotPresetUI) {
+  let spec: BuildSpec;
+  if (p.mode === 'build' && p.buildSpec) {
+    spec = { ...p.buildSpec };
+  } else {
+    // Seed preset → run selectAvatar to derive the exact parts that seed
+    // produces under the preset's options, then map to BuildSpec.
+    const seed = p.seed || 'alice';
+    const opts: AvatarOptions = {};
+    if (p.packs && p.packs.length > 0) opts.packs = p.packs;
+    if (p.style) opts.style = p.style;
+    if (p.mood) opts.mood = p.mood;
+    if (p.paletteId) opts.paletteId = p.paletteId;
+    if (p.background) opts.background = p.background;
+    const a = selectAvatar(seed, opts);
+    spec = {
+      palette: a.palette.id,
+      body: a.body,
+      eyes: a.eyes,
+      mouth: a.mouth,
+      antenna: a.antenna,
+      accessory: a.accessory,
+      background: a.background,
+      topper: a.topper,
+      outfit: a.outfit,
+      hueShift: a.hueShift,
+      bodyScale: a.bodyScale,
+      eyeGapShift: a.eyeGapShift,
+      mouthCurveScale: a.mouthCurveScale,
+      antennaTilt: a.antennaTilt,
+    };
+  }
+  Object.assign(buildSpec, spec);
+  renderBuildPalettes();
+  renderBuildPickers();
+  renderBuildPreview();
+  setActiveTab('build');
+  notifyHost(`Editing "${p.name}" — changes won't overwrite the saved mascot`);
+}
+
+function bindMascotActionModalHandlers() {
+  document.getElementById('mascot-action-close')?.addEventListener('click', closeMascotActionModal);
+  document.getElementById('mascot-action-modal')?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).id === 'mascot-action-modal') closeMascotActionModal();
+  });
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('#mascot-action-modal .action-btn'),
+  );
+  for (const btn of buttons) {
+    btn.addEventListener('click', () => {
+      const action = btn.getAttribute('data-action') as
+        'insert' | 'fill' | 'edit' | 'delete' | null;
+      if (action) handleMascotAction(action);
+    });
+  }
+}
+
+function loadMascot(p: MascotPresetUI) {
+  if (p.mode === 'build' && p.buildSpec) {
+    Object.assign(buildSpec, p.buildSpec);
+    if (p.style) {
+      seedState.style = p.style;
+      persistStyle();
+    }
+    if (p.packs) {
+      enabledPackIds = new Set(p.packs);
+      persistEnabledPacks();
+      renderPackGrid();
+      renderPacksHero();
+    }
+    renderBuildPickers();
+    renderBuildPreview();
+    setActiveTab('build');
+    notifyHost(`Loaded "${p.name}"`);
+    return;
+  }
+  // seed mode
+  if (p.seed) $<HTMLInputElement>('seed-input').value = p.seed;
+  if (p.paletteId !== undefined) seedState.seedPaletteId = p.paletteId;
+  else seedState.seedPaletteId = '';
+  if (p.background !== undefined) seedState.background = p.background;
+  else seedState.background = '';
+  if (p.style) {
+    seedState.style = p.style;
+    persistStyle();
+  } else {
+    seedState.style = '';
+    persistStyle();
+  }
+  if (p.mood) {
+    seedState.mood = p.mood;
+    persistMood();
+  } else {
+    seedState.mood = '';
+    persistMood();
+  }
+  enabledPackIds = new Set(p.packs ?? []);
+  persistEnabledPacks();
+  renderSeedPalettes();
+  renderPackGrid();
+  renderPacksHero();
+  renderMoodRow();
+  renderSeedPreview();
+  setActiveTab('seed');
+  notifyHost(`Loaded "${p.name}"`);
+}
+
+// ---------- Save mascot modal ----------
+//
+// Opened from "+ Add to library" link in Seed / Build (and from the Mascots
+// tab's primary button). Asks for a name + shows a live thumbnail of the
+// avatar currently configured in the active tab. Pro-only — non-Pro click
+// opens the upgrade modal instead.
+
+function openSaveMascotModal() {
+  if (!isPaid()) {
+    openUpgradeModal();
+    return;
+  }
+  const overlay = document.getElementById('save-mascot-modal');
+  if (!overlay) return;
+  // Render live thumbnail using whichever tab the user is in.
+  const thumb = document.getElementById('save-mascot-thumb');
+  if (thumb) {
+    if (activeTab === 'build') {
+      setSvgPreview(thumb, buildAvatar(buildSpec, currentBuildOptions(96, false)));
+    } else {
+      const seed = $<HTMLInputElement>('seed-input').value.trim() || 'alice';
+      setSvgPreview(thumb, createAvatar(seed, { ...currentSeedOptions(), size: 96 }));
+    }
+  }
+  const input = document.getElementById('save-mascot-name') as HTMLInputElement | null;
+  if (input) {
+    input.value = '';
+    setTimeout(() => input.focus(), 50);
+  }
+  const status = document.getElementById('save-mascot-status');
+  if (status) { status.textContent = ''; status.className = 'save-mascot-status'; }
+  overlay.classList.add('show');
+}
+
+function closeSaveMascotModal() {
+  const overlay = document.getElementById('save-mascot-modal');
+  if (overlay) overlay.classList.remove('show');
+}
+
+function submitSaveMascotModal() {
+  const input = document.getElementById('save-mascot-name') as HTMLInputElement | null;
+  const status = document.getElementById('save-mascot-status');
+  const name = (input?.value ?? '').trim();
+  if (!name) {
+    if (status) {
+      status.textContent = 'Name required.';
+      status.className = 'save-mascot-status err';
+    }
+    input?.focus();
+    return;
+  }
+  if (!isPaid()) {
+    closeSaveMascotModal();
+    openUpgradeModal();
+    return;
+  }
+  const preset = captureCurrentAvatar(name);
+  parent.postMessage({ pluginMessage: { type: 'preset-save', preset } }, '*');
+  closeSaveMascotModal();
+  notifyHost(`Saved "${name}" to library`);
+}
+
+function bindMascotHandlers() {
+  // "+ Add to library" links from Seed / Build / Mascots tab.
+  const triggers = ['seed-add-to-library', 'build-add-to-library', 'mascot-add-from-tab'];
+  for (const id of triggers) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', openSaveMascotModal);
+  }
+  // Modal close handlers — × button, Cancel, backdrop click, Esc key.
+  document.getElementById('save-mascot-close')?.addEventListener('click', closeSaveMascotModal);
+  document.getElementById('save-mascot-cancel')?.addEventListener('click', closeSaveMascotModal);
+  document.getElementById('save-mascot-modal')?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).id === 'save-mascot-modal') closeSaveMascotModal();
+  });
+  document.getElementById('save-mascot-submit')?.addEventListener('click', submitSaveMascotModal);
+  const input = document.getElementById('save-mascot-name') as HTMLInputElement | null;
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submitSaveMascotModal();
+    if (e.key === 'Escape') closeSaveMascotModal();
+  });
+}
+
+// ---------- Daily usage chip ----------
+function renderUsageChip(u: { count: number; limit: number; pro: boolean }) {
+  const chip = document.getElementById('usage-chip');
+  const txt = document.getElementById('usage-chip-text');
+  if (!chip || !txt) return;
+  chip.classList.remove('low', 'out', 'pro');
+  if (u.pro) {
+    chip.classList.add('pro');
+    txt.textContent = 'Pro · Unlimited';
+    chip.title = 'Pro license active — no daily limit.';
+    chip.onclick = null;
+    return;
+  }
+  const left = Math.max(0, u.limit - u.count);
+  txt.textContent = left === 0 ? `Daily limit reached` : `${left} of ${u.limit} left today`;
+  chip.title = left === 0
+    ? 'Daily insert budget used. Upgrade to Pro for unlimited inserts.'
+    : `Free tier: ${u.limit} inserts per day. Upgrade to Pro for unlimited.`;
+  if (left === 0) {
+    chip.classList.add('out');
+    chip.onclick = () => openUpgradeModal();
+  } else {
+    if (left <= 3) chip.classList.add('low');
+    chip.onclick = null;
+  }
+}
+
+function requestUsage() {
+  parent.postMessage({ pluginMessage: { type: 'usage-get' } }, '*');
+}
+
+// Build mode primary: rasterize PNG up-front so main thread can either fill
+// the current selection or place a new SVG node depending on what's selected.
+async function doBuildPrimary() {
+  const svg = buildAvatar(buildSpec, currentBuildOptions(200, false));
+  const svgLarge = buildAvatar(buildSpec, currentBuildOptions(512, false));
+  let bytes: Uint8Array | undefined;
+  try {
+    bytes = await rasterizeSvgToPng(svgLarge, 512);
+  } catch (err) {
+    console.error('[navii] rasterize failed', err);
+  }
+  // Pre-rasterized SVG + PNG are sent to main thread; carry the same options
+  // so the inserted node's `naviiOptions` plugin data reflects the brand
+  // palette in use. Main thread itself can't reconstruct the palette object
+  // (it doesn't share UI's brand state), so we rely on what UI sends.
+  parent.postMessage({
+    pluginMessage: { type: 'insert-build', spec: buildSpec, options: currentBuildOptions(200, false), svg, bytes },
   }, '*');
 }
 
@@ -1126,6 +1885,18 @@ function init() {
         }
       }
     }
+    if (msg.type === 'presets') {
+      presets = (msg.presets as MascotPresetUI[]) || [];
+      renderMascotGrid();
+    }
+    if (msg.type === 'usage' || msg.type === 'usage-blocked') {
+      const u = msg.usage as { count: number; limit: number; pro: boolean };
+      renderUsageChip(u);
+      if (msg.type === 'usage-blocked') openUpgradeModal();
+    }
+    if (msg.type === 'onboarding-status') {
+      handleOnboardingStatus(msg.seen === true);
+    }
   });
 
   // Pro pill + upgrade modal wiring
@@ -1136,13 +1907,58 @@ function init() {
   document.getElementById('upgrade-modal')?.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).id === 'upgrade-modal') closeUpgradeModal();
   });
+  // Pack-detail modal: dismiss when clicking the overlay outside the card.
+  document.getElementById('pack-modal')?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).id === 'pack-modal') closePackModal();
+  });
+  // Esc also dismisses any open modal-overlay (defensive — handled by browser
+  // for most form fields but not the pack-modal which has no inputs).
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePackModal();
+  });
   $('modal-buy').addEventListener('click', () => {
     window.open(POLAR_PURCHASE_URL, '_blank');
   });
   $('modal-have-key').addEventListener('click', () => {
-    const sec = document.getElementById('modal-key-section');
-    if (sec) sec.style.display = 'block';
-    $<HTMLInputElement>('modal-key-input').focus();
+    setUpgradeModalView('key');
+  });
+  // Carousel navigation — delegated handler on the slides wrapper.
+  // Catches clicks on dots (data-slide) + Next/Back buttons (data-target-slide).
+  const slidesHost = document.getElementById('upgrade-slides');
+  if (slidesHost) {
+    slidesHost.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const dot = target.closest('.upgrade-dot');
+      if (dot) {
+        const idx = Number.parseInt(dot.getAttribute('data-slide') ?? '0', 10);
+        setUpgradeCarouselSlide(idx);
+        return;
+      }
+      const nav = target.closest<HTMLElement>('[data-target-slide]');
+      if (nav) {
+        const idx = Number.parseInt(nav.getAttribute('data-target-slide') ?? '0', 10);
+        setUpgradeCarouselSlide(idx);
+      }
+    });
+  }
+  // Left/Right arrows step the carousel when modal is open + on buy view
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('upgrade-modal');
+    const card = document.getElementById('upgrade-modal-card');
+    if (!modal || !modal.classList.contains('show')) return;
+    if (card?.getAttribute('data-view') !== 'buy') return;
+    if (e.key === 'ArrowRight') setUpgradeCarouselSlide(Math.min(1, upgradeCarouselSlide + 1));
+    else if (e.key === 'ArrowLeft') setUpgradeCarouselSlide(Math.max(0, upgradeCarouselSlide - 1));
+  });
+  $('modal-key-back').addEventListener('click', () => {
+    setUpgradeModalView('buy');
+  });
+  // Enter inside the key input also fires verify.
+  $<HTMLInputElement>('modal-key-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      $('modal-key-verify').click();
+    }
   });
   $('modal-key-verify').addEventListener('click', () => {
     const key = $<HTMLInputElement>('modal-key-input').value.trim();
@@ -1189,76 +2005,46 @@ function init() {
     if (e.key === 'Enter') $('brand-hex-apply').click();
   });
 
+  // Multi-hex quick-import — paste several hex codes at once.
+  const multiInput = document.getElementById('brand-multi-input') as HTMLInputElement | null;
+  const multiBtn = document.getElementById('brand-multi-apply');
+  if (multiBtn && multiInput) {
+    multiBtn.addEventListener('click', () => {
+      applyBrandFromMultiHex(multiInput.value);
+    });
+    multiInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') applyBrandFromMultiHex(multiInput.value);
+    });
+  }
+
   updateBrandUi();
 
-  // Onboarding (first run only) — stage 1: confetti + cast, stage 2: hero + live seed
-  const onboardEl = $('onboarding');
-  const onboardKey = 'navii.onboarded';
-  let seenOnboarding = false;
-  try { seenOnboarding = localStorage.getItem(onboardKey) === 'true'; } catch { /* noop */ }
+  // Onboarding (first run only) — persistence handled by main thread via
+  // figma.clientStorage (UI iframe localStorage is unreliable across sessions).
+  // We bind handlers eagerly but only reveal the screen if the main thread
+  // tells us the user has not seen it yet.
+  $('onboarding-start').addEventListener('click', () => dismissOnboarding('start'));
+  $('onboarding-skip').addEventListener('click', () => dismissOnboarding('skip'));
 
-  function dismissOnboarding() {
-    const seedEl = $<HTMLInputElement>('onb-seed');
-    const typed = seedEl ? seedEl.value.trim() : '';
-    onboardEl.classList.remove('show', 'stage-1', 'stage-2');
-    try { localStorage.setItem(onboardKey, 'true'); } catch { /* noop */ }
-    // Wipe onboarding SVGs so their <defs> IDs (navii-grad-<seedHash>) leave
-    // the document. Otherwise the hero SVG (carrying same seed as main
-    // preview) collides on gradient IDs and the visible main preview
-    // resolves url(#...) to the hidden onboarding defs → empty fill = faded.
-    const heroEl = document.getElementById('onb-hero');
-    const castEl = document.getElementById('onb-cast');
-    const confEl = document.getElementById('onb-confetti');
-    if (heroEl) clear(heroEl);
-    if (castEl) clear(castEl);
-    if (confEl) clear(confEl);
-    const main = $<HTMLInputElement>('seed-input');
-    if (main && typed) main.value = typed;
-    requestAnimationFrame(() => {
-      renderSeedPreview();
-      renderBuildPreview();
+  const onbSeedInput = $<HTMLInputElement>('onb-seed');
+  if (onbSeedInput) {
+    onbSeedInput.addEventListener('input', () => {
+      const v = onbSeedInput.value.trim() || 'Navii';
+      renderOnbHero(v);
+      const heroEl = document.getElementById('onb-hero');
+      if (heroEl) {
+        heroEl.classList.remove('pulse');
+        // Reflow so re-adding the class restarts the animation.
+        void heroEl.offsetWidth;
+        heroEl.classList.add('pulse');
+      }
+    });
+    onbSeedInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') dismissOnboarding('start');
     });
   }
 
-  function transitionToHero() {
-    onboardEl.classList.add('stage-2');
-    const tiles = onboardEl.querySelectorAll<HTMLElement>('.cast-tile');
-    tiles.forEach((tile, i) => {
-      const angle = (i / Math.max(tiles.length, 1)) * Math.PI * 2 + Math.random() * 0.5;
-      const dist = 230 + Math.random() * 70;
-      tile.style.setProperty('--tx', (Math.cos(angle) * dist).toFixed(0) + 'px');
-      tile.style.setProperty('--ty', (Math.sin(angle) * dist).toFixed(0) + 'px');
-      tile.style.setProperty('--rot', ((Math.random() - 0.5) * 60).toFixed(0) + 'deg');
-    });
-    renderOnbHero('Navii');
-    updateOnbBubble('Navii');
-    const titleEl = document.getElementById('onb-title');
-    const leadEl = document.getElementById('onb-lead');
-    if (titleEl) titleEl.textContent = 'Make yours.';
-    if (leadEl) leadEl.textContent = 'Type any name. Same seed → same mascot, forever.';
-    const seedInput = $<HTMLInputElement>('onb-seed');
-    if (seedInput) {
-      seedInput.addEventListener('input', () => {
-        const v = seedInput.value.trim() || 'Navii';
-        renderOnbHero(v);
-        updateOnbBubble(v);
-      });
-      seedInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') dismissOnboarding();
-      });
-      setTimeout(() => seedInput.focus(), 700);
-    }
-  }
-
-  if (!seenOnboarding) {
-    onboardEl.classList.add('show', 'stage-1');
-    renderOnboardingCast();
-    spawnConfetti(60);
-    setTimeout(transitionToHero, 1600);
-  }
-
-  $('onboarding-start').addEventListener('click', dismissOnboarding);
-  $('onboarding-skip').addEventListener('click', dismissOnboarding);
+  parent.postMessage({ pluginMessage: { type: 'onboarding-get' } }, '*');
 
   // Initial render
   $<HTMLInputElement>('seed-input').value = 'alice';
@@ -1270,54 +2056,76 @@ function init() {
   renderRecent();
   renderPackGrid();
   renderPacksHero();
-  bindStyleHintHandlers();
-  renderStyleHintRow();
+  bindMascotHandlers();
+  bindMascotActionModalHandlers();
+  bindMoodHandlers();
+  renderMoodRow();
+  requestPresets();
+  requestUsage();
+}
+
+function handleOnboardingStatus(seen: boolean) {
+  if (seen) return;
+  const onboardEl = document.getElementById('onboarding');
+  if (!onboardEl) return;
+  onboardEl.classList.add('show');
+  renderOnboardingCast();
+  renderOnbHero('Navii');
+  const seedInput = document.getElementById('onb-seed') as HTMLInputElement | null;
+  if (seedInput) setTimeout(() => seedInput.focus(), 500);
+}
+
+function dismissOnboarding(via: 'start' | 'skip') {
+  const onboardEl = document.getElementById('onboarding');
+  if (!onboardEl) return;
+  const seedEl = document.getElementById('onb-seed') as HTMLInputElement | null;
+  const typed = seedEl ? seedEl.value.trim() : '';
+  onboardEl.classList.remove('show');
+  parent.postMessage(
+    { pluginMessage: { type: 'onboarding-set', seen: true } },
+    '*',
+  );
+  // Wipe onboarding SVGs so their <defs> IDs (navii-grad-<seedHash>) leave
+  // the document. Otherwise the hero SVG (carrying same seed as main
+  // preview) collides on gradient IDs and the visible main preview
+  // resolves url(#...) to the hidden onboarding defs → empty fill = faded.
+  const heroEl = document.getElementById('onb-hero');
+  const castEl = document.getElementById('onb-cast');
+  if (heroEl) clear(heroEl);
+  if (castEl) clear(castEl);
+  const main = document.getElementById('seed-input') as HTMLInputElement | null;
+  if (main && typed) {
+    main.value = typed;
+    notifyHost(`Saved "${typed}" as your starter mascot.`);
+  }
+  requestAnimationFrame(() => {
+    renderSeedPreview();
+    renderBuildPreview();
+  });
+  // Drop reason on the floor for now — keeps signature future-proof for analytics.
+  void via;
 }
 
 function renderOnboardingCast() {
+  // Small thumbnail strip under the hero — hints at variety without
+  // dominating the screen.
   const cast = document.getElementById('onb-cast');
   if (!cast) return;
   clear(cast);
-  const seeds = ['aria', 'milo', 'nova', 'kai', 'sage', 'eden', 'luna', 'rio'];
+  const seeds = ['aria', 'milo', 'nova', 'kai', 'sage', 'eden'];
   seeds.forEach((seed, i) => {
     const tile = document.createElement('div');
-    tile.className = 'cast-tile';
-    tile.style.animationDelay = (i * 80) + 'ms';
-    setSvgPreview(tile, createAvatar(seed, { size: 76, animated: true }));
+    tile.className = 'mini-tile';
+    tile.style.animationDelay = (i * 60 + 200) + 'ms';
+    setSvgPreview(tile, createAvatar(seed, { size: 30, animated: false }));
     cast.appendChild(tile);
   });
-}
-
-function spawnConfetti(count: number) {
-  const wrap = document.getElementById('onb-confetti');
-  if (!wrap) return;
-  clear(wrap);
-  const colors = ['#6366f1', '#a855f7', '#22d3ee', '#f59e0b', '#34d399', '#f43f5e', '#facc15'];
-  for (let i = 0; i < count; i++) {
-    const bit = document.createElement('div');
-    bit.className = 'confetti-bit';
-    bit.style.left = (Math.random() * 100) + '%';
-    bit.style.background = colors[i % colors.length] || '#6366f1';
-    bit.style.animationDelay = (Math.random() * 400) + 'ms';
-    bit.style.animationDuration = (1500 + Math.random() * 800) + 'ms';
-    wrap.appendChild(bit);
-  }
 }
 
 function renderOnbHero(seed: string) {
   const hero = document.getElementById('onb-hero');
   if (!hero) return;
-  setSvgPreview(hero, createAvatar(seed, { size: 180, animated: true }));
-}
-
-function updateOnbBubble(name: string) {
-  const bubble = document.getElementById('onb-bubble');
-  if (!bubble) return;
-  bubble.textContent = '';
-  bubble.appendChild(document.createTextNode("Hi, I'm "));
-  const strong = document.createElement('strong');
-  strong.textContent = name;
-  bubble.appendChild(strong);
+  setSvgPreview(hero, createAvatar(seed, { size: 156, animated: true }));
 }
 
 try {

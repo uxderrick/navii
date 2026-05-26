@@ -83,7 +83,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 - Mono switched to full-bleed squircle (was contained orb) for editorial tile look.
 
 ### Added (API host)
-- **Polar.sh license verification** — `POST /license/verify` now proxies to Polar's `/v1/customer-portal/license-keys/validate` (replaces Gumroad). Validates `status === 'granted'`, expiry, and optional benefit-id match.
+- **Polar.sh license verification** — `POST /license/verify` now proxies to Polar's `/v1/customer-portal/license-keys/validate` (replaces Polar.sh). Validates `status === 'granted'`, expiry, and optional benefit-id match.
 - **`GET /checkout`** — redirects to Polar checkout w/ configured product preselected. Powered by `@polar-sh/hono`.
 - **`GET /portal`** — Polar customer portal proxy (license re-fetch, refund request).
 - **`POST /polar/webhooks`** — signature-verified webhook receiver, logs events.
@@ -92,12 +92,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 - 8 new license unit tests w/ fetch mock covering granted/revoked/expired/wrong-product/upstream-error paths.
 
 ### Changed (API host)
-- Privacy page swapped Gumroad references for Polar.sh.
-- `AppOptions` renamed `gumroadProductPermalink` → `polarOrganizationId` + related Polar fields.
+- Privacy page swapped Polar.sh references for Polar.sh.
+- `AppOptions` renamed `Polar.shProductPermalink` → `polarOrganizationId` + related Polar fields.
 
 ### Added (Figma plugin)
 - **Style hint pill row** in Packs panel — Auto / Masc / Femme / Neutral toggle. Persisted via `navii.style` localStorage. Disabled when no pack active.
-- Plugin checkout URL now points at `${API_BASE}/checkout` (instead of hardcoded Gumroad link), letting us swap payment providers without re-publishing.
+- Plugin checkout URL now points at `${API_BASE}/checkout` (instead of hardcoded Polar.sh link), letting us swap payment providers without re-publishing.
 
 ### Fixed (Figma plugin)
 - Left column in Packs panel was not scrollable when content overflowed (e.g. with new Style hint section). Added `overflow-y: auto` + `min-height: 0` to `.col-left`.

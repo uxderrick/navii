@@ -12,6 +12,13 @@ type InsertMsg = {
   type: 'insert';
   seed: string;
   options: AvatarOptions;
+  /**
+   * Override the default selection-aware routing:
+   * - 'insert' = always create a new SVG node, ignore selection
+   * - 'fill'   = always try to image-fill selected shapes (error if none)
+   * - undefined = legacy: fill if shapes selected, else new node
+   */
+  force?: 'insert' | 'fill';
 };
 
 type InsertBuildMsg = {
@@ -20,6 +27,8 @@ type InsertBuildMsg = {
   options: AvatarOptions;
   svg?: string;
   bytes?: Uint8Array;
+  /** Same semantics as InsertMsg.force — overrides selection-aware routing. */
+  force?: 'insert' | 'fill';
 };
 
 type FillRandomMsg = {
@@ -73,6 +82,7 @@ export interface MascotPreset {
   /** shared — at-save snapshot of options */
   packs?: string[];
   style?: 'masc' | 'femme' | 'neutral';
+  mood?: 'happy' | 'serious' | 'sleepy' | 'wink';
   paletteId?: string;
   background?: 'none' | 'solid' | 'ring';
   createdAt: number;
@@ -81,6 +91,11 @@ export interface MascotPreset {
 type PresetListMsg = { type: 'preset-list' };
 type PresetSaveMsg = { type: 'preset-save'; preset: MascotPreset };
 type PresetDeleteMsg = { type: 'preset-delete'; id: string };
+
+type UsageGetMsg = { type: 'usage-get' };
+
+type OnboardingGetMsg = { type: 'onboarding-get' };
+type OnboardingSetMsg = { type: 'onboarding-set'; seen: boolean };
 
 type Msg =
   | InsertMsg
@@ -95,9 +110,12 @@ type Msg =
   | PresetListMsg
   | PresetSaveMsg
   | PresetDeleteMsg
+  | UsageGetMsg
+  | OnboardingGetMsg
+  | OnboardingSetMsg
   | { type: 'close' };
 
-figma.showUI(__html__, { width: 760, height: 640, themeColors: true });
+figma.showUI(__html__, { width: 640, height: 520, themeColors: true });
 
 figma.ui.onmessage = async (msg: Msg) => {
   switch (msg.type) {
@@ -113,6 +131,9 @@ figma.ui.onmessage = async (msg: Msg) => {
     case 'preset-list':    return doPresetList();
     case 'preset-save':    return doPresetSave(msg);
     case 'preset-delete':  return doPresetDelete(msg);
+    case 'usage-get':      return doUsageGet();
+    case 'onboarding-get': return doOnboardingGet();
+    case 'onboarding-set': return doOnboardingSet(msg);
     case 'close':          return figma.closePlugin();
   }
 };
@@ -143,11 +164,139 @@ function placeAt(node: SceneNode, x: number, y: number) {
   node.y = y;
 }
 
+// ---------- Daily usage cap (free tier) ----------
+//
+// Free users get a soft daily insert budget. Pro skips the check entirely.
+// Counter lives in figma.clientStorage so it follows the user across files.
+// Reset is local-midnight by ISO date string (YYYY-MM-DD).
+//
+// Client-side counter is a deterrent, not a vault — a determined user could
+// clear clientStorage or uninstall to reset. Sufficient for nudging the
+// curious / casual user toward Pro. Hard cap belongs server-side (future
+// API-key gate). v1 keeps it light.
+
+const USAGE_STORAGE_KEY = 'navii.usage';
+const FREE_DAILY_LIMIT = 10;
+
+interface UsageRecord {
+  date: string; // YYYY-MM-DD
+  count: number;
+}
+
+function today(): string {
+  // Use device-local YYYY-MM-DD so the reset feels right wherever the user is.
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+async function readUsage(): Promise<UsageRecord> {
+  try {
+    const stored = await figma.clientStorage.getAsync(USAGE_STORAGE_KEY);
+    if (!stored || typeof stored !== 'object') return { date: today(), count: 0 };
+    const rec = stored as UsageRecord;
+    if (rec.date !== today()) return { date: today(), count: 0 };
+    return rec;
+  } catch {
+    return { date: today(), count: 0 };
+  }
+}
+
+async function writeUsage(rec: UsageRecord): Promise<void> {
+  try {
+    await figma.clientStorage.setAsync(USAGE_STORAGE_KEY, rec);
+  } catch {
+    // clientStorage rarely fails; non-fatal.
+  }
+}
+
+function isProActive(): boolean {
+  return cachedLicenseOk;
+}
+
+let cachedLicenseOk = false;
+
+/**
+ * Check + reserve one insert against the daily budget. Returns true if the
+ * action is allowed; false (and pings UI to show the upgrade modal) otherwise.
+ * Pro users always pass.
+ */
+async function checkAndIncrementUsage(): Promise<boolean> {
+  if (isProActive()) return true;
+  const rec = await readUsage();
+  if (rec.count >= FREE_DAILY_LIMIT) {
+    figma.notify(
+      `Daily limit reached (${FREE_DAILY_LIMIT}). Upgrade to Pro for unlimited inserts.`,
+      { error: true },
+    );
+    figma.ui.postMessage({
+      type: 'usage-blocked',
+      usage: { ...rec, limit: FREE_DAILY_LIMIT, pro: false },
+    });
+    return false;
+  }
+  const next = { date: rec.date, count: rec.count + 1 };
+  await writeUsage(next);
+  figma.ui.postMessage({
+    type: 'usage',
+    usage: { ...next, limit: FREE_DAILY_LIMIT, pro: false },
+  });
+  return true;
+}
+
+async function doUsageGet() {
+  const rec = await readUsage();
+  figma.ui.postMessage({
+    type: 'usage',
+    usage: { ...rec, limit: FREE_DAILY_LIMIT, pro: isProActive() },
+  });
+}
+
+// ---------- Onboarding seen-flag ----------
+//
+// Figma plugin UI iframe localStorage is unreliable across sessions, so the
+// onboarding screen was showing on every launch. Persistent flag lives in
+// figma.clientStorage on the main thread.
+
+const ONBOARDING_STORAGE_KEY = 'navii.onboarded';
+
+async function doOnboardingGet() {
+  let seen = false;
+  try {
+    const stored = await figma.clientStorage.getAsync(ONBOARDING_STORAGE_KEY);
+    seen = stored === true;
+  } catch {
+    // clientStorage rarely fails; treat as unseen.
+  }
+  figma.ui.postMessage({ type: 'onboarding-status', seen });
+}
+
+async function doOnboardingSet(msg: OnboardingSetMsg) {
+  try {
+    if (msg.seen) {
+      await figma.clientStorage.setAsync(ONBOARDING_STORAGE_KEY, true);
+    } else {
+      await figma.clientStorage.deleteAsync(ONBOARDING_STORAGE_KEY);
+    }
+  } catch {
+    // non-fatal.
+  }
+}
+
 async function doInsert(msg: InsertMsg) {
-  // Selection-aware: shapes selected → image-fill each one with the seed.
-  // No selection → create new SVG node at viewport center.
+  if (!(await checkAndIncrementUsage())) return;
+  // Routing:
+  // - force='fill'    → must fill selection (error if none)
+  // - force='insert'  → always create new node, ignore selection
+  // - undefined       → legacy: fill if selection, else new node
   const fillable = fillableSelection();
-  if (fillable.length > 0) {
+  if (msg.force === 'fill' && fillable.length === 0) {
+    figma.notify('Select shapes or frames to fill first', { error: true });
+    return;
+  }
+  const shouldFill = msg.force === 'fill' || (msg.force !== 'insert' && fillable.length > 0);
+  if (shouldFill) {
     figma.notify(`Filling ${fillable.length} shape${fillable.length === 1 ? '' : 's'}…`);
     const url = buildUrl(msg.seed, { ...msg.options, size: 512 }, '.png');
     try {
@@ -179,10 +328,21 @@ async function doInsert(msg: InsertMsg) {
 }
 
 async function doInsertBuild(msg: InsertBuildMsg) {
-  // Selection-aware: shapes selected → image-fill each one with the rasterized
-  // build PNG (sent from UI). No selection → place new SVG node.
+  if (!(await checkAndIncrementUsage())) return;
+  // Routing — see InsertMsg.force docs. Build flow can only fill when raster
+  // bytes are present (Figma image fills require PNG, not SVG).
   const fillable = fillableSelection();
-  if (fillable.length > 0 && msg.bytes) {
+  if (msg.force === 'fill' && fillable.length === 0) {
+    figma.notify('Select shapes or frames to fill first', { error: true });
+    return;
+  }
+  if (msg.force === 'fill' && !msg.bytes) {
+    figma.notify('Fill unavailable — no raster bytes', { error: true });
+    return;
+  }
+  const shouldFill = (msg.force === 'fill') ||
+    (msg.force !== 'insert' && fillable.length > 0 && !!msg.bytes);
+  if (shouldFill && msg.bytes) {
     try {
       const image = figma.createImage(msg.bytes);
       const fill: ImagePaint = { type: 'IMAGE', imageHash: image.hash, scaleMode: 'FILL' };
@@ -230,6 +390,9 @@ async function doFillRandom(msg: FillRandomMsg) {
     figma.notify('Select shapes or frames first', { error: true });
     return;
   }
+  // Fill counts as one usage tick regardless of shape count — a single user
+  // action. Casual designers can still test 50-cell grids on free tier.
+  if (!(await checkAndIncrementUsage())) return;
 
   figma.notify(`Generating ${fillable.length} random avatars…`);
 
@@ -347,7 +510,10 @@ async function verifyLicenseRemote(key: string, email?: string): Promise<License
 async function doLicenseVerify(msg: LicenseVerifyMsg) {
   const result = await verifyLicenseRemote(msg.key.trim(), msg.email?.trim());
   await writeLicense(result.ok ? result : null);
+  cachedLicenseOk = result.ok;
   figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(result) });
+  // Push fresh usage state so UI removes / shows the daily counter promptly.
+  void doUsageGet();
   if (result.ok) {
     figma.notify('Navii Pro unlocked. Thanks!');
   } else {
@@ -358,23 +524,28 @@ async function doLicenseVerify(msg: LicenseVerifyMsg) {
 async function doLicenseRestore() {
   const cached = await readLicense();
   if (!cached) {
+    cachedLicenseOk = false;
     figma.ui.postMessage({ type: 'license-status', license: { ok: false } });
     return;
   }
   const stale = Date.now() - cached.verifiedAt > LICENSE_REVALIDATE_MS;
   if (!stale) {
+    cachedLicenseOk = true;
     figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(cached) });
     return;
   }
   // Stale — re-verify silently using the cached key (kept main-thread only).
   const fresh = await verifyLicenseRemote(cached.key);
   await writeLicense(fresh.ok ? fresh : null);
+  cachedLicenseOk = fresh.ok;
   figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(fresh) });
 }
 
 async function doLicenseClear() {
   await writeLicense(null);
+  cachedLicenseOk = false;
   figma.ui.postMessage({ type: 'license-status', license: { ok: false } });
+  void doUsageGet();
   figma.notify('Pro license removed from this device');
 }
 
