@@ -6,6 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.21.2] - 2026-05-26
+
+### Changed (API host)
+- Golly logo now links to `https://gollyexpress.com/` and is labeled "Golly Express".
+
 ## [0.21.1] - 2026-05-26
 
 ### Added (API host)
