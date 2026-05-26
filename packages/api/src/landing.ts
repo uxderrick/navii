@@ -500,8 +500,14 @@ export function landingHtml(): string {
     gap: 40px 56px;
   }
   @media (max-width: 540px) {
-    .logos-rows { gap: 24px; }
-    .logos-row { gap: 28px 36px; }
+    .logos-rows {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 28px 36px;
+    }
+    .logos-row { display: contents; }
   }
   .logo {
     display: inline-flex;
@@ -767,8 +773,8 @@ export function landingHtml(): string {
       <a class="logo" href="https://clerra.app/" aria-label="Clerra">
         <img src="/logos/clerra.svg" alt="Clerra" loading="lazy" />
       </a>
-      <a class="logo" href="https://fleetlinq.online/" aria-label="Brand">
-        <img class="lg" src="/logos/brand.webp" alt="Brand" loading="lazy" />
+      <a class="logo" href="https://fleetlinq.online/" target="_blank" rel="noopener" aria-label="Fleetlinq">
+        <img class="lg" src="/logos/fleetlinq.png" alt="Fleetlinq" loading="lazy" />
       </a>
       <a class="logo" href="https://soma-me-zeta.vercel.app/" aria-label="Brand">
         <img class="lg" src="/logos/van.svg" alt="Brand" loading="lazy" />
@@ -1180,6 +1186,20 @@ export function landingHtml(): string {
   });
 
   rebuild();
+
+  // shuffle logos on every page load
+  const logoRows = document.querySelectorAll('.logos-rows .logos-row');
+  if (logoRows.length >= 2) {
+    const all = [];
+    logoRows.forEach(function (r) { all.push.apply(all, Array.from(r.children)); });
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = all[i]; all[i] = all[j]; all[j] = tmp;
+    }
+    const half = Math.ceil(all.length / 2);
+    logoRows[0].replaceChildren.apply(logoRows[0], all.slice(0, half));
+    logoRows[1].replaceChildren.apply(logoRows[1], all.slice(half));
+  }
 })();
 </script>
 

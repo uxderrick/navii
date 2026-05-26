@@ -9,7 +9,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 ## [0.21.1] - 2026-05-26
 
 ### Added (API host)
-- Golly logo in the landing "built with navii" wall.
+- Golly and Fleetlinq logos in the landing "built with navii" wall.
+- Client-side Fisher-Yates shuffle of logos on every page load, so positions vary while the response itself stays cacheable.
+
+### Changed (API host)
+- On viewports ≤540px the two logo rows collapse into a single wrapping row via `display: contents`. Desktop unchanged.
 
 ## [0.21.0] - 2026-05-26
 
