@@ -6,6 +6,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.22.4] - 2026-05-26
+
+### Fixed (Figma plugin)
+- **Missing `permissions: ["teamlibrary"]`** in `manifest.json`. Without it, `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()` throws and Brand mode silently returns an empty palette list for every Pro user. Added.
+- **`innerHTML` interpolation** of `pack.name` and `pack.emoji` replaced with `createElement` + `textContent` (ui.ts, active-packs chip + pack-card title). XSS surface closed even though current pack data is static.
+- **`doInsertBuild` new-node path** now wrapped in try/catch — uncaught throw from `figma.createNodeFromSvg` would otherwise kill the plugin's main thread.
+
+### Removed (Figma plugin)
+- **Cmd+Shift+P dev-bypass shortcut** that unlocked Pro features for free. Violated Figma's review policy (hidden functionality circumventing fees). Deleted entirely; only the Cmd+Enter primary-action shortcut remains.
+
+### Changed (Figma plugin)
+- **License key no longer crosses the iframe boundary.** Main thread sends a sanitized `publicLicenseView()` over `figma.ui.postMessage`. The raw key stays in the main thread (needed for re-verify) + `figma.clientStorage` only. UI never sees or stores the key string.
+
+### Fixed (build pipeline)
+- **`scripts/build.mjs`** stopped escaping `<script` (without `/`). Per HTML5 only `</script` ends a script block; the extra replace could corrupt minified regex/string literals containing the substring. Only `</script` is escaped now.
+
 ## [0.22.3] - 2026-05-26
 
 ### Fixed (API host)
@@ -137,7 +153,8 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.3...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.22.4...HEAD
+[0.22.4]: https://github.com/uxderrick/navii/compare/v0.22.3...v0.22.4
 [0.22.3]: https://github.com/uxderrick/navii/compare/v0.22.2...v0.22.3
 [0.22.2]: https://github.com/uxderrick/navii/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/uxderrick/navii/compare/v0.22.0...v0.22.1

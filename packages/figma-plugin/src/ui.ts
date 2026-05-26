@@ -854,7 +854,12 @@ function renderPacksHero() {
         if (!pack) continue;
         const chip = document.createElement('span');
         chip.className = 'active-pack-chip';
-        chip.innerHTML = `<span>${pack.emoji ?? '✦'}</span><span>${pack.name}</span>`;
+        const chipEmoji = document.createElement('span');
+        chipEmoji.textContent = pack.emoji ?? '✦';
+        const chipName = document.createElement('span');
+        chipName.textContent = pack.name;
+        chip.appendChild(chipEmoji);
+        chip.appendChild(chipName);
         const x = document.createElement('span');
         x.className = 'x';
         x.textContent = '×';
@@ -891,7 +896,9 @@ function renderPackGrid() {
     info.className = 'pack-card-info';
     const title = document.createElement('div');
     title.className = 'pack-card-title';
-    title.innerHTML = `<span>${pack.name}</span>`;
+    const titleName = document.createElement('span');
+    titleName.textContent = pack.name;
+    title.appendChild(titleName);
     if (!available) {
       const days = Math.max(0, Math.ceil((new Date(pack.unlockDate!).getTime() - Date.now()) / 86_400_000));
       const badge = document.createElement('span');
@@ -1090,21 +1097,11 @@ function init() {
     parent.postMessage({ pluginMessage: { type: 'fill-random', options: opts } }, '*');
   });
 
-  // Cmd/Ctrl+Enter shortcut
+  // Cmd/Ctrl+Enter shortcut — submit primary action without leaving keyboard
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       doPrimary();
-    }
-    // Dev bypass — Cmd+Shift+P toggles Pro locally for testing.
-    // This only flips the UI's `isPaid()` view; server-side gated features
-    // (Gumroad-verified) still need a real key. Safe to ship — power users
-    // can find this in the source anyway.
-    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'p') {
-      e.preventDefault();
-      const now = !isPaid();
-      setLicenseStatus(now ? { ok: true, plan: 'pro', email: 'dev@local' } : { ok: false });
-      console.log('[navii] dev pro toggled:', now);
     }
   });
 

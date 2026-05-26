@@ -1,6 +1,6 @@
 {
   "name": "@usenavii/figma-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Navii avatars inside Figma. Insert deterministic mascots into your designs.",
   "type": "module",

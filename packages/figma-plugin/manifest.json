@@ -5,6 +5,7 @@
   "main": "dist/code.js",
   "ui": "dist/ui.html",
   "editorType": ["figma"],
+  "permissions": ["teamlibrary"],
   "networkAccess": {
     "allowedDomains": ["https://api.navii.dev", "https://navii.dev"],
     "reasoning": "api.navii.dev renders avatar SVG/PNG for the seed the user types and verifies optional Pro license keys. navii.dev links to docs, privacy policy, and support."

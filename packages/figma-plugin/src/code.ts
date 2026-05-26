@@ -57,6 +57,31 @@ type NotifyMsg = {
   error?: boolean;
 };
 
+/**
+ * Saved mascot preset — a named snapshot of either a seed (+ pack/style/palette
+ * overrides) or a builder spec. Lets users reuse "Our brand mascot Aria",
+ * "Acme Bot", etc. across files. Stored in figma.clientStorage per user.
+ */
+export interface MascotPreset {
+  id: string;
+  name: string;
+  mode: 'seed' | 'build';
+  /** seed mode only */
+  seed?: string;
+  /** build mode only */
+  buildSpec?: BuildSpec;
+  /** shared — at-save snapshot of options */
+  packs?: string[];
+  style?: 'masc' | 'femme' | 'neutral';
+  paletteId?: string;
+  background?: 'none' | 'solid' | 'ring';
+  createdAt: number;
+}
+
+type PresetListMsg = { type: 'preset-list' };
+type PresetSaveMsg = { type: 'preset-save'; preset: MascotPreset };
+type PresetDeleteMsg = { type: 'preset-delete'; id: string };
+
 type Msg =
   | InsertMsg
   | InsertBuildMsg
@@ -67,6 +92,9 @@ type Msg =
   | ListVariablesMsg
   | CopyUrlMsg
   | NotifyMsg
+  | PresetListMsg
+  | PresetSaveMsg
+  | PresetDeleteMsg
   | { type: 'close' };
 
 figma.showUI(__html__, { width: 760, height: 640, themeColors: true });
@@ -82,6 +110,9 @@ figma.ui.onmessage = async (msg: Msg) => {
     case 'list-variables': return doListVariables();
     case 'copy-url':       return doCopyUrl(msg);
     case 'notify':         return figma.notify(msg.message, msg.error ? { error: true } : undefined);
+    case 'preset-list':    return doPresetList();
+    case 'preset-save':    return doPresetSave(msg);
+    case 'preset-delete':  return doPresetDelete(msg);
     case 'close':          return figma.closePlugin();
   }
 };
@@ -167,18 +198,23 @@ async function doInsertBuild(msg: InsertBuildMsg) {
     return;
   }
 
-  const svg = msg.svg ?? buildAvatar(msg.spec, msg.options);
-  const node = figma.createNodeFromSvg(svg);
-  const labelParts = [
-    msg.spec.body, msg.spec.eyes, msg.spec.mouth, msg.spec.palette,
-  ].filter(Boolean);
-  node.name = `Navii / build / ${labelParts.join('-') || 'custom'}`;
-  node.setPluginData('naviiBuildSpec', JSON.stringify(msg.spec));
-  node.setPluginData('naviiOptions', JSON.stringify(msg.options));
-  const center = figma.viewport.center;
-  placeAt(node, center.x - node.width / 2, center.y - node.height / 2);
-  figma.currentPage.selection = [node];
-  figma.notify('Inserted custom Navii');
+  try {
+    const svg = msg.svg ?? buildAvatar(msg.spec, msg.options);
+    const node = figma.createNodeFromSvg(svg);
+    const labelParts = [
+      msg.spec.body, msg.spec.eyes, msg.spec.mouth, msg.spec.palette,
+    ].filter(Boolean);
+    node.name = `Navii / build / ${labelParts.join('-') || 'custom'}`;
+    node.setPluginData('naviiBuildSpec', JSON.stringify(msg.spec));
+    node.setPluginData('naviiOptions', JSON.stringify(msg.options));
+    const center = figma.viewport.center;
+    placeAt(node, center.x - node.width / 2, center.y - node.height / 2);
+    figma.currentPage.selection = [node];
+    figma.notify('Inserted custom Navii');
+  } catch (err) {
+    console.error('navii: insert-build (new node) failed', err);
+    figma.notify('Insert failed — try again', { error: true });
+  }
 }
 
 function fillableSelection(): (SceneNode & { fills: readonly Paint[] })[] {
@@ -250,6 +286,25 @@ async function readLicense(): Promise<LicenseRecord | null> {
   }
 }
 
+/**
+ * Sanitized view of a LicenseRecord for posting to the UI iframe.
+ *
+ * The raw license key stays in the main thread (we need it to re-verify on
+ * restore + stale cache refresh). The UI never needs the key string — it
+ * only renders status + email. Stripping `key` here is defense-in-depth so a
+ * future UI logger or DOM dump can't accidentally leak it.
+ */
+function publicLicenseView(rec: LicenseRecord | { ok: false } | null) {
+  if (!rec || !('ok' in rec) || !rec.ok) return { ok: false } as const;
+  return {
+    ok: true as const,
+    ...(rec.plan ? { plan: rec.plan } : {}),
+    ...(rec.purchaseId ? { purchaseId: rec.purchaseId } : {}),
+    ...(rec.email ? { email: rec.email } : {}),
+    ...(rec.verifiedAt ? { verifiedAt: rec.verifiedAt } : {}),
+  };
+}
+
 async function writeLicense(rec: LicenseRecord | null) {
   try {
     if (rec) await figma.clientStorage.setAsync(LICENSE_STORAGE_KEY, rec);
@@ -292,7 +347,7 @@ async function verifyLicenseRemote(key: string, email?: string): Promise<License
 async function doLicenseVerify(msg: LicenseVerifyMsg) {
   const result = await verifyLicenseRemote(msg.key.trim(), msg.email?.trim());
   await writeLicense(result.ok ? result : null);
-  figma.ui.postMessage({ type: 'license-status', license: result });
+  figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(result) });
   if (result.ok) {
     figma.notify('Navii Pro unlocked. Thanks!');
   } else {
@@ -308,13 +363,13 @@ async function doLicenseRestore() {
   }
   const stale = Date.now() - cached.verifiedAt > LICENSE_REVALIDATE_MS;
   if (!stale) {
-    figma.ui.postMessage({ type: 'license-status', license: cached });
+    figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(cached) });
     return;
   }
-  // Stale — re-verify silently.
+  // Stale — re-verify silently using the cached key (kept main-thread only).
   const fresh = await verifyLicenseRemote(cached.key);
   await writeLicense(fresh.ok ? fresh : null);
-  figma.ui.postMessage({ type: 'license-status', license: fresh });
+  figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(fresh) });
 }
 
 async function doLicenseClear() {
@@ -501,4 +556,57 @@ async function doListVariables() {
 async function doCopyUrl(msg: CopyUrlMsg) {
   const url = buildUrl(msg.seed, msg.options);
   figma.ui.postMessage({ type: 'url', url });
+}
+
+// ---------- Saved mascot presets ----------
+//
+// Per-user storage via figma.clientStorage. Persists across files. Pro-only —
+// the gate lives in the UI iframe (isPaid() check) since the storage itself is
+// inert without a way to load presets back into a renderable spec.
+
+const PRESETS_STORAGE_KEY = 'navii.presets';
+const PRESETS_MAX = 100;
+
+async function readPresets(): Promise<MascotPreset[]> {
+  try {
+    const stored = await figma.clientStorage.getAsync(PRESETS_STORAGE_KEY);
+    if (!Array.isArray(stored)) return [];
+    return stored as MascotPreset[];
+  } catch {
+    return [];
+  }
+}
+
+async function writePresets(list: MascotPreset[]): Promise<void> {
+  try {
+    await figma.clientStorage.setAsync(PRESETS_STORAGE_KEY, list);
+  } catch {
+    // clientStorage rarely fails; non-fatal.
+  }
+}
+
+async function doPresetList() {
+  const list = await readPresets();
+  figma.ui.postMessage({ type: 'presets', presets: list });
+}
+
+async function doPresetSave(msg: { preset: MascotPreset }) {
+  const list = await readPresets();
+  const idx = list.findIndex((p) => p.id === msg.preset.id);
+  if (idx >= 0) {
+    list[idx] = msg.preset;
+  } else {
+    list.unshift(msg.preset);
+    if (list.length > PRESETS_MAX) list.length = PRESETS_MAX;
+  }
+  await writePresets(list);
+  figma.ui.postMessage({ type: 'presets', presets: list });
+}
+
+async function doPresetDelete(msg: { id: string }) {
+  const list = await readPresets();
+  const next = list.filter((p) => p.id !== msg.id);
+  if (next.length === list.length) return;
+  await writePresets(next);
+  figma.ui.postMessage({ type: 'presets', presets: next });
 }

@@ -33,14 +33,11 @@ const uiOpts = {
 async function inlineHtml() {
   const html = await readFile(resolve(root, 'src/ui.html'), 'utf8');
   const rawJs = await readFile(resolve(root, 'dist/ui.js'), 'utf8');
-  // Per HTML5, only `</script` (case-insensitive) ends the script block.
-  // Other `</X` patterns (`</g`, `</svg`, etc.) are fine as raw text — the
-  // parser checks against the literal "script" then bails. Escaping them
-  // anyway BREAKS regex literals like `/</g` (turns into `/<\/g` which
-  // never closes). So only touch the dangerous pair.
-  const safeJs = rawJs
-    .replace(/<\/script/gi, '<\\/script')
-    .replace(/<script/gi, '<\\script');
+  // Per HTML5, only `</script` (case-insensitive) ends a script block.
+  // Other `<X` patterns (`<script` without `/`, `<g`, etc.) are inert inside
+  // a script's text content — the parser only watches for the close tag.
+  // Escaping anything else can corrupt minified regex/string literals.
+  const safeJs = rawJs.replace(/<\/script/gi, '<\\/script');
   const marker = '<!-- script injected by build.mjs -->';
   const tag = `<script>${safeJs}</script>`;
   // Use a replacer FUNCTION so `$&`, `$1`, etc. inside `tag` (common in
