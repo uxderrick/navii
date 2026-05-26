@@ -776,6 +776,9 @@ export function landingHtml(): string {
       <a class="logo" href="https://jedevent.com/" aria-label="JED Events">
         <img class="lg" src="/logos/jed.webp" alt="JED Events" loading="lazy" />
       </a>
+      <a class="logo" href="https://app.golly.live/login?redirect=/" target="_blank" rel="noopener" aria-label="Golly">
+        <img class="lg" src="/logos/golly.png" alt="Golly" loading="lazy" />
+      </a>
     </div>
     </div>
   </section>

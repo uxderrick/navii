@@ -6,6 +6,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.21.1] - 2026-05-26
+
+### Added (API host)
+- Golly logo in the landing "built with navii" wall.
+
+## [0.21.0] - 2026-05-26
+
+### Added (API host)
+- Landing "built with navii" logo wall section above the playground, in two centered rows.
+- `GET /logos/:file` route serving PNG/SVG/JPG/WEBP assets from `packages/api/public/logos` with a filename whitelist and path-traversal guard.
+- Dockerfile copies `packages/api/public` into the runtime image so the route works in production.
+
 ## [0.20.1] - 2026-05-25
 
 ### Fixed
