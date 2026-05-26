@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createAvatar, type AvatarOptions, type StyleHint } from '@usenavii/core';
+import { createAvatar, type AvatarOptions, type MoodId, type Palette, type StyleHint } from '@usenavii/core';
 
 export interface NaviiProps extends Omit<AvatarOptions, 'style'> {
   seed: string;
@@ -22,9 +22,11 @@ export function Navii({
   seed,
   size = 96,
   paletteId,
+  palette,
   background,
   title,
   animated,
+  mood,
   className,
   style,
   styleHint,
@@ -33,13 +35,15 @@ export function Navii({
   const dataUri = React.useMemo(() => {
     const opts: AvatarOptions = { size };
     if (paletteId !== undefined) opts.paletteId = paletteId;
+    if (palette !== undefined) opts.palette = palette;
     if (background !== undefined) opts.background = background;
     if (title !== undefined) opts.title = title;
     if (animated !== undefined) opts.animated = animated;
+    if (mood !== undefined) opts.mood = mood;
     if (styleHint !== undefined) opts.style = styleHint;
     const svg = createAvatar(seed, opts);
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  }, [seed, size, paletteId, background, title, animated, styleHint]);
+  }, [seed, size, paletteId, palette, background, title, animated, mood, styleHint]);
 
   return (
     <img
@@ -54,4 +58,4 @@ export function Navii({
 }
 
 export { createAvatar, selectAvatar, renderAvatar } from '@usenavii/core';
-export type { AvatarSpec, AvatarOptions, Palette } from '@usenavii/core';
+export type { AvatarSpec, AvatarOptions, MoodId, Palette } from '@usenavii/core';

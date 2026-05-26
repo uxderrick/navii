@@ -12,7 +12,35 @@ import {
 } from './parts/index.js';
 import { resolvePacks } from './packs/index.js';
 import type { Pack, PackPicks, StylePartSubset } from './packs/types.js';
-import type { AvatarOptions, AvatarSpec, BackgroundId, OutfitId, Palette, StyleHint } from './types.js';
+import type {
+  AvatarOptions,
+  AvatarSpec,
+  BackgroundId,
+  EyeStyleId,
+  MoodId,
+  MouthStyleId,
+  OutfitId,
+  Palette,
+  StyleHint,
+} from './types.js';
+
+/**
+ * Mood → curated eye + mouth pair. When `AvatarOptions.mood` is set, these
+ * override seed-derived picks (bypassing pack constraints) to give the same
+ * seed multiple expressions while keeping body/palette/topper/etc identical.
+ */
+const MOOD_EYES: Record<Exclude<MoodId, 'neutral'>, EyeStyleId> = {
+  happy: 'wide',
+  serious: 'squint',
+  sleepy: 'sleepy',
+  wink: 'wink',
+};
+const MOOD_MOUTH: Record<Exclude<MoodId, 'neutral'>, MouthStyleId> = {
+  happy: 'smile',
+  serious: 'flat',
+  sleepy: 'dot',
+  wink: 'smirk',
+};
 
 /**
  * Apply a style-hint subset filter to a pool. Looks across enabled packs for
@@ -138,10 +166,17 @@ export function selectAvatar(seed: string, options: AvatarOptions = {}): AvatarS
   }
 
   const body = rng.pick(bodyPool);
-  const eyes = rng.pick(eyesPool);
-  const mouth = rng.pick(mouthPool);
+  const eyesPicked = rng.pick(eyesPool);
+  const mouthPicked = rng.pick(mouthPool);
   const antenna = rng.pick(antennaPool);
   const accessory = rng.pick(accessoryPool);
+
+  // Mood overlay — overrides seed-derived eyes + mouth with a curated pair.
+  // Bypasses pack pick constraints by design: the mood IS the override.
+  // Same seed + mood = byte-identical render across re-runs.
+  const mood = options.mood;
+  const eyes = mood && mood !== 'neutral' ? MOOD_EYES[mood] : eyesPicked;
+  const mouth = mood && mood !== 'neutral' ? MOOD_MOUTH[mood] : mouthPicked;
 
   let background: BackgroundId;
   if (typeof options.background === 'string') {

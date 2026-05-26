@@ -58,7 +58,13 @@ export interface BuildSpec {
  * same shape as `createAvatar`'s options.
  */
 export function build(spec: BuildSpec = {}, options: AvatarOptions = {}): string {
-  const palette = spec.palette ? (PALETTE_BY_ID[spec.palette] ?? PALETTES[0]!) : PALETTES[0]!;
+  // `options.palette` (Palette object) wins over `spec.palette` (id). Lets
+  // callers inject brand palettes or any runtime-built palette without
+  // registering it in the global lookup. Falls back to spec.palette id, then
+  // to PALETTES[0] for a sensible default.
+  const palette =
+    options.palette ??
+    (spec.palette ? (PALETTE_BY_ID[spec.palette] ?? PALETTES[0]!) : PALETTES[0]!);
 
   const resolved: AvatarSpec = {
     seed: '__build__',

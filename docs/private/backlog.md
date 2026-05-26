@@ -1,3 +1,3 @@
 # Navii Backlog
 
-- [ ] **`/random` endpoint** — return a random avatar (random seed → SVG/PNG). Hosted-only. Good for demos, hero placeholders, "spin again" UX. Should set `Cache-Control: no-store` so reloads actually differ.
+_(empty — all formal items shipped as of v0.23.0)_

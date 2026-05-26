@@ -6,7 +6,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
-## [0.22.5] - 2026-05-26
+## [0.23.0] - 2026-05-26
+
+### Added (`@usenavii/core` 0.6.0, `@usenavii/react` 0.6.0)
+- **`AvatarOptions.mood`** — new `MoodId = 'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'`. Overrides seed-derived eyes + mouth with a curated pair: `happy` → wide + smile, `serious` → squint + flat, `sleepy` → sleepy + dot, `wink` → wink + smirk. Same seed + same mood = byte-identical render. Different mood on the same seed shares body / palette / topper. Bypasses pack pick constraints by design (the mood IS the override). `neutral` (or undefined) preserves prior behavior.
+- **Runtime palette injection in `build()`** — `options.palette` (Palette object) now wins over `spec.palette` (id). Lets callers pass a brand or runtime-built palette without registering it in `PALETTES`. Fall-through: `options.palette` → `spec.palette` id → `PALETTES[0]`.
+- **React `<Navii>`** forwards new `mood` and `palette` props through to the engine; `MoodId` re-exported from the React package.
+
+### Added (API host)
+- `GET /avatar/:seed?mood=happy|serious|sleepy|wink|neutral` — server-side mood overlay. PNG cache key extended with `m=` so moods don't collide.
+
+
 
 ### Added (API host)
 - Elorm UI logo (inline SVG, `currentColor`) in the landing "built with navii" wall, sized via new `.logo svg.lg` rule.

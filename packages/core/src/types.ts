@@ -52,6 +52,19 @@ export type OutfitId =
  */
 export type StyleHint = 'masc' | 'femme' | 'neutral';
 
+/**
+ * Expression overlay for the seed flow. Overrides the seed-derived `eyes` +
+ * `mouth` selections with a curated pair that conveys a specific mood.
+ *
+ * Same seed + same mood = same avatar. Different mood = same body, different
+ * face. Pack pick constraints on eyes/mouth are bypassed by design — the
+ * mood IS the override, so Office + `happy` legitimately produces wide eyes
+ * even though Office normally restricts to dot/sleepy/squint.
+ *
+ * `neutral` (or undefined) leaves picks seed-derived (current behavior).
+ */
+export type MoodId = 'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink';
+
 export interface AvatarSpec {
   seed: string;
   palette: Palette;
@@ -129,6 +142,13 @@ export interface AvatarOptions {
    * Determinism preserved: same seed + same style = same output.
    */
   style?: StyleHint;
+  /**
+   * Expression overlay. Overrides seed-derived eyes + mouth with a curated
+   * pair conveying a specific mood (happy / serious / sleepy / wink). Same
+   * seed + mood = same avatar; different moods on the same seed share body,
+   * palette, topper, etc. Bypasses pack pick constraints on eyes/mouth.
+   */
+  mood?: MoodId;
   /** Add `role="img"` and `aria-label`. */
   title?: string;
   /** Emit idle animations (float, blink, antenna pulse, sparkle twinkle). Default false. */
