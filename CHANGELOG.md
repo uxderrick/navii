@@ -6,6 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.23.3] - 2026-05-26
+
+### Added (API host)
+- **`/blog` — release timeline.** New page parses `CHANGELOG.md` at request time, surfaces minor+ releases (`x.y.0`) only, links to GitHub release notes per entry. Per-release permalinks at `/blog/v<x.y.z>`. Hero avatar per release derived from the version string. Sitemap includes every release URL. Linked from landing + docs nav.
+
 ## [0.23.2] - 2026-05-26
 
 ### Changed (docs)
