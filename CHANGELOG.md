@@ -6,6 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.23.2] - 2026-05-26
+
+### Changed (docs)
+- Public READMEs (root, `@usenavii/core`, `@usenavii/react`) and the live API reference at `/docs/http-api` + `/docs/sdk-core` now document `AvatarOptions.mood`, the new `Palette` object override on `build()`, and the `?mood=` query param on `/avatar/:seed`. React README memo-deps line corrected to match source (`mood`, `palette`, `styleHint` in; stale `tileBg` claim out).
+- Chore release — image rebuild deploys the updated landing page and `/docs/*` pages to `api.navii.dev`. No npm package contents changed (publish step no-ops on existing versions).
+
 ## [0.23.1] - 2026-05-26
 
 ### Fixed (release)
@@ -20,10 +26,6 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ### Added (API host)
 - `GET /avatar/:seed?mood=happy|serious|sleepy|wink|neutral` — server-side mood overlay. PNG cache key extended with `m=` so moods don't collide.
-
-
-
-### Added (API host)
 - Elorm UI logo (inline SVG, `currentColor`) in the landing "built with navii" wall, sized via new `.logo svg.lg` rule.
 
 ## [0.22.4] - 2026-05-26
