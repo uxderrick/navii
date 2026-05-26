@@ -81,10 +81,42 @@ Navii.{ create, random, render, select, group, seed, build }
 | ------------ | ----------------------------------------------------- | ------------ |
 | `size`       | `number` (px)                                         | `96`         |
 | `paletteId`  | known palette id (e.g. `'mint'`)                      | seed-derived |
+| `palette`    | `Palette` object — runtime/brand palette, no registration in `PALETTES` needed. Wins over `paletteId`. | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
+| `mood`       | `'neutral' \| 'happy' \| 'serious' \| 'sleepy' \| 'wink'` — overrides seed-derived eyes + mouth with a curated pair. Same seed + same mood = byte-identical. Bypasses pack eye/mouth constraints by design. | `'neutral'` |
 | `tileBg`     | CSS color or `'auto'` (palette accent)                | none         |
 | `title`      | accessible label (sets `<title>` + `aria-label`)      | none         |
 | `animated`   | `boolean` — idle float / blink / sway / pulse / twinkle | `false`    |
+
+#### Mood overlay
+
+Same seed, four expressions — body / palette / topper stay identical:
+
+```ts
+import { createAvatar } from '@usenavii/core';
+
+createAvatar('alice');                          // neutral (seed-derived)
+createAvatar('alice', { mood: 'happy' });       // wide eyes + smile
+createAvatar('alice', { mood: 'serious' });     // squint + flat mouth
+createAvatar('alice', { mood: 'sleepy' });      // sleepy + dot
+createAvatar('alice', { mood: 'wink' });        // wink + smirk
+```
+
+#### Runtime palette injection (`build()` only)
+
+Pass a `Palette` object (e.g. pulled from Figma variables or design tokens) without registering it in the global `PALETTES` lookup:
+
+```ts
+import { build } from '@usenavii/core';
+
+const acmePalette = {
+  id: 'acme', name: 'Acme Brand',
+  bodyFrom: '#FF5722', bodyTo: '#FFA726',
+  feature: '#1A1A1A', background: '#FFF8F0',
+};
+
+build({ body: 'tall', eyes: 'wide' }, { palette: acmePalette, size: 128 });
+```
 
 ### `random()` — pick a seed for you
 

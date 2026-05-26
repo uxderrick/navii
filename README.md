@@ -181,7 +181,9 @@ Any field left unspecified falls back to its first variant.
 | ------------ | ----------------------------------------------------- | ------------ |
 | `size`       | `number` (px)                                         | `96`         |
 | `paletteId`  | known palette id (e.g. `'mint'`)                      | seed-derived |
+| `palette`    | `Palette` object — runtime/brand palette, no registration needed. Wins over `paletteId`. | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
+| `mood`       | `'neutral' \| 'happy' \| 'serious' \| 'sleepy' \| 'wink'` — overrides seed-derived eyes + mouth with a curated pair. Same seed + mood = byte-identical. | `'neutral'` |
 | `title`      | accessible label (sets `<title>` + `aria-label`)      | none         |
 | `animated`   | `boolean` — emits idle animation `<style>` block      | `false`      |
 
@@ -204,7 +206,9 @@ Any field left unspecified falls back to its first variant.
   seed={user.id}        // required
   size={64}             // px, default 96
   paletteId="mint"      // optional override
+  palette={brand}       // optional — runtime Palette object, wins over paletteId
   background="ring"     // 'none' | 'solid' | 'ring' | { color }
+  mood="happy"          // 'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'
   title={user.name}     // accessible label
   animated              // idle animation
   className="rounded-full"
@@ -235,6 +239,7 @@ Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated
 | `size`       | `int`    | `96`    | Clamped to 16–1024.                            |
 | `palette`    | `string` | seeded  | Palette id, e.g. `mint`, `indigo`.             |
 | `background` | `enum`   | seeded  | `none` \| `solid` \| `ring`.                   |
+| `mood`       | `enum`   | seeded  | `neutral` \| `happy` \| `serious` \| `sleepy` \| `wink`. Overrides seed-derived eyes + mouth. |
 | `title`      | `string` | none    | Accessible label.                              |
 | `animated`   | `1` / `0`| `0`     | Idle animation (SVG only — ignored for PNG).   |
 | `tileBg`     | `string` | none    | Solid color behind avatar.                     |

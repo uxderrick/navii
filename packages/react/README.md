@@ -44,13 +44,26 @@ Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated
 | `seed`       | `string` — **required**                               | —            |
 | `size`       | `number` (px)                                         | `96`         |
 | `paletteId`  | known palette id (e.g. `'mint'`)                      | seed-derived |
+| `palette`    | `Palette` object — runtime/brand palette, wins over `paletteId` | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
+| `mood`       | `'neutral' \| 'happy' \| 'serious' \| 'sleepy' \| 'wink'` — overrides seed-derived eyes + mouth. Same seed + mood = byte-identical. | `'neutral'` |
 | `tileBg`     | CSS color or `'auto'` (palette accent)                | none         |
 | `title`      | accessible label                                      | none         |
 | `animated`   | `boolean` — idle float / blink / sway / twinkle       | `false`      |
 | `alt`        | image alt text (falls back to `title`)                | `''`         |
 | `className`  | passed through to `<img>`                             | —            |
 | `style`      | passed through to `<img>`                             | —            |
+
+### Mood overlay
+
+Same seed, four expressions — body / palette / topper stay identical:
+
+```tsx
+<Navii seed="alice" mood="happy"   size={96} />
+<Navii seed="alice" mood="serious" size={96} />
+<Navii seed="alice" mood="sleepy"  size={96} />
+<Navii seed="alice" mood="wink"    size={96} />
+```
 
 ## The seed: read this once
 
@@ -112,7 +125,7 @@ Or render `<Navii>` directly when `photoUrl` is null — no fetch needed, determ
 
 ## Determinism guarantee
 
-Same seed + same options → byte-identical SVG. Memoized on `seed + size + paletteId + background + tileBg + title + animated`. Re-renders with same props don't re-run the engine.
+Same seed + same options → byte-identical SVG. Memoized on `seed + size + paletteId + palette + background + mood + title + animated + styleHint`. Re-renders with same props don't re-run the engine.
 
 ## License
 
