@@ -6,6 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.23.6] - 2026-05-27
+
+### Removed (API host)
+- Ghana Duty logo from the landing "built with navii" wall (asset + markup). Wall keeps Elorm UI, Golly Express, Fleetlinq.
+
 ## [0.23.5] - 2026-05-27
 
 ### Added (API host)
