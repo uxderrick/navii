@@ -12,3 +12,6 @@ coverage
 
 # private notes — monetization, strategy, brainstorms
 docs/private/
+
+# Claude Code per-developer overrides (project settings + hooks are tracked)
+.claude/settings.local.json
