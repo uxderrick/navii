@@ -6,6 +6,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.25.1] - 2026-05-27
+
+### Added (API host)
+- **`/avatar/:seed?packs=…&style=…`** — `/avatar/:seed` now parses `packs` (comma-separated pack ids) and `style` (`masc | femme | neutral`) query params. Unknown pack ids are silently skipped (engine ignores them). Pack order does not affect cached output — the PNG cache key normalizes by sorting.
+
+### Fixed (API host)
+- PNG cache key extended to include `packs` + `style` so cached renders no longer collide across different pack/style combinations of the same seed.
+
+### Changed (API host)
+- `/docs/http-api` documents the new `packs` and `style` rows in the `/avatar/:seed` query table, plus new example URLs (`?packs=halloween`, `?packs=office,mono&style=neutral`).
+- `/random` inherits the new params (it forwards every `/avatar/:seed` query through unchanged).
+
+### Notes
+- Required by the upcoming Figma plugin update (fixes fill-mode rendering — plugin was sending the right options to the main thread but `buildUrl()` was stripping `packs`/`mood`/`style` before the HTTP request).
+- Backward compatible. Existing `<img src="https://api.navii.dev/avatar/alice">` URLs unchanged.
+
 ## [0.25.0] - 2026-05-27
 
 ### Added (`@usenavii/react` 0.7.0)

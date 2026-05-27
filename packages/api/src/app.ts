@@ -660,6 +660,20 @@ export function createApp(options: AppOptions = {}) {
       moodRaw === 'wink' || moodRaw === 'neutral'
         ? moodRaw
         : undefined;
+    // packs= comma-separated list. Unknown ids are silently skipped by the
+    // engine (resolvePacks ignores them), so no enum validation needed here.
+    const packsRaw = c.req.query('packs');
+    const packs = packsRaw
+      ? packsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+      : undefined;
+    // style= biases seeded picks via masc/femme/neutral. Only meaningful
+    // alongside packs but harmless otherwise — engine treats undefined style
+    // as "no bias".
+    const styleRaw = c.req.query('style');
+    const style =
+      styleRaw === 'masc' || styleRaw === 'femme' || styleRaw === 'neutral'
+        ? styleRaw
+        : undefined;
 
     const avatarOpts: AvatarOptions = { size };
     if (paletteId) avatarOpts.paletteId = paletteId;
@@ -670,11 +684,13 @@ export function createApp(options: AppOptions = {}) {
     if (animated && !wantsPng) avatarOpts.animated = true;
     if (tileBg) avatarOpts.tileBg = tileBg;
     if (mood) avatarOpts.mood = mood;
+    if (packs && packs.length > 0) avatarOpts.packs = packs;
+    if (style) avatarOpts.style = style;
 
     const svg = createAvatar(seed, avatarOpts);
 
     if (wantsPng) {
-      const cacheKey = canonicalKey(seed, size, paletteId, background, title, tileBg, mood);
+      const cacheKey = canonicalKey(seed, size, paletteId, background, title, tileBg, mood, packs, style);
       let png = pngCache.get(cacheKey);
       if (!png) {
         try {
@@ -825,8 +841,14 @@ function canonicalKey(
   title: string | undefined,
   tileBg: string | undefined,
   mood?: string | undefined,
+  packs?: readonly string[] | undefined,
+  style?: string | undefined,
 ): string {
-  return `${seed}|s=${size}|p=${palette ?? ''}|b=${background ?? ''}|t=${title ?? ''}|tb=${tileBg ?? ''}|m=${mood ?? ''}`;
+  // Packs are normalized (sorted) so `?packs=halloween,office` and
+  // `?packs=office,halloween` hash to the same cache entry — engine output is
+  // order-insensitive across pack ids.
+  const packKey = packs && packs.length > 0 ? [...packs].sort().join(',') : '';
+  return `${seed}|s=${size}|p=${palette ?? ''}|b=${background ?? ''}|t=${title ?? ''}|tb=${tileBg ?? ''}|m=${mood ?? ''}|pk=${packKey}|st=${style ?? ''}`;
 }
 
 function renderGallery(seeds: string[], size: number, animated: boolean): string {

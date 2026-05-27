@@ -808,6 +808,8 @@ function pageHttpApi(): string {
           <tr><td><code>background</code></td><td>enum</td><td>seeded</td><td><code>none</code> · <code>solid</code> · <code>ring</code>.</td></tr>
           <tr><td><code>tileBg</code></td><td>color</td><td>none</td><td>Opaque circular fill behind avatar. Any CSS color (URL-encoded, e.g. <code>%23ffffff</code>) or <code>auto</code> to use the palette accent.</td></tr>
           <tr><td><code>mood</code></td><td>enum</td><td>seeded</td><td><code>neutral</code> · <code>happy</code> · <code>serious</code> · <code>sleepy</code> · <code>wink</code>. Overrides seed-derived eyes + mouth with a curated pair. Same seed + mood = byte-identical render.</td></tr>
+          <tr><td><code>packs</code></td><td>csv</td><td>none</td><td>Comma-separated pack ids — e.g. <code>halloween</code>, <code>office,mono</code>. Themed bodies, palettes, accessories. Unknown ids are silently skipped. Order doesn't affect cached output.</td></tr>
+          <tr><td><code>style</code></td><td>enum</td><td>seeded</td><td><code>masc</code> · <code>femme</code> · <code>neutral</code>. Style-hint bias on seeded picks. Only meaningful alongside <code>packs</code>; harmless otherwise.</td></tr>
           <tr><td><code>title</code></td><td>string</td><td>none</td><td>Accessible label. Adds <code>role="img"</code> + <code>aria-label</code> to the SVG root.</td></tr>
           <tr><td><code>animated</code></td><td>0 / 1</td><td>0</td><td>Idle motion (float, blink, antenna sway, spark pulse, twinkle). SVG only — ignored for PNG. Honors <code>prefers-reduced-motion</code>.</td></tr>
         </tbody>
@@ -818,6 +820,8 @@ function pageHttpApi(): string {
 ${API_BASE}/avatar/alice?palette=violet&amp;animated=1
 ${API_BASE}/avatar/alice?tileBg=%23ffffff
 ${API_BASE}/avatar/alice?mood=happy
+${API_BASE}/avatar/alice?packs=halloween
+${API_BASE}/avatar/alice?packs=office,mono&amp;style=neutral
 ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
     </section>
 
@@ -826,7 +830,7 @@ ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
       <p>Returns a fresh avatar inline — same URL, different avatar every refresh. Internally picks a new UUID seed per request and renders directly. <strong>No redirect.</strong> Point an <code>&lt;img src="/random"&gt;</code> at it and every page refresh swaps the avatar.</p>
 
       <h4 id="random-query">Query</h4>
-      <p>All <code>/avatar/:seed</code> params apply (<code>size</code>, <code>palette</code>, <code>background</code>, <code>tileBg</code>, <code>mood</code>, <code>title</code>, <code>animated</code>) — same semantics, same clamps, same enums.</p>
+      <p>All <code>/avatar/:seed</code> params apply (<code>size</code>, <code>palette</code>, <code>background</code>, <code>tileBg</code>, <code>mood</code>, <code>packs</code>, <code>style</code>, <code>title</code>, <code>animated</code>) — same semantics, same clamps, same enums.</p>
 
       <h4 id="random-headers">Response headers</h4>
       <ul>
