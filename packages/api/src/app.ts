@@ -13,7 +13,7 @@ import { renderCast, DEFAULT_CAST_SEEDS } from './cast.js';
 import { docSlugs } from './docs.js';
 import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
-import { blogIndexHtml, blogReleaseHtml, blogReleaseVersions } from './blog.js';
+import { blogIndexHtml, blogReleaseHtml, blogReleaseVersions, blogReleaseOgPng } from './blog.js';
 import { privacyHtml, supportHtml } from './legal.js';
 import { createLicenseRoutes } from './license.js';
 import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
@@ -426,6 +426,32 @@ export function createApp(options: AppOptions = {}) {
       });
     } catch (err) {
       log.error({ err: (err as Error).message }, 'og.png raster failed');
+      return c.text(`OG image unavailable: ${(err as Error).message}`, 501);
+    }
+  });
+
+  // Per-release OG cards — composed from the version's CHANGELOG entry.
+  app.get('/og/blog/:filename', async (c) => {
+    const raw = c.req.param('filename');
+    // Strip .png suffix; accept v-prefixed or bare version.
+    const stem = raw.replace(/\.png$/i, '');
+    const version = stem.startsWith('v') ? stem.slice(1) : stem;
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
+      return c.text('Not found', 404);
+    }
+    try {
+      const png = await blogReleaseOgPng(version);
+      if (!png) return c.text('Not found', 404);
+      return new Response(png as BodyInit, {
+        status: 200,
+        headers: {
+          'content-type': 'image/png',
+          'cache-control': 'public, max-age=86400, immutable',
+          'access-control-allow-origin': '*',
+        },
+      });
+    } catch (err) {
+      log.error({ err: (err as Error).message, version }, 'blog og raster failed');
       return c.text(`OG image unavailable: ${(err as Error).message}`, 501);
     }
   });

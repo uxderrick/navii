@@ -6,6 +6,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-05-27
+
+### Added (API host)
+- **Per-release OG cards** — `GET /og/blog/v<X.Y.Z>.png` composes a 1200×630 card for each minor+ release: dark radial background, hero avatar (deterministic from `navii <version>` seed + `mood: happy`, transparent so the mascot floats on the gradient), version pill, headline parsed from CHANGELOG, date, and `navii.dev/blog` brand mark. Cached per version. `/blog/v<X.Y.Z>` now sets `og:image` + `twitter:image` to this URL so social previews show the release-specific card instead of the generic landing OG image.
+
 ## [0.23.6] - 2026-05-27
 
 ### Removed (API host)

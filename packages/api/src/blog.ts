@@ -14,11 +14,18 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { selectAvatar, renderAvatarInner } from '@usenavii/core';
+import { svgToPng } from './raster.js';
+import { LruCache } from './middleware/lruCache.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
+
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
+const ogPngCache = new LruCache<string, Uint8Array>(32);
 
 interface ReleaseGroup {
   /** Section heading, e.g. "Added (@usenavii/core 0.6.0)". */
@@ -214,11 +221,12 @@ function shell(opts: {
   description: string;
   canonicalPath: string;
   content: string;
+  ogImage?: string;
 }): string {
   const pageTitle = `${opts.title} — Navii`;
   const desc = opts.description.replace(/"/g, '&quot;');
   const url = `${SITE_BASE}${opts.canonicalPath}`;
-  const ogImage = `${API_BASE}/og.png`;
+  const ogImage = opts.ogImage ?? `${API_BASE}/og.png`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -546,6 +554,7 @@ export function blogReleaseHtml(version: string): { ok: true; html: string } | {
       description: r.headline.slice(0, 160),
       canonicalPath: `/blog/v${r.version}`,
       content,
+      ogImage: `${API_BASE}/og/blog/v${r.version}.png`,
     }),
   };
 }
@@ -555,4 +564,148 @@ export function blogReleaseVersions(): string[] {
   return parseChangelog(readChangelog())
     .filter((r) => isMinor(r.version))
     .map((r) => r.version);
+}
+
+// ─── OG card per release ────────────────────────────────────────────────────
+//
+// Composes a 1200×630 SVG: dark radial bg + the release's hero avatar (using
+// the deterministic "navii X.Y.Z" + mood:happy seed) on the left + the
+// headline / version / date stack on the right + a brand mark in the footer.
+// Rasterized via resvg, then cached per version.
+
+function escXml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+/** Strip inline markdown (**bold**, `code`) for plain-text OG card rendering. */
+function stripInlineMd(md: string): string {
+  return md
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+}
+
+/** Greedy word-wrap to roughly N chars per line. Returns up to maxLines. */
+function wrapText(text: string, perLine: number, maxLines: number): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let cur = '';
+  for (const w of words) {
+    if (!cur) { cur = w; continue; }
+    if (cur.length + 1 + w.length <= perLine) {
+      cur += ' ' + w;
+    } else {
+      lines.push(cur);
+      cur = w;
+      if (lines.length === maxLines - 1) break;
+    }
+  }
+  if (cur && lines.length < maxLines) lines.push(cur);
+  // Last line may have leftover words — append ellipsis if so.
+  const consumed = lines.join(' ').length;
+  if (consumed < text.replace(/\s+/g, ' ').length && lines.length === maxLines) {
+    lines[maxLines - 1] = (lines[maxLines - 1] ?? '').replace(/\s+\S+$/, '') + '…';
+  }
+  return lines;
+}
+
+export function blogReleaseOgSvg(release: Release): string {
+  // Layout: avatar block on the left, text stack on the right.
+  const avatarSize = 380;
+  const avatarX = 80;
+  const avatarY = (OG_HEIGHT - avatarSize) / 2;
+
+  const textX = avatarX + avatarSize + 60; // 520
+  const textRight = OG_WIDTH - 80;          // 1120
+  const textWidth = textRight - textX;       // 600
+
+  // Hero avatar — same seed scheme used in the timeline cards. Background
+  // overridden to 'none' so the mascot sits on the OG card's gradient instead
+  // of a clipped solid tile.
+  const heroSeed = `navii ${release.version}`;
+  const spec = selectAvatar(heroSeed, { mood: 'happy', background: 'none' });
+  const avatarInner = renderAvatarInner(spec, { size: avatarSize });
+
+  // Headline — strip inline md, wrap to ~22 chars/line × 3 lines.
+  const headline = stripInlineMd(release.headline);
+  const headlineLines = wrapText(headline, 22, 3);
+
+  const sans = 'sans-serif';
+  const headlineFontSize = 60;
+  const headlineLineH = 70;
+  const headlineStartY = avatarY + 90; // optical alignment with avatar top
+
+  const headlineEl = headlineLines
+    .map(
+      (line, i) =>
+        `<text x="${textX}" y="${headlineStartY + i * headlineLineH}" font-family="${sans}" font-size="${headlineFontSize}" font-weight="700" fill="#f5f5f5" letter-spacing="-2">${escXml(line)}</text>`,
+    )
+    .join('\n  ');
+
+  // Version pill — sits above the headline.
+  const pillX = textX;
+  const pillY = headlineStartY - 80;
+  const pillText = `v${release.version}`;
+  const pillW = pillText.length * 14 + 28;
+  const pillH = 38;
+
+  // Date — below the headline stack.
+  const dateY = headlineStartY + headlineLines.length * headlineLineH + 18;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${OG_WIDTH}" height="${OG_HEIGHT}" viewBox="0 0 ${OG_WIDTH} ${OG_HEIGHT}">
+  <defs>
+    <radialGradient id="ogBlogBg" cx="35%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#1c1c22" />
+      <stop offset="100%" stop-color="#0a0a0b" />
+    </radialGradient>
+    <filter id="ogBlogShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="22" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="${OG_WIDTH}" height="${OG_HEIGHT}" fill="url(#ogBlogBg)" />
+
+  <!-- Soft drop-shadow behind the avatar -->
+  <ellipse cx="${avatarX + avatarSize / 2}" cy="${avatarY + avatarSize + 12}" rx="${avatarSize * 0.42}" ry="22" fill="#c084fc" opacity="0.18" filter="url(#ogBlogShadow)" />
+
+  <!-- Hero avatar -->
+  <svg x="${avatarX}" y="${avatarY}" width="${avatarSize}" height="${avatarSize}" viewBox="0 0 100 100">
+    ${avatarInner}
+  </svg>
+
+  <!-- Version pill -->
+  <rect x="${pillX}" y="${pillY}" width="${pillW}" height="${pillH}" rx="${pillH / 2}" fill="#18181b" stroke="#1f1f24" stroke-width="1" />
+  <text x="${pillX + pillW / 2}" y="${pillY + pillH / 2 + 7}" font-family="${sans}" font-size="20" font-weight="600" fill="#c084fc" text-anchor="middle" letter-spacing="0.5">${escXml(pillText)}</text>
+
+  <!-- Headline -->
+  ${headlineEl}
+
+  <!-- Date -->
+  <text x="${textX}" y="${dateY}" font-family="${sans}" font-size="22" font-weight="500" fill="#a1a1aa" letter-spacing="-0.2">${escXml(formatDate(release.date))}</text>
+
+  <!-- Brand mark -->
+  <text x="80" y="${OG_HEIGHT - 60}" font-family="${sans}" font-size="22" font-weight="600" fill="#a1a1aa" letter-spacing="-0.3">navii.dev<tspan fill="#71717a">/blog</tspan></text>
+
+  <!-- Subtle hairline border at the bottom -->
+  <line x1="80" y1="${OG_HEIGHT - 88}" x2="${OG_WIDTH - 80}" y2="${OG_HEIGHT - 88}" stroke="#1f1f24" stroke-width="1" />
+</svg>`;
+}
+
+/** Rasterize + cache the per-release OG card. Returns null if version unknown. */
+export async function blogReleaseOgPng(version: string): Promise<Uint8Array | null> {
+  const cached = ogPngCache.get(version);
+  if (cached) return cached;
+  const releases = parseChangelog(readChangelog());
+  const r = releases.find((rr) => rr.version === version);
+  if (!r) return null;
+  const png = await svgToPng(blogReleaseOgSvg(r), OG_WIDTH);
+  ogPngCache.set(version, png);
+  return png;
 }
