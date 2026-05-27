@@ -65,6 +65,46 @@ Same seed, four expressions — body / palette / topper stay identical:
 <Navii seed="alice" mood="wink"    size={96} />
 ```
 
+## `<NaviiGroup>` — overlapping stack
+
+For team rows, contributor lists, etc. Wraps core's `renderGroup()`.
+
+```tsx
+import { NaviiGroup } from '@usenavii/react';
+
+<NaviiGroup
+  seeds={team.map((u) => u.id)}
+  size={48}
+  overlap={0.3}        // 0 = no overlap, 0.7 = heavy stack
+  max={5}              // overflow collapses into a "+N" counter tile
+  ring="#0a0a0b"       // border around each tile
+/>
+```
+
+### `NaviiGroupProps`
+
+| Prop          | Type                                                  | Default      |
+| ------------- | ----------------------------------------------------- | ------------ |
+| `seeds`       | `string[]` — **required**                             | —            |
+| `size`        | `number` per-tile px                                  | `64`         |
+| `overlap`     | `number` 0–0.7                                        | `0.3`        |
+| `max`         | `number` cap before showing `+N` counter              | all          |
+| `ring`        | `string` border color                                 | `#ffffff`    |
+| `tileBg`      | CSS color or `'transparent'` (fill behind each tile)  | `#ffffff`    |
+| `counterFill` | `string` background of `+N` tile                      | `#E5E7EB`    |
+| `counterInk`  | `string` text color of `+N` tile                      | `#374151`    |
+| `paletteId`   | known palette id — applies to every tile              | seed-derived |
+| `palette`     | `Palette` object override — applies to every tile     | none         |
+| `mood`        | mood overlay — applies to every tile                  | `'neutral'`  |
+| `background`  | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
+| `animated`    | `boolean` — idle motion per tile                      | `false`      |
+| `styleHint`   | `'masc' \| 'femme' \| 'neutral'`                      | none         |
+| `alt`         | accessible label (defaults to "Group of N avatars")   | derived      |
+| `className`   | passed through to `<img>`                             | —            |
+| `style`       | passed through to `<img>`                             | —            |
+
+The `<img>` width is calculated from `size`, `overlap`, and `max` so it has correct intrinsic dimensions — no layout shift after load.
+
 ## The seed: read this once
 
 Same seed always produces the same avatar — that's the contract.

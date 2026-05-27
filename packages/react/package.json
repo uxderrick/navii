@@ -1,6 +1,6 @@
 {
   "name": "@usenavii/react",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "React binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
   "main": "./dist/index.cjs",

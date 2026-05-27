@@ -1199,6 +1199,35 @@ export function UserChip({ user }) {
     </section>
 
     <section>
+      <h2 id="group">&lt;NaviiGroup&gt; — overlapping stack</h2>
+      <p>Wraps core's <code>renderGroup()</code>. Common for team rows, contributor lists, attendee piles. Width is computed from <code>size</code>, <code>overlap</code>, and <code>max</code> so the rendered <code>&lt;img&gt;</code> has correct intrinsic dimensions and doesn't shift on load.</p>
+      <pre class="code"><code>import { NaviiGroup } from '@usenavii/react';
+
+&lt;NaviiGroup
+  seeds={team.map((u) =&gt; u.id)}
+  size={48}
+  overlap={0.3}        // 0 = no overlap, 0.7 = heavy stack
+  max={5}              // overflow collapses into a "+N" counter tile
+  ring="#0a0a0b"       // border around each tile
+/&gt;</code></pre>
+      <h3 id="group-props">NaviiGroupProps</h3>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>seeds</code></td><td>string[]</td><td>—</td><td><strong>Required.</strong> Empty array renders nothing.</td></tr>
+          <tr><td><code>size</code></td><td>number</td><td>64</td><td>Per-tile size in px.</td></tr>
+          <tr><td><code>overlap</code></td><td>number 0–0.7</td><td>0.3</td><td>Fraction of tile that overlaps previous.</td></tr>
+          <tr><td><code>max</code></td><td>number</td><td>all</td><td>Cap before showing a <code>+N</code> counter tile.</td></tr>
+          <tr><td><code>ring</code></td><td>string</td><td><code>#ffffff</code></td><td>Border color around each tile.</td></tr>
+          <tr><td><code>tileBg</code></td><td>string</td><td><code>#ffffff</code></td><td>Fill behind each tile (use <code>'transparent'</code> to skip).</td></tr>
+          <tr><td><code>counterFill</code></td><td>string</td><td><code>#E5E7EB</code></td><td>Background of the <code>+N</code> tile.</td></tr>
+          <tr><td><code>counterInk</code></td><td>string</td><td><code>#374151</code></td><td>Text color of the <code>+N</code> tile.</td></tr>
+          <tr><td><code>paletteId</code> / <code>palette</code> / <code>mood</code> / <code>background</code> / <code>animated</code> / <code>styleHint</code></td><td colspan="2">—</td><td>Forwarded to every tile. Same semantics as <code>&lt;Navii&gt;</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
       <h2 id="memo">Memoization</h2>
       <p>The component memoizes the data-URI on <code>seed</code> + all option props via <code>useMemo</code>. This runs on both the server (SSR) and client (hydration), so output is byte-identical between the two renders. Subsequent renders with unchanged props reuse the cached URI without re-running the engine.</p>
       <p>If you're rendering a list, ensure your seeds are stable across renders (e.g. <code>user.id</code>, not <code>idx + Date.now()</code>) — otherwise every render rebuilds every avatar.</p>
@@ -1206,7 +1235,7 @@ export function UserChip({ user }) {
 
     <section>
       <h2 id="re-exports">Re-exports</h2>
-      <p>All <code>@usenavii/core</code> top-level exports are re-exported for convenience: <code>createAvatar</code>, <code>selectAvatar</code>, <code>renderAvatar</code>, plus the types <code>AvatarSpec</code>, <code>AvatarOptions</code>, <code>Palette</code>.</p>
+      <p>Top-level <code>@usenavii/core</code> exports re-exported for convenience: <code>createAvatar</code>, <code>selectAvatar</code>, <code>renderAvatar</code>, <code>renderGroup</code>, plus the types <code>AvatarSpec</code>, <code>AvatarOptions</code>, <code>GroupOptions</code>, <code>MoodId</code>, <code>Palette</code>.</p>
     </section>
   `;
 }

@@ -6,6 +6,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-05-27
+
+### Added (`@usenavii/react` 0.7.0)
+- **`<NaviiGroup>`** — overlapping avatar stack, thin React wrapper around `@usenavii/core`'s `renderGroup()`. Props: `seeds`, `size`, `overlap`, `max` (overflow → `+N` counter tile), `ring`, `tileBg`, `counterFill`, `counterInk`, plus all per-tile options (`paletteId`, `palette`, `mood`, `background`, `animated`, `styleHint`). `<img>` width is computed from `size + overlap + max` so layout is stable on load.
+- `renderGroup` + `GroupOptions` re-exported from `@usenavii/react`.
+
+### Changed (`@usenavii/core`)
+- No source changes. Stays at `0.6.0` — react `0.7.0` ships independently. Lockstep convention relaxed when only one package has source changes.
+
+### Changed (tooling)
+- `scripts/release-audit.mjs` — core/react version mismatch downgraded from `error` to `warn`. Lockstep stays the default expectation, but the audit no longer forces a no-op publish on the unchanged package.
+
+### Added (API host)
+- `/docs/sdk-react` documents `<NaviiGroup>` props + behavior, plus the new `renderGroup`/`GroupOptions` re-exports.
+
 ## [0.24.2] - 2026-05-27
 
 ### Added (API host)

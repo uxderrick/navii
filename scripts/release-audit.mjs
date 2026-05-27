@@ -63,9 +63,12 @@ const corePkg = readJson('packages/core/package.json');
 const reactPkg = readJson('packages/react/package.json');
 if (corePkg && reactPkg) {
   if (corePkg.version !== reactPkg.version) {
+    // Lockstep is the convention, not a hard rule — when only one package has
+    // source changes, bumping both forces a wasted no-op publish. Downgrade to
+    // a warn so the release can proceed once intentional.
     note(
-      'error',
-      `core (${corePkg.version}) and react (${reactPkg.version}) versions out of sync — they ship in lockstep.`,
+      'warn',
+      `core (${corePkg.version}) and react (${reactPkg.version}) versions differ. If both packages changed in this release, bump them together; if only one changed, this is fine.`,
     );
   }
   // 2. React workspace dep on core must match core's version range.

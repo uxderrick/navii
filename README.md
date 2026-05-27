@@ -218,6 +218,20 @@ Any field left unspecified falls back to its first variant.
 
 Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated as opaque by the browser (no inline scripting surface).
 
+```tsx
+import { NaviiGroup } from '@usenavii/react';
+
+<NaviiGroup
+  seeds={team.map((u) => u.id)}
+  size={48}
+  overlap={0.3}
+  max={5}                // overflow collapses into "+N" tile
+  ring="#0a0a0b"
+/>
+```
+
+`<NaviiGroup>` wraps core's `renderGroup()` and computes the `<img>` width from `size + overlap + max` so layout is stable.
+
 ### `@usenavii/api` — hosted endpoint
 
 | Method | Path                  | Purpose                                |
