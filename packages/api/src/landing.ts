@@ -790,6 +790,12 @@ export function landingHtml(): string {
       <a class="logo" href="https://ui.elorm.xyz/" target="_blank" rel="noopener" aria-label="Elorm UI">
         <svg class="lg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 22L22 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </a>
+      <a class="logo" href="https://theskill.club/" target="_blank" rel="noopener" aria-label="The Skill Club">
+        <img class="lg" src="/logos/theskillclub.svg" alt="The Skill Club" loading="lazy" />
+      </a>
+      <a class="logo" href="https://www.getforyu.com/" target="_blank" rel="noopener" aria-label="ForYu">
+        <img class="lg" src="/logos/foryu.png" alt="ForYu" loading="lazy" />
+      </a>
     </div>
     </div>
   </section>
