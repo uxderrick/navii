@@ -526,12 +526,17 @@ async function doLicenseRestore() {
   if (!cached) {
     cachedLicenseOk = false;
     figma.ui.postMessage({ type: 'license-status', license: { ok: false } });
+    void doUsageGet();
     return;
   }
   const stale = Date.now() - cached.verifiedAt > LICENSE_REVALIDATE_MS;
   if (!stale) {
     cachedLicenseOk = true;
     figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(cached) });
+    // Push a fresh usage snapshot now that we know Pro state — otherwise the
+    // UI's earlier usage-get could've raced ahead of license restore and
+    // reported pro:false, leaving the chip stuck on "10 of 10 left today".
+    void doUsageGet();
     return;
   }
   // Stale — re-verify silently using the cached key (kept main-thread only).
@@ -539,6 +544,7 @@ async function doLicenseRestore() {
   await writeLicense(fresh.ok ? fresh : null);
   cachedLicenseOk = fresh.ok;
   figma.ui.postMessage({ type: 'license-status', license: publicLicenseView(fresh) });
+  void doUsageGet();
 }
 
 async function doLicenseClear() {

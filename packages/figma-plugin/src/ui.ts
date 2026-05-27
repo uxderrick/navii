@@ -531,13 +531,18 @@ function updateProPill() {
   if (!pill || !label) return;
   if (isPaid()) {
     pill.classList.add('unlocked');
-    pill.title = `Pro unlocked${licenseStatus.email ? ` (${licenseStatus.email})` : ''}`;
+    pill.title = `Pro unlocked${licenseStatus.email ? ` (${licenseStatus.email})` : ''}. Click to view account / sign out.`;
     label.textContent = 'Pro';
   } else {
     pill.classList.remove('unlocked');
     pill.title = 'Unlock Navii Pro';
     label.textContent = 'Upgrade';
   }
+  // Sync the upgrade-modal Pro footer too — visible only when Pro.
+  const card = document.getElementById('upgrade-modal-card');
+  const emailEl = document.getElementById('modal-pro-email');
+  if (card) card.classList.toggle('is-pro', isPaid());
+  if (emailEl) emailEl.textContent = licenseStatus.email ? `Signed in as ${licenseStatus.email}` : 'Pro license active on this device';
 }
 
 function openUpgradeModal() {
@@ -986,6 +991,14 @@ function setActiveTab(tab: 'seed' | 'build' | 'packs' | 'mascots') {
   // Fill random only applies in Seed mode (Build mode = one specific spec).
   $('fill-random-btn').style.display = tab === 'seed' ? '' : 'none';
   $('url-bar').classList.remove('show');
+  // Footer hidden on browsing tabs (Packs, Mascots) — they have their own
+  // inline actions (Enable in pack-modal, card-click action modal in Mascots).
+  // Seed + Build keep the footer because Insert is the primary CTA there.
+  const footer = document.querySelector<HTMLElement>('.footer');
+  if (footer) {
+    const hide = tab === 'packs' || tab === 'mascots';
+    footer.style.display = hide ? 'none' : '';
+  }
   // Refresh panel content when entering its tab.
   if (tab === 'packs') renderPacksHero();
   if (tab === 'mascots') renderMascotGrid();
@@ -1901,7 +1914,15 @@ function init() {
 
   // Pro pill + upgrade modal wiring
   $('pro-pill').addEventListener('click', () => {
-    if (!isPaid()) openUpgradeModal();
+    // Free users get the buy flow. Pro users get the modal too, but it shows
+    // their email + Sign out button (so they can flip to free-mode for testing).
+    openUpgradeModal();
+  });
+  // Sign out — clears cached license + flips UI to free-tier mode.
+  document.getElementById('modal-sign-out')?.addEventListener('click', () => {
+    if (!confirm('Sign out of Pro? Your license key is preserved on Polar — you can re-verify any time.')) return;
+    parent.postMessage({ pluginMessage: { type: 'license-clear' } }, '*');
+    closeUpgradeModal();
   });
   $('modal-close').addEventListener('click', closeUpgradeModal);
   document.getElementById('upgrade-modal')?.addEventListener('click', (e) => {
@@ -2062,6 +2083,10 @@ function init() {
   renderMoodRow();
   requestPresets();
   requestUsage();
+  // Explicit pull of cached license — main thread also pushes on startup,
+  // but that race lost the message before the UI iframe attached its
+  // listener, so users had to re-enter their key on every plugin open.
+  parent.postMessage({ pluginMessage: { type: 'license-restore' } }, '*');
 }
 
 function handleOnboardingStatus(seen: boolean) {

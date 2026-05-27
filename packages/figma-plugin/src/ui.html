@@ -931,6 +931,43 @@
   .modal-view-key .modal-status { font-size: 11px; min-height: 14px; }
   .modal-view-key .modal-status.err { color: #C0392B; }
   .modal-view-key .modal-status.ok { color: #047857; }
+
+  /* Pro footer in upgrade modal — only renders when isPaid(). Lets the user
+     revoke their cached license to test the free-tier flow on the same box. */
+  .modal-pro-footer {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .upgrade-modal.is-pro .modal-pro-footer { display: flex; }
+  .modal-pro-email {
+    font-size: 11px;
+    color: var(--fg-secondary);
+    font-family: ui-monospace, monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .modal-sign-out {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-secondary);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .modal-sign-out:hover {
+    color: #B91C1C;
+    border-color: #FCA5A5;
+  }
   .modal-close {
     position: absolute;
     top: 8px;
@@ -2283,6 +2320,13 @@
         <button class="modal-key-verify-big" id="modal-key-verify">Verify key</button>
         <div class="modal-status" id="modal-status" aria-live="polite"></div>
         <button class="modal-key-back" id="modal-key-back" type="button">Don't have a key? Buy one →</button>
+      </div>
+
+      <!-- PRO FOOTER — visible only when isPaid(). Allows revoking the cached
+           license so the user can re-test in free-tier mode (or move device). -->
+      <div class="modal-pro-footer" id="modal-pro-footer">
+        <span class="modal-pro-email" id="modal-pro-email"></span>
+        <button class="modal-sign-out" id="modal-sign-out" type="button" title="Remove cached Pro license from this device. You can re-verify with your key any time.">Sign out of Pro</button>
       </div>
     </div>
   </div>

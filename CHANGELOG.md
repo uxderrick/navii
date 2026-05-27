@@ -6,6 +6,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.24.1] - 2026-05-27
+
+### Added (Figma plugin)
+- **Sign out of Pro** — Pro pill in header now opens upgrade modal even when Pro. Modal footer shows the signed-in email + a Sign-out button that clears the cached license via `license-clear`. Lets users test the free-tier flow on the same device without losing access (the underlying Polar license is unchanged).
+
+### Changed (Figma plugin)
+- Pro pill click now always opens the upgrade modal (was: free-only). Pro view exposes account info + sign-out.
+- Footer (Insert / Fill random) hidden on **Packs** and **Mascots** tabs — those are browsing surfaces with their own inline actions (Enable button in pack-modal, card-click action modal in Mascots). Footer remains on Seed + Build where Insert is the primary CTA.
+
+### Fixed (Figma plugin)
+- Pro user's usage chip stayed stuck at "10 of 10 left today" on plugin open due to a race between `usage-get` (UI request) and `doLicenseRestore` (main thread state). Restore now pushes a fresh usage snapshot via `doUsageGet()` after setting `cachedLicenseOk`, so the chip flips to "Pro · Unlimited" reliably.
+
 ## [0.24.0] - 2026-05-27
 
 ### Added (API host)
