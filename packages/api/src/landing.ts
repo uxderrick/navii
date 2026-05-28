@@ -737,8 +737,9 @@ export function landingHtml(): string {
     <h1>A face for <em>every user.</em></h1>
     <p class="lede">Drop-in 22M+ deterministic mascot avatars. Pass any string (user id, email, UUID) and get back a clean SVG or PNG. Same seed in, same face out, every time.</p>
     <div class="hero-ctas">
-      <a class="primary" href="#install">Try it →</a>
-      <a class="secondary" href="/builder">Customize a face</a>
+      <a class="primary" href="#install">Install Navii →</a>
+      <a class="secondary" href="https://www.figma.com/community/plugin/1640037999835658823" target="_blank" rel="noopener">Get Figma Plugin →</a>
+      <a class="tertiary" href="/builder">Try the Builder</a>
     </div>
   </header>
 

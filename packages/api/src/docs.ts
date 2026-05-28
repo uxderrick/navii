@@ -1088,7 +1088,9 @@ return &lt;Navii seed={seed} /&gt;;</code></pre>
           <tr><td><code>size</code></td><td>number (px)</td><td>96</td><td>Output canvas size. SVG viewBox is fixed at 100×100; size scales it.</td></tr>
           <tr><td><code>paletteId</code></td><td>string</td><td>seeded</td><td>Force a specific palette. Pass any palette id.</td></tr>
           <tr><td><code>palette</code></td><td><code>Palette</code> object</td><td>—</td><td>Runtime/brand palette object (e.g. pulled from Figma variables). Wins over <code>paletteId</code>. No registration in <code>PALETTES</code> required.</td></tr>
-          <tr><td><code>background</code></td><td>enum or <code>{ color: string }</code></td><td>seeded</td><td>Override scene fill. Enum form picks from <code>'none' | 'solid' | 'ring'</code>; object form supplies an exact color.</td></tr>
+          <tr><td><code>packs</code></td><td><code>readonly string[]</code></td><td>—</td><td>Enable themed packs (premium content). Pack ids resolve against the built-in registry; unknown ids are silently skipped. Their palettes + parts merge into the selection pool, so the same seed renders differently from the base pool. Empty/undefined → base pool only.</td></tr>
+          <tr><td><code>style</code></td><td><code>StyleHint</code></td><td>—</td><td><code>'masc' | 'femme' | 'neutral'</code>. Biases seeded picks toward a gender expression. Only takes effect when an enabled pack defines <code>styleHints</code>. Determinism preserved: same seed + same style = same output.</td></tr>
+          <tr><td><code>background</code></td><td>enum or <code>{ color: string }</code></td><td>seeded</td><td>Override scene fill. Enum form picks from <code>'none' | 'solid' | 'ring'</code>; object form supplies an exact color (SDK-only — URL form accepts enum only).</td></tr>
           <tr><td><code>mood</code></td><td>enum</td><td>seeded</td><td><code>'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'</code>. Overrides seed-derived eyes + mouth with a curated pair. Same seed + mood = byte-identical. Bypasses pack eye/mouth constraints by design.</td></tr>
           <tr><td><code>title</code></td><td>string</td><td>—</td><td>Adds <code>role="img"</code> and <code>aria-label</code>.</td></tr>
           <tr><td><code>animated</code></td><td>boolean</td><td>false</td><td>Emits inline <code>&lt;style&gt;</code> with idle animations. Honors <code>prefers-reduced-motion</code>.</td></tr>
@@ -1196,7 +1198,8 @@ export function UserChip({ user }) {
         <tbody>
           <tr><td><code>seed</code></td><td>string</td><td><strong>Required.</strong> See <a href="/docs/concepts#seeds">the seed rule</a>.</td></tr>
           <tr><td><code>className</code></td><td>string</td><td>Class applied to the <code>&lt;img&gt;</code> element.</td></tr>
-          <tr><td><code>style</code></td><td>CSSProperties</td><td>Inline style on the <code>&lt;img&gt;</code>.</td></tr>
+          <tr><td><code>style</code></td><td>CSSProperties</td><td>Standard React inline style on the <code>&lt;img&gt;</code>. <strong>Note:</strong> this is the React DOM <code>style</code>, not the engine's <code>StyleHint</code> — use <code>styleHint</code> below for engine-level bias.</td></tr>
+          <tr><td><code>styleHint</code></td><td><code>'masc' | 'femme' | 'neutral'</code></td><td>Engine-level style hint (biases seeded picks). Forwarded to <code>AvatarOptions.style</code>. Renamed in React to avoid collision with React's <code>style</code> prop.</td></tr>
           <tr><td><code>alt</code></td><td>string</td><td>Alt text. Falls back to <code>title</code> if omitted.</td></tr>
         </tbody>
       </table>
@@ -1227,6 +1230,7 @@ export function UserChip({ user }) {
           <tr><td><code>counterFill</code></td><td>string</td><td><code>#E5E7EB</code></td><td>Background of the <code>+N</code> tile.</td></tr>
           <tr><td><code>counterInk</code></td><td>string</td><td><code>#374151</code></td><td>Text color of the <code>+N</code> tile.</td></tr>
           <tr><td><code>paletteId</code> / <code>palette</code> / <code>mood</code> / <code>background</code> / <code>animated</code> / <code>styleHint</code></td><td colspan="2">—</td><td>Forwarded to every tile. Same semantics as <code>&lt;Navii&gt;</code>.</td></tr>
+          <tr><td><code>packs</code> / <code>title</code></td><td colspan="2">—</td><td><strong>Typed but not forwarded</strong> — inherited from <code>GroupOptions</code> but the React wrapper does not currently pass them to per-tile renders. Use <code>renderGroup</code> from <code>@usenavii/core</code> directly if you need them per tile.</td></tr>
         </tbody>
       </table>
     </section>

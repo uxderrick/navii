@@ -6,6 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.25.2] - 2026-05-28
+
+### Changed (API host)
+- Landing hero CTAs reworked. New triple: `Install Navii →` (primary, scrolls to install snippets), `Get Figma Plugin →` (secondary, opens Figma community), `Try the Builder` (tertiary text link → `/builder`). Old single-purpose pair (`Try it` + `Customize a face`) replaced — plugin is now visible from the hero.
+- `/docs/sdk-core` SDK options table picks up `packs` + `style` rows (matches the engine surface that's been live since v0.23.0).
+
 ## [0.25.1] - 2026-05-27
 
 ### Added (API host)
