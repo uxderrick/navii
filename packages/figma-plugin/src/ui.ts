@@ -30,17 +30,18 @@ const PALETTE_PREVIEW: Record<string, string> = {
 };
 
 // ---------- state ----------
-const STORAGE_KEY = 'navii.recent';
+// All UI prefs (recent seeds, style, mood, brand collapse state, brand
+// selection) persist via figma.clientStorage on the main thread. The iframe
+// localStorage was getting wiped between sessions, so anything saved there
+// was effectively ephemeral. See doPrefsGet/doPrefsSet in code.ts.
 let recent: string[] = [];
-try {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) recent = JSON.parse(raw);
-} catch (err) {
-  console.warn('[navii] localStorage unavailable', err);
+
+function prefsSet(key: string, value: unknown) {
+  parent.postMessage({ pluginMessage: { type: 'prefs-set', key, value } }, '*');
 }
 
 function persistRecent() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(recent)); } catch { /* noop */ }
+  prefsSet('recent', recent);
 }
 
 console.log('[navii] ui.ts loaded');
@@ -73,38 +74,25 @@ const seedState = {
   // Mood overrides seed-derived eyes + mouth with a curated pair conveying
   // an expression. '' (Auto) = leave seed-derived.
   mood: '' as '' | 'happy' | 'serious' | 'sleepy' | 'wink',
+  // Pack focus — picks which pool the Seed preview/insert draws from.
+  // 'default' = the free base pool (no packs); any other value = a single
+  // enabled pack id. Always-on chip strip in the left panel; "Default" is
+  // always available so this is never empty. Not persisted — session-local.
+  packFocus: 'default' as string,
 };
 
-// ---------- style-hint persistence ----------
-const STYLE_STORAGE_KEY = 'navii.style';
-try {
-  const raw = localStorage.getItem(STYLE_STORAGE_KEY);
-  if (raw === 'masc' || raw === 'femme' || raw === 'neutral') {
-    seedState.style = raw;
-  }
-} catch { /* noop */ }
+const DEFAULT_PACK_FOCUS = 'default';
+
+// ---------- style + mood persistence ----------
+// Both flow through the generic prefsSet helper. Initial values are picked
+// up when prefs-list arrives from the main thread shortly after init.
 
 function persistStyle() {
-  try {
-    if (seedState.style) localStorage.setItem(STYLE_STORAGE_KEY, seedState.style);
-    else localStorage.removeItem(STYLE_STORAGE_KEY);
-  } catch { /* noop */ }
+  prefsSet('style', seedState.style || null);
 }
 
-// ---------- mood persistence ----------
-const MOOD_STORAGE_KEY = 'navii.mood';
-try {
-  const raw = localStorage.getItem(MOOD_STORAGE_KEY);
-  if (raw === 'happy' || raw === 'serious' || raw === 'sleepy' || raw === 'wink') {
-    seedState.mood = raw;
-  }
-} catch { /* noop */ }
-
 function persistMood() {
-  try {
-    if (seedState.mood) localStorage.setItem(MOOD_STORAGE_KEY, seedState.mood);
-    else localStorage.removeItem(MOOD_STORAGE_KEY);
-  } catch { /* noop */ }
+  prefsSet('mood', seedState.mood || null);
 }
 
 const buildSpec: BuildSpec = {
@@ -136,17 +124,18 @@ interface MascotPresetUI {
 let presets: MascotPresetUI[] = [];
 
 // ---------- Packs state ----------
-const PACKS_STORAGE_KEY = 'navii.enabled-packs';
+// Persisted via figma.clientStorage on the main thread (UI iframe localStorage
+// is wiped by Figma between sessions). Main thread replies with 'packs-list'
+// shortly after init; until then enabledPackIds is empty.
 let enabledPackIds: Set<string> = new Set();
-try {
-  const raw = localStorage.getItem(PACKS_STORAGE_KEY);
-  if (raw) enabledPackIds = new Set(JSON.parse(raw));
-} catch { /* noop */ }
 
 function persistEnabledPacks() {
-  try {
-    localStorage.setItem(PACKS_STORAGE_KEY, JSON.stringify([...enabledPackIds]));
-  } catch { /* noop */ }
+  parent.postMessage(
+    {
+      pluginMessage: { type: 'packs-set', packs: [...enabledPackIds] },
+    },
+    '*',
+  );
 }
 
 function isPackAvailable(pack: Pack): boolean {
@@ -199,10 +188,16 @@ function currentSeedOptions(): AvatarOptions {
   } else if (seedState.seedPaletteId) {
     opts.paletteId = seedState.seedPaletteId;
   }
-  const packs = getEnabledPackIds();
-  if (packs.length > 0) {
-    opts.packs = packs;
-    // Style hint only meaningful when at least one pack active.
+  const enabled = getEnabledPackIds();
+  // Pack focus drives the pool selection. 'default' = no packs (free base).
+  // Any other value must be an enabled pack id to take effect — if the user
+  // disabled the focused pack since last render, we fall back to 'default'.
+  if (
+    seedState.packFocus !== DEFAULT_PACK_FOCUS &&
+    enabled.includes(seedState.packFocus)
+  ) {
+    opts.packs = [seedState.packFocus];
+    // Style hint only meaningful when a pack is active.
     if (seedState.style) opts.style = seedState.style;
   }
   // Mood applies regardless of packs — it overrides face features directly.
@@ -494,23 +489,116 @@ function derivePalette(baseHex: string, name: string): BrandPalette {
   };
 }
 
-const BRAND_STORAGE_KEY = 'navii.brand-palette';
+// Brand selection persists via clientStorage as a small key, not the resolved
+// palette. The Figma file's variables can change between sessions (new vars
+// added, colors edited, vars renamed/removed), so we re-derive on restore.
+//
+// Shape:
+//   { hexes: string[], label: string, variableName?: string }
+//
+// - hexes.length === 1, no variableName → user-typed single hex picker.
+// - hexes.length === 1, variableName set → Figma variable click; on restore
+//   we look up `variableName` in the fresh variables-list and use that hex.
+//   If the variable is gone, the selection is silently dropped.
+// - hexes.length > 1 → multi-hex paste; re-runs the same derivation.
+interface BrandSelection {
+  hexes: string[];
+  label: string;
+  variableName?: string;
+}
 
-function loadBrandPalette(): BrandPalette | null {
-  try {
-    const raw = localStorage.getItem(BRAND_STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as BrandPalette;
-  } catch {
-    return null;
+let pendingBrandSelection: BrandSelection | null = null;
+
+function persistBrandSelection(sel: BrandSelection | null) {
+  prefsSet('brandSelection', sel);
+}
+
+/**
+ * Called when prefs-list arrives. Manual hex selections (no variableName) can
+ * resolve immediately since they don't depend on the Figma variables list.
+ * Figma-variable selections defer to maybeApplyPendingBrandFromVariables
+ * once variables-list lands.
+ */
+function applyPendingBrandIfReady() {
+  const sel = pendingBrandSelection;
+  if (!sel) return;
+  if (sel.variableName) return; // wait for variables-list
+  if (sel.hexes.length === 1) {
+    pendingBrandSelection = null;
+    applyBrandFromHex(sel.hexes[0]!, sel.label);
+  } else if (sel.hexes.length > 1) {
+    pendingBrandSelection = null;
+    brandPalette = deriveMultiHexPalette(sel.hexes, sel.label);
+    seedState.seedPaletteId = 'brand';
+    renderSeedPalettes();
+    renderBuildPalettes();
+    renderSeedPreview();
+    renderBuildPreview();
   }
 }
 
-function persistBrandPalette(p: BrandPalette | null) {
-  try {
-    if (p) localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(p));
-    else localStorage.removeItem(BRAND_STORAGE_KEY);
-  } catch { /* noop */ }
+/**
+ * Called when variables-list arrives. Looks up the saved variableName in the
+ * fresh list. If found, re-applies with the current (possibly changed) hex.
+ * If the variable was renamed/removed, the selection is silently dropped.
+ */
+function maybeApplyPendingBrandFromVariables() {
+  const sel = pendingBrandSelection;
+  if (!sel || !sel.variableName) return;
+  pendingBrandSelection = null;
+  const fresh = brandColors.find((c) => c.name === sel.variableName);
+  if (!fresh) {
+    // Var no longer exists; clear the saved selection too so we don't keep
+    // hunting for it next session.
+    persistBrandSelection(null);
+    return;
+  }
+  applyBrandFromHex(fresh.hex, fresh.name, true);
+}
+
+/**
+ * Hydrate UI state from the prefs blob the main thread sent. Called once
+ * shortly after init. Each field is restored independently; missing fields
+ * stay at their default values.
+ */
+function handlePrefsList(prefs: Record<string, unknown>) {
+  // style
+  const style = prefs['style'];
+  if (style === 'masc' || style === 'femme' || style === 'neutral') {
+    seedState.style = style;
+  }
+  // mood
+  const mood = prefs['mood'];
+  if (mood === 'happy' || mood === 'serious' || mood === 'sleepy' || mood === 'wink') {
+    seedState.mood = mood;
+  }
+  // recent seeds
+  const r = prefs['recent'];
+  if (Array.isArray(r)) {
+    recent = r.filter((v): v is string => typeof v === 'string').slice(0, 24);
+  }
+  // brand-group collapse state
+  const bc = prefs['brandCollapsed'];
+  if (Array.isArray(bc)) {
+    collapsedGroups = new Set(bc.filter((v): v is string => typeof v === 'string'));
+    collapseInitialized = true;
+  }
+  // brand selection — defer resolution. Manual hex restores immediately;
+  // variable-backed restores once variables-list arrives.
+  const sel = prefs['brandSelection'];
+  if (
+    sel &&
+    typeof sel === 'object' &&
+    !Array.isArray(sel) &&
+    Array.isArray((sel as { hexes?: unknown }).hexes)
+  ) {
+    pendingBrandSelection = sel as BrandSelection;
+    applyPendingBrandIfReady();
+  }
+  // Re-render surfaces that depend on restored state.
+  renderRecent();
+  renderMoodRow();
+  renderSeedPreview();
 }
 
 // ---------- License state ----------
@@ -690,7 +778,7 @@ function applyBrandFromMultiHex(text: string) {
   }
   const label = hexes.length === 1 ? hexes[0]! : `Custom (${hexes.length})`;
   brandPalette = deriveMultiHexPalette(hexes, label);
-  persistBrandPalette(brandPalette);
+  persistBrandSelection({ hexes, label });
   seedState.seedPaletteId = 'brand';
   renderSeedPalettes();
   renderBuildPalettes();
@@ -702,9 +790,13 @@ function applyBrandFromMultiHex(text: string) {
   }
 }
 
-function applyBrandFromHex(hex: string, label: string) {
+function applyBrandFromHex(hex: string, label: string, fromVariable = false) {
   brandPalette = derivePalette(hex, label);
-  persistBrandPalette(brandPalette);
+  persistBrandSelection({
+    hexes: [hex],
+    label,
+    ...(fromVariable ? { variableName: label } : {}),
+  });
   seedState.seedPaletteId = 'brand';
   // DON'T rebuild brand groups (would collapse the user's expanded sections).
   // Surgically update active states on existing DOM instead.
@@ -731,24 +823,16 @@ function updateBrandActiveStates(activeHex: string) {
 }
 
 // Per-collection collapse state — persisted so the designer's choices stick.
-// Special sentinel "*all*" means "everything starts collapsed" (used on first
-// load when the user hasn't toggled anything yet).
-const COLLAPSE_STORAGE_KEY = 'navii.brand-collapsed';
-const COLLAPSE_INITIALIZED_KEY = 'navii.brand-collapsed-init';
+// Collapsed brand groups + initialization flag. Persisted via clientStorage
+// as `brandCollapsed` (string[]). Empty array also signals "initialized" —
+// the dedicated init flag from the localStorage era is no longer needed since
+// prefs-list arriving carries explicit absence/presence.
 let collapsedGroups: Set<string> = new Set();
 let collapseInitialized = false;
-try {
-  const raw = localStorage.getItem(COLLAPSE_STORAGE_KEY);
-  if (raw) collapsedGroups = new Set(JSON.parse(raw));
-  collapseInitialized = localStorage.getItem(COLLAPSE_INITIALIZED_KEY) === 'true';
-} catch { /* noop */ }
 
 function persistCollapseState() {
-  try {
-    localStorage.setItem(COLLAPSE_STORAGE_KEY, JSON.stringify([...collapsedGroups]));
-    localStorage.setItem(COLLAPSE_INITIALIZED_KEY, 'true');
-    collapseInitialized = true;
-  } catch { /* noop */ }
+  collapseInitialized = true;
+  prefsSet('brandCollapsed', [...collapsedGroups]);
 }
 
 function groupBrandColors(colors: VariableEntry[]): Map<string, VariableEntry[]> {
@@ -853,7 +937,7 @@ function renderBrandSwatches() {
         sw.className = 'swatch' + (active ? ' active' : '');
         sw.style.background = c.hex;
         sw.title = `${c.name} (${c.hex})`;
-        sw.addEventListener('click', () => applyBrandFromHex(c.hex, c.name));
+        sw.addEventListener('click', () => applyBrandFromHex(c.hex, c.name, true));
         row.appendChild(sw);
       }
       parent.appendChild(row);
@@ -1281,10 +1365,70 @@ function closePackModal() {
 function togglePack(id: string) {
   if (enabledPackIds.has(id)) enabledPackIds.delete(id);
   else enabledPackIds.add(id);
+  // If the focused pack was just disabled, fall back to Default so the seed
+  // preview reverts to the free base pool instead of silently rendering a
+  // disabled pack.
+  if (
+    seedState.packFocus !== DEFAULT_PACK_FOCUS &&
+    !enabledPackIds.has(seedState.packFocus)
+  ) {
+    seedState.packFocus = DEFAULT_PACK_FOCUS;
+  }
   persistEnabledPacks();
   renderPackGrid();
   renderPacksHero();
+  renderPackFocusRow();
   renderSeedPreview();
+}
+
+function setPackFocus(value: string) {
+  seedState.packFocus = value;
+  renderPackFocusRow();
+  renderSeedPreview();
+}
+
+/**
+ * Render the "Showing from" chip strip above the Seed input. Always shows a
+ * "Default" chip (free base pool); each enabled pack adds another chip.
+ * Hidden only when zero packs are enabled — at that point the choice is
+ * degenerate (only Default).
+ */
+function renderPackFocusRow() {
+  const section = document.getElementById('pack-focus-section');
+  const row = document.getElementById('pack-focus-row');
+  if (!section || !row) return;
+  const enabled = getEnabledPackIds();
+  if (enabled.length === 0) {
+    section.style.display = 'none';
+    // Reset to Default so the preview renders from the free base pool when
+    // we re-enter the chip strip later.
+    seedState.packFocus = DEFAULT_PACK_FOCUS;
+    return;
+  }
+  section.style.display = '';
+  clear(row);
+  // Normalize stale focus (e.g. a pack was just disabled outside togglePack).
+  const focus =
+    seedState.packFocus === DEFAULT_PACK_FOCUS ||
+    enabled.includes(seedState.packFocus)
+      ? seedState.packFocus
+      : DEFAULT_PACK_FOCUS;
+  seedState.packFocus = focus;
+
+  const makePill = (value: string, label: string) => {
+    const pill = document.createElement('div');
+    pill.className = 'style-pill' + (focus === value ? ' active' : '');
+    pill.textContent = label;
+    pill.addEventListener('click', () => setPackFocus(value));
+    return pill;
+  };
+
+  // Default is always first — it represents the free base pool (no packs).
+  row.appendChild(makePill(DEFAULT_PACK_FOCUS, 'Default'));
+  for (const id of enabled) {
+    const pack = BUILT_IN_PACKS.find((p) => p.id === id);
+    row.appendChild(makePill(id, pack?.name ?? id));
+  }
 }
 
 function setStyleHint(value: '' | 'masc' | 'femme' | 'neutral') {
@@ -1360,6 +1504,15 @@ function captureCurrentAvatar(name: string): MascotPresetUI {
   const id = uuid();
   const createdAt = Date.now();
   const enabledPacks = getEnabledPackIds();
+  // Capture what the user actually sees right now. With the focus model the
+  // seed preview renders from exactly one pool: 'default' (no packs) or the
+  // focused pack id. Saving every enabled pack would replay a different
+  // (multi-pack-blended) render on load, surprising the user.
+  const effectivePacks =
+    seedState.packFocus !== DEFAULT_PACK_FOCUS &&
+    enabledPacks.includes(seedState.packFocus)
+      ? [seedState.packFocus]
+      : [];
   if (activeTab === 'build') {
     return {
       id, name, mode: 'build',
@@ -1374,7 +1527,7 @@ function captureCurrentAvatar(name: string): MascotPresetUI {
   return {
     id, name, mode: 'seed',
     seed,
-    ...(enabledPacks.length > 0 ? { packs: enabledPacks } : {}),
+    ...(effectivePacks.length > 0 ? { packs: effectivePacks } : {}),
     ...(seedState.style ? { style: seedState.style } : {}),
     ...(seedState.mood ? { mood: seedState.mood } : {}),
     ...(seedState.seedPaletteId && seedState.seedPaletteId !== 'brand'
@@ -1641,9 +1794,18 @@ function loadMascot(p: MascotPresetUI) {
   }
   enabledPackIds = new Set(p.packs ?? []);
   persistEnabledPacks();
+  // Loading a preset focuses the preview on whatever pool was captured:
+  //   - single pack saved → focus that pack
+  //   - no packs (or multi-pack legacy preset) → focus Default
+  // This guarantees the loaded render matches what the user saved, since the
+  // engine now renders from exactly one pool at a time.
+  const captured = p.packs ?? [];
+  seedState.packFocus =
+    captured.length === 1 ? captured[0]! : DEFAULT_PACK_FOCUS;
   renderSeedPalettes();
   renderPackGrid();
   renderPacksHero();
+  renderPackFocusRow();
   renderMoodRow();
   renderSeedPreview();
   setActiveTab('seed');
@@ -1863,9 +2025,11 @@ function init() {
   $('primary-btn').addEventListener('click', doPrimary);
   $('fill-random-btn').addEventListener('click', () => {
     if (!guardOnline('Filling random avatars')) return;
-    const opts: AvatarOptions = {};
-    if (seedState.seedPaletteId) opts.paletteId = seedState.seedPaletteId;
-    if (seedState.background) opts.background = seedState.background;
+    // Reuse currentSeedOptions so packs / mood / style / background / palette
+    // all flow through to each random-seed fill. Drop `size` — fills always
+    // raster at 512 via the main thread regardless of preview size.
+    const opts: AvatarOptions = { ...currentSeedOptions() };
+    delete (opts as { size?: number }).size;
     parent.postMessage({ pluginMessage: { type: 'fill-random', options: opts } }, '*');
   });
 
@@ -1884,6 +2048,10 @@ function init() {
     if (msg.type === 'variables-list') {
       brandColors = (msg.variables as VariableEntry[]) || [];
       renderBrandSwatches();
+      // If a brand selection was saved against a Figma variable, re-resolve
+      // it now that we have the fresh list. Hex may have changed; var may
+      // be gone (silent drop).
+      maybeApplyPendingBrandFromVariables();
     }
     if (msg.type === 'license-status') {
       setLicenseStatus(msg.license || { ok: false });
@@ -1909,6 +2077,28 @@ function init() {
     }
     if (msg.type === 'onboarding-status') {
       handleOnboardingStatus(msg.seen === true);
+    }
+    if (msg.type === 'prefs-list') {
+      handlePrefsList((msg.prefs as Record<string, unknown>) ?? {});
+    }
+    if (msg.type === 'packs-list') {
+      // Hydrate enabled-packs from clientStorage. Filter against built-in
+      // pack ids so stale entries (renamed/removed packs) don't linger.
+      const incoming = Array.isArray(msg.packs) ? (msg.packs as string[]) : [];
+      const valid = new Set(BUILT_IN_PACKS.map((p) => p.id));
+      enabledPackIds = new Set(incoming.filter((id) => valid.has(id)));
+      // Normalize focus against newly-hydrated enabled set + re-render the
+      // surfaces that depend on it.
+      if (
+        seedState.packFocus !== DEFAULT_PACK_FOCUS &&
+        !enabledPackIds.has(seedState.packFocus)
+      ) {
+        seedState.packFocus = DEFAULT_PACK_FOCUS;
+      }
+      renderPackGrid();
+      renderPacksHero();
+      renderPackFocusRow();
+      renderSeedPreview();
     }
   });
 
@@ -1997,8 +2187,9 @@ function init() {
   });
   updateProPill();
 
-  // Brand wiring
-  brandPalette = loadBrandPalette();
+  // Brand wiring — brandPalette starts null. It hydrates when prefs-list
+  // arrives (manual hex selections restore immediately) or when variables-list
+  // arrives (Figma variable selections re-resolve against the fresh list).
   $('brand-open-btn').addEventListener('click', openUpgradeModal);
 
   // Custom palette: color picker ↔ hex sync + apply
@@ -2077,12 +2268,19 @@ function init() {
   renderRecent();
   renderPackGrid();
   renderPacksHero();
+  renderPackFocusRow();
   bindMascotHandlers();
   bindMascotActionModalHandlers();
   bindMoodHandlers();
   renderMoodRow();
   requestPresets();
   requestUsage();
+  // Same race lesson as license-restore: pull enabled packs + UI prefs
+  // explicitly via figma.clientStorage. localStorage in the UI iframe is
+  // wiped by Figma between sessions, so any state saved there was being
+  // lost on every reopen.
+  parent.postMessage({ pluginMessage: { type: 'packs-get' } }, '*');
+  parent.postMessage({ pluginMessage: { type: 'prefs-get' } }, '*');
   // Explicit pull of cached license — main thread also pushes on startup,
   // but that race lost the message before the UI iframe attached its
   // listener, so users had to re-enter their key on every plugin open.

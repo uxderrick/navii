@@ -97,6 +97,12 @@ type UsageGetMsg = { type: 'usage-get' };
 type OnboardingGetMsg = { type: 'onboarding-get' };
 type OnboardingSetMsg = { type: 'onboarding-set'; seen: boolean };
 
+type PacksGetMsg = { type: 'packs-get' };
+type PacksSetMsg = { type: 'packs-set'; packs: string[] };
+
+type PrefsGetMsg = { type: 'prefs-get' };
+type PrefsSetMsg = { type: 'prefs-set'; key: string; value: unknown };
+
 type Msg =
   | InsertMsg
   | InsertBuildMsg
@@ -113,6 +119,10 @@ type Msg =
   | UsageGetMsg
   | OnboardingGetMsg
   | OnboardingSetMsg
+  | PacksGetMsg
+  | PacksSetMsg
+  | PrefsGetMsg
+  | PrefsSetMsg
   | { type: 'close' };
 
 figma.showUI(__html__, { width: 640, height: 520, themeColors: true });
@@ -134,6 +144,10 @@ figma.ui.onmessage = async (msg: Msg) => {
     case 'usage-get':      return doUsageGet();
     case 'onboarding-get': return doOnboardingGet();
     case 'onboarding-set': return doOnboardingSet(msg);
+    case 'packs-get':      return doPacksGet();
+    case 'packs-set':      return doPacksSet(msg);
+    case 'prefs-get':      return doPrefsGet();
+    case 'prefs-set':      return doPrefsSet(msg);
     case 'close':          return figma.closePlugin();
   }
 };
@@ -143,11 +157,23 @@ void doLicenseRestore();
 
 function buildUrl(seed: string, opts: AvatarOptions, ext = ''): string {
   // QuickJS (Figma main thread) lacks URLSearchParams — build manually.
+  // Keep this in sync with packages/api/src/app.ts's /avatar/:seed query
+  // parser — otherwise the fill (image-fetch) path silently strips options
+  // and the rendered image diverges from the in-plugin preview.
   const parts: string[] = [];
   if (opts.size) parts.push(`size=${opts.size}`);
   if (opts.paletteId) parts.push(`palette=${encodeURIComponent(opts.paletteId)}`);
   if (typeof opts.background === 'string') parts.push(`background=${opts.background}`);
   if (opts.tileBg) parts.push(`tileBg=${encodeURIComponent(opts.tileBg)}`);
+  if (opts.mood) parts.push(`mood=${opts.mood}`);
+  if (opts.packs && opts.packs.length > 0) {
+    parts.push(`packs=${opts.packs.map(encodeURIComponent).join(',')}`);
+  }
+  if (opts.style) parts.push(`style=${opts.style}`);
+  // opts.palette (Palette object) intentionally NOT serialized — brand
+  // palettes don't round-trip through the HTTP API (no registry id). The
+  // in-plugin preview uses the local engine; fill mode falls back to the
+  // paletteId if one is set, otherwise the seed-derived palette.
   const qs = parts.length ? '?' + parts.join('&') : '';
   return `${API_BASE}/avatar/${encodeURIComponent(seed)}${ext}${qs}`;
 }
@@ -278,6 +304,91 @@ async function doOnboardingSet(msg: OnboardingSetMsg) {
       await figma.clientStorage.setAsync(ONBOARDING_STORAGE_KEY, true);
     } else {
       await figma.clientStorage.deleteAsync(ONBOARDING_STORAGE_KEY);
+    }
+  } catch {
+    // non-fatal.
+  }
+}
+
+// ---------- Enabled packs (per-user persistence) ----------
+//
+// Pack toggles previously used UI-iframe localStorage, which Figma wipes
+// between plugin sessions. Move to figma.clientStorage on the main thread
+// (same pattern as onboarding + usage + license).
+
+const PACKS_STORAGE_KEY = 'navii.enabled-packs';
+
+async function doPacksGet() {
+  let packs: string[] = [];
+  try {
+    const stored = await figma.clientStorage.getAsync(PACKS_STORAGE_KEY);
+    if (Array.isArray(stored)) {
+      packs = stored.filter((v): v is string => typeof v === 'string');
+    }
+  } catch {
+    // clientStorage rarely fails; treat as no packs enabled.
+  }
+  figma.ui.postMessage({ type: 'packs-list', packs });
+}
+
+async function doPacksSet(msg: PacksSetMsg) {
+  try {
+    const packs = (msg.packs ?? []).filter((v) => typeof v === 'string');
+    if (packs.length === 0) {
+      await figma.clientStorage.deleteAsync(PACKS_STORAGE_KEY);
+    } else {
+      await figma.clientStorage.setAsync(PACKS_STORAGE_KEY, packs);
+    }
+  } catch {
+    // non-fatal.
+  }
+}
+
+// ---------- Generic UI prefs ----------
+//
+// Single clientStorage blob keyed by 'navii.prefs'. UI requests the whole
+// object on init (prefs-get → prefs-list), then individual updates flow
+// through prefs-set with { key, value }. Whitelist guards the namespace so
+// the UI can't sneak arbitrary keys into persistent storage.
+
+const PREFS_STORAGE_KEY = 'navii.prefs';
+const ALLOWED_PREF_KEYS = new Set([
+  'style',            // 'masc' | 'femme' | 'neutral'
+  'mood',             // 'happy' | 'serious' | 'sleepy' | 'wink'
+  'recent',           // string[] (recent seed history)
+  'brandCollapsed',   // string[] (collapsed brand group keys)
+  'brandSelection',   // { collectionId, variableName } | null
+]);
+
+async function doPrefsGet() {
+  let prefs: Record<string, unknown> = {};
+  try {
+    const stored = await figma.clientStorage.getAsync(PREFS_STORAGE_KEY);
+    if (stored && typeof stored === 'object' && !Array.isArray(stored)) {
+      prefs = stored as Record<string, unknown>;
+    }
+  } catch {
+    // clientStorage rarely fails; treat as no prefs.
+  }
+  figma.ui.postMessage({ type: 'prefs-list', prefs });
+}
+
+async function doPrefsSet(msg: PrefsSetMsg) {
+  if (!ALLOWED_PREF_KEYS.has(msg.key)) return;
+  try {
+    const stored = await figma.clientStorage.getAsync(PREFS_STORAGE_KEY);
+    const current =
+      stored && typeof stored === 'object' && !Array.isArray(stored)
+        ? (stored as Record<string, unknown>)
+        : {};
+    if (msg.value === null || msg.value === undefined) {
+      const { [msg.key]: _, ...rest } = current;
+      await figma.clientStorage.setAsync(PREFS_STORAGE_KEY, rest);
+    } else {
+      await figma.clientStorage.setAsync(PREFS_STORAGE_KEY, {
+        ...current,
+        [msg.key]: msg.value,
+      });
     }
   } catch {
     // non-fatal.

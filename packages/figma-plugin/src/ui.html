@@ -1494,6 +1494,10 @@
     color: var(--fg-tertiary);
     margin-top: 4px;
   }
+  /* Left-panel pack focus selector — sits above the Seed input. Slightly
+     tighter margins than right-panel sections; chips wrap naturally. */
+  .pack-focus-section { margin-bottom: 10px; }
+  .pack-focus-section .section-label { margin-bottom: 6px; }
 
   .active-pack-empty {
     color: var(--fg-tertiary);
@@ -2345,6 +2349,10 @@
         <button class="nav-arrow next" id="next-btn" title="Next random">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
+      </div>
+      <div class="pack-focus-section" id="pack-focus-section" style="display: none;">
+        <div class="section-label">Showing from</div>
+        <div class="style-hint-row" id="pack-focus-row"></div>
       </div>
       <div>
         <div class="section-label">Seed</div>
