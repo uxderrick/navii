@@ -31,6 +31,20 @@ describe('api', () => {
     expect(body.startsWith('<svg')).toBe(true);
   });
 
+  it('sets x-navii-warning when seed looks like an email', async () => {
+    const res = await get('/avatar/' + encodeURIComponent('user@example.com'));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('x-navii-warning')).toContain('plaintext-email-seed');
+  });
+
+  it('omits x-navii-warning for hashed seeds', async () => {
+    const res = await get(
+      '/avatar/973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b',
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get('x-navii-warning')).toBeNull();
+  });
+
   it('strips .svg extension from seed', async () => {
     const a = await (await get('/avatar/alice')).text();
     const b = await (await get('/avatar/alice.svg')).text();

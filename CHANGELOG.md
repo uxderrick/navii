@@ -6,6 +6,32 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+### Added (`@usenavii/core` 0.7.0)
+
+- **`seedFromEmail(email)`** — Gravatar-compatible seed helper. Returns `sha256` hex of the trimmed + lowercased email so the raw address never reaches URLs, server access logs, `Referer` headers, browser history, CDN cache keys, or analytics pixels. Two services hashing the same email produce the same seed → drop-in compatible with Gravatar's lookup scheme.
+- **`normalizeEmail(email)`** — exported canonicalization step (trim + lowercase + NFC) for callers who need to reproduce the form before hashing.
+- **`sha256Hex(input)`** — sync SHA-256 (FIPS 180-4) primitive used by `seedFromEmail`. Pure JS, no deps; available for callers that want to hash other inputs in the same scheme.
+- **`SeedOptions`** type + `hashEmail` option on `Navii.seed()`.
+
+### Changed (`@usenavii/core` 0.7.0) — breaking
+
+- `Navii.seed({ email })` now returns `sha256(normalizeEmail(email))` instead of the raw address. **Migration:** if your existing avatars were keyed on raw emails and you need them to stay stable, pass `{ hashEmail: false }` until you can re-key. New deployments should leave the default.
+- `Navii.seedFromEmail` exposed on the `Navii` namespace.
+
+### Added (`@usenavii/react` 0.8.0)
+
+- Re-exports `seed`, `seedFromEmail`, `normalizeEmail`, `SeedFields`, `SeedOptions` from `@usenavii/core` so `<Navii seed={seedFromEmail(user.email)} />` works without a second import.
+
+### Added (API host)
+
+- `/avatar/:seed` sets `x-navii-warning: plaintext-email-seed; hash with seedFromEmail()` when the seed matches an email pattern. Render still succeeds — the header is a client-side nudge. Also logged at `warn` level for ops visibility.
+
+### Changed (API host)
+
+- `/docs/recipes` gets a new "Using emails as seeds (Gravatar-style)" section.
+- `/docs/sdk-core#seed` documents `seedFromEmail`, `normalizeEmail`, and the `hashEmail` option on `Navii.seed()`.
+- `/docs/http-api#headers` documents the new `x-navii-warning` response header.
+
 ## [0.25.2] - 2026-05-28
 
 ### Changed (API host)

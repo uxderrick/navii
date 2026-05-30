@@ -149,5 +149,21 @@ export function NaviiGroup({
   );
 }
 
-export { createAvatar, selectAvatar, renderAvatar, renderGroup } from '@usenavii/core';
-export type { AvatarSpec, AvatarOptions, GroupOptions, MoodId, Palette } from '@usenavii/core';
+export {
+  createAvatar,
+  selectAvatar,
+  renderAvatar,
+  renderGroup,
+  seed,
+  seedFromEmail,
+  normalizeEmail,
+} from '@usenavii/core';
+export type {
+  AvatarSpec,
+  AvatarOptions,
+  GroupOptions,
+  MoodId,
+  Palette,
+  SeedFields,
+  SeedOptions,
+} from '@usenavii/core';

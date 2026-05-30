@@ -648,6 +648,14 @@ export function createApp(options: AppOptions = {}) {
     const seed = stripExt(decoded);
     if (!seed) return c.text('seed required', 400);
 
+    // Email-shaped seed = plaintext PII on the wire (URL, logs, Referer,
+    // CDN cache keys). Honor the request but flag it. Clients should hash
+    // with `seedFromEmail()` from @usenavii/core instead.
+    const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(seed);
+    if (looksLikeEmail) {
+      log.warn({ seedShape: 'email' }, 'plaintext email seed');
+    }
+
     const size = clampInt(c.req.query('size'), 16, 1024, 96);
     const paletteId = c.req.query('palette');
     const background = c.req.query('background');
@@ -704,24 +712,22 @@ export function createApp(options: AppOptions = {}) {
           );
         }
       }
-      return new Response(png as BodyInit, {
-        status: 200,
-        headers: {
-          'content-type': 'image/png',
-          'cache-control': 'public, max-age=31536000, immutable',
-          'access-control-allow-origin': '*',
-        },
-      });
-    }
-
-    return new Response(svg, {
-      status: 200,
-      headers: {
-        'content-type': 'image/svg+xml; charset=utf-8',
+      const headers: Record<string, string> = {
+        'content-type': 'image/png',
         'cache-control': 'public, max-age=31536000, immutable',
         'access-control-allow-origin': '*',
-      },
-    });
+      };
+      if (looksLikeEmail) headers['x-navii-warning'] = 'plaintext-email-seed; hash with seedFromEmail()';
+      return new Response(png as BodyInit, { status: 200, headers });
+    }
+
+    const svgHeaders: Record<string, string> = {
+      'content-type': 'image/svg+xml; charset=utf-8',
+      'cache-control': 'public, max-age=31536000, immutable',
+      'access-control-allow-origin': '*',
+    };
+    if (looksLikeEmail) svgHeaders['x-navii-warning'] = 'plaintext-email-seed; hash with seedFromEmail()';
+    return new Response(svg, { status: 200, headers: svgHeaders });
   });
 
   app.get('/gallery', (c) => {

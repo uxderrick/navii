@@ -448,6 +448,19 @@ createAvatar(s);</code></pre>
     </section>
 
     <section>
+      <h2 id="email-seeds">Using emails as seeds (Gravatar-style)</h2>
+      <p>Raw emails in URLs are PII on the wire — they end up in server access logs, <code>Referer</code> headers sent to third parties, browser history, CDN cache keys, and analytics pixels. Hash the email first with the same scheme Gravatar uses (<code>sha256</code> of the trimmed + lowercased address):</p>
+      <pre class="code"><code>import { seedFromEmail, createAvatar } from '@usenavii/core';
+
+const s = seedFromEmail(user.email);  // "973dfe46…b4e813b" — sha256 hex
+createAvatar(s);
+// or hit the API: \`${API_BASE}/avatar/\${s}.svg\`</code></pre>
+      <p>Two services that hash with <code>seedFromEmail()</code> produce the same seed for the same person — drop-in compatible with Gravatar's lookup scheme.</p>
+      <p><code>Navii.seed({ email })</code> hashes by default since v0.7. Pass <code>{ hashEmail: false }</code> only when you need existing raw-email seeds to stay stable during a migration.</p>
+      <p>The hosted API echoes <code>X-Navii-Warning: plaintext-email-seed</code> when it sees an email-shaped seed. Treat it as a nudge to hash on the client.</p>
+    </section>
+
+    <section>
       <h2 id="random-onboarding">Random avatar on every refresh / onboarding</h2>
       <p>For "spin again" UX, demo seeding, or auto-assigning an avatar before the user picks one — use <code>/random</code>. Same URL, different avatar every request. No redirect, no URL rewrite.</p>
       <pre class="code"><code>&lt;img src="${API_BASE}/random?size=128" alt="" /&gt;</code></pre>
@@ -903,6 +916,10 @@ await db.users.update(user.id, { naviiSeed: seed });</code></pre>
         <li><code>x-ratelimit-reset</code> — Unix epoch seconds when the window resets.</li>
         <li><code>retry-after</code> — only on <code>429</code> responses.</li>
       </ul>
+      <p>The avatar route emits a warning when the seed shape suggests PII:</p>
+      <ul>
+        <li><code>x-navii-warning: plaintext-email-seed; hash with seedFromEmail()</code> — set when the seed matches an email pattern. Avatar still renders; hash the email client-side with <a href="/docs/sdk-core#seed"><code>seedFromEmail()</code></a> to drop the warning.</li>
+      </ul>
     </section>
 
     <section>
@@ -1078,6 +1095,28 @@ await db.users.update(user.id, { naviiSeed: seed });</code></pre>
 return &lt;Navii seed={seed} /&gt;;</code></pre>
 
       <p>Calling <code>Navii.random()</code> directly inside a render function (without <code>useState</code>/<code>useMemo</code>) gives you a new avatar on every re-render.</p>
+    </section>
+
+    <section>
+      <h2 id="seed">Seed helpers</h2>
+      <pre class="code"><code>seed(fields: SeedFields, options?: SeedOptions): string
+seedFromEmail(email: string): string
+normalizeEmail(email: string): string</code></pre>
+
+      <p><code>Navii.seed({ id, email, name, createdAt })</code> picks the most unique field available: <code>id</code> → <code>email</code> → <code>name + createdAt</code> → <code>name</code>. The email branch is <strong>hashed by default</strong> with <code>seedFromEmail()</code> so PII never reaches the wire.</p>
+
+      <pre class="code"><code>import { seed, seedFromEmail } from '@usenavii/core';
+
+const s = seed({ id: user.id, email: user.email, name: user.name });
+// id wins if present; otherwise sha256-of-email; otherwise name.
+
+const hashed = seedFromEmail('alice@example.com');
+// → "973dfe46…b4e813b" — matches Gravatar's sha256 scheme exactly.</code></pre>
+
+      <p><strong>Privacy — why hash emails?</strong> Raw emails in URLs leak into server access logs, <code>Referer</code> headers, browser history, CDN cache keys, and analytics pixels. <code>seedFromEmail()</code> applies the same canonicalization Gravatar uses (<code>sha256</code> of <code>email.trim().toLowerCase()</code>), so the seed stays stable and two services hashing the same way get the same avatar for the same person.</p>
+
+      <p><strong>Migrating off raw-email seeds.</strong> If existing avatars are keyed on the plaintext email and changing them would surprise users, pass <code>{ hashEmail: false }</code> to keep the old behavior:</p>
+      <pre class="code"><code>seed({ email: user.email }, { hashEmail: false }); // legacy — avoid in new code</code></pre>
     </section>
 
     <section>

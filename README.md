@@ -104,15 +104,34 @@ The **seed determines the avatar**. Same seed always produces the same avatar �
 
 **Rule of thumb:** pass a *stable unique identifier* per user.
 
-| Seed input                | Recommendation                                          |
-| ------------------------- | ------------------------------------------------------- |
-| `user.id` / UUID          | ✅ Best. Stable and globally unique.                    |
-| `user.email`              | ✅ Good. Stable, unique per user.                       |
-| `user.name` alone         | ⚠️ Names collide. Two "Alice"s get the same avatar.    |
-| `${name}-${createdAt}`    | ✅ Fine fallback if no ID exists. Bake at signup.       |
-| `Date.now()` at render    | ❌ **Don't.** Breaks determinism — changes every reload.|
+| Seed input                | Recommendation                                              |
+| ------------------------- | ----------------------------------------------------------- |
+| `user.id` / UUID          | ✅ Best. Stable and globally unique.                        |
+| `seedFromEmail(email)`    | ✅ Good. Hashed email — stable, unique, no PII on the wire. |
+| `user.email` (raw)        | ⚠️ Leaks email into URLs, logs, Referer headers. Hash it.   |
+| `user.name` alone         | ⚠️ Names collide. Two "Alice"s get the same avatar.         |
+| `${name}-${createdAt}`    | ✅ Fine fallback if no ID exists. Bake at signup.           |
+| `Date.now()` at render    | ❌ **Don't.** Breaks determinism — changes every reload.    |
 
 If your app *only* has a display name, compose a stable seed at signup time (e.g. `${name}-${createdAt}`) and store it. Never derive the seed from the current time at render — the avatar must be reproducible.
+
+### Using emails as seeds (Gravatar-style)
+
+Raw emails in URLs leak through server access logs, Referer headers, browser history, CDN cache keys, and analytics pixels. Hash the email first — same scheme Gravatar uses (`sha256` of the trimmed + lowercased address):
+
+```ts
+import { seedFromEmail } from '@usenavii/core';
+
+const s = seedFromEmail(user.email);  // e.g. "973dfe46…b4e813b"
+createAvatar(s);
+// or hit the API: `https://api.navii.dev/avatar/${s}.svg`
+```
+
+Two services that both hash with `seedFromEmail()` end up with the same seed for the same person — drop-in compatible with Gravatar's lookup scheme.
+
+`Navii.seed({ email })` hashes by default since v0.7. Pass `{ hashEmail: false }` only when migrating off raw-email seeds and you need existing avatars to stay stable.
+
+The API echoes a warning header (`x-navii-warning: plaintext-email-seed`) when an email-shaped seed reaches it. Treat it as a nudge to hash on the client.
 
 ---
 

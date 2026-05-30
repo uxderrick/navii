@@ -3,7 +3,8 @@ export { createRng, cyrb53 } from './prng.js';
 export { selectAvatar } from './select.js';
 export { renderAvatar, renderAvatarInner } from './render.js';
 export { renderGroup, type GroupOptions } from './group.js';
-export { seed, type SeedFields } from './seed.js';
+export { seed, seedFromEmail, normalizeEmail, type SeedFields, type SeedOptions } from './seed.js';
+export { sha256Hex } from './sha256.js';
 export { build, type BuildSpec } from './build.js';
 export {
   BUILT_IN_PACKS,
@@ -16,7 +17,7 @@ export {
 import { selectAvatar } from './select.js';
 import { renderAvatar } from './render.js';
 import { renderGroup } from './group.js';
-import { seed } from './seed.js';
+import { seed, seedFromEmail } from './seed.js';
 import { build } from './build.js';
 import type { AvatarOptions } from './types.js';
 
@@ -114,5 +115,6 @@ export const Navii = {
   select: selectAvatar,
   group: renderGroup,
   seed,
+  seedFromEmail,
   build,
 } as const;

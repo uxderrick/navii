@@ -109,21 +109,26 @@ The `<img>` width is calculated from `size`, `overlap`, and `max` so it has corr
 
 Same seed always produces the same avatar — that's the contract.
 
-| Pass                       | Result                                                  |
-| -------------------------- | ------------------------------------------------------- |
-| `user.id` / UUID           | ✅ Best. Stable and globally unique.                    |
-| `user.email`               | ✅ Good. Stable, unique per user.                       |
-| `user.name` alone          | ⚠️ Names collide. Two "Alice"s get the same avatar.    |
-| `${name}-${createdAt}`     | ✅ Fine fallback if no ID exists. Bake at signup.       |
-| `Date.now()` at render     | ❌ **Don't.** Breaks determinism — changes on reload.   |
+| Pass                       | Result                                                      |
+| -------------------------- | ----------------------------------------------------------- |
+| `user.id` / UUID           | ✅ Best. Stable and globally unique.                        |
+| `seedFromEmail(email)`     | ✅ Good. Hashed email — stable, unique, no PII on the wire. |
+| `user.email` (raw)         | ⚠️ Leaks email into URLs, logs, Referer headers. Hash it.   |
+| `user.name` alone          | ⚠️ Names collide. Two "Alice"s get the same avatar.         |
+| `${name}-${createdAt}`     | ✅ Fine fallback if no ID exists. Bake at signup.           |
+| `Date.now()` at render     | ❌ **Don't.** Breaks determinism — changes on reload.       |
 
 Need a helper that picks the right field automatically?
 
-```ts
-import { seed } from '@usenavii/core';
+```tsx
+import { seed, seedFromEmail } from '@usenavii/react';
 
+// Hashes the email branch by default (Gravatar-style sha256).
 const s = seed({ id: user.id, email: user.email, name: user.name });
 <Navii seed={s} />
+
+// Or hash an email explicitly:
+<Navii seed={seedFromEmail(user.email)} />
 ```
 
 ## Example use cases
