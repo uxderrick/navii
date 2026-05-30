@@ -6,6 +6,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-05-30
+
 ### Added (`@usenavii/core` 0.7.0)
 
 - **`seedFromEmail(email)`** — Gravatar-compatible seed helper. Returns `sha256` hex of the trimmed + lowercased email so the raw address never reaches URLs, server access logs, `Referer` headers, browser history, CDN cache keys, or analytics pixels. Two services hashing the same email produce the same seed → drop-in compatible with Gravatar's lookup scheme.
