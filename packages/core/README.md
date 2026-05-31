@@ -61,9 +61,9 @@ const svg = Navii.create(s);
 
 It picks the most unique field automatically: `id` → `email` → `name + createdAt` → `name`. When the email branch is used it hashes via `seedFromEmail()` by default — pass `{ hashEmail: false }` only to preserve existing raw-email seeds during a migration.
 
-### Using emails as seeds (Gravatar-style)
+### Using emails as seeds
 
-Raw emails in URLs leak through server logs, Referer headers, browser history, and CDN cache keys. Hash the email with the same scheme Gravatar uses (`sha256` of trimmed + lowercased address):
+Raw emails in URLs leak through server logs, Referer headers, browser history, and CDN cache keys. Hash the email — `sha256` of the trimmed + lowercased address:
 
 ```ts
 import { seedFromEmail, createAvatar } from '@usenavii/core';
@@ -72,7 +72,7 @@ const s = seedFromEmail(user.email);  // sha256 hex, 64 chars
 createAvatar(s);
 ```
 
-Two services that both hash with `seedFromEmail()` get the same seed for the same person — drop-in compatible with Gravatar's lookup scheme.
+Two services that both hash with `seedFromEmail()` get the same seed for the same person, so avatars stay consistent across products.
 
 ## API
 

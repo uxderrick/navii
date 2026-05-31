@@ -123,7 +123,7 @@ Need a helper that picks the right field automatically?
 ```tsx
 import { seed, seedFromEmail } from '@usenavii/react';
 
-// Hashes the email branch by default (Gravatar-style sha256).
+// Hashes the email branch by default (sha256 of normalized email).
 const s = seed({ id: user.id, email: user.email, name: user.name });
 <Navii seed={s} />
 

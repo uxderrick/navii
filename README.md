@@ -115,9 +115,9 @@ The **seed determines the avatar**. Same seed always produces the same avatar �
 
 If your app *only* has a display name, compose a stable seed at signup time (e.g. `${name}-${createdAt}`) and store it. Never derive the seed from the current time at render — the avatar must be reproducible.
 
-### Using emails as seeds (Gravatar-style)
+### Using emails as seeds
 
-Raw emails in URLs leak through server access logs, Referer headers, browser history, CDN cache keys, and analytics pixels. Hash the email first — same scheme Gravatar uses (`sha256` of the trimmed + lowercased address):
+Raw emails in URLs leak through server access logs, Referer headers, browser history, CDN cache keys, and analytics pixels. Hash the email first — `sha256` of the trimmed + lowercased address:
 
 ```ts
 import { seedFromEmail } from '@usenavii/core';
@@ -127,7 +127,7 @@ createAvatar(s);
 // or hit the API: `https://api.navii.dev/avatar/${s}.svg`
 ```
 
-Two services that both hash with `seedFromEmail()` end up with the same seed for the same person — drop-in compatible with Gravatar's lookup scheme.
+Two services that both hash with `seedFromEmail()` end up with the same seed for the same person, so avatars stay consistent across products.
 
 `Navii.seed({ email })` hashes by default since v0.7. Pass `{ hashEmail: false }` only when migrating off raw-email seeds and you need existing avatars to stay stable.
 

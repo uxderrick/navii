@@ -448,14 +448,14 @@ createAvatar(s);</code></pre>
     </section>
 
     <section>
-      <h2 id="email-seeds">Using emails as seeds (Gravatar-style)</h2>
-      <p>Raw emails in URLs are PII on the wire — they end up in server access logs, <code>Referer</code> headers sent to third parties, browser history, CDN cache keys, and analytics pixels. Hash the email first with the same scheme Gravatar uses (<code>sha256</code> of the trimmed + lowercased address):</p>
+      <h2 id="email-seeds">Using emails as seeds</h2>
+      <p>Raw emails in URLs are PII on the wire — they end up in server access logs, <code>Referer</code> headers sent to third parties, browser history, CDN cache keys, and analytics pixels. Hash the email first with <code>sha256</code> of the trimmed + lowercased address:</p>
       <pre class="code"><code>import { seedFromEmail, createAvatar } from '@usenavii/core';
 
 const s = seedFromEmail(user.email);  // "973dfe46…b4e813b" — sha256 hex
 createAvatar(s);
 // or hit the API: \`${API_BASE}/avatar/\${s}.svg\`</code></pre>
-      <p>Two services that hash with <code>seedFromEmail()</code> produce the same seed for the same person — drop-in compatible with Gravatar's lookup scheme.</p>
+      <p>Two services that hash with <code>seedFromEmail()</code> produce the same seed for the same person, so avatars stay consistent across products.</p>
       <p><code>Navii.seed({ email })</code> hashes by default since v0.7. Pass <code>{ hashEmail: false }</code> only when you need existing raw-email seeds to stay stable during a migration.</p>
       <p>The hosted API echoes <code>X-Navii-Warning: plaintext-email-seed</code> when it sees an email-shaped seed. Treat it as a nudge to hash on the client.</p>
     </section>
@@ -1111,9 +1111,9 @@ const s = seed({ id: user.id, email: user.email, name: user.name });
 // id wins if present; otherwise sha256-of-email; otherwise name.
 
 const hashed = seedFromEmail('alice@example.com');
-// → "973dfe46…b4e813b" — matches Gravatar's sha256 scheme exactly.</code></pre>
+// → "973dfe46…b4e813b" — sha256 hex of normalized email.</code></pre>
 
-      <p><strong>Privacy — why hash emails?</strong> Raw emails in URLs leak into server access logs, <code>Referer</code> headers, browser history, CDN cache keys, and analytics pixels. <code>seedFromEmail()</code> applies the same canonicalization Gravatar uses (<code>sha256</code> of <code>email.trim().toLowerCase()</code>), so the seed stays stable and two services hashing the same way get the same avatar for the same person.</p>
+      <p><strong>Privacy — why hash emails?</strong> Raw emails in URLs leak into server access logs, <code>Referer</code> headers, browser history, CDN cache keys, and analytics pixels. <code>seedFromEmail()</code> applies <code>sha256(email.trim().toLowerCase())</code>, so the seed stays stable and two services hashing the same way get the same avatar for the same person.</p>
 
       <p><strong>Migrating off raw-email seeds.</strong> If existing avatars are keyed on the plaintext email and changing them would surprise users, pass <code>{ hashEmail: false }</code> to keep the old behavior:</p>
       <pre class="code"><code>seed({ email: user.email }, { hashEmail: false }); // legacy — avoid in new code</code></pre>

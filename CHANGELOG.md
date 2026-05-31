@@ -6,6 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.26.1] - 2026-05-31
+
+### Changed (docs)
+
+- Removed Gravatar comparisons from user-facing docs (README, package READMEs, `/docs/recipes`, `/docs/sdk-core`). Functionality unchanged — `seedFromEmail()` still hashes `sha256(email.trim().toLowerCase())`, so cross-product seed parity still holds for any caller using the same scheme.
+
 ## [0.26.0] - 2026-05-30
 
 ### Added (`@usenavii/core` 0.7.0)
