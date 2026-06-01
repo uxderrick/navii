@@ -23,6 +23,14 @@ describe('api', () => {
     expect(body).toMatchObject({ name: 'navii' });
   });
 
+  it('GET /figma redirects to the Figma community plugin', async () => {
+    const res = await get('/figma');
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toBe(
+      'https://www.figma.com/community/plugin/1640037999835658823',
+    );
+  });
+
   it('GET /avatar/:seed returns SVG', async () => {
     const res = await get('/avatar/alice');
     expect(res.status).toBe(200);

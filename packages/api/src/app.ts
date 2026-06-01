@@ -18,6 +18,8 @@ import { privacyHtml, supportHtml } from './legal.js';
 import { createLicenseRoutes } from './license.js';
 import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
 
+const FIGMA_PLUGIN_URL = 'https://www.figma.com/community/plugin/1640037999835658823';
+
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
   cache?: { max: number };
@@ -180,6 +182,8 @@ export function createApp(options: AppOptions = {}) {
       determinism: 'Same seed + same query → byte-identical response, forever. Safe to cache, safe to mirror.',
     }),
   );
+
+  app.get('/figma', (c) => c.redirect(FIGMA_PLUGIN_URL, 302));
 
   app.get('/thanks', (c) => {
     const checkoutId = c.req.query('checkout_id') ?? c.req.query('checkoutId') ?? '';
