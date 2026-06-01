@@ -63,10 +63,80 @@ export interface LicenseRouteOptions {
   apiBase?: string;
 }
 
-export function createLicenseRoutes(opts: LicenseRouteOptions) {
-  const router = new Hono();
+export type LicenseValidator = (key: string) => Promise<LicenseVerifyResult>;
+
+export function createLicenseValidator(opts: LicenseRouteOptions): LicenseValidator {
   const apiBase = (opts.apiBase ?? DEFAULT_POLAR_BASE).replace(/\/+$/, '');
   const validateUrl = `${apiBase}/v1/customer-portal/license-keys/validate`;
+
+  return async (key: string): Promise<LicenseVerifyResult> => {
+    const cleanKey = key.trim();
+    if (!cleanKey) return { ok: false, reason: 'missing_key' };
+
+    let upstream: Response;
+    try {
+      upstream = await fetch(validateUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          organization_id: opts.organizationId,
+          key: cleanKey,
+        }),
+      });
+    } catch (err) {
+      log.warn({ err: String(err) }, 'license: polar fetch failed');
+      return { ok: false, reason: 'upstream_unreachable' };
+    }
+
+    let data: PolarValidateResponse;
+    try {
+      data = (await upstream.json()) as PolarValidateResponse;
+    } catch {
+      return { ok: false, reason: 'upstream_invalid' };
+    }
+
+    // Polar returns 4xx with { detail } on invalid keys / unknown org / etc.
+    if (!upstream.ok) {
+      const reason = typeof data.detail === 'string'
+        ? data.detail
+        : Array.isArray(data.detail) && data.detail[0]?.msg
+        ? data.detail[0].msg
+        : 'invalid_key';
+      return { ok: false, reason };
+    }
+
+    // Defensive: even on 200, status may not be 'granted'.
+    if (data.status !== 'granted') {
+      return { ok: false, reason: data.status ?? 'invalid_status' };
+    }
+
+    // Expiry — Polar returns ISO string or null. Treat past dates as revoked.
+    if (data.expires_at) {
+      const expiry = new Date(data.expires_at).getTime();
+      if (Number.isFinite(expiry) && expiry < Date.now()) {
+        return { ok: false, reason: 'expired' };
+      }
+    }
+
+    // Optional product gating — reject keys for a different benefit if set.
+    if (opts.benefitId && data.benefit_id && data.benefit_id !== opts.benefitId) {
+      log.info(
+        { expected: opts.benefitId, actual: data.benefit_id },
+        'license: benefit mismatch',
+      );
+      return { ok: false, reason: 'wrong_product' };
+    }
+
+    const result: LicenseVerifyResult = { ok: true, plan: 'pro' };
+    // Polar key id is stable per-purchase; doubles as our purchaseId.
+    if (data.id) result.purchaseId = data.id;
+    return result;
+  };
+}
+
+export function createLicenseRoutes(opts: LicenseRouteOptions) {
+  const router = new Hono();
+  const validateLicense = createLicenseValidator(opts);
 
   // CORS — Figma plugin iframe sends `Origin: null`, so allow all origins.
   // This route only accepts a license key (no cookies/auth/sensitive data),
@@ -101,66 +171,13 @@ export function createLicenseRoutes(opts: LicenseRouteOptions) {
       return c.json<LicenseVerifyResult>({ ok: false, reason: 'missing_key' }, 400);
     }
 
-    let upstream: Response;
-    try {
-      upstream = await fetch(validateUrl, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          organization_id: opts.organizationId,
-          key,
-        }),
-      });
-    } catch (err) {
-      log.warn({ err: String(err) }, 'license: polar fetch failed');
-      return c.json<LicenseVerifyResult>({ ok: false, reason: 'upstream_unreachable' }, 502);
+    const result = await validateLicense(key);
+    if (!result.ok) {
+      const status = result.reason === 'upstream_unreachable' || result.reason === 'upstream_invalid'
+        ? 502
+        : 401;
+      return c.json<LicenseVerifyResult>(result, status);
     }
-
-    let data: PolarValidateResponse;
-    try {
-      data = (await upstream.json()) as PolarValidateResponse;
-    } catch {
-      return c.json<LicenseVerifyResult>({ ok: false, reason: 'upstream_invalid' }, 502);
-    }
-
-    // Polar returns 4xx with { detail } on invalid keys / unknown org / etc.
-    if (!upstream.ok) {
-      const reason = typeof data.detail === 'string'
-        ? data.detail
-        : Array.isArray(data.detail) && data.detail[0]?.msg
-        ? data.detail[0].msg
-        : 'invalid_key';
-      return c.json<LicenseVerifyResult>({ ok: false, reason }, 401);
-    }
-
-    // Defensive: even on 200, status may not be 'granted'.
-    if (data.status !== 'granted') {
-      return c.json<LicenseVerifyResult>(
-        { ok: false, reason: data.status ?? 'invalid_status' },
-        401,
-      );
-    }
-
-    // Expiry — Polar returns ISO string or null. Treat past dates as revoked.
-    if (data.expires_at) {
-      const expiry = new Date(data.expires_at).getTime();
-      if (Number.isFinite(expiry) && expiry < Date.now()) {
-        return c.json<LicenseVerifyResult>({ ok: false, reason: 'expired' }, 401);
-      }
-    }
-
-    // Optional product gating — reject keys for a different benefit if set.
-    if (opts.benefitId && data.benefit_id && data.benefit_id !== opts.benefitId) {
-      log.info(
-        { expected: opts.benefitId, actual: data.benefit_id },
-        'license: benefit mismatch',
-      );
-      return c.json<LicenseVerifyResult>({ ok: false, reason: 'wrong_product' }, 401);
-    }
-
-    const result: LicenseVerifyResult = { ok: true, plan: 'pro' };
-    // Polar key id is stable per-purchase; doubles as our purchaseId.
-    if (data.id) result.purchaseId = data.id;
     return c.json<LicenseVerifyResult>(result);
   });
 

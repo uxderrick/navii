@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createApp } from '../src/app.js';
+import { createLicenseValidator } from '../src/license.js';
 
 const POLAR_ORG = '00000000-0000-0000-0000-000000000001';
 const POLAR_BENEFIT = '00000000-0000-0000-0000-000000000002';
@@ -45,6 +46,37 @@ describe('license/verify — Polar backend', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data).toMatchObject({ ok: true, plan: 'pro', purchaseId: 'license-1' });
+  });
+
+  it('shared validator returns ok=true when Polar responds granted', async () => {
+    mockPolar({
+      id: 'license-2',
+      organization_id: POLAR_ORG,
+      benefit_id: POLAR_BENEFIT,
+      key: 'KEY-VALIDATOR',
+      status: 'granted',
+      expires_at: null,
+    });
+    const validate = createLicenseValidator({
+      organizationId: POLAR_ORG,
+      benefitId: POLAR_BENEFIT,
+    });
+
+    const result = await validate('KEY-VALIDATOR');
+
+    expect(result).toMatchObject({ ok: true, plan: 'pro', purchaseId: 'license-2' });
+  });
+
+  it('shared validator rejects invalid Polar keys', async () => {
+    mockPolar({ detail: 'License key not found' }, { status: 404 });
+    const validate = createLicenseValidator({
+      organizationId: POLAR_ORG,
+      benefitId: POLAR_BENEFIT,
+    });
+
+    const result = await validate('KEY-NOPE');
+
+    expect(result).toMatchObject({ ok: false, reason: 'License key not found' });
   });
 
   it('rejects when status is revoked', async () => {
