@@ -63,6 +63,8 @@ export interface LicenseRouteOptions {
   apiBase?: string;
   /** Optional in-process validation cache TTL. Disabled when omitted. */
   cacheTtlMs?: number;
+  /** Optional shared validator, useful when callers want to reuse a cache. */
+  validator?: LicenseValidator;
 }
 
 export type LicenseValidator = (key: string) => Promise<LicenseVerifyResult>;
@@ -156,7 +158,7 @@ export function createLicenseValidator(opts: LicenseRouteOptions): LicenseValida
 
 export function createLicenseRoutes(opts: LicenseRouteOptions) {
   const router = new Hono();
-  const validateLicense = createLicenseValidator(opts);
+  const validateLicense = opts.validator ?? createLicenseValidator(opts);
 
   // CORS — Figma plugin iframe sends `Origin: null`, so allow all origins.
   // This route only accepts a license key (no cookies/auth/sensitive data),

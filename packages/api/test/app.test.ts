@@ -7,6 +7,10 @@ async function get(path: string): Promise<Response> {
   return app.fetch(new Request(`http://test${path}`));
 }
 
+async function getWithHeaders(path: string, headers: Record<string, string>): Promise<Response> {
+  return app.fetch(new Request(`http://test${path}`, { headers }));
+}
+
 describe('api', () => {
   it('GET / returns landing HTML', async () => {
     const res = await get('/');
@@ -43,6 +47,23 @@ describe('api', () => {
     expect(res.headers.get('content-type')).toContain('image/svg+xml');
     const body = await res.text();
     expect(body.startsWith('<svg')).toBe(true);
+  });
+
+  it('GET /avatar/:seed?pro=1 requires Pro auth', async () => {
+    const res = await get('/avatar/alice?pro=1');
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      error: 'pro_auth_required',
+      upgradeUrl: 'https://navii.dev/pro',
+    });
+    expect(body.message).toContain('https://navii.dev/pro');
+  });
+
+  it('GET /avatar/:seed without pro query remains anonymous', async () => {
+    const res = await get('/avatar/alice');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('image/svg+xml');
   });
 
   it('sets x-navii-warning when seed looks like an email', async () => {

@@ -15,7 +15,7 @@ import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 import { blogIndexHtml, blogReleaseHtml, blogReleaseVersions, blogReleaseOgPng } from './blog.js';
 import { privacyHtml, supportHtml } from './legal.js';
-import { createLicenseRoutes } from './license.js';
+import { createLicenseRoutes, createLicenseValidator, type LicenseValidator } from './license.js';
 import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
 
 const FIGMA_PLUGIN_URL = 'https://www.figma.com/community/plugin/1640037999835658823';
@@ -86,6 +86,14 @@ export interface AppOptions {
 export function createApp(options: AppOptions = {}) {
   const app = new Hono();
   const pngCache = new LruCache<string, Uint8Array>(options.cache?.max ?? 500);
+  const validateLicense: LicenseValidator | undefined = options.polarOrganizationId
+    ? createLicenseValidator({
+      organizationId: options.polarOrganizationId,
+      ...(options.polarBenefitId ? { benefitId: options.polarBenefitId } : {}),
+      ...(options.polarApiBase ? { apiBase: options.polarApiBase } : {}),
+      cacheTtlMs: 86_400_000,
+    })
+    : undefined;
 
   if (options.rateLimit) {
     app.use(
@@ -95,11 +103,12 @@ export function createApp(options: AppOptions = {}) {
   }
 
   // License verification (proxy to Polar.sh). Only mounted when configured.
-  if (options.polarOrganizationId) {
+  if (options.polarOrganizationId && validateLicense) {
     app.route('/', createLicenseRoutes({
       organizationId: options.polarOrganizationId,
       ...(options.polarBenefitId ? { benefitId: options.polarBenefitId } : {}),
       ...(options.polarApiBase ? { apiBase: options.polarApiBase } : {}),
+      validator: validateLicense,
     }));
   }
 
@@ -654,6 +663,12 @@ export function createApp(options: AppOptions = {}) {
     const seed = stripExt(decoded);
     if (!seed) return c.text('seed required', 400);
 
+    const wantsPro = c.req.query('pro') === '1' || c.req.query('pro') === 'true';
+    if (wantsPro) {
+      const authFailure = await requireProAuth(c.req.header('authorization'), validateLicense);
+      if (authFailure) return authFailure;
+    }
+
     // Email-shaped seed = plaintext PII on the wire (URL, logs, Referer,
     // CDN cache keys). Honor the request but flag it. Clients should hash
     // with `seedFromEmail()` from @usenavii/core instead.
@@ -871,6 +886,38 @@ function invalidLicense(): Response {
       headers: { 'access-control-allow-origin': '*' },
     },
   );
+}
+
+function bearerToken(header: string | undefined): string | undefined {
+  const match = /^Bearer\s+(.+)$/i.exec(header ?? '');
+  return match?.[1]?.trim() || undefined;
+}
+
+async function requireProAuth(
+  authorization: string | undefined,
+  validateLicense: LicenseValidator | undefined,
+): Promise<Response | undefined> {
+  const token = bearerToken(authorization);
+  if (!token || !validateLicense) return proAuthRequired();
+
+  const result = await validateLicense(token);
+  if (!result.ok) {
+    if (result.reason === 'upstream_unreachable' || result.reason === 'upstream_invalid') {
+      return Response.json(
+        {
+          error: 'license_check_unavailable',
+          message: 'License verification is temporarily unavailable.',
+        },
+        {
+          status: 502,
+          headers: { 'access-control-allow-origin': '*' },
+        },
+      );
+    }
+    return invalidLicense();
+  }
+
+  return undefined;
 }
 
 function canonicalKey(
