@@ -79,6 +79,29 @@ describe('license/verify — Polar backend', () => {
     expect(result).toMatchObject({ ok: false, reason: 'License key not found' });
   });
 
+  it('shared validator caches results within the ttl', async () => {
+    const fetchSpy = mockPolar({
+      id: 'license-cached',
+      organization_id: POLAR_ORG,
+      benefit_id: POLAR_BENEFIT,
+      key: 'KEY-CACHED',
+      status: 'granted',
+      expires_at: null,
+    });
+    const validate = createLicenseValidator({
+      organizationId: POLAR_ORG,
+      benefitId: POLAR_BENEFIT,
+      cacheTtlMs: 86_400_000,
+    });
+
+    const first = await validate('KEY-CACHED');
+    const second = await validate('KEY-CACHED');
+
+    expect(first).toMatchObject({ ok: true, plan: 'pro' });
+    expect(second).toMatchObject({ ok: true, plan: 'pro' });
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('rejects when status is revoked', async () => {
     mockPolar({ id: 'license-1', status: 'revoked' });
     const app = makeApp();

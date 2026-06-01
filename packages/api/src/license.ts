@@ -61,6 +61,8 @@ export interface LicenseRouteOptions {
   benefitId?: string;
   /** Override API base for tests. */
   apiBase?: string;
+  /** Optional in-process validation cache TTL. Disabled when omitted. */
+  cacheTtlMs?: number;
 }
 
 export type LicenseValidator = (key: string) => Promise<LicenseVerifyResult>;
@@ -68,11 +70,10 @@ export type LicenseValidator = (key: string) => Promise<LicenseVerifyResult>;
 export function createLicenseValidator(opts: LicenseRouteOptions): LicenseValidator {
   const apiBase = (opts.apiBase ?? DEFAULT_POLAR_BASE).replace(/\/+$/, '');
   const validateUrl = `${apiBase}/v1/customer-portal/license-keys/validate`;
+  const cacheTtlMs = opts.cacheTtlMs ?? 0;
+  const cache = new Map<string, { expiresAt: number; result: LicenseVerifyResult }>();
 
-  return async (key: string): Promise<LicenseVerifyResult> => {
-    const cleanKey = key.trim();
-    if (!cleanKey) return { ok: false, reason: 'missing_key' };
-
+  async function validateWithPolar(cleanKey: string): Promise<LicenseVerifyResult> {
     let upstream: Response;
     try {
       upstream = await fetch(validateUrl, {
@@ -130,6 +131,25 @@ export function createLicenseValidator(opts: LicenseRouteOptions): LicenseValida
     const result: LicenseVerifyResult = { ok: true, plan: 'pro' };
     // Polar key id is stable per-purchase; doubles as our purchaseId.
     if (data.id) result.purchaseId = data.id;
+    return result;
+  }
+
+  return async (key: string): Promise<LicenseVerifyResult> => {
+    const cleanKey = key.trim();
+    if (!cleanKey) return { ok: false, reason: 'missing_key' };
+
+    if (cacheTtlMs > 0) {
+      const hit = cache.get(cleanKey);
+      if (hit && hit.expiresAt > Date.now()) return hit.result;
+      if (hit) cache.delete(cleanKey);
+    }
+
+    const result = await validateWithPolar(cleanKey);
+
+    if (cacheTtlMs > 0) {
+      cache.set(cleanKey, { expiresAt: Date.now() + cacheTtlMs, result });
+    }
+
     return result;
   };
 }
