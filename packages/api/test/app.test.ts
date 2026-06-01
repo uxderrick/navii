@@ -31,6 +31,12 @@ describe('api', () => {
     );
   });
 
+  it('GET /pro redirects to checkout', async () => {
+    const res = await get('/pro');
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toBe('/checkout');
+  });
+
   it('GET /avatar/:seed returns SVG', async () => {
     const res = await get('/avatar/alice');
     expect(res.status).toBe(200);

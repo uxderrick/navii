@@ -19,6 +19,7 @@ import { createLicenseRoutes } from './license.js';
 import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
 
 const FIGMA_PLUGIN_URL = 'https://www.figma.com/community/plugin/1640037999835658823';
+const PRO_UPGRADE_URL = 'https://navii.dev/pro';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
@@ -184,6 +185,7 @@ export function createApp(options: AppOptions = {}) {
   );
 
   app.get('/figma', (c) => c.redirect(FIGMA_PLUGIN_URL, 302));
+  app.get('/pro', (c) => c.redirect('/checkout', 302));
 
   app.get('/thanks', (c) => {
     const checkoutId = c.req.query('checkout_id') ?? c.req.query('checkoutId') ?? '';
@@ -841,6 +843,34 @@ function clampFloat(raw: string | undefined, min: number, max: number, fallback:
   const n = Number.parseFloat(raw);
   if (!Number.isFinite(n)) return fallback;
   return Math.max(min, Math.min(max, n));
+}
+
+function proAuthRequired(): Response {
+  return Response.json(
+    {
+      error: 'pro_auth_required',
+      message: `This option requires Navii Pro. Get a license at ${PRO_UPGRADE_URL}.`,
+      upgradeUrl: PRO_UPGRADE_URL,
+    },
+    {
+      status: 401,
+      headers: { 'access-control-allow-origin': '*' },
+    },
+  );
+}
+
+function invalidLicense(): Response {
+  return Response.json(
+    {
+      error: 'invalid_license',
+      message: `The Navii Pro license key is invalid or inactive. Get a license at ${PRO_UPGRADE_URL}.`,
+      upgradeUrl: PRO_UPGRADE_URL,
+    },
+    {
+      status: 401,
+      headers: { 'access-control-allow-origin': '*' },
+    },
+  );
 }
 
 function canonicalKey(
