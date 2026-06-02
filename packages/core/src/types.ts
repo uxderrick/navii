@@ -20,7 +20,9 @@ export type BodyShapeId =
   // Halloween pack-only bodies (kept out of base BODY_IDS to preserve seeds)
   | 'pumpkin' | 'ghost' | 'skullHead'
   // Accra Gallery pack-only bodies
-  | 'galleryPlaque' | 'softShield' | 'wovenTile' | 'medallion';
+  | 'galleryPlaque' | 'softShield' | 'wovenTile' | 'medallion'
+  // Lagos Danfo pack-only bodies
+  | 'busBadge' | 'routePlaque' | 'signTile';
 export type EyeStyleId =
   | 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star'
   | 'heart' | 'oval' | 'dot' | 'cross';
@@ -34,7 +36,9 @@ export type AccessoryId =
   | 'none' | 'blush' | 'freckles' | 'sparkle'
   | 'glasses' | 'eyepatch' | 'mole' | 'earring'
   // Accra Gallery pack-only accessories
-  | 'goldHoop' | 'blackStarPin';
+  | 'goldHoop' | 'blackStarPin'
+  // Lagos Danfo pack-only accessories
+  | 'yellowGlasses' | 'greenPin' | 'routeDot';
 export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
   | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
@@ -43,11 +47,15 @@ export type TopperId =
   // Halloween pack-only toppers
   | 'witchHat' | 'pumpkinStem' | 'ghostSheet'
   // Accra Gallery pack-only toppers
-  | 'textileBand' | 'geometricCap' | 'galleryWrap';
+  | 'textileBand' | 'geometricCap' | 'galleryWrap'
+  // Lagos Danfo pack-only toppers
+  | 'danfoRoofStripe' | 'naijaBand' | 'routeCap';
 export type OutfitId =
   | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie'
   // Accra Gallery pack-only outfits
-  | 'patternedCollar';
+  | 'patternedCollar'
+  // Lagos Danfo pack-only outfits
+  | 'roadStripeCollar' | 'flagCollar' | 'yellowTrimNecklace';
 
 /**
  * Optional style hint used to bias seeded picks toward a gender expression.
