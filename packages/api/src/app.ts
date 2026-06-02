@@ -669,7 +669,16 @@ export function createApp(options: AppOptions = {}) {
     const seed = stripExt(decoded);
     if (!seed) return c.text('seed required', 400);
 
-    const wantsPro = c.req.query('pro') === '1' || c.req.query('pro') === 'true';
+    // packs= comma-separated list. Unknown ids are silently skipped by the
+    // engine (resolvePacks ignores them), so no enum validation needed here.
+    const packsRaw = c.req.query('packs');
+    const packs = packsRaw
+      ? packsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+      : undefined;
+    const wantsPro =
+      c.req.query('pro') === '1' ||
+      c.req.query('pro') === 'true' ||
+      (packs !== undefined && packs.length > 0);
     if (wantsPro) {
       const authFailure = await requireProAuth(c.req.header('authorization'), validateLicense);
       if (authFailure) return authFailure;
@@ -695,12 +704,6 @@ export function createApp(options: AppOptions = {}) {
       moodRaw === 'wink' || moodRaw === 'neutral'
         ? moodRaw
         : undefined;
-    // packs= comma-separated list. Unknown ids are silently skipped by the
-    // engine (resolvePacks ignores them), so no enum validation needed here.
-    const packsRaw = c.req.query('packs');
-    const packs = packsRaw
-      ? packsRaw.split(',').map((s) => s.trim()).filter(Boolean)
-      : undefined;
     // style= biases seeded picks via masc/femme/neutral. Only meaningful
     // alongside packs but harmless otherwise — engine treats undefined style
     // as "no bias".

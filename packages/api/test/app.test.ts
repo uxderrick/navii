@@ -72,6 +72,16 @@ describe('api', () => {
     expect(body.message).toContain('https://navii.dev/pro');
   });
 
+  it('GET /avatar/:seed with packs requires Pro auth', async () => {
+    const res = await get('/avatar/alice?packs=halloween');
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      error: 'pro_auth_required',
+      upgradeUrl: 'https://navii.dev/pro',
+    });
+  });
+
   it('GET /avatar/:seed without pro query remains anonymous', async () => {
     const res = await get('/avatar/alice');
     expect(res.status).toBe(200);
