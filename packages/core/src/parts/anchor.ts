@@ -151,4 +151,25 @@ export const ANCHORS: Record<BodyShapeId, FaceAnchor> = {
     groundY: 88,
     cheekY: 56, cheekOffset: 18,
   },
+  busBadge: {
+    cx: 50, eyeY: 48, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 18,
+    groundY: 91,
+    cheekY: 56, cheekOffset: 22,
+  },
+  routePlaque: {
+    cx: 50, eyeY: 48, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 20,
+    groundY: 87,
+    cheekY: 56, cheekOffset: 23,
+  },
+  signTile: {
+    cx: 50, eyeY: 49, eyeOffset: 11, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 7,
+    topperX: 50, topperY: 15,
+    groundY: 90,
+    cheekY: 56, cheekOffset: 20,
+  },
 };
