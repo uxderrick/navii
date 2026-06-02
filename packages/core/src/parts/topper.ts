@@ -128,23 +128,50 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
 
     case 'textileBand':
       return [
-        `<path d="M${cx - 20} ${topY + 9} Q${cx} ${topY + 3} ${cx + 20} ${topY + 9} L${cx + 20} ${topY + 13} Q${cx} ${topY + 7} ${cx - 20} ${topY + 13} Z" fill="${palette.accent}" stroke="${ink}" stroke-width="0.55" />`,
-        `<rect x="${cx - 13}" y="${topY + 7.5}" width="5" height="4" fill="${palette.bodyTo}" opacity="0.9" />`,
-        `<rect x="${cx - 4}" y="${topY + 6.5}" width="5" height="4.5" fill="${palette.ink}" opacity="0.92" />`,
-        `<rect x="${cx + 5}" y="${topY + 7.5}" width="5" height="4" fill="${palette.bodyFrom}" opacity="0.9" />`,
+        `<path d="M${cx - 20} ${topY + 9} Q${cx} ${topY + 3} ${cx + 20} ${topY + 9} L${cx + 20} ${topY + 13} Q${cx} ${topY + 7} ${cx - 20} ${topY + 13} Z" fill="#F3CF4E" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 15}" y="${topY + 7.5}" width="5" height="4" fill="#111827" opacity="0.94" />`,
+        `<rect x="${cx - 8}" y="${topY + 7}" width="5" height="4.5" fill="#B12F28" opacity="0.94" />`,
+        `<rect x="${cx - 1}" y="${topY + 6.5}" width="5" height="5" fill="#2F6A3E" opacity="0.94" />`,
+        `<rect x="${cx + 6}" y="${topY + 7}" width="5" height="4.5" fill="#F8D04A" opacity="0.94" />`,
       ].join('');
 
     case 'geometricCap':
       return [
         `<path d="M${cx - 15} ${topY + 7} L${cx - 8} ${topY - 6} L${cx + 8} ${topY - 6} L${cx + 15} ${topY + 7} Z" fill="${palette.ink}" opacity="0.94" />`,
-        `<path d="M${cx - 12} ${topY + 5} L${cx - 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="${palette.accent}" opacity="0.9" />`,
-        `<path d="M${cx + 12} ${topY + 5} L${cx + 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="${palette.bodyFrom}" opacity="0.9" />`,
+        `<path d="M${cx - 12} ${topY + 5} L${cx - 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="#F3CF4E" opacity="0.94" />`,
+        `<path d="M${cx + 12} ${topY + 5} L${cx + 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="#B12F28" opacity="0.94" />`,
+        `<rect x="${cx - 3}" y="${topY + 1}" width="6" height="5" fill="#2F6A3E" opacity="0.9" />`,
       ].join('');
 
     case 'galleryWrap':
       return [
-        `<path d="M${cx - 18} ${topY + 8} Q${cx - 14} ${topY - 6} ${cx + 2} ${topY - 8} Q${cx + 17} ${topY - 5} ${cx + 19} ${topY + 9} Q${cx + 8} ${topY + 4} ${cx - 18} ${topY + 8} Z" fill="${palette.accent}" stroke="${ink}" stroke-width="0.55" />`,
-        `<path d="M${cx - 6} ${topY - 5} Q${cx + 2} ${topY + 1} ${cx + 16} ${topY + 5}" stroke="${palette.ink}" stroke-width="0.7" opacity="0.35" fill="none" />`,
+        `<path d="M${cx - 18} ${topY + 8} Q${cx - 14} ${topY - 6} ${cx + 2} ${topY - 8} Q${cx + 17} ${topY - 5} ${cx + 19} ${topY + 9} Q${cx + 8} ${topY + 4} ${cx - 18} ${topY + 8} Z" fill="#B12F28" stroke="${ink}" stroke-width="0.55" />`,
+        `<path d="M${cx - 6} ${topY - 5} Q${cx + 2} ${topY + 1} ${cx + 16} ${topY + 5}" stroke="#F3CF4E" stroke-width="1" opacity="0.95" fill="none" />`,
+        `<path d="M${cx - 14} ${topY + 5} Q${cx - 4} ${topY + 1} ${cx + 13} ${topY + 7}" stroke="#2F6A3E" stroke-width="0.9" opacity="0.9" fill="none" />`,
+      ].join('');
+
+    case 'danfoRoofStripe':
+      return [
+        `<path d="M${cx - 20} ${topY + 8} Q${cx} ${topY + 2} ${cx + 20} ${topY + 8} L${cx + 20} ${topY + 13} Q${cx} ${topY + 7} ${cx - 20} ${topY + 13} Z" fill="#F5C51B" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 15}" y="${topY + 8}" width="30" height="2.5" rx="1" fill="#111827" opacity="0.9" />`,
+        `<rect x="${cx - 10}" y="${topY + 11}" width="8" height="2.5" fill="#008753" opacity="0.96" />`,
+        `<rect x="${cx - 1}" y="${topY + 11}" width="8" height="2.5" fill="#F8F7EF" opacity="0.96" />`,
+        `<rect x="${cx + 8}" y="${topY + 11}" width="8" height="2.5" fill="#008753" opacity="0.96" />`,
+      ].join('');
+
+    case 'naijaBand':
+      return [
+        `<path d="M${cx - 19} ${topY + 8} Q${cx} ${topY + 3} ${cx + 19} ${topY + 8} L${cx + 19} ${topY + 13} Q${cx} ${topY + 8} ${cx - 19} ${topY + 13} Z" fill="#008753" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 5}" y="${topY + 6.5}" width="10" height="6" rx="1" fill="#F8F7EF" opacity="0.98" />`,
+        `<rect x="${cx - 18}" y="${topY + 9}" width="6" height="3" fill="#F5C51B" opacity="0.96" />`,
+        `<rect x="${cx + 12}" y="${topY + 9}" width="6" height="3" fill="#F5C51B" opacity="0.96" />`,
+      ].join('');
+
+    case 'routeCap':
+      return [
+        `<path d="M${cx - 16} ${topY + 6} Q${cx - 13} ${topY - 6} ${cx} ${topY - 7} Q${cx + 13} ${topY - 6} ${cx + 16} ${topY + 6} Z" fill="#008753" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 14} ${topY + 6} L${cx + 14} ${topY + 6}" stroke="#F5C51B" stroke-width="3" stroke-linecap="round" />`,
+        `<rect x="${cx - 4}" y="${topY - 5}" width="8" height="8" rx="1.5" fill="#F8F7EF" stroke="${ink}" stroke-width="0.4" />`,
       ].join('');
 
     case 'witchHat': {

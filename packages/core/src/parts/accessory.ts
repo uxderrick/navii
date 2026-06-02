@@ -101,6 +101,39 @@ export function renderAccessory(
       const y = anchor.cheekY + 11;
       return `<path d="M${x} ${y - 3.6} L${x + 1.1} ${y - 1.1} L${x + 3.8} ${y - 1.1} L${x + 1.6} ${y + 0.6} L${x + 2.4} ${y + 3.2} L${x} ${y + 1.6} L${x - 2.4} ${y + 3.2} L${x - 1.6} ${y + 0.6} L${x - 3.8} ${y - 1.1} L${x - 1.1} ${y - 1.1} Z" fill="${palette.ink}" opacity="0.88" />`;
     }
+
+    case 'yellowGlasses': {
+      const lx = anchor.cx - anchor.eyeOffset;
+      const rx = anchor.cx + anchor.eyeOffset;
+      const y = anchor.eyeY;
+      const r = 6;
+      const gw = 1.3 * sw;
+      return [
+        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="#F5C51B" stroke-width="${gw}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="#F5C51B" stroke-width="${gw}" />`,
+        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="#F5C51B" stroke-width="${gw}" />`,
+        `<circle cx="${lx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+      ].join('');
+    }
+
+    case 'greenPin': {
+      const x = anchor.cx + 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${3.2 * sw}" fill="#008753" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<rect x="${x - 1}" y="${y - 3}" width="2" height="6" fill="#F8F7EF" opacity="0.96" />`,
+      ].join('');
+    }
+
+    case 'routeDot': {
+      const x = anchor.cx - 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${3.3 * sw}" fill="#F5C51B" stroke="${palette.ink}" stroke-width="${0.5 * sw}" />`,
+        `<circle cx="${x}" cy="${y}" r="${1.1 * sw}" fill="#111827" opacity="0.9" />`,
+      ].join('');
+    }
   }
 
   function dot(cx: number, cy: number, color: string): string {

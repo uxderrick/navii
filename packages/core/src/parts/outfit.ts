@@ -113,10 +113,33 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
 
     case 'patternedCollar':
       return [
-        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 12} ${cx - 12} ${cy + 5} Z" fill="${accent}" stroke="${ink}" stroke-width="0.6" />`,
-        `<rect x="${cx - 10}" y="${cy + 1}" width="4" height="5" fill="${palette.bodyTo}" opacity="0.9" />`,
-        `<rect x="${cx - 3}" y="${cy + 3}" width="4" height="5" fill="${palette.ink}" opacity="0.82" />`,
-        `<rect x="${cx + 4}" y="${cy + 1}" width="4" height="5" fill="${palette.bodyFrom}" opacity="0.9" />`,
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 12} ${cx - 12} ${cy + 5} Z" fill="#111827" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 12}" y="${cy}" width="4" height="6" fill="#B12F28" opacity="0.96" />`,
+        `<rect x="${cx - 6}" y="${cy + 2}" width="4" height="6" fill="#F3CF4E" opacity="0.96" />`,
+        `<rect x="${cx}" y="${cy + 3}" width="4" height="6" fill="#2F6A3E" opacity="0.96" />`,
+        `<rect x="${cx + 6}" y="${cy + 2}" width="4" height="6" fill="#F8D04A" opacity="0.96" />`,
+      ].join('');
+
+    case 'roadStripeCollar':
+      return [
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="#111827" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 11}" y="${cy}" width="7" height="5" fill="#F5C51B" opacity="0.98" />`,
+        `<rect x="${cx - 2}" y="${cy + 2}" width="4" height="6" fill="#F8F7EF" opacity="0.98" />`,
+        `<rect x="${cx + 5}" y="${cy}" width="7" height="5" fill="#008753" opacity="0.98" />`,
+      ].join('');
+
+    case 'flagCollar':
+      return [
+        `<path d="M${cx - 14} ${cy - 3} Q${cx} ${cy + 4} ${cx + 14} ${cy - 3} L${cx + 11} ${cy + 5} Q${cx} ${cy + 10} ${cx - 11} ${cy + 5} Z" fill="#008753" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 4}" y="${cy - 1}" width="8" height="9" rx="1" fill="#F8F7EF" opacity="0.98" />`,
+        `<path d="M${cx - 13} ${cy + 1} L${cx + 13} ${cy + 1}" stroke="#F5C51B" stroke-width="1.1" stroke-linecap="round" />`,
+      ].join('');
+
+    case 'yellowTrimNecklace':
+      return [
+        `<path d="M${cx - 11} ${cy} Q${cx} ${cy + 8} ${cx + 11} ${cy}" stroke="#F5C51B" stroke-width="1" fill="none" stroke-linecap="round" />`,
+        `<rect x="${cx - 2.5}" y="${cy + 5.5}" width="5" height="5" rx="1" fill="#008753" stroke="${ink}" stroke-width="0.45" />`,
+        `<rect x="${cx - 0.8}" y="${cy + 5.8}" width="1.6" height="4.4" fill="#F8F7EF" opacity="0.96" />`,
       ].join('');
   }
 }
