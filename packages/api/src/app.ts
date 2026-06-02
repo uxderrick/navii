@@ -236,15 +236,15 @@ export function createApp(options: AppOptions = {}) {
 
   app.get('/docs', (c) => c.redirect(`/docs/${defaultDocSlug()}`, 302));
 
-  app.get('/docs/:slug', (c) => {
+  app.get('/docs/:slug', async (c) => {
     const slug = c.req.param('slug');
     if (!isDocSlug(slug)) {
-      return new Response(docsHtml(slug), {
+      return new Response(await docsHtml(slug), {
         status: 404,
         headers: { 'content-type': 'text/html; charset=utf-8' },
       });
     }
-    return new Response(docsHtml(slug), {
+    return new Response(await docsHtml(slug), {
       status: 200,
       headers: {
         'content-type': 'text/html; charset=utf-8',

@@ -31,16 +31,23 @@ import {
   TOPPER_IDS,
   PALETTES,
 } from '@usenavii/core/parts';
+import { codeToHtml } from 'shiki';
 
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
+type CodeToHtmlOptions = Parameters<typeof codeToHtml>[1];
+type ShikiLang = CodeToHtmlOptions['lang'];
+
+const SHIKI_THEME = 'vitesse-dark';
+const highlightedCode = new Map<string, Promise<string>>();
+const STATIC_CODE_BLOCK_RE = /<pre(?:\s+class="code")?><code>([\s\S]*?)<\/code><\/pre>/g;
 
 interface DocPage {
   slug: string;
   title: string;
   summary: string;
   section: string;
-  body: () => string;
+  body: () => string | Promise<string>;
 }
 
 const PAGES: DocPage[] = [
@@ -66,10 +73,11 @@ export function defaultDocSlug(): string {
   return 'quickstart';
 }
 
-export function docsHtml(slug: string): string {
+export async function docsHtml(slug: string): Promise<string> {
   const page = PAGES.find((p) => p.slug === slug);
   if (!page) return shell('not found', notFound(), slug, 'Documentation page not found.');
-  return shell(page.title, page.body(), slug, page.summary);
+  const content = await highlightStaticCodeBlocks(await page.body());
+  return shell(page.title, content, slug, page.summary);
 }
 
 /** All doc slugs — used by /sitemap.xml to advertise pages to crawlers. */
@@ -79,6 +87,65 @@ export function docSlugs(): readonly string[] {
 
 // ────────────────────────────────────────────────────────────────────────────
 // shell
+
+async function codeBlock(source: string, lang: ShikiLang): Promise<string> {
+  const code = source.trim();
+  const key = `${SHIKI_THEME}:${lang}:${code}`;
+  let highlighted = highlightedCode.get(key);
+  if (!highlighted) {
+    highlighted = codeToHtml(code, { lang, theme: SHIKI_THEME });
+    highlightedCode.set(key, highlighted);
+  }
+  return highlighted;
+}
+
+async function highlightStaticCodeBlocks(content: string): Promise<string> {
+  const matches = Array.from(content.matchAll(STATIC_CODE_BLOCK_RE));
+  if (matches.length === 0) return content;
+
+  const replacements = await Promise.all(
+    matches.map((match) => {
+      const code = decodeCodeHtml(match[1] ?? '');
+      return codeBlock(code, inferCodeLanguage(code));
+    }),
+  );
+
+  let next = '';
+  let cursor = 0;
+  matches.forEach((match, index) => {
+    const start = match.index ?? 0;
+    next += content.slice(cursor, start);
+    next += replacements[index]!;
+    cursor = start + match[0].length;
+  });
+  next += content.slice(cursor);
+  return next;
+}
+
+function inferCodeLanguage(source: string): ShikiLang {
+  const code = source.trim();
+  if (!code) return 'text';
+  if (/^[{\[]/.test(code)) return 'json';
+  if (/^HTTP\/\d|^(GET|POST|PUT|PATCH|DELETE)\s/m.test(code)) return 'http';
+  if (/^(npm|pnpm|yarn|docker|curl)\s|^#\s/m.test(code)) return 'bash';
+  if (/^https?:\/\//.test(code)) return 'text';
+  if (/^(raw:|encoded:|Cache-Control:|\d)/.test(code)) return 'text';
+  if (/<\/?[A-Z][\w.:-]*|<\/?[a-z][\w.:-]*/.test(code)) return 'tsx';
+  if (/\b(import|export|const|let|function|interface|type|await|async)\b/.test(code)) return 'ts';
+  return 'text';
+}
+
+function decodeCodeHtml(value: string): string {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec: string) => String.fromCodePoint(Number.parseInt(dec, 10)))
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&');
+}
 
 function shell(title: string, content: string, currentSlug: string, summary: string): string {
   const pageTitle = `${escapeHtml(title)} — Navii docs`;
@@ -299,14 +366,14 @@ ${styleBlock()}
   }
 
   function enhance() {
-    document.querySelectorAll('pre.code').forEach(function (pre) {
+    document.querySelectorAll('pre.code, pre.shiki').forEach(function (pre) {
       if (pre.parentElement && pre.parentElement.classList.contains('code-block')) return;
       const wrap = document.createElement('div');
       wrap.className = 'code-block';
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(pre);
       const codeEl = pre.querySelector('code') || pre;
-      paint(codeEl);
+      if (!pre.classList.contains('shiki')) paint(codeEl);
       wrap.appendChild(makeButton(function () { return codeEl.textContent; }));
     });
   }
@@ -981,7 +1048,33 @@ encoded: alice%40example.com</code></pre>
   `;
 }
 
-function pagePro(): string {
+async function pagePro(): Promise<string> {
+  const [
+    authCurl,
+    freeUrl,
+    missingAuthError,
+    invalidLicenseError,
+    unavailableError,
+  ] = await Promise.all([
+    codeBlock(`curl -H "Authorization: Bearer <license_key>" \\
+  "${API_BASE}/avatar/alice?packs=halloween"`, 'bash'),
+    codeBlock(`${API_BASE}/avatar/alice?size=128`, 'text'),
+    codeBlock(`{
+  "error": "pro_auth_required",
+  "message": "This option requires Navii Pro. Get a license at https://navii.dev/pro.",
+  "upgradeUrl": "https://navii.dev/pro"
+}`, 'json'),
+    codeBlock(`{
+  "error": "invalid_license",
+  "message": "The Navii Pro license key is invalid or inactive. Get a license at https://navii.dev/pro.",
+  "upgradeUrl": "https://navii.dev/pro"
+}`, 'json'),
+    codeBlock(`{
+  "error": "license_check_unavailable",
+  "message": "License verification is temporarily unavailable."
+}`, 'json'),
+  ]);
+
   return `
     <header class="page-head">
       <h1>Navii Pro</h1>
@@ -990,17 +1083,16 @@ function pagePro(): string {
 
     <section>
       <h2 id="buy">Get a license</h2>
-      <p>Buy Navii Pro at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. Today that URL sends you straight to checkout; later it may become a pricing page. API clients should keep linking to it either way.</p>
+      <p>Buy Navii Pro at <a class="license-url" href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. Today that URL sends you straight to checkout; later it may become a pricing page. API clients should keep linking to it either way.</p>
       <p>After purchase, Polar emails your license key. The same key unlocks the Figma plugin and Pro-only hosted API options.</p>
     </section>
 
     <section>
       <h2 id="auth">API auth</h2>
       <p>Pass the license key as a bearer token when you request a Pro-only option:</p>
-      <pre><code>curl -H "Authorization: Bearer &lt;license_key&gt;" \\
-  "${API_BASE}/avatar/alice?packs=halloween"</code></pre>
+      ${authCurl}
       <p>Keep using ordinary unauthenticated URLs for free options:</p>
-      <pre><code>${API_BASE}/avatar/alice?size=128</code></pre>
+      ${freeUrl}
     </section>
 
     <section>
@@ -1018,22 +1110,11 @@ function pagePro(): string {
     <section>
       <h2 id="errors">Error responses</h2>
       <p>Missing Pro auth returns <code>401</code> with an upgrade URL:</p>
-      <pre><code>{
-  "error": "pro_auth_required",
-  "message": "This option requires Navii Pro. Get a license at https://navii.dev/pro.",
-  "upgradeUrl": "https://navii.dev/pro"
-}</code></pre>
+      ${missingAuthError}
       <p>Invalid, revoked, expired, or wrong-product keys return <code>401</code>:</p>
-      <pre><code>{
-  "error": "invalid_license",
-  "message": "The Navii Pro license key is invalid or inactive. Get a license at https://navii.dev/pro.",
-  "upgradeUrl": "https://navii.dev/pro"
-}</code></pre>
+      ${invalidLicenseError}
       <p>If Polar cannot be reached or returns an invalid response, Navii returns <code>502</code>:</p>
-      <pre><code>{
-  "error": "license_check_unavailable",
-  "message": "License verification is temporarily unavailable."
-}</code></pre>
+      ${unavailableError}
     </section>
 
     <section>
@@ -1615,6 +1696,21 @@ a:focus-visible, button:focus-visible {
   color: var(--muted-2);
 }
 .content p { margin: 0 0 14px; color: var(--ink); }
+.content a.license-url {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: 1px solid rgba(192, 132, 252, 0.42);
+  border-radius: 6px;
+  background: rgba(192, 132, 252, 0.12);
+  color: var(--ink);
+  font: 12.5px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+.content a.license-url:hover {
+  border-color: var(--accent);
+  background: rgba(192, 132, 252, 0.18);
+  color: var(--ink);
+}
 .content p.note {
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -1629,7 +1725,8 @@ a:focus-visible, button:focus-visible {
 
 /* code blocks */
 .code-block { position: relative; margin: 0 0 16px; }
-.code-block pre.code { margin: 0; }
+.code-block pre.code,
+.code-block pre.shiki { margin: 0; }
 pre.code {
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -1642,6 +1739,17 @@ pre.code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 pre.code code { background: transparent; border: 0; padding: 0; font-size: inherit; font-family: inherit; color: var(--ink); }
+pre.shiki {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 44px 14px 16px;
+  overflow-x: auto;
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+pre.shiki code { background: transparent; border: 0; padding: 0; font-size: inherit; font-family: inherit; color: inherit; }
 
 .copy-icon {
   position: absolute;

@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { createApp } from '../src/app.js';
+import { docSlugs } from '../src/docs.js';
 
 const app = createApp();
 const POLAR_ORG = '00000000-0000-0000-0000-000000000001';
@@ -24,6 +25,15 @@ describe('api', () => {
     expect(res.headers.get('content-type')).toContain('text/html');
     const body = await res.text();
     expect(body).toContain('<title>Navii');
+  });
+
+  it('GET / landing links Pro in the top nav and Blog in the footer', async () => {
+    const res = await get('/');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('<a href="/docs/pro">pro</a>');
+    expect(body).toContain('<a href="/blog">blog</a>');
+    expect(body).not.toContain('<a href="/blog">blog</a>\n      <a href="https://github.com/uxderrick/navii">github</a>');
   });
 
   it('GET /api returns JSON metadata', async () => {
@@ -60,6 +70,38 @@ describe('api', () => {
     expect(body).toContain('Navii Pro');
     expect(body).toContain('Authorization: Bearer');
     expect(body).toContain('https://navii.dev/pro');
+  });
+
+  it('GET /docs/pro highlights the license URL callout', async () => {
+    const res = await get('/docs/pro');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('<a class="license-url" href="https://navii.dev/pro">https://navii.dev/pro</a>');
+  });
+
+  it('GET /docs/pro renders Shiki-highlighted code blocks', async () => {
+    const res = await get('/docs/pro');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('class="shiki');
+    expect(body).toContain('Authorization: Bearer');
+  });
+
+  it('GET /docs/quickstart renders all static code blocks with Shiki', async () => {
+    const res = await get('/docs/quickstart');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('class="shiki');
+    expect(body).not.toContain('<pre class="code"><code>');
+  });
+
+  it('GET /docs/* does not render legacy static code blocks', async () => {
+    for (const slug of docSlugs()) {
+      const res = await get(`/docs/${slug}`);
+      expect(res.status).toBe(200);
+      const body = await res.text();
+      expect(body).not.toContain('<pre class="code"><code>');
+    }
   });
 
   it('GET /avatar/:seed returns SVG', async () => {
