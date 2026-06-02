@@ -11,6 +11,7 @@ describe('packs — scaffold', () => {
   it('exposes the launch packs in the registry', () => {
     const ids = BUILT_IN_PACKS.map((p) => p.id).sort();
     expect(ids).toEqual([
+      'accra-gallery',
       'earth', 'halloween', 'mono', 'neon',
       'office', 'office-bright', 'pastel',
     ]);
@@ -68,5 +69,38 @@ describe('packs — scaffold', () => {
     const a = createAvatar('alice', { packs: ['office'] });
     const b = createAvatar('alice', { packs: ['office'] });
     expect(a).toBe(b);
+  });
+
+  it('accra gallery pack contributes 5 namespaced palettes', () => {
+    const pack = PACK_REGISTRY['accra-gallery']!;
+    expect(pack).toBeDefined();
+    expect(pack.name).toBe('Accra Gallery');
+    expect(pack.palettes).toBeDefined();
+    expect(pack.palettes!.length).toBe(5);
+    for (const p of pack.palettes!) {
+      expect(p.id.startsWith('accra-gallery:'), `palette id "${p.id}" must be namespaced`).toBe(true);
+    }
+    expect(pack.paletteExclusive).toBe(true);
+    expect(pack.flat).toBe(true);
+  });
+
+  it('accra gallery changes output while remaining deterministic', () => {
+    const base = createAvatar('ama');
+    const first = createAvatar('ama', { packs: ['accra-gallery'] });
+    const second = createAvatar('ama', { packs: ['accra-gallery'] });
+    expect(first).not.toBe(base);
+    expect(first).toBe(second);
+  });
+
+  it('accra gallery paletteId can target a pack palette explicitly', () => {
+    const svg = createAvatar('kwame', {
+      packs: ['accra-gallery'],
+      paletteId: 'accra-gallery:gallery-gold',
+    });
+    expect(svg).toBe(createAvatar('kwame', {
+      packs: ['accra-gallery'],
+      paletteId: 'accra-gallery:gallery-gold',
+    }));
+    expect(svg).toContain('#F6EEDC');
   });
 });
