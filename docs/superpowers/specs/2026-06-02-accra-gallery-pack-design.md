@@ -58,32 +58,30 @@ The name is place-based, modern, and premium without being too literal.
 
 ## Palettes
 
-The pack should ship five palettes:
+The pack should ship five palettes based on the approved swatch strip:
+near-black, warm gold, brick red, deep green, and bright gold. Warm ivory is
+the gallery/card surface, not a primary avatar body color.
 
 - `accra-gallery:gallery-gold`
-  - ivory background
-  - gold body/accent
-  - dark stroke
-  - small red/green detail
-- `accra-gallery:ivory-red`
-  - warm ivory base
-  - deep red body/accent
-  - gold highlight
+  - warm gold body
+  - brick red secondary
   - black stroke
 - `accra-gallery:green-gold`
   - deep green body/accent
   - gold highlight
-  - ivory surface
   - black stroke
-- `accra-gallery:black-star`
-  - black or near-black plate
-  - ivory/gold body
-  - red/green minimal detail
-- `accra-gallery:woven-warm`
-  - muted gold
+- `accra-gallery:red-black`
   - brick red
-  - moss green
-  - warm cream
+  - near-black secondary
+  - gold highlight
+- `accra-gallery:black-gold`
+  - near-black body
+  - gold secondary
+  - red accent
+- `accra-gallery:woven-gold`
+  - bright gold body
+  - deep green secondary
+  - brick red accent
 
 Palette colors should be saturated enough to be recognizable, but less harsh
 than flat flag colors. The final values should be tuned against 32px and 48px

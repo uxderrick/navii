@@ -6,16 +6,16 @@ import type { Palette } from '../types.js';
  *
  * Visual rules:
  * - Warm ivory gallery surfaces
- * - Gold, red, green, and black accents
+ * - Near-black, gold, red, green, and bright-gold accents
  * - Kente-inspired geometry as restrained bands/collars/toppers
  * - Flat editorial rendering with exclusive palettes
  */
 const palettes: Palette[] = [
-  { id: 'accra-gallery:gallery-gold', bodyFrom: '#D8A928', bodyTo: '#B88716', accent: '#F6EEDC', ink: '#1D1710', blush: '#D97058' },
-  { id: 'accra-gallery:ivory-red',    bodyFrom: '#F6EEDC', bodyTo: '#B93A32', accent: '#D8A928', ink: '#201813', blush: '#D97058' },
-  { id: 'accra-gallery:green-gold',   bodyFrom: '#1F6B45', bodyTo: '#12442E', accent: '#D8A928', ink: '#171A13', blush: '#E2A08A' },
-  { id: 'accra-gallery:black-star',   bodyFrom: '#F3DEC2', bodyTo: '#D8A928', accent: '#111111', ink: '#111111', blush: '#C75B4D' },
-  { id: 'accra-gallery:woven-warm',   bodyFrom: '#C9852A', bodyTo: '#7D2D24', accent: '#1F6B45', ink: '#1C130E', blush: '#D98B70' },
+  { id: 'accra-gallery:gallery-gold', bodyFrom: '#F3CF4E', bodyTo: '#B12F28', accent: '#111827', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:green-gold',   bodyFrom: '#2F6A3E', bodyTo: '#F3CF4E', accent: '#111827', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:red-black',    bodyFrom: '#812723', bodyTo: '#111827', accent: '#F3CF4E', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:black-gold',   bodyFrom: '#111827', bodyTo: '#F3CF4E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:woven-gold',   bodyFrom: '#F8D04A', bodyTo: '#2F6A3E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
 ];
 
 export const accraGalleryPack: Pack = {

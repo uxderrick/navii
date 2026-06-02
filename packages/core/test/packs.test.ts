@@ -73,10 +73,24 @@ describe('packs — scaffold', () => {
 
   it('accra gallery pack contributes 5 namespaced palettes', () => {
     const pack = PACK_REGISTRY['accra-gallery']!;
+    const paletteIds = pack.palettes!.map((p) => p.id);
     expect(pack).toBeDefined();
     expect(pack.name).toBe('Accra Gallery');
     expect(pack.palettes).toBeDefined();
     expect(pack.palettes!.length).toBe(5);
+    expect(paletteIds).toEqual([
+      'accra-gallery:gallery-gold',
+      'accra-gallery:green-gold',
+      'accra-gallery:red-black',
+      'accra-gallery:black-gold',
+      'accra-gallery:woven-gold',
+    ]);
+    expect(pack.palettes![0]).toMatchObject({
+      bodyFrom: '#F3CF4E',
+      bodyTo: '#B12F28',
+      accent: '#111827',
+      ink: '#111827',
+    });
     for (const p of pack.palettes!) {
       expect(p.id.startsWith('accra-gallery:'), `palette id "${p.id}" must be namespaced`).toBe(true);
     }

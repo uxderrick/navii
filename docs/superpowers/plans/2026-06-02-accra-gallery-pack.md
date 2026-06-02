@@ -10,6 +10,25 @@
 
 ---
 
+## Palette Correction
+
+After implementation review, the approved Accra Gallery swatch strip was
+clarified as near-black, warm gold, brick red, deep green, and bright gold.
+Warm ivory remains the gallery/card surface (`bgColor`), not an avatar body
+palette. The final pack implementation should use:
+
+```ts
+const palettes: Palette[] = [
+  { id: 'accra-gallery:gallery-gold', bodyFrom: '#F3CF4E', bodyTo: '#B12F28', accent: '#111827', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:green-gold',   bodyFrom: '#2F6A3E', bodyTo: '#F3CF4E', accent: '#111827', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:red-black',    bodyFrom: '#812723', bodyTo: '#111827', accent: '#F3CF4E', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:black-gold',   bodyFrom: '#111827', bodyTo: '#F3CF4E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:woven-gold',   bodyFrom: '#F8D04A', bodyTo: '#2F6A3E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
+];
+```
+
+---
+
 ## File Structure
 
 - Create `packages/core/src/packs/accra-gallery.ts`: pack metadata, palettes, picks, style hints, and render flags.
