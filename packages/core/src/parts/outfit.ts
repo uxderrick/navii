@@ -110,5 +110,13 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
           `<path d="M${cx} ${knotBot + 0.5} L${cx} ${cy + 13.5}" stroke="${ink}" stroke-width="0.35" opacity="0.35" />`,
         ].join('');
       }
+
+    case 'patternedCollar':
+      return [
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 12} ${cx - 12} ${cy + 5} Z" fill="${accent}" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 10}" y="${cy + 1}" width="4" height="5" fill="${palette.bodyTo}" opacity="0.9" />`,
+        `<rect x="${cx - 3}" y="${cy + 3}" width="4" height="5" fill="${palette.ink}" opacity="0.82" />`,
+        `<rect x="${cx + 4}" y="${cy + 1}" width="4" height="5" fill="${palette.bodyFrom}" opacity="0.9" />`,
+      ].join('');
   }
 }

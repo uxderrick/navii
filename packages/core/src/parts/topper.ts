@@ -126,6 +126,27 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
       ].join('');
     }
 
+    case 'textileBand':
+      return [
+        `<path d="M${cx - 20} ${topY + 9} Q${cx} ${topY + 3} ${cx + 20} ${topY + 9} L${cx + 20} ${topY + 13} Q${cx} ${topY + 7} ${cx - 20} ${topY + 13} Z" fill="${palette.accent}" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 13}" y="${topY + 7.5}" width="5" height="4" fill="${palette.bodyTo}" opacity="0.9" />`,
+        `<rect x="${cx - 4}" y="${topY + 6.5}" width="5" height="4.5" fill="${palette.ink}" opacity="0.92" />`,
+        `<rect x="${cx + 5}" y="${topY + 7.5}" width="5" height="4" fill="${palette.bodyFrom}" opacity="0.9" />`,
+      ].join('');
+
+    case 'geometricCap':
+      return [
+        `<path d="M${cx - 15} ${topY + 7} L${cx - 8} ${topY - 6} L${cx + 8} ${topY - 6} L${cx + 15} ${topY + 7} Z" fill="${palette.ink}" opacity="0.94" />`,
+        `<path d="M${cx - 12} ${topY + 5} L${cx - 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="${palette.accent}" opacity="0.9" />`,
+        `<path d="M${cx + 12} ${topY + 5} L${cx + 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="${palette.bodyFrom}" opacity="0.9" />`,
+      ].join('');
+
+    case 'galleryWrap':
+      return [
+        `<path d="M${cx - 18} ${topY + 8} Q${cx - 14} ${topY - 6} ${cx + 2} ${topY - 8} Q${cx + 17} ${topY - 5} ${cx + 19} ${topY + 9} Q${cx + 8} ${topY + 4} ${cx - 18} ${topY + 8} Z" fill="${palette.accent}" stroke="${ink}" stroke-width="0.55" />`,
+        `<path d="M${cx - 6} ${topY - 5} Q${cx + 2} ${topY + 1} ${cx + 16} ${topY + 5}" stroke="${palette.ink}" stroke-width="0.7" opacity="0.35" fill="none" />`,
+      ].join('');
+
     case 'witchHat': {
       // Tall pointed witch hat — cone + brim + band w/ buckle. Sits on apex,
       // tilts slightly for stylized silhouette.

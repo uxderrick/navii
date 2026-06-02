@@ -18,7 +18,9 @@ export type BodyShapeId =
   | 'orb' | 'tall' | 'squat' | 'pear' | 'pebble'
   | 'dumpling' | 'taro' | 'wisp' | 'squircle'
   // Halloween pack-only bodies (kept out of base BODY_IDS to preserve seeds)
-  | 'pumpkin' | 'ghost' | 'skullHead';
+  | 'pumpkin' | 'ghost' | 'skullHead'
+  // Accra Gallery pack-only bodies
+  | 'galleryPlaque' | 'softShield' | 'wovenTile' | 'medallion';
 export type EyeStyleId =
   | 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star'
   | 'heart' | 'oval' | 'dot' | 'cross';
@@ -30,16 +32,22 @@ export type MouthStyleId =
 export type AntennaStyleId = 'none' | 'classic' | 'curl' | 'double' | 'spike';
 export type AccessoryId =
   | 'none' | 'blush' | 'freckles' | 'sparkle'
-  | 'glasses' | 'eyepatch' | 'mole' | 'earring';
+  | 'glasses' | 'eyepatch' | 'mole' | 'earring'
+  // Accra Gallery pack-only accessories
+  | 'goldHoop' | 'blackStarPin';
 export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
   | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
   | 'headband' | 'halo' | 'crown' | 'antlers'
   | 'bob' | 'bun' | 'ponytail'
   // Halloween pack-only toppers
-  | 'witchHat' | 'pumpkinStem' | 'ghostSheet';
+  | 'witchHat' | 'pumpkinStem' | 'ghostSheet'
+  // Accra Gallery pack-only toppers
+  | 'textileBand' | 'geometricCap' | 'galleryWrap';
 export type OutfitId =
-  | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie';
+  | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie'
+  // Accra Gallery pack-only outfits
+  | 'patternedCollar';
 
 /**
  * Optional style hint used to bias seeded picks toward a gender expression.

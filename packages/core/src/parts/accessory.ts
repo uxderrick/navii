@@ -86,6 +86,21 @@ export function renderAccessory(
         `<ellipse cx="${rx}" cy="${ey + 3.2}" rx="${1.3 * sw}" ry="${2 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
       ].join('');
     }
+
+    case 'goldHoop': {
+      const ex = anchor.cheekOffset + 4;
+      const ey = anchor.cheekY + 4;
+      return [
+        `<circle cx="${anchor.cx - ex}" cy="${ey}" r="${2.4 * sw}" fill="none" stroke="${palette.accent}" stroke-width="${0.9 * sw}" />`,
+        `<circle cx="${anchor.cx + ex}" cy="${ey}" r="${2.4 * sw}" fill="none" stroke="${palette.accent}" stroke-width="${0.9 * sw}" />`,
+      ].join('');
+    }
+
+    case 'blackStarPin': {
+      const x = anchor.cx + 13;
+      const y = anchor.cheekY + 11;
+      return `<path d="M${x} ${y - 3.6} L${x + 1.1} ${y - 1.1} L${x + 3.8} ${y - 1.1} L${x + 1.6} ${y + 0.6} L${x + 2.4} ${y + 3.2} L${x} ${y + 1.6} L${x - 2.4} ${y + 3.2} L${x - 1.6} ${y + 0.6} L${x - 3.8} ${y - 1.1} L${x - 1.1} ${y - 1.1} Z" fill="${palette.ink}" opacity="0.88" />`;
+    }
   }
 
   function dot(cx: number, cy: number, color: string): string {

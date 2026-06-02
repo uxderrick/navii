@@ -49,6 +49,11 @@ const BODY_PATHS: Record<BodyShapeId, string> = {
 
   // SkullHead — egg-ish shape, slight pinch at jaw for skull silhouette.
   skullHead: 'M50 16 C68 16 80 30 80 50 C80 64 76 72 70 78 L68 86 L60 88 L60 82 L40 82 L40 88 L32 86 L30 78 C24 72 20 64 20 50 C20 30 32 16 50 16 Z',
+
+  galleryPlaque: 'M50 16 C68 16 78 29 78 48 L78 80 C78 87 71 91 50 91 C29 91 22 87 22 80 L22 48 C22 29 32 16 50 16 Z',
+  softShield: 'M50 15 C67 18 80 30 80 49 C80 70 67 84 50 91 C33 84 20 70 20 49 C20 30 33 18 50 15 Z',
+  wovenTile: 'M20 18 L80 18 C83 18 86 21 86 24 L86 76 C86 83 80 88 50 91 C20 88 14 83 14 76 L14 24 C14 21 17 18 20 18 Z',
+  medallion: 'M50 14 C68 14 82 28 82 48 C82 70 68 88 50 88 C32 88 18 70 18 48 C18 28 32 14 50 14 Z',
 };
 
 export function bodyAnchor(id: BodyShapeId): FaceAnchor {

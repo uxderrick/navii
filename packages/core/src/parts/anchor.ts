@@ -123,4 +123,32 @@ export const ANCHORS: Record<BodyShapeId, FaceAnchor> = {
     groundY: 90,
     cheekY: 60, cheekOffset: 16,
   },
+  galleryPlaque: {
+    cx: 50, eyeY: 50, eyeOffset: 10, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 7,
+    topperX: 50, topperY: 16,
+    groundY: 91,
+    cheekY: 57, cheekOffset: 17,
+  },
+  softShield: {
+    cx: 50, eyeY: 50, eyeOffset: 10, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 7,
+    topperX: 50, topperY: 15,
+    groundY: 91,
+    cheekY: 57, cheekOffset: 18,
+  },
+  wovenTile: {
+    cx: 50, eyeY: 49, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 18,
+    groundY: 91,
+    cheekY: 56, cheekOffset: 22,
+  },
+  medallion: {
+    cx: 50, eyeY: 49, eyeOffset: 10, eyeScale: 1.0,
+    mouthY: 61, mouthSpan: 7,
+    topperX: 50, topperY: 14,
+    groundY: 88,
+    cheekY: 56, cheekOffset: 18,
+  },
 };
