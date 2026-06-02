@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { createApp } from '../src/app.js';
 
 const app = createApp();
+const POLAR_ORG = '00000000-0000-0000-0000-000000000001';
+const POLAR_BENEFIT = '00000000-0000-0000-0000-000000000002';
 
 async function get(path: string): Promise<Response> {
   return app.fetch(new Request(`http://test${path}`));
@@ -10,6 +12,10 @@ async function get(path: string): Promise<Response> {
 async function getWithHeaders(path: string, headers: Record<string, string>): Promise<Response> {
   return app.fetch(new Request(`http://test${path}`, { headers }));
 }
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('api', () => {
   it('GET / returns landing HTML', async () => {
@@ -64,6 +70,52 @@ describe('api', () => {
     const res = await get('/avatar/alice');
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('image/svg+xml');
+  });
+
+  it('GET /avatar/:seed?pro=1 rejects invalid Pro auth', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ detail: 'License key not found' }), {
+        status: 404,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const proApp = createApp({ polarOrganizationId: POLAR_ORG, polarBenefitId: POLAR_BENEFIT });
+
+    const res = await proApp.fetch(new Request('http://test/avatar/alice?pro=1', {
+      headers: { authorization: 'Bearer KEY-NOPE' },
+    }));
+
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      error: 'invalid_license',
+      upgradeUrl: 'https://navii.dev/pro',
+    });
+  });
+
+  it('GET /avatar/:seed?pro=1 renders with valid Pro auth', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({
+        id: 'license-pro',
+        organization_id: POLAR_ORG,
+        benefit_id: POLAR_BENEFIT,
+        status: 'granted',
+        expires_at: null,
+      }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const proApp = createApp({ polarOrganizationId: POLAR_ORG, polarBenefitId: POLAR_BENEFIT });
+
+    const res = await proApp.fetch(new Request('http://test/avatar/alice?pro=1', {
+      headers: { authorization: 'Bearer KEY-OK' },
+    }));
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('image/svg+xml');
+    const body = await res.text();
+    expect(body.startsWith('<svg')).toBe(true);
   });
 
   it('sets x-navii-warning when seed looks like an email', async () => {
