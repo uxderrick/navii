@@ -12,7 +12,7 @@ describe('packs — scaffold', () => {
     const ids = BUILT_IN_PACKS.map((p) => p.id).sort();
     expect(ids).toEqual([
       'accra-gallery',
-      'earth', 'halloween', 'mono', 'neon',
+      'earth', 'halloween', 'lagos-danfo', 'mono', 'neon',
       'office', 'office-bright', 'pastel',
     ]);
     // Every built-in is reachable by id
@@ -80,10 +80,10 @@ describe('packs — scaffold', () => {
     expect(pack.palettes!.length).toBe(5);
     expect(paletteIds).toEqual([
       'accra-gallery:gallery-gold',
-      'accra-gallery:green-gold',
+      'accra-gallery:green-red',
       'accra-gallery:red-black',
-      'accra-gallery:black-gold',
-      'accra-gallery:woven-gold',
+      'accra-gallery:black-red',
+      'accra-gallery:red-gold',
     ]);
     expect(pack.palettes![0]).toMatchObject({
       bodyFrom: '#F3CF4E',
@@ -91,6 +91,11 @@ describe('packs — scaffold', () => {
       accent: '#111827',
       ink: '#111827',
     });
+    expect(pack.palettes!.find((p) => p.id === 'accra-gallery:black-red')).toMatchObject({
+      bodyFrom: '#111827',
+      ink: '#F6EEDC',
+    });
+    expect(pack.palettes!.filter((p) => p.bodyFrom === '#B12F28' || p.bodyFrom === '#812723')).toHaveLength(2);
     for (const p of pack.palettes!) {
       expect(p.id.startsWith('accra-gallery:'), `palette id "${p.id}" must be namespaced`).toBe(true);
     }
@@ -116,5 +121,61 @@ describe('packs — scaffold', () => {
       paletteId: 'accra-gallery:gallery-gold',
     }));
     expect(svg).toContain('#F6EEDC');
+  });
+
+  it('lagos danfo pack contributes 5 namespaced palettes', () => {
+    const pack = PACK_REGISTRY['lagos-danfo']!;
+    const paletteIds = pack.palettes!.map((p) => p.id);
+    expect(pack).toBeDefined();
+    expect(pack.name).toBe('Lagos Danfo');
+    expect(pack.description).toContain('Nigerian green-white-green');
+    expect(pack.palettes).toBeDefined();
+    expect(pack.palettes!.length).toBe(5);
+    expect(paletteIds).toEqual([
+      'lagos-danfo:green-white',
+      'lagos-danfo:white-green',
+      'lagos-danfo:danfo-green',
+      'lagos-danfo:deep-green',
+      'lagos-danfo:street-black',
+    ]);
+    expect(pack.palettes![0]).toMatchObject({
+      bodyFrom: '#008753',
+      bodyTo: '#F8F7EF',
+      accent: '#F5C51B',
+      ink: '#111827',
+    });
+    expect(pack.palettes!.find((p) => p.id === 'lagos-danfo:street-black')).toMatchObject({
+      bodyFrom: '#111827',
+      ink: '#F8F7EF',
+    });
+    for (const p of pack.palettes!) {
+      expect(p.id.startsWith('lagos-danfo:'), `palette id "${p.id}" must be namespaced`).toBe(true);
+    }
+    expect(pack.paletteExclusive).toBe(true);
+    expect(pack.flat).toBe(true);
+  });
+
+  it('lagos danfo changes output while remaining deterministic', () => {
+    const base = createAvatar('lagos-founder');
+    const first = createAvatar('lagos-founder', { packs: ['lagos-danfo'] });
+    const second = createAvatar('lagos-founder', { packs: ['lagos-danfo'] });
+    expect(first).not.toBe(base);
+    expect(first).toBe(second);
+    expect(first).toContain('#F8F7EF');
+  });
+
+  it('lagos danfo paletteId can target the street black palette visibly', () => {
+    const svg = createAvatar('eko-night', {
+      packs: ['lagos-danfo'],
+      paletteId: 'lagos-danfo:street-black',
+    });
+    expect(svg).toBe(createAvatar('eko-night', {
+      packs: ['lagos-danfo'],
+      paletteId: 'lagos-danfo:street-black',
+    }));
+    expect(svg).toContain('#111827');
+    expect(svg).toContain('#F8F7EF');
+    expect(svg).toContain('#F5C51B');
+    expect(svg).toContain('#008753');
   });
 });
