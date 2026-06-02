@@ -12,6 +12,7 @@
  */
 
 import type { Pack, PackRegistry } from './types.js';
+import { accraGalleryPack } from './accra-gallery.js';
 import { officePack } from './office.js';
 import { officeBrightPack } from './office-bright.js';
 import { halloweenPack } from './halloween.js';
@@ -23,6 +24,7 @@ import { earthPack } from './earth.js';
 export type { Pack, PackRegistry } from './types.js';
 
 export const BUILT_IN_PACKS: Pack[] = [
+  accraGalleryPack,
   officePack,
   officeBrightPack,
   halloweenPack,
