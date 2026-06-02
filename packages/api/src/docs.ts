@@ -50,6 +50,7 @@ const PAGES: DocPage[] = [
   { slug: 'recipes',     section: 'Start',     title: 'Recipes',             summary: 'Battle-tested patterns: SSR, fallbacks, galleries, React Native.', body: pageRecipes },
   { slug: 'parts',       section: 'Reference', title: 'Parts catalog',       summary: 'Every variant value, rendered.', body: pageParts },
   { slug: 'http-api',    section: 'Reference', title: 'HTTP API',            summary: 'Full endpoint reference for the hosted service.', body: pageHttpApi },
+  { slug: 'pro',         section: 'Reference', title: 'Navii Pro',           summary: 'License keys, Pro-only API options, and upgrade errors.', body: pagePro },
   { slug: 'rate-limits', section: 'Reference', title: 'Rate limits',         summary: 'Per-route quotas, why immutable caching makes Navii cheap to host.', body: pageRateLimits },
   { slug: 'sdk-core',    section: 'SDK',       title: '@usenavii/core',         summary: 'Engine functions, types, and advanced composition.', body: pageSdkCore },
   { slug: 'sdk-react',   section: 'SDK',       title: '@usenavii/react',        summary: 'React component with memoized rendering.', body: pageSdkReact },
@@ -976,6 +977,72 @@ encoded: alice%40example.com</code></pre>
     <section>
       <h2 id="auth">Authentication</h2>
       <p>None for the documented free API. CORS is wide open (<code>access-control-allow-origin: *</code>) — embed from anywhere, no token, no signup. Future Pro-only capabilities may accept <code>Authorization: Bearer &lt;polar_license_key&gt;</code>, but that auth requirement applies only to the Pro-only capability being requested. Get a license at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. If you need to lock down a self-hosted deployment, put it behind your own auth layer (Cloudflare Access, BasicAuth via Caddy, etc.).</p>
+    </section>
+  `;
+}
+
+function pagePro(): string {
+  return `
+    <header class="page-head">
+      <h1>Navii Pro</h1>
+      <p class="lede">Use your Navii Pro license key to unlock premium API options such as themed packs while the free API stays anonymous and backwards-compatible.</p>
+    </header>
+
+    <section>
+      <h2 id="buy">Get a license</h2>
+      <p>Buy Navii Pro at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. Today that URL sends you straight to checkout; later it may become a pricing page. API clients should keep linking to it either way.</p>
+      <p>After purchase, Polar emails your license key. The same key unlocks the Figma plugin and Pro-only hosted API options.</p>
+    </section>
+
+    <section>
+      <h2 id="auth">API auth</h2>
+      <p>Pass the license key as a bearer token when you request a Pro-only option:</p>
+      <pre><code>curl -H "Authorization: Bearer &lt;license_key&gt;" \\
+  "${API_BASE}/avatar/alice?packs=halloween"</code></pre>
+      <p>Keep using ordinary unauthenticated URLs for free options:</p>
+      <pre><code>${API_BASE}/avatar/alice?size=128</code></pre>
+    </section>
+
+    <section>
+      <h2 id="requires-pro">What requires Pro</h2>
+      <table>
+        <thead><tr><th>Option</th><th>Auth required?</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>packs=...</code></td><td>Yes</td><td>Premium themed packs such as <code>halloween</code>, <code>office</code>, and future pack drops.</td></tr>
+          <tr><td><code>pro=1</code></td><td>Yes</td><td>Auth probe for testing whether a license key is accepted. Renders the same avatar after auth succeeds.</td></tr>
+          <tr><td>Base avatar params</td><td>No</td><td><code>size</code>, <code>palette</code>, <code>background</code>, <code>mood</code>, <code>animated</code>, <code>tileBg</code>, and <code>title</code> stay anonymous.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 id="errors">Error responses</h2>
+      <p>Missing Pro auth returns <code>401</code> with an upgrade URL:</p>
+      <pre><code>{
+  "error": "pro_auth_required",
+  "message": "This option requires Navii Pro. Get a license at https://navii.dev/pro.",
+  "upgradeUrl": "https://navii.dev/pro"
+}</code></pre>
+      <p>Invalid, revoked, expired, or wrong-product keys return <code>401</code>:</p>
+      <pre><code>{
+  "error": "invalid_license",
+  "message": "The Navii Pro license key is invalid or inactive. Get a license at https://navii.dev/pro.",
+  "upgradeUrl": "https://navii.dev/pro"
+}</code></pre>
+      <p>If Polar cannot be reached or returns an invalid response, Navii returns <code>502</code>:</p>
+      <pre><code>{
+  "error": "license_check_unavailable",
+  "message": "License verification is temporarily unavailable."
+}</code></pre>
+    </section>
+
+    <section>
+      <h2 id="security">Security notes</h2>
+      <ul>
+        <li>Do not put a license key in public frontend code unless you are comfortable with users seeing it.</li>
+        <li>Prefer server-side calls, CLI usage, build scripts, or backend SDK helpers for Pro API requests.</li>
+        <li>License checks are cached in-process for 24 hours to keep rendering fast and avoid hitting Polar on every avatar request.</li>
+      </ul>
     </section>
   `;
 }
