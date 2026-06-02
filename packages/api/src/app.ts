@@ -190,6 +190,12 @@ export function createApp(options: AppOptions = {}) {
         helper: 'use @usenavii/core seed({ id, email, name, createdAt }) to pick the most-unique field automatically',
       },
       determinism: 'Same seed + same query → byte-identical response, forever. Safe to cache, safe to mirror.',
+      compatibility: {
+        freeApi: 'All documented endpoints and query params as of v0.24.x stay available, unauthenticated, with the same response formats.',
+        proFeatures: 'Future Pro features are additive and use Authorization: Bearer <polar_license_key> only when a Pro-only capability is requested.',
+        rateLimits: 'Free-tier rate limits will not tighten beyond the currently published hosted limits.',
+        immutableUrls: 'Existing avatar URLs keep working; immutable cache headers mean old URLs remain valid for cached clients.',
+      },
     }),
   );
 

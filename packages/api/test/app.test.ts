@@ -30,7 +30,13 @@ describe('api', () => {
     const res = await get('/api');
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body).toMatchObject({ name: 'navii' });
+    expect(body).toMatchObject({
+      name: 'navii',
+      compatibility: {
+        freeApi: expect.stringContaining('documented endpoints'),
+        proFeatures: expect.stringContaining('additive'),
+      },
+    });
   });
 
   it('GET /figma redirects to the Figma community plugin', async () => {

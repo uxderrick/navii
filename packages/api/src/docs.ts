@@ -801,6 +801,13 @@ function pageHttpApi(): string {
     </header>
 
     <section>
+      <h2 id="compatibility">Compatibility promise</h2>
+      <p>Every endpoint, query param, response format, and response header documented as of v0.24.x stays available on the hosted API. Existing URLs such as <code>${API_BASE}/avatar/alice</code> keep working unauthenticated.</p>
+      <p>Future Pro features are additive: they use <code>Authorization: Bearer &lt;polar_license_key&gt;</code> only when you request a Pro-only capability. Get a license at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. The free API remains anonymous, and hosted free-tier rate limits will not tighten beyond the currently published limits.</p>
+      <p class="note">Why so strict? Avatar responses use <code>cache-control: public, max-age=31536000, immutable</code>. Once a URL is in customer HTML, browsers and CDNs may hold it for a year. Navii treats those URLs as a public contract.</p>
+    </section>
+
+    <section>
       <h2 id="avatar">GET /avatar/:seed[.svg|.png]</h2>
       <p>Returns a deterministic mascot avatar for the given seed. Same seed → same avatar, byte-for-byte. Append <code>.png</code> to the seed to receive a rasterized PNG instead of SVG.</p>
 
@@ -955,7 +962,7 @@ encoded: alice%40example.com</code></pre>
       <p>What we promise to keep stable in patch + minor releases:</p>
       <ul>
         <li>Existing seeds' part selections don't shift when new variants are added (new parts append to the PRNG stream, never insert).</li>
-        <li>Endpoint URLs, query params, and response headers stay backwards-compatible.</li>
+        <li>Endpoint URLs, query params, response formats, and response headers stay backwards-compatible; Pro-only features are additive and gated only when requested.</li>
         <li>SVG markup may change in tiny non-visible ways (formatting, attribute order) — treat as text-content stable, not byte-stable across upgrades.</li>
       </ul>
       <p>What can change in a major release:</p>
@@ -968,7 +975,7 @@ encoded: alice%40example.com</code></pre>
 
     <section>
       <h2 id="auth">Authentication</h2>
-      <p>None. Every endpoint is anonymous. CORS is wide open (<code>access-control-allow-origin: *</code>) — embed from anywhere, no token, no signup. If you need to lock down a self-hosted deployment, put it behind your own auth layer (Cloudflare Access, BasicAuth via Caddy, etc.).</p>
+      <p>None for the documented free API. CORS is wide open (<code>access-control-allow-origin: *</code>) — embed from anywhere, no token, no signup. Future Pro-only capabilities may accept <code>Authorization: Bearer &lt;polar_license_key&gt;</code>, but that auth requirement applies only to the Pro-only capability being requested. Get a license at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. If you need to lock down a self-hosted deployment, put it behind your own auth layer (Cloudflare Access, BasicAuth via Caddy, etc.).</p>
     </section>
   `;
 }
