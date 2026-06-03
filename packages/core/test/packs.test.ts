@@ -12,7 +12,7 @@ describe('packs — scaffold', () => {
     const ids = BUILT_IN_PACKS.map((p) => p.id).sort();
     expect(ids).toEqual([
       'accra-gallery',
-      'earth', 'halloween', 'lagos-danfo', 'mono', 'neon',
+      'earth', 'halloween', 'lagos-danfo', 'mono', 'nairobi-matatu', 'neon',
       'office', 'office-bright', 'pastel',
     ]);
     // Every built-in is reachable by id
@@ -177,5 +177,61 @@ describe('packs — scaffold', () => {
     expect(svg).toContain('#F8F7EF');
     expect(svg).toContain('#F5C51B');
     expect(svg).toContain('#008753');
+  });
+
+  it('nairobi matatu pack contributes 5 namespaced palettes', () => {
+    const pack = PACK_REGISTRY['nairobi-matatu']!;
+    const paletteIds = pack.palettes!.map((p) => p.id);
+    expect(pack).toBeDefined();
+    expect(pack.name).toBe('Nairobi Matatu');
+    expect(pack.description).toContain('matatu route graphics');
+    expect(pack.palettes).toBeDefined();
+    expect(pack.palettes!.length).toBe(5);
+    expect(paletteIds).toEqual([
+      'nairobi-matatu:night-green',
+      'nairobi-matatu:route-red',
+      'nairobi-matatu:electric-blue',
+      'nairobi-matatu:shuka-check',
+      'nairobi-matatu:safari-neon',
+    ]);
+    expect(pack.palettes![0]).toMatchObject({
+      bodyFrom: '#101820',
+      bodyTo: '#12D977',
+      accent: '#F8F7EF',
+      ink: '#F8F7EF',
+    });
+    expect(pack.palettes!.find((p) => p.id === 'nairobi-matatu:night-green')).toMatchObject({
+      bodyFrom: '#101820',
+      ink: '#F8F7EF',
+    });
+    for (const p of pack.palettes!) {
+      expect(p.id.startsWith('nairobi-matatu:'), `palette id "${p.id}" must be namespaced`).toBe(true);
+    }
+    expect(pack.paletteExclusive).toBe(true);
+    expect(pack.flat).toBe(true);
+  });
+
+  it('nairobi matatu changes output while remaining deterministic', () => {
+    const base = createAvatar('nairobi-founder');
+    const first = createAvatar('nairobi-founder', { packs: ['nairobi-matatu'] });
+    const second = createAvatar('nairobi-founder', { packs: ['nairobi-matatu'] });
+    expect(first).not.toBe(base);
+    expect(first).toBe(second);
+    expect(first).toContain('#101820');
+  });
+
+  it('nairobi matatu dark palette keeps neon and light details visible', () => {
+    const svg = createAvatar('matatu-night', {
+      packs: ['nairobi-matatu'],
+      paletteId: 'nairobi-matatu:night-green',
+    });
+    expect(svg).toBe(createAvatar('matatu-night', {
+      packs: ['nairobi-matatu'],
+      paletteId: 'nairobi-matatu:night-green',
+    }));
+    expect(svg).toContain('#101820');
+    expect(svg).toContain('#F8F7EF');
+    expect(svg).toContain('#12D977');
+    expect(svg).toContain('#FF2D55');
   });
 });
