@@ -174,6 +174,30 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
         `<rect x="${cx - 4}" y="${topY - 5}" width="8" height="8" rx="1.5" fill="#F8F7EF" stroke="${ink}" stroke-width="0.4" />`,
       ].join('');
 
+    case 'neonRouteBand':
+      return [
+        `<path d="M${cx - 21} ${topY + 8} Q${cx} ${topY + 1} ${cx + 21} ${topY + 8} L${cx + 19} ${topY + 13} Q${cx} ${topY + 7} ${cx - 19} ${topY + 13} Z" fill="#101820" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 16} ${topY + 9} L${cx + 16} ${topY + 7}" stroke="#12D977" stroke-width="2.4" stroke-linecap="round" />`,
+        `<path d="M${cx - 12} ${topY + 12} L${cx + 12} ${topY + 10}" stroke="#FFD23F" stroke-width="1.5" stroke-linecap="round" />`,
+        `<rect x="${cx - 3}" y="${topY + 5}" width="6" height="5" rx="1" fill="#FF2D55" opacity="0.95" />`,
+      ].join('');
+
+    case 'shukaGridBand':
+      return [
+        `<path d="M${cx - 20} ${topY + 8} Q${cx} ${topY + 3} ${cx + 20} ${topY + 8} L${cx + 20} ${topY + 13} Q${cx} ${topY + 8} ${cx - 20} ${topY + 13} Z" fill="#D72638" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 15}" y="${topY + 8}" width="30" height="1.7" fill="#101820" opacity="0.96" />`,
+        `<rect x="${cx - 15}" y="${topY + 11.5}" width="30" height="1.5" fill="#F8F7EF" opacity="0.96" />`,
+        `<rect x="${cx - 6}" y="${topY + 6.5}" width="2" height="7" fill="#2F80ED" opacity="0.9" />`,
+        `<rect x="${cx + 5}" y="${topY + 6.5}" width="2" height="7" fill="#101820" opacity="0.9" />`,
+      ].join('');
+
+    case 'stickerCap':
+      return [
+        `<path d="M${cx - 16} ${topY + 6} L${cx + 11} ${topY - 6} C${cx + 16} ${topY - 4} ${cx + 19} ${topY + 1} ${cx + 17} ${topY + 6} Z" fill="#2F80ED" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 13} ${topY + 5} L${cx + 14} ${topY + 5}" stroke="#FFD23F" stroke-width="2.4" stroke-linecap="round" />`,
+        `<circle cx="${cx + 7}" cy="${topY - 1}" r="2.2" fill="#12D977" stroke="${ink}" stroke-width="0.4" />`,
+      ].join('');
+
     case 'witchHat': {
       // Tall pointed witch hat — cone + brim + band w/ buckle. Sits on apex,
       // tilts slightly for stylized silhouette.

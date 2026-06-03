@@ -141,5 +141,29 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
         `<rect x="${cx - 2.5}" y="${cy + 5.5}" width="5" height="5" rx="1" fill="#008753" stroke="${ink}" stroke-width="0.45" />`,
         `<rect x="${cx - 0.8}" y="${cy + 5.8}" width="1.6" height="4.4" fill="#F8F7EF" opacity="0.96" />`,
       ].join('');
+
+    case 'shukaCheckCollar':
+      return [
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="#D72638" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 13}" y="${cy}" width="26" height="1.6" fill="#101820" opacity="0.96" />`,
+        `<rect x="${cx - 13}" y="${cy + 4}" width="26" height="1.5" fill="#F8F7EF" opacity="0.96" />`,
+        `<rect x="${cx - 5}" y="${cy - 1}" width="2" height="8" fill="#2F80ED" opacity="0.9" />`,
+        `<rect x="${cx + 5}" y="${cy - 1}" width="2" height="8" fill="#101820" opacity="0.9" />`,
+      ].join('');
+
+    case 'neonTrimCollar':
+      return [
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="#101820" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 11} ${cy + 1} L${cx + 11} ${cy + 1}" stroke="#12D977" stroke-width="1.8" stroke-linecap="round" />`,
+        `<path d="M${cx - 7} ${cy + 5} L${cx + 7} ${cy + 5}" stroke="#FFD23F" stroke-width="1.5" stroke-linecap="round" />`,
+        `<rect x="${cx - 2}" y="${cy + 2}" width="4" height="5" fill="#FF2D55" opacity="0.95" />`,
+      ].join('');
+
+    case 'routeStripeNecklace':
+      return [
+        `<path d="M${cx - 11} ${cy} Q${cx} ${cy + 8} ${cx + 11} ${cy}" stroke="#2F80ED" stroke-width="1" fill="none" stroke-linecap="round" />`,
+        `<rect x="${cx - 3}" y="${cy + 5}" width="6" height="5" rx="1" fill="#FFD23F" stroke="${ink}" stroke-width="0.45" />`,
+        `<path d="M${cx - 2} ${cy + 7.5} L${cx + 2} ${cy + 7.5}" stroke="#101820" stroke-width="0.8" />`,
+      ].join('');
   }
 }

@@ -134,6 +134,41 @@ export function renderAccessory(
         `<circle cx="${x}" cy="${y}" r="${1.1 * sw}" fill="#111827" opacity="0.9" />`,
       ].join('');
     }
+
+    case 'brightGlasses': {
+      const lx = anchor.cx - anchor.eyeOffset;
+      const rx = anchor.cx + anchor.eyeOffset;
+      const y = anchor.eyeY;
+      const r = 6;
+      const gw = 1.35 * sw;
+      return [
+        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="#12D977" stroke-width="${gw}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="#FFD23F" stroke-width="${gw}" />`,
+        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="#FF2D55" stroke-width="${gw}" />`,
+        `<circle cx="${lx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+      ].join('');
+    }
+
+    case 'kenyaPin': {
+      const x = anchor.cx + 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${3.3 * sw}" fill="#101820" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<rect x="${x - 2.4}" y="${y - 0.8}" width="4.8" height="1.6" fill="#F8F7EF" opacity="0.96" />`,
+        `<rect x="${x - 0.8}" y="${y - 2.4}" width="1.6" height="4.8" fill="#D72638" opacity="0.96" />`,
+      ].join('');
+    }
+
+    case 'matatuMark': {
+      const x = anchor.cx - 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<path d="M${x - 4} ${y + 1} L${x + 3} ${y - 4} L${x + 4} ${y + 3} Z" fill="#FFD23F" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x - 1.5}" cy="${y + 2.6}" r="${0.9 * sw}" fill="#12D977" />`,
+        `<circle cx="${x + 2.5}" cy="${y - 0.2}" r="${0.9 * sw}" fill="#FF2D55" />`,
+      ].join('');
+    }
   }
 
   function dot(cx: number, cy: number, color: string): string {
