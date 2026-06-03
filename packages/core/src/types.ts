@@ -22,7 +22,9 @@ export type BodyShapeId =
   // Accra Gallery pack-only bodies
   | 'galleryPlaque' | 'softShield' | 'wovenTile' | 'medallion'
   // Lagos Danfo pack-only bodies
-  | 'busBadge' | 'routePlaque' | 'signTile';
+  | 'busBadge' | 'routePlaque' | 'signTile'
+  // Nairobi Matatu pack-only bodies
+  | 'matatuBadge' | 'routeSticker' | 'cityPlaque' | 'angledSignTile';
 export type EyeStyleId =
   | 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star'
   | 'heart' | 'oval' | 'dot' | 'cross';
@@ -38,7 +40,9 @@ export type AccessoryId =
   // Accra Gallery pack-only accessories
   | 'goldHoop' | 'blackStarPin'
   // Lagos Danfo pack-only accessories
-  | 'yellowGlasses' | 'greenPin' | 'routeDot';
+  | 'yellowGlasses' | 'greenPin' | 'routeDot'
+  // Nairobi Matatu pack-only accessories
+  | 'brightGlasses' | 'kenyaPin' | 'matatuMark';
 export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
   | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
@@ -49,13 +53,17 @@ export type TopperId =
   // Accra Gallery pack-only toppers
   | 'textileBand' | 'geometricCap' | 'galleryWrap'
   // Lagos Danfo pack-only toppers
-  | 'danfoRoofStripe' | 'naijaBand' | 'routeCap';
+  | 'danfoRoofStripe' | 'naijaBand' | 'routeCap'
+  // Nairobi Matatu pack-only toppers
+  | 'neonRouteBand' | 'shukaGridBand' | 'stickerCap';
 export type OutfitId =
   | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie'
   // Accra Gallery pack-only outfits
   | 'patternedCollar'
   // Lagos Danfo pack-only outfits
-  | 'roadStripeCollar' | 'flagCollar' | 'yellowTrimNecklace';
+  | 'roadStripeCollar' | 'flagCollar' | 'yellowTrimNecklace'
+  // Nairobi Matatu pack-only outfits
+  | 'shukaCheckCollar' | 'neonTrimCollar' | 'routeStripeNecklace';
 
 /**
  * Optional style hint used to bias seeded picks toward a gender expression.
