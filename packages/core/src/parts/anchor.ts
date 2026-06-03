@@ -172,4 +172,32 @@ export const ANCHORS: Record<BodyShapeId, FaceAnchor> = {
     groundY: 90,
     cheekY: 56, cheekOffset: 20,
   },
+  matatuBadge: {
+    cx: 50, eyeY: 48, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 18,
+    groundY: 91,
+    cheekY: 56, cheekOffset: 22,
+  },
+  routeSticker: {
+    cx: 50, eyeY: 48, eyeOffset: 11, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 17,
+    groundY: 91,
+    cheekY: 56, cheekOffset: 21,
+  },
+  cityPlaque: {
+    cx: 50, eyeY: 49, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 16,
+    groundY: 90,
+    cheekY: 56, cheekOffset: 22,
+  },
+  angledSignTile: {
+    cx: 50, eyeY: 49, eyeOffset: 11, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 7,
+    topperX: 50, topperY: 15,
+    groundY: 90,
+    cheekY: 56, cheekOffset: 20,
+  },
 };
