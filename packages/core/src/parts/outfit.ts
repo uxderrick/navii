@@ -19,6 +19,11 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
   const cy = anchor.mouthY + (anchor.groundY - anchor.mouthY) * 0.55;
   const ink = palette.ink;
   const accent = palette.accent;
+  const routeYellow = '#F5C51B';
+  const kenyaGreen = '#00843D';
+  const kenyaRed = '#C8102E';
+  const matatuBlack = '#101820';
+  const paperWhite = '#F8F7EF';
 
   switch (id) {
     case 'collar':
@@ -144,26 +149,28 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
 
     case 'shukaCheckCollar':
       return [
-        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="#D72638" stroke="${ink}" stroke-width="0.6" />`,
-        `<rect x="${cx - 13}" y="${cy}" width="26" height="1.6" fill="#101820" opacity="0.96" />`,
-        `<rect x="${cx - 13}" y="${cy + 4}" width="26" height="1.5" fill="#F8F7EF" opacity="0.96" />`,
-        `<rect x="${cx - 5}" y="${cy - 1}" width="2" height="8" fill="#2F80ED" opacity="0.9" />`,
-        `<rect x="${cx + 5}" y="${cy - 1}" width="2" height="8" fill="#101820" opacity="0.9" />`,
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="${kenyaRed}" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 13}" y="${cy}" width="26" height="1.6" fill="${matatuBlack}" opacity="0.96" />`,
+        `<rect x="${cx - 13}" y="${cy + 4}" width="26" height="1.5" fill="${paperWhite}" opacity="0.96" />`,
+        `<rect x="${cx - 6}" y="${cy - 1}" width="2" height="8" fill="#1E4EA8" opacity="0.92" />`,
+        `<rect x="${cx + 6}" y="${cy - 1}" width="2" height="8" fill="${matatuBlack}" opacity="0.92" />`,
+        `<rect x="${cx - 12}" y="${cy + 2}" width="5" height="1.5" fill="${routeYellow}" opacity="0.95" />`,
       ].join('');
 
     case 'neonTrimCollar':
       return [
-        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="#101820" stroke="${ink}" stroke-width="0.6" />`,
-        `<path d="M${cx - 11} ${cy + 1} L${cx + 11} ${cy + 1}" stroke="#12D977" stroke-width="1.8" stroke-linecap="round" />`,
-        `<path d="M${cx - 7} ${cy + 5} L${cx + 7} ${cy + 5}" stroke="#FFD23F" stroke-width="1.5" stroke-linecap="round" />`,
-        `<rect x="${cx - 2}" y="${cy + 2}" width="4" height="5" fill="#FF2D55" opacity="0.95" />`,
+        `<path d="M${cx - 15} ${cy - 3} Q${cx} ${cy + 5} ${cx + 15} ${cy - 3} L${cx + 12} ${cy + 5} Q${cx} ${cy + 11} ${cx - 12} ${cy + 5} Z" fill="${matatuBlack}" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 12} ${cy + 1} L${cx + 12} ${cy + 1}" stroke="${routeYellow}" stroke-width="2" stroke-linecap="round" />`,
+        `<rect x="${cx - 12}" y="${cy + 4}" width="8" height="2" fill="${kenyaGreen}" opacity="0.98" />`,
+        `<rect x="${cx - 3}" y="${cy + 4}" width="6" height="2" fill="${paperWhite}" opacity="0.98" />`,
+        `<rect x="${cx + 5}" y="${cy + 4}" width="8" height="2" fill="${kenyaRed}" opacity="0.98" />`,
       ].join('');
 
     case 'routeStripeNecklace':
       return [
-        `<path d="M${cx - 11} ${cy} Q${cx} ${cy + 8} ${cx + 11} ${cy}" stroke="#2F80ED" stroke-width="1" fill="none" stroke-linecap="round" />`,
-        `<rect x="${cx - 3}" y="${cy + 5}" width="6" height="5" rx="1" fill="#FFD23F" stroke="${ink}" stroke-width="0.45" />`,
-        `<path d="M${cx - 2} ${cy + 7.5} L${cx + 2} ${cy + 7.5}" stroke="#101820" stroke-width="0.8" />`,
+        `<path d="M${cx - 12} ${cy} Q${cx} ${cy + 8} ${cx + 12} ${cy}" stroke="${routeYellow}" stroke-width="1.2" fill="none" stroke-linecap="round" />`,
+        `<rect x="${cx - 4}" y="${cy + 5}" width="8" height="5.5" rx="1" fill="${paperWhite}" stroke="${ink}" stroke-width="0.45" />`,
+        `<text x="${cx}" y="${cy + 9.5}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="4.3" font-weight="800" fill="${matatuBlack}">CBD</text>`,
       ].join('');
   }
 }

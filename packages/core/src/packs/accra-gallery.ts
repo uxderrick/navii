@@ -12,10 +12,10 @@ import type { Palette } from '../types.js';
  */
 const palettes: Palette[] = [
   { id: 'accra-gallery:gallery-gold', bodyFrom: '#F3CF4E', bodyTo: '#B12F28', accent: '#111827', ink: '#111827', blush: '#B12F28' },
-  { id: 'accra-gallery:green-gold',   bodyFrom: '#2F6A3E', bodyTo: '#F3CF4E', accent: '#111827', ink: '#111827', blush: '#B12F28' },
-  { id: 'accra-gallery:red-black',    bodyFrom: '#812723', bodyTo: '#111827', accent: '#F3CF4E', ink: '#111827', blush: '#B12F28' },
-  { id: 'accra-gallery:black-gold',   bodyFrom: '#111827', bodyTo: '#F3CF4E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
-  { id: 'accra-gallery:woven-gold',   bodyFrom: '#F8D04A', bodyTo: '#2F6A3E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:green-red',    bodyFrom: '#2F6A3E', bodyTo: '#F3CF4E', accent: '#B12F28', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:red-black',    bodyFrom: '#B12F28', bodyTo: '#111827', accent: '#F3CF4E', ink: '#111827', blush: '#B12F28' },
+  { id: 'accra-gallery:black-red',    bodyFrom: '#111827', bodyTo: '#B12F28', accent: '#F3CF4E', ink: '#F6EEDC', blush: '#B12F28' },
+  { id: 'accra-gallery:red-gold',     bodyFrom: '#812723', bodyTo: '#F8D04A', accent: '#2F6A3E', ink: '#111827', blush: '#B12F28' },
 ];
 
 export const accraGalleryPack: Pack = {
@@ -34,25 +34,25 @@ export const accraGalleryPack: Pack = {
     mouth: ['smile', 'flat', 'smirk', 'dot'],
     antenna: ['none'],
     accessory: ['none', 'glasses', 'goldHoop', 'blackStarPin'],
-    topper: ['none', 'textileBand', 'geometricCap', 'galleryWrap'],
+    topper: ['textileBand', 'textileBand', 'geometricCap', 'galleryWrap'],
     background: ['solid'],
-    outfit: ['none', 'patternedCollar', 'necklace'],
+    outfit: ['patternedCollar', 'patternedCollar', 'necklace'],
   },
   styleHints: {
     masc: {
-      outfit: ['none', 'patternedCollar'],
+      outfit: ['patternedCollar'],
       accessory: ['none', 'glasses', 'blackStarPin'],
-      topper: ['none', 'geometricCap', 'textileBand'],
+      topper: ['geometricCap', 'textileBand'],
     },
     femme: {
-      outfit: ['none', 'patternedCollar', 'necklace'],
+      outfit: ['patternedCollar', 'necklace'],
       accessory: ['none', 'goldHoop', 'glasses'],
-      topper: ['none', 'galleryWrap', 'textileBand'],
+      topper: ['galleryWrap', 'textileBand'],
     },
     neutral: {
-      outfit: ['none', 'patternedCollar'],
+      outfit: ['patternedCollar'],
       accessory: ['none', 'glasses', 'blackStarPin'],
-      topper: ['none', 'textileBand'],
+      topper: ['textileBand'],
     },
   },
 };

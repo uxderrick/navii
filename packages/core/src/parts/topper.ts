@@ -12,6 +12,11 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
   const cx = anchor.topperX;
   const topY = anchor.topperY;
   const ink = palette.ink;
+  const routeYellow = '#F5C51B';
+  const kenyaGreen = '#00843D';
+  const kenyaRed = '#C8102E';
+  const matatuBlack = '#101820';
+  const paperWhite = '#F8F7EF';
 
   switch (id) {
     case 'ears':
@@ -176,26 +181,30 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
 
     case 'neonRouteBand':
       return [
-        `<path d="M${cx - 21} ${topY + 8} Q${cx} ${topY + 1} ${cx + 21} ${topY + 8} L${cx + 19} ${topY + 13} Q${cx} ${topY + 7} ${cx - 19} ${topY + 13} Z" fill="#101820" stroke="${ink}" stroke-width="0.6" />`,
-        `<path d="M${cx - 16} ${topY + 9} L${cx + 16} ${topY + 7}" stroke="#12D977" stroke-width="2.4" stroke-linecap="round" />`,
-        `<path d="M${cx - 12} ${topY + 12} L${cx + 12} ${topY + 10}" stroke="#FFD23F" stroke-width="1.5" stroke-linecap="round" />`,
-        `<rect x="${cx - 3}" y="${topY + 5}" width="6" height="5" rx="1" fill="#FF2D55" opacity="0.95" />`,
+        `<path d="M${cx - 22} ${topY + 8} Q${cx} ${topY + 1} ${cx + 22} ${topY + 8} L${cx + 20} ${topY + 14} Q${cx} ${topY + 8} ${cx - 20} ${topY + 14} Z" fill="${matatuBlack}" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 18} ${topY + 9} L${cx + 18} ${topY + 7}" stroke="${routeYellow}" stroke-width="2.6" stroke-linecap="round" />`,
+        `<rect x="${cx - 18}" y="${topY + 11.5}" width="9" height="2" fill="${kenyaGreen}" opacity="0.96" />`,
+        `<rect x="${cx - 4}" y="${topY + 10.8}" width="8" height="2.4" fill="${paperWhite}" opacity="0.98" />`,
+        `<rect x="${cx + 9}" y="${topY + 11.5}" width="9" height="2" fill="${kenyaRed}" opacity="0.96" />`,
+        `<text x="${cx}" y="${topY + 10.7}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="5" font-weight="800" fill="${matatuBlack}">46</text>`,
       ].join('');
 
     case 'shukaGridBand':
       return [
-        `<path d="M${cx - 20} ${topY + 8} Q${cx} ${topY + 3} ${cx + 20} ${topY + 8} L${cx + 20} ${topY + 13} Q${cx} ${topY + 8} ${cx - 20} ${topY + 13} Z" fill="#D72638" stroke="${ink}" stroke-width="0.55" />`,
-        `<rect x="${cx - 15}" y="${topY + 8}" width="30" height="1.7" fill="#101820" opacity="0.96" />`,
-        `<rect x="${cx - 15}" y="${topY + 11.5}" width="30" height="1.5" fill="#F8F7EF" opacity="0.96" />`,
-        `<rect x="${cx - 6}" y="${topY + 6.5}" width="2" height="7" fill="#2F80ED" opacity="0.9" />`,
-        `<rect x="${cx + 5}" y="${topY + 6.5}" width="2" height="7" fill="#101820" opacity="0.9" />`,
+        `<path d="M${cx - 20} ${topY + 8} Q${cx} ${topY + 3} ${cx + 20} ${topY + 8} L${cx + 20} ${topY + 13} Q${cx} ${topY + 8} ${cx - 20} ${topY + 13} Z" fill="${kenyaRed}" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 15}" y="${topY + 8}" width="30" height="1.7" fill="${matatuBlack}" opacity="0.96" />`,
+        `<rect x="${cx - 15}" y="${topY + 11.5}" width="30" height="1.5" fill="${paperWhite}" opacity="0.96" />`,
+        `<rect x="${cx - 7}" y="${topY + 6.5}" width="2" height="7" fill="#1E4EA8" opacity="0.92" />`,
+        `<rect x="${cx + 6}" y="${topY + 6.5}" width="2" height="7" fill="${matatuBlack}" opacity="0.92" />`,
+        `<rect x="${cx - 18}" y="${topY + 6.8}" width="5" height="2" fill="${routeYellow}" opacity="0.95" />`,
       ].join('');
 
     case 'stickerCap':
       return [
-        `<path d="M${cx - 16} ${topY + 6} L${cx + 11} ${topY - 6} C${cx + 16} ${topY - 4} ${cx + 19} ${topY + 1} ${cx + 17} ${topY + 6} Z" fill="#2F80ED" stroke="${ink}" stroke-width="0.6" />`,
-        `<path d="M${cx - 13} ${topY + 5} L${cx + 14} ${topY + 5}" stroke="#FFD23F" stroke-width="2.4" stroke-linecap="round" />`,
-        `<circle cx="${cx + 7}" cy="${topY - 1}" r="2.2" fill="#12D977" stroke="${ink}" stroke-width="0.4" />`,
+        `<path d="M${cx - 17} ${topY + 6} L${cx + 12} ${topY - 6} C${cx + 17} ${topY - 4} ${cx + 20} ${topY + 1} ${cx + 17} ${topY + 6} Z" fill="${paperWhite}" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 14} ${topY + 5} L${cx + 15} ${topY + 5}" stroke="${routeYellow}" stroke-width="2.6" stroke-linecap="round" />`,
+        `<rect x="${cx - 4}" y="${topY - 2}" width="12" height="5" rx="1.1" fill="${matatuBlack}" stroke="${ink}" stroke-width="0.35" />`,
+        `<text x="${cx + 2}" y="${topY + 1.9}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="4.5" font-weight="800" fill="${routeYellow}">CBD</text>`,
       ].join('');
 
     case 'witchHat': {

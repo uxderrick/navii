@@ -8,6 +8,11 @@ export function renderAccessory(
   opts?: { strokeMul?: number },
 ): string {
   const sw = opts?.strokeMul ?? 1;
+  const routeYellow = '#F5C51B';
+  const kenyaGreen = '#00843D';
+  const kenyaRed = '#C8102E';
+  const matatuBlack = '#101820';
+  const paperWhite = '#F8F7EF';
   switch (id) {
     case 'none':
       return '';
@@ -142,11 +147,12 @@ export function renderAccessory(
       const r = 6;
       const gw = 1.35 * sw;
       return [
-        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="#12D977" stroke-width="${gw}" />`,
-        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="#FFD23F" stroke-width="${gw}" />`,
-        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="#FF2D55" stroke-width="${gw}" />`,
+        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="${paperWhite}" stroke-width="${gw}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="${routeYellow}" stroke-width="${gw}" />`,
+        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="${kenyaGreen}" stroke-width="${gw}" />`,
         `<circle cx="${lx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
         `<circle cx="${rx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+        `<path d="M${lx - 2} ${y - 8} L${lx + 2} ${y - 8}" stroke="${kenyaRed}" stroke-width="${0.9 * sw}" stroke-linecap="round" />`,
       ].join('');
     }
 
@@ -154,9 +160,10 @@ export function renderAccessory(
       const x = anchor.cx + 13;
       const y = anchor.cheekY + 10;
       return [
-        `<circle cx="${x}" cy="${y}" r="${3.3 * sw}" fill="#101820" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
-        `<rect x="${x - 2.4}" y="${y - 0.8}" width="4.8" height="1.6" fill="#F8F7EF" opacity="0.96" />`,
-        `<rect x="${x - 0.8}" y="${y - 2.4}" width="1.6" height="4.8" fill="#D72638" opacity="0.96" />`,
+        `<circle cx="${x}" cy="${y}" r="${3.4 * sw}" fill="${matatuBlack}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<rect x="${x - 2.6}" y="${y - 1.8}" width="5.2" height="1.2" fill="${kenyaRed}" opacity="0.98" />`,
+        `<rect x="${x - 2.6}" y="${y + 0.4}" width="5.2" height="1.2" fill="${kenyaGreen}" opacity="0.98" />`,
+        `<rect x="${x - 2.6}" y="${y - 0.4}" width="5.2" height="0.8" fill="${paperWhite}" opacity="0.98" />`,
       ].join('');
     }
 
@@ -164,9 +171,10 @@ export function renderAccessory(
       const x = anchor.cx - 13;
       const y = anchor.cheekY + 10;
       return [
-        `<path d="M${x - 4} ${y + 1} L${x + 3} ${y - 4} L${x + 4} ${y + 3} Z" fill="#FFD23F" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
-        `<circle cx="${x - 1.5}" cy="${y + 2.6}" r="${0.9 * sw}" fill="#12D977" />`,
-        `<circle cx="${x + 2.5}" cy="${y - 0.2}" r="${0.9 * sw}" fill="#FF2D55" />`,
+        `<rect x="${x - 5}" y="${y - 4}" width="10" height="7" rx="1.2" fill="${routeYellow}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<text x="${x}" y="${y + 1.1}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="5" font-weight="800" fill="${matatuBlack}">46</text>`,
+        `<circle cx="${x - 4.2}" cy="${y + 4.1}" r="${0.8 * sw}" fill="${kenyaGreen}" />`,
+        `<circle cx="${x + 4.2}" cy="${y + 4.1}" r="${0.8 * sw}" fill="${kenyaRed}" />`,
       ].join('');
     }
   }

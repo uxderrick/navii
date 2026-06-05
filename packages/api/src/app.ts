@@ -769,6 +769,27 @@ export function createApp(options: AppOptions = {}) {
     return c.html(renderGallery(seeds, size, animated));
   });
 
+  app.get('/accra-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderAccraPacksDemo(count, size, animated));
+  });
+
+  app.get('/lagos-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderLagosPacksDemo(count, size, animated));
+  });
+
+  app.get('/nairobi-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderNairobiPacksDemo(count, size, animated));
+  });
+
   // Catch-all — any URL that didn't match a route redirects to the landing
   // page. Avoids needing a styled 404 surface and keeps every dead link
   // pointing somewhere useful.
@@ -983,4 +1004,567 @@ function renderGallery(seeds: string[], size: number, animated: boolean): string
   <div class="grid">${tiles}</div>
 </body>
 </html>`;
+}
+
+function renderAccraPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'ama', 'kwame', 'akosua', 'kofi', 'esi', 'yaw', 'abena', 'kojo', 'afia', 'kwesi', 'adjoa', 'akua',
+    'accra-founder', 'oscar', 'nana', 'efua', 'kweku', 'yaa', 'selasi', 'adwoa', 'navii-accra', 'gallery-01',
+    'founder-page', 'team-card', 'pitch-deck', 'product-lead', 'design-lead', 'growth-lead', 'ops-lead', 'community',
+    'labadi', 'osu', 'ridge', 'cantonments', 'east-legon', 'jamestown', 'airport', 'spintex', 'madina', 'tema',
+  ];
+  const palettes = [
+    'accra-gallery:gallery-gold',
+    'accra-gallery:green-red',
+    'accra-gallery:red-black',
+    'accra-gallery:black-red',
+    'accra-gallery:red-gold',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['accra-gallery'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('accra-gallery:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const animQuery = animated ? '&animated=1' : '';
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Accra Gallery demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f6eedc;
+      --ink: #111827;
+      --gold: #f3cf4e;
+      --red: #b12f28;
+      --green: #2f6a3e;
+      --line: rgba(17, 24, 39, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 760px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 620px;
+      color: rgba(17, 24, 39, 0.68);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.28);
+      font-weight: 650;
+    }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(17,24,39,0.08);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.34);
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(17, 24, 39, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Accra Gallery</h1>
+        <p class="meta">${count} generated avatars using the Accra Gallery pack. Demo page only, rendered directly from core so you can scan the pack without Pro API auth.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/accra-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/accra-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/accra-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Accra Gallery palette">
+      <span style="background:#111827"></span>
+      <span style="background:#F3CF4E"></span>
+      <span style="background:#B12F28"></span>
+      <span style="background:#2F6A3E"></span>
+      <span style="background:#F8D04A"></span>
+    </div>
+    <section class="grid">${items}</section>
+  </main>
+</body>
+</html>`;
+}
+
+function renderLagosPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'eko', 'lagos', 'danfo', 'naija', 'yemi', 'tunde', 'ada', 'wale', 'sade', 'seun', 'ife', 'zainab',
+    'lagos-founder', 'eko-night', 'mainland', 'island', 'ikeja', 'yaba', 'lekki', 'surulere', 'oshodi', 'vi',
+    'team-card', 'pitch-deck', 'product-lead', 'design-lead', 'growth-lead', 'ops-lead', 'community', 'studio',
+    'route-01', 'route-02', 'bus-stop', 'city-energy', 'flag-first', 'danfo-line', 'green-white', 'street-black',
+  ];
+  const palettes = [
+    'lagos-danfo:green-white',
+    'lagos-danfo:white-green',
+    'lagos-danfo:danfo-green',
+    'lagos-danfo:deep-green',
+    'lagos-danfo:street-black',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['lagos-danfo'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('lagos-danfo:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lagos Danfo demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f8f7ef;
+      --ink: #111827;
+      --green: #008753;
+      --deep-green: #075f3a;
+      --yellow: #f5c51b;
+      --line: rgba(17, 24, 39, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 760px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 650px;
+      color: rgba(17, 24, 39, 0.68);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.34);
+      font-weight: 650;
+    }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(17,24,39,0.08);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.44);
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(17, 24, 39, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Lagos Danfo</h1>
+        <p class="meta">${count} generated avatars using the Lagos Danfo pack. Local review page only, rendered directly from core so you can scan the pack before we treat the Figma plugin visuals as approved.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/lagos-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/lagos-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/lagos-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Lagos Danfo palette">
+      <span style="background:#111827"></span>
+      <span style="background:#008753"></span>
+      <span style="background:#F8F7EF"></span>
+      <span style="background:#008753"></span>
+      <span style="background:#F5C51B"></span>
+    </div>
+    <section class="grid">${items}</section>
+  </main>
+</body>
+</html>`;
+}
+
+function renderNairobiPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'nairobi', 'matatu', 'ngong', 'westlands', 'karen', 'kilimani', 'langata', 'kariobangi', 'eastleigh', 'parklands', 'ruaraka', 'kibera',
+    'nairobi-founder', 'matatu-night', 'route-46', 'route-11', 'route-23', 'city-hop', 'stage-left', 'stage-right', 'neon-line', 'shuka-grid',
+    'team-card', 'pitch-deck', 'product-lead', 'design-lead', 'growth-lead', 'ops-lead', 'community', 'studio',
+    'uhuru', 'tom-mboya', 'archives', 'river-road', 'electric-stage', 'safari-neon', 'route-poster', 'green-light',
+  ];
+  const palettes = [
+    'nairobi-matatu:route-black',
+    'nairobi-matatu:kanu-red',
+    'nairobi-matatu:city-green',
+    'nairobi-matatu:yellow-stripe',
+    'nairobi-matatu:shuka-blue',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['nairobi-matatu'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('nairobi-matatu:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nairobi Matatu demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f7f1e3;
+      --ink: #101820;
+      --green: #12d977;
+      --red: #ff2d55;
+      --blue: #2f80ed;
+      --yellow: #ffd23f;
+      --line: rgba(16, 24, 32, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 780px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 690px;
+      color: rgba(16, 24, 32, 0.66);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.48);
+      font-weight: 650;
+    }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(16,24,32,0.12);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.44);
+      border: 1px solid rgba(16, 24, 32, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(16, 24, 32, 0.04);
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(16, 24, 32, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Nairobi Matatu</h1>
+        <p class="meta">${count} generated avatars using the Nairobi Matatu pack. Local review page only, focused on route stickers, yellow matatu stripes, Kenya flag color, and restrained shuka details.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/nairobi-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/nairobi-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/nairobi-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Nairobi Matatu palette">
+      <span style="background:#101820"></span>
+      <span style="background:#C8102E"></span>
+      <span style="background:#00843D"></span>
+      <span style="background:#F5C51B"></span>
+      <span style="background:#1E4EA8"></span>
+      <span style="background:#F8F7EF"></span>
+    </div>
+    <section class="grid">${items}</section>
+  </main>
+</body>
+</html>`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }

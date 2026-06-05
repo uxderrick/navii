@@ -5,23 +5,23 @@ import type { Palette } from '../types.js';
  * Nairobi Matatu — premium Nairobi/Kenya avatar identity system.
  *
  * Visual rules:
- * - Dark route-poster plates with electric matatu color
- * - Shuka-inspired checks as restrained bands/collars
- * - Neon route marks, sticker geometry, and high-contrast face details
+ * - Route-sticker plates with yellow matatu stripe details
+ * - Kenya flag black/red/green/white with restrained shuka blue
+ * - Chrome/window dots, route numbers, and high-contrast face details
  * - Flat editorial rendering with exclusive palettes
  */
 const palettes: Palette[] = [
-  { id: 'nairobi-matatu:night-green', bodyFrom: '#101820', bodyTo: '#12D977', accent: '#F8F7EF', ink: '#F8F7EF', blush: '#FF2D55' },
-  { id: 'nairobi-matatu:route-red', bodyFrom: '#C1121F', bodyTo: '#101820', accent: '#2F80ED', ink: '#F8F7EF', blush: '#FFD23F' },
-  { id: 'nairobi-matatu:electric-blue', bodyFrom: '#2F80ED', bodyTo: '#101820', accent: '#FFD23F', ink: '#F8F7EF', blush: '#12D977' },
-  { id: 'nairobi-matatu:shuka-check', bodyFrom: '#D72638', bodyTo: '#101820', accent: '#F8F7EF', ink: '#F8F7EF', blush: '#2F80ED' },
-  { id: 'nairobi-matatu:safari-neon', bodyFrom: '#F2E8CF', bodyTo: '#0B6E4F', accent: '#FF2D55', ink: '#101820', blush: '#FFD23F' },
+  { id: 'nairobi-matatu:route-black', bodyFrom: '#101820', bodyTo: '#101820', accent: '#F5C51B', ink: '#F8F7EF', blush: '#C8102E' },
+  { id: 'nairobi-matatu:kanu-red', bodyFrom: '#C8102E', bodyTo: '#101820', accent: '#F5C51B', ink: '#F8F7EF', blush: '#00843D' },
+  { id: 'nairobi-matatu:city-green', bodyFrom: '#00843D', bodyTo: '#101820', accent: '#F5C51B', ink: '#F8F7EF', blush: '#C8102E' },
+  { id: 'nairobi-matatu:yellow-stripe', bodyFrom: '#F5C51B', bodyTo: '#101820', accent: '#00843D', ink: '#101820', blush: '#C8102E' },
+  { id: 'nairobi-matatu:shuka-blue', bodyFrom: '#1E4EA8', bodyTo: '#101820', accent: '#C8102E', ink: '#F8F7EF', blush: '#F5C51B' },
 ];
 
 export const nairobiMatatuPack: Pack = {
   id: 'nairobi-matatu',
   name: 'Nairobi Matatu',
-  description: 'Nairobi-inspired avatars with matatu route graphics, dark plates, neon color, and restrained shuka-grid accents.',
+  description: 'Nairobi-inspired avatars with matatu route stickers, yellow route stripes, Kenya flag color, and restrained shuka-grid accents.',
   emoji: '▣',
   palettes,
   paletteExclusive: true,

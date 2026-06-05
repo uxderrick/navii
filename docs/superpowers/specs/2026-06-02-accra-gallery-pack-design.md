@@ -60,28 +60,30 @@ The name is place-based, modern, and premium without being too literal.
 
 The pack should ship five palettes based on the approved swatch strip:
 near-black, warm gold, brick red, deep green, and bright gold. Warm ivory is
-the gallery/card surface, not a primary avatar body color.
+the gallery/card surface, not a primary avatar body color. Because flat render
+mode makes `bodyFrom` dominant, at least two palettes should be red-led so the
+pack reads Ghanaian rather than mostly green/yellow.
 
 - `accra-gallery:gallery-gold`
   - warm gold body
   - brick red secondary
   - black stroke
-- `accra-gallery:green-gold`
+- `accra-gallery:green-red`
   - deep green body/accent
   - gold highlight
-  - black stroke
+  - red accent
 - `accra-gallery:red-black`
   - brick red
   - near-black secondary
   - gold highlight
-- `accra-gallery:black-gold`
+- `accra-gallery:black-red`
   - near-black body
-  - gold secondary
-  - red accent
-- `accra-gallery:woven-gold`
-  - bright gold body
-  - deep green secondary
-  - brick red accent
+- red secondary
+  - gold accent
+- `accra-gallery:red-gold`
+  - deep red body
+  - bright gold secondary
+  - deep green accent
 
 Palette colors should be saturated enough to be recognizable, but less harsh
 than flat flag colors. The final values should be tuned against 32px and 48px

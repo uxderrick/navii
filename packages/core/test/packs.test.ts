@@ -184,23 +184,23 @@ describe('packs — scaffold', () => {
     const paletteIds = pack.palettes!.map((p) => p.id);
     expect(pack).toBeDefined();
     expect(pack.name).toBe('Nairobi Matatu');
-    expect(pack.description).toContain('matatu route graphics');
+    expect(pack.description).toContain('matatu route stickers');
     expect(pack.palettes).toBeDefined();
     expect(pack.palettes!.length).toBe(5);
     expect(paletteIds).toEqual([
-      'nairobi-matatu:night-green',
-      'nairobi-matatu:route-red',
-      'nairobi-matatu:electric-blue',
-      'nairobi-matatu:shuka-check',
-      'nairobi-matatu:safari-neon',
+      'nairobi-matatu:route-black',
+      'nairobi-matatu:kanu-red',
+      'nairobi-matatu:city-green',
+      'nairobi-matatu:yellow-stripe',
+      'nairobi-matatu:shuka-blue',
     ]);
     expect(pack.palettes![0]).toMatchObject({
       bodyFrom: '#101820',
-      bodyTo: '#12D977',
-      accent: '#F8F7EF',
+      bodyTo: '#101820',
+      accent: '#F5C51B',
       ink: '#F8F7EF',
     });
-    expect(pack.palettes!.find((p) => p.id === 'nairobi-matatu:night-green')).toMatchObject({
+    expect(pack.palettes!.find((p) => p.id === 'nairobi-matatu:route-black')).toMatchObject({
       bodyFrom: '#101820',
       ink: '#F8F7EF',
     });
@@ -223,15 +223,28 @@ describe('packs — scaffold', () => {
   it('nairobi matatu dark palette keeps neon and light details visible', () => {
     const svg = createAvatar('matatu-night', {
       packs: ['nairobi-matatu'],
-      paletteId: 'nairobi-matatu:night-green',
+      paletteId: 'nairobi-matatu:route-black',
     });
     expect(svg).toBe(createAvatar('matatu-night', {
       packs: ['nairobi-matatu'],
-      paletteId: 'nairobi-matatu:night-green',
+      paletteId: 'nairobi-matatu:route-black',
     }));
     expect(svg).toContain('#101820');
     expect(svg).toContain('#F8F7EF');
-    expect(svg).toContain('#12D977');
-    expect(svg).toContain('#FF2D55');
+    expect(svg).toContain('#F5C51B');
+    expect(svg).toContain('#00843D');
+    expect(svg).toContain('#C8102E');
+  });
+
+  it('nairobi matatu route-sticker palette includes route and flag markers', () => {
+    const svg = createAvatar('route-46', {
+      packs: ['nairobi-matatu'],
+      paletteId: 'nairobi-matatu:route-black',
+    });
+    expect(svg).toContain('#F5C51B');
+    expect(svg).toContain('#00843D');
+    expect(svg).toContain('#C8102E');
+    expect(svg).toContain('#F8F7EF');
+    expect(svg).toMatch(/>46<|>CBD</);
   });
 });
