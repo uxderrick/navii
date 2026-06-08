@@ -46,4 +46,24 @@ describe('renderGroup', () => {
     expect(svg).toContain('clipPath');
     expect(svg).toContain('clip-path="url(#navii-clip)"');
   });
+
+  it('escapes custom colors before writing them to SVG attributes', () => {
+    const svg = renderGroup(['a', 'b', 'c'], {
+      size: 48,
+      max: 2,
+      ring: '#fff" stroke-width="99',
+      tileBg: '#000" opacity="0',
+      counterFill: '#eee" onload="alert(1)',
+      counterInk: '#111" onclick="alert(1)',
+    });
+
+    expect(svg).toContain('stroke="#fff&quot; stroke-width=&quot;99"');
+    expect(svg).toContain('fill="#000&quot; opacity=&quot;0"');
+    expect(svg).toContain('fill="#eee&quot; onload=&quot;alert(1)"');
+    expect(svg).toContain('fill="#111&quot; onclick=&quot;alert(1)"');
+    expect(svg).not.toContain('stroke="#fff" stroke-width="99"');
+    expect(svg).not.toContain('fill="#000" opacity="0"');
+    expect(svg).not.toContain('fill="#eee" onload="alert(1)"');
+    expect(svg).not.toContain('fill="#111" onclick="alert(1)"');
+  });
 });

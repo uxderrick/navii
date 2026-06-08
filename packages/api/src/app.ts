@@ -790,6 +790,13 @@ export function createApp(options: AppOptions = {}) {
     return c.html(renderNairobiPacksDemo(count, size, animated));
   });
 
+  app.get('/command-center-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderCommandCenterPacksDemo(count, size, animated));
+  });
+
   // Catch-all — any URL that didn't match a route redirects to the landing
   // page. Avoids needing a styled 404 surface and keeps every dead link
   // pointing somewhere useful.
@@ -1557,6 +1564,534 @@ function renderNairobiPacksDemo(count: number, size: number, animated: boolean):
     </div>
     <section class="grid">${items}</section>
   </main>
+</body>
+</html>`;
+}
+
+function renderCommandCenterPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'workspace', 'operator', 'project', 'team-seat', 'integration', 'automation', 'bot', 'agent', 'sync', 'admin',
+    'workflow', 'handoff', 'access', 'tenant', 'cluster', 'node', 'audit', 'inbox', 'release', 'roadmap',
+    'north-star', 'activation', 'retention', 'revenue', 'product-led', 'design-system', 'ops', 'support',
+    'identity', 'segment', 'role', 'feature-flag', 'incident', 'success', 'blocked', 'shipped',
+  ];
+  const palettes = [
+    'command-center:graphite',
+    'command-center:slate',
+    'command-center:cloud',
+    'command-center:moss',
+    'command-center:cobalt',
+    'command-center:sand',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['command-center'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('command-center:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const glyph = (seed: string, paletteId: string, glyphSize = 40): string => createAvatar(seed, {
+    size: glyphSize,
+    packs: ['command-center'],
+    paletteId,
+  });
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Command Center demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f7f8fa;
+      --ink: #111827;
+      --muted: rgba(17, 24, 39, 0.64);
+      --line: rgba(17, 24, 39, 0.14);
+      --panel: rgba(255, 255, 255, 0.72);
+      --blue: #cbd5e1;
+      --green: #8fb7a2;
+      --amber: #b7c3d0;
+      --violet: #3b5b8f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(rgba(17, 24, 39, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17, 24, 39, 0.04) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 32px 32px;
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 800px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 690px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.68);
+      font-weight: 650;
+    }
+    .tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      margin: 0 0 22px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.62);
+    }
+    .tab {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 15px;
+      color: rgba(17, 24, 39, 0.64);
+      background: transparent;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab[aria-selected="true"] {
+      color: #f8fafc;
+      background: var(--ink);
+    }
+    .tab-panel[hidden] { display: none; }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(17,24,39,0.1);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .use-cases {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .app-side,
+    .app-main,
+    .product-card {
+      background: rgba(255,255,255,0.74);
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      border-radius: 8px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .app-side {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+    .app-main {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+    .use-title {
+      margin: 0 0 10px;
+      color: rgba(17, 24, 39, 0.54);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .workspace-item,
+    .member-row,
+    .integration-row,
+    .activity-row,
+    .table-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+      padding: 9px;
+      border-radius: 7px;
+    }
+    .workspace-item.active,
+    .member-row,
+    .integration-row,
+    .table-row {
+      background: rgba(17,24,39,0.035);
+    }
+    .glyph-sm,
+    .glyph-md {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      background: #fff;
+    }
+    .glyph-sm { width: 34px; height: 34px; }
+    .glyph-md { width: 42px; height: 42px; }
+    .glyph-sm svg,
+    .glyph-md svg { width: 100%; height: 100%; display: block; }
+    .item-copy {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+    }
+    .item-copy strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+    .item-copy span,
+    .muted {
+      color: rgba(17, 24, 39, 0.54);
+      font-size: 12px;
+    }
+    .pill {
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: rgba(17, 24, 39, 0.62);
+      font-size: 11px;
+      font-weight: 750;
+      background: rgba(255,255,255,0.7);
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .product-card {
+      padding: 13px;
+      min-height: 126px;
+      display: grid;
+      align-content: space-between;
+      gap: 14px;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .metric {
+      margin: 8px 0 0;
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 850;
+    }
+    .bar {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(17,24,39,0.08);
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #567568;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .panel-lite {
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(247,248,250,0.64);
+    }
+    .stack {
+      display: grid;
+      gap: 8px;
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(17, 24, 39, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+      .use-cases,
+      .split,
+      .product-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Command Center</h1>
+        <p class="meta">${count} generated avatars using the Command Center pack. Local review page only, rendered directly from core so you can scan abstract SaaS system tokens before it goes into the Figma plugin.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/command-center-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/command-center-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/command-center-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Command Center palette">
+      <span style="background:#111827"></span>
+      <span style="background:#475569"></span>
+      <span style="background:#F7F8FA"></span>
+      <span style="background:#567568"></span>
+      <span style="background:#3B5B8F"></span>
+      <span style="background:#D8C7A3"></span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Command Center preview views">
+      <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="gallery-panel" id="gallery-tab" data-tab-target="gallery">Gallery</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="use-cases-panel" id="use-cases-tab" data-tab-target="use-cases">In Product</button>
+    </div>
+    <section class="tab-panel" id="gallery-panel" role="tabpanel" aria-labelledby="gallery-tab" data-tab-panel="gallery">
+      <div class="grid">${items}</div>
+    </section>
+    <section class="tab-panel" id="use-cases-panel" role="tabpanel" aria-labelledby="use-cases-tab" data-tab-panel="use-cases" hidden>
+      <div class="use-cases">
+        <aside class="app-side">
+          <section>
+            <h2 class="use-title">Workspace switcher</h2>
+            <div class="stack">
+              <div class="workspace-item active">
+                <div class="glyph-md">${glyph('workspace-primary', 'command-center:graphite', 42)}</div>
+                <div class="item-copy"><strong>Northstar CRM</strong><span>Production workspace</span></div>
+                <span class="pill">Live</span>
+              </div>
+              <div class="workspace-item">
+                <div class="glyph-md">${glyph('workspace-growth', 'command-center:moss', 42)}</div>
+                <div class="item-copy"><strong>Growth Lab</strong><span>Experiments</span></div>
+                <span class="pill">12</span>
+              </div>
+              <div class="workspace-item">
+                <div class="glyph-md">${glyph('workspace-sandbox', 'command-center:sand', 42)}</div>
+                <div class="item-copy"><strong>Sandbox</strong><span>Internal tools</span></div>
+                <span class="pill">Dev</span>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h2 class="use-title">Team seats</h2>
+            <div class="stack">
+              <div class="member-row">
+                <div class="glyph-sm">${glyph('seat-product-lead', 'command-center:cloud', 34)}</div>
+                <div class="item-copy"><strong>Product lead</strong><span>Owner</span></div>
+                <span class="pill">Admin</span>
+              </div>
+              <div class="member-row">
+                <div class="glyph-sm">${glyph('seat-support', 'command-center:cobalt', 34)}</div>
+                <div class="item-copy"><strong>Support ops</strong><span>8 queues</span></div>
+                <span class="pill">Ops</span>
+              </div>
+              <div class="member-row">
+                <div class="glyph-sm">${glyph('seat-finance', 'command-center:slate', 34)}</div>
+                <div class="item-copy"><strong>Finance</strong><span>Billing</span></div>
+                <span class="pill">View</span>
+              </div>
+            </div>
+          </section>
+        </aside>
+        <div class="app-main">
+          <section>
+            <h2 class="use-title">Project cards</h2>
+            <div class="product-grid">
+              <article class="product-card">
+                <div class="card-head">
+                  <div class="glyph-md">${glyph('project-retention', 'command-center:moss', 42)}</div>
+                  <span class="pill">On track</span>
+                </div>
+                <div>
+                  <strong>Retention engine</strong>
+                  <p class="metric">84%</p>
+                </div>
+                <div class="bar"><span style="width:84%"></span></div>
+              </article>
+              <article class="product-card">
+                <div class="card-head">
+                  <div class="glyph-md">${glyph('project-billing', 'command-center:graphite', 42)}</div>
+                  <span class="pill">Review</span>
+                </div>
+                <div>
+                  <strong>Billing rules</strong>
+                  <p class="metric">31</p>
+                </div>
+                <div class="bar"><span style="width:58%;background:#3B5B8F"></span></div>
+              </article>
+              <article class="product-card">
+                <div class="card-head">
+                  <div class="glyph-md">${glyph('project-segment', 'command-center:sand', 42)}</div>
+                  <span class="pill">Beta</span>
+                </div>
+                <div>
+                  <strong>Segment sync</strong>
+                  <p class="metric">9k</p>
+                </div>
+                <div class="bar"><span style="width:67%;background:#8A7858"></span></div>
+              </article>
+            </div>
+          </section>
+          <div class="split">
+            <section class="panel-lite">
+              <h2 class="use-title">Integration list</h2>
+              <div class="stack">
+                <div class="integration-row">
+                  <div class="glyph-sm">${glyph('integration-stripe', 'command-center:graphite', 34)}</div>
+                  <div class="item-copy"><strong>Stripe billing</strong><span>Synced 2m ago</span></div>
+                  <span class="pill">Healthy</span>
+                </div>
+                <div class="integration-row">
+                  <div class="glyph-sm">${glyph('integration-slack', 'command-center:moss', 34)}</div>
+                  <div class="item-copy"><strong>Slack alerts</strong><span>18 channels</span></div>
+                  <span class="pill">Active</span>
+                </div>
+                <div class="integration-row">
+                  <div class="glyph-sm">${glyph('integration-sheets', 'command-center:cloud', 34)}</div>
+                  <div class="item-copy"><strong>Sheets export</strong><span>Daily digest</span></div>
+                  <span class="pill">Auto</span>
+                </div>
+              </div>
+            </section>
+            <section class="panel-lite">
+              <h2 class="use-title">Activity feed</h2>
+              <div class="stack">
+                <div class="activity-row">
+                  <div class="glyph-sm">${glyph('activity-release', 'command-center:cobalt', 34)}</div>
+                  <div class="item-copy"><strong>Release approved</strong><span>Workspace policy updated</span></div>
+                  <span class="muted">Now</span>
+                </div>
+                <div class="activity-row">
+                  <div class="glyph-sm">${glyph('activity-audit', 'command-center:slate', 34)}</div>
+                  <div class="item-copy"><strong>Audit export</strong><span>Prepared by automation</span></div>
+                  <span class="muted">1h</span>
+                </div>
+                <div class="activity-row">
+                  <div class="glyph-sm">${glyph('activity-customer', 'command-center:sand', 34)}</div>
+                  <div class="item-copy"><strong>Customer table</strong><span>3 records enriched</span></div>
+                  <span class="muted">4h</span>
+                </div>
+              </div>
+            </section>
+          </div>
+          <section class="panel-lite">
+            <h2 class="use-title">Customer table</h2>
+            <div class="stack">
+              <div class="table-row">
+                <div class="glyph-sm">${glyph('customer-enterprise', 'command-center:graphite', 34)}</div>
+                <div class="item-copy"><strong>Enterprise account</strong><span>32 seats · yearly</span></div>
+                <span class="pill">Priority</span>
+              </div>
+              <div class="table-row">
+                <div class="glyph-sm">${glyph('customer-startup', 'command-center:moss', 34)}</div>
+                <div class="item-copy"><strong>Startup account</strong><span>6 seats · monthly</span></div>
+                <span class="pill">Trial</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const tabs = document.querySelectorAll('[data-tab-target]');
+    const panels = document.querySelectorAll('[data-tab-panel]');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab-target');
+        tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
+        panels.forEach((panel) => {
+          panel.hidden = panel.getAttribute('data-tab-panel') !== target;
+        });
+      });
+    });
+  </script>
 </body>
 </html>`;
 }

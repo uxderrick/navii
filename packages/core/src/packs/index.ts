@@ -13,6 +13,7 @@
 
 import type { Pack, PackRegistry } from './types.js';
 import { accraGalleryPack } from './accra-gallery.js';
+import { commandCenterPack } from './command-center.js';
 import { lagosDanfoPack } from './lagos-danfo.js';
 import { nairobiMatatuPack } from './nairobi-matatu.js';
 import { officePack } from './office.js';
@@ -27,6 +28,7 @@ export type { Pack, PackRegistry } from './types.js';
 
 export const BUILT_IN_PACKS: Pack[] = [
   accraGalleryPack,
+  commandCenterPack,
   lagosDanfoPack,
   nairobiMatatuPack,
   officePack,

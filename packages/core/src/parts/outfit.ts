@@ -24,6 +24,9 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
   const kenyaRed = '#C8102E';
   const matatuBlack = '#101820';
   const paperWhite = '#F8F7EF';
+  const commandBlue = '#CBD5E1';
+  const commandGreen = '#8FB7A2';
+  const commandAmber = '#B7C3D0';
 
   switch (id) {
     case 'collar':
@@ -171,6 +174,32 @@ export function renderOutfit(id: OutfitId, anchor: FaceAnchor, palette: Palette)
         `<path d="M${cx - 12} ${cy} Q${cx} ${cy + 8} ${cx + 12} ${cy}" stroke="${routeYellow}" stroke-width="1.2" fill="none" stroke-linecap="round" />`,
         `<rect x="${cx - 4}" y="${cy + 5}" width="8" height="5.5" rx="1" fill="${paperWhite}" stroke="${ink}" stroke-width="0.45" />`,
         `<text x="${cx}" y="${cy + 9.5}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="4.3" font-weight="800" fill="${matatuBlack}">CBD</text>`,
+      ].join('');
+
+    case 'dataCollar':
+      return [
+        `<path d="M${cx - 16} ${cy - 3} Q${cx} ${cy + 5} ${cx + 16} ${cy - 3} L${cx + 13} ${cy + 6} Q${cx} ${cy + 12} ${cx - 13} ${cy + 6} Z" fill="#0F172A" stroke="${ink}" stroke-width="0.55" />`,
+        `<circle cx="${cx - 8}" cy="${cy + 3}" r="2" fill="${commandBlue}" opacity="0.92" />`,
+        `<circle cx="${cx}" cy="${cy + 5}" r="2" fill="${commandGreen}" opacity="0.92" />`,
+        `<circle cx="${cx + 8}" cy="${cy + 3}" r="2" fill="${commandAmber}" opacity="0.92" />`,
+      ].join('');
+
+    case 'pipelineBand':
+      return [
+        `<path d="M${cx - 15} ${cy - 2} Q${cx} ${cy + 5} ${cx + 15} ${cy - 2} L${cx + 12} ${cy + 6} Q${cx} ${cy + 11} ${cx - 12} ${cy + 6} Z" fill="${paperWhite}" stroke="${ink}" stroke-width="0.55" />`,
+        `<circle cx="${cx - 9}" cy="${cy + 3}" r="2.2" fill="${commandBlue}" />`,
+        `<path d="M${cx - 6.5} ${cy + 3} L${cx - 1.8} ${cy + 3}" stroke="#0F172A" stroke-width="1" stroke-linecap="round" />`,
+        `<circle cx="${cx}" cy="${cy + 3}" r="2.2" fill="${commandGreen}" />`,
+        `<path d="M${cx + 2.5} ${cy + 3} L${cx + 7.2} ${cy + 3}" stroke="#0F172A" stroke-width="1" stroke-linecap="round" />`,
+        `<circle cx="${cx + 9}" cy="${cy + 3}" r="2.2" fill="${commandAmber}" />`,
+      ].join('');
+
+    case 'connectorNecklace':
+      return [
+        `<path d="M${cx - 12} ${cy} Q${cx} ${cy + 8} ${cx + 12} ${cy}" stroke="${commandBlue}" stroke-width="1.1" fill="none" stroke-linecap="round" />`,
+        `<rect x="${cx - 4.5}" y="${cy + 5}" width="9" height="6" rx="1.4" fill="#0F172A" stroke="${ink}" stroke-width="0.45" />`,
+        `<circle cx="${cx - 1.8}" cy="${cy + 8}" r="1.05" fill="${commandGreen}" />`,
+        `<circle cx="${cx + 1.8}" cy="${cy + 8}" r="1.05" fill="${commandBlue}" />`,
       ].join('');
   }
 }

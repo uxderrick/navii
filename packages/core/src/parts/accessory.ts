@@ -13,6 +13,10 @@ export function renderAccessory(
   const kenyaRed = '#C8102E';
   const matatuBlack = '#101820';
   const paperWhite = '#F8F7EF';
+  const commandBlue = '#CBD5E1';
+  const commandGreen = '#8FB7A2';
+  const commandAmber = '#B7C3D0';
+  const commandSlate = '#64748B';
   switch (id) {
     case 'none':
       return '';
@@ -175,6 +179,57 @@ export function renderAccessory(
         `<text x="${x}" y="${y + 1.1}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="5" font-weight="800" fill="${matatuBlack}">46</text>`,
         `<circle cx="${x - 4.2}" cy="${y + 4.1}" r="${0.8 * sw}" fill="${kenyaGreen}" />`,
         `<circle cx="${x + 4.2}" cy="${y + 4.1}" r="${0.8 * sw}" fill="${kenyaRed}" />`,
+      ].join('');
+    }
+
+    case 'statusDot': {
+      const x = anchor.cx + 15;
+      const y = anchor.cheekY + 9;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${4.1 * sw}" fill="#0F172A" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x}" cy="${y}" r="${2.1 * sw}" fill="${commandGreen}" />`,
+        `<circle cx="${x}" cy="${y}" r="${1.05 * sw}" fill="${commandSlate}" opacity="0.86" />`,
+      ].join('');
+    }
+
+    case 'cursorPointer': {
+      const x = anchor.cx + 13;
+      const y = anchor.eyeY - 15;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${4.8 * sw}" fill="none" stroke="${commandBlue}" stroke-width="${1.1 * sw}" opacity="0.88" />`,
+        `<circle cx="${x}" cy="${y}" r="${1.5 * sw}" fill="${commandGreen}" opacity="0.95" />`,
+      ].join('');
+    }
+
+    case 'sparklineBadge': {
+      const x = anchor.cx - 15;
+      const y = anchor.cheekY + 8;
+      return [
+        `<circle cx="${x - 4.2}" cy="${y}" r="${2.1 * sw}" fill="${commandBlue}" opacity="0.9" />`,
+        `<circle cx="${x + 4.2}" cy="${y}" r="${2.1 * sw}" fill="${commandGreen}" opacity="0.9" />`,
+        `<path d="M${x - 2.1} ${y} L${x + 2.1} ${y}" stroke="${commandSlate}" stroke-width="${0.9 * sw}" stroke-linecap="round" opacity="0.75" />`,
+      ].join('');
+    }
+
+    case 'integrationBadge': {
+      const x = anchor.cx - 14;
+      const y = anchor.cheekY + 9;
+      return [
+        `<rect x="${x - 6.8}" y="${y - 4.6}" width="13.6" height="9.2" rx="2" fill="${commandBlue}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x - 2.6}" cy="${y}" r="${1.15 * sw}" fill="${commandSlate}" opacity="0.82" />`,
+        `<circle cx="${x + 2.6}" cy="${y}" r="${1.15 * sw}" fill="${paperWhite}" opacity="0.88" />`,
+        `<circle cx="${x + 6.5}" cy="${y - 4.2}" r="${1.4 * sw}" fill="${commandGreen}" stroke="${paperWhite}" stroke-width="${0.35 * sw}" />`,
+      ].join('');
+    }
+
+    case 'successCheck': {
+      const x = anchor.cx + 14;
+      const y = anchor.cheekY + 9;
+      return [
+        `<rect x="${x - 6}" y="${y - 5}" width="12" height="10" rx="3" fill="${commandGreen}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x - 2.1}" cy="${y}" r="${1.2 * sw}" fill="${paperWhite}" opacity="0.86" />`,
+        `<circle cx="${x + 2.1}" cy="${y}" r="${1.2 * sw}" fill="${commandSlate}" opacity="0.86" />`,
+        `<circle cx="${x - 7.5}" cy="${y - 4.8}" r="${1.25 * sw}" fill="${commandAmber}" />`,
       ].join('');
     }
   }

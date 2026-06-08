@@ -12,6 +12,7 @@ describe('packs — scaffold', () => {
     const ids = BUILT_IN_PACKS.map((p) => p.id).sort();
     expect(ids).toEqual([
       'accra-gallery',
+      'command-center',
       'earth', 'halloween', 'lagos-danfo', 'mono', 'nairobi-matatu', 'neon',
       'office', 'office-bright', 'pastel',
     ]);
@@ -246,5 +247,86 @@ describe('packs — scaffold', () => {
     expect(svg).toContain('#C8102E');
     expect(svg).toContain('#F8F7EF');
     expect(svg).toMatch(/>46<|>CBD</);
+  });
+
+  it('command center pack contributes 6 namespaced system-token palettes', () => {
+    const pack = PACK_REGISTRY['command-center']!;
+    const paletteIds = pack.palettes!.map((p) => p.id);
+    expect(pack).toBeDefined();
+    expect(pack.name).toBe('Command Center');
+    expect(pack.description).toContain('system tokens');
+    expect(pack.palettes).toBeDefined();
+    expect(pack.palettes!.length).toBe(6);
+    expect(paletteIds).toEqual([
+      'command-center:graphite',
+      'command-center:slate',
+      'command-center:cloud',
+      'command-center:moss',
+      'command-center:cobalt',
+      'command-center:sand',
+    ]);
+    expect(pack.palettes![0]).toMatchObject({
+      bodyFrom: '#111827',
+      bodyTo: '#111827',
+      accent: '#CBD5E1',
+      ink: '#F8FAFC',
+    });
+    for (const p of pack.palettes!) {
+      expect(p.id.startsWith('command-center:'), `palette id "${p.id}" must be namespaced`).toBe(true);
+    }
+    expect(pack.paletteExclusive).toBe(true);
+    expect(pack.flat).toBe(true);
+  });
+
+  it('command center changes output while remaining deterministic', () => {
+    const base = createAvatar('saas-founder');
+    const first = createAvatar('saas-founder', { packs: ['command-center'] });
+    const second = createAvatar('saas-founder', { packs: ['command-center'] });
+    expect(first).not.toBe(base);
+    expect(first).toBe(second);
+    expect(first).toContain('#F7F8FA');
+  });
+
+  it('command center system-token palette stays abstract and app-safe', () => {
+    const svg = createAvatar('dashboard-ready', {
+      packs: ['command-center'],
+      paletteId: 'command-center:graphite',
+    });
+    expect(svg).toBe(createAvatar('dashboard-ready', {
+      packs: ['command-center'],
+      paletteId: 'command-center:graphite',
+    }));
+    expect(svg).toContain('#111827');
+    expect(svg).toContain('#8FB7A2');
+    expect(svg).not.toMatch(/>OK<|>API<|>99<|>CMD<|<text/);
+    expect(svg).not.toContain('#FDE68A');
+    expect(svg).not.toContain('#38BDF8');
+  });
+
+  it('command center renders workspace glyphs instead of character faces', () => {
+    const svg = createAvatar('workspace-glyph', {
+      packs: ['command-center'],
+      paletteId: 'command-center:cloud',
+    });
+    expect(svg).toContain('data-navii-render="workspace-glyph"');
+    expect(svg).not.toContain('class="eyes"');
+    expect(svg).not.toContain('class="body"');
+    expect(svg).not.toContain('class="antenna"');
+    expect(svg).not.toContain('<text');
+    expect(svg).toContain('#64748B');
+    expect(svg).toContain('#B7C3D0');
+  });
+
+  it('command center workspace glyphs stay quiet and minimal', () => {
+    const svg = createAvatar('minimal-workspace-token', {
+      packs: ['command-center'],
+      paletteId: 'command-center:moss',
+    });
+    expect(svg).toContain('data-navii-render="workspace-glyph"');
+    expect(svg).not.toContain('<ellipse');
+    expect(svg.match(/<rect /g)?.length ?? 0).toBeLessThanOrEqual(3);
+    expect(svg.match(/<circle /g)?.length ?? 0).toBeLessThanOrEqual(2);
+    expect(svg).not.toContain('width="8" height="8"');
+    expect(svg).not.toContain('rx="2.5"');
   });
 });

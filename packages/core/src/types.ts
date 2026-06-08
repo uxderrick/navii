@@ -24,7 +24,9 @@ export type BodyShapeId =
   // Lagos Danfo pack-only bodies
   | 'busBadge' | 'routePlaque' | 'signTile'
   // Nairobi Matatu pack-only bodies
-  | 'matatuBadge' | 'routeSticker' | 'cityPlaque' | 'angledSignTile';
+  | 'matatuBadge' | 'routeSticker' | 'cityPlaque' | 'angledSignTile'
+  // Command Center pack-only bodies
+  | 'dashboardCard' | 'metricTile' | 'appWindow' | 'alertPill';
 export type EyeStyleId =
   | 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star'
   | 'heart' | 'oval' | 'dot' | 'cross';
@@ -42,7 +44,9 @@ export type AccessoryId =
   // Lagos Danfo pack-only accessories
   | 'yellowGlasses' | 'greenPin' | 'routeDot'
   // Nairobi Matatu pack-only accessories
-  | 'brightGlasses' | 'kenyaPin' | 'matatuMark';
+  | 'brightGlasses' | 'kenyaPin' | 'matatuMark'
+  // Command Center pack-only accessories
+  | 'statusDot' | 'cursorPointer' | 'sparklineBadge' | 'integrationBadge' | 'successCheck';
 export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
   | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
@@ -55,7 +59,9 @@ export type TopperId =
   // Lagos Danfo pack-only toppers
   | 'danfoRoofStripe' | 'naijaBand' | 'routeCap'
   // Nairobi Matatu pack-only toppers
-  | 'neonRouteBand' | 'shukaGridBand' | 'stickerCap';
+  | 'neonRouteBand' | 'shukaGridBand' | 'stickerCap'
+  // Command Center pack-only toppers
+  | 'browserTabs' | 'commandBar' | 'notificationChip' | 'chartHeader';
 export type OutfitId =
   | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie'
   // Accra Gallery pack-only outfits
@@ -63,7 +69,9 @@ export type OutfitId =
   // Lagos Danfo pack-only outfits
   | 'roadStripeCollar' | 'flagCollar' | 'yellowTrimNecklace'
   // Nairobi Matatu pack-only outfits
-  | 'shukaCheckCollar' | 'neonTrimCollar' | 'routeStripeNecklace';
+  | 'shukaCheckCollar' | 'neonTrimCollar' | 'routeStripeNecklace'
+  // Command Center pack-only outfits
+  | 'dataCollar' | 'pipelineBand' | 'connectorNecklace';
 
 /**
  * Optional style hint used to bias seeded picks toward a gender expression.
@@ -136,6 +144,8 @@ export interface AvatarSpec {
    * behind the sharp body). Used by Neon for cyberpunk signage feel.
    */
   glow?: boolean;
+  /** Alternate pack-specific render pipeline. */
+  renderMode?: 'workspace-glyph';
 }
 
 export interface AvatarOptions {

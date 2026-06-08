@@ -200,4 +200,32 @@ export const ANCHORS: Record<BodyShapeId, FaceAnchor> = {
     groundY: 90,
     cheekY: 56, cheekOffset: 20,
   },
+  dashboardCard: {
+    cx: 50, eyeY: 47, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 61, mouthSpan: 8,
+    topperX: 50, topperY: 16,
+    groundY: 89,
+    cheekY: 55, cheekOffset: 23,
+  },
+  metricTile: {
+    cx: 50, eyeY: 48, eyeOffset: 11, eyeScale: 1.0,
+    mouthY: 61, mouthSpan: 7,
+    topperX: 50, topperY: 18,
+    groundY: 88,
+    cheekY: 55, cheekOffset: 21,
+  },
+  appWindow: {
+    cx: 50, eyeY: 48, eyeOffset: 12, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 14,
+    groundY: 90,
+    cheekY: 56, cheekOffset: 23,
+  },
+  alertPill: {
+    cx: 50, eyeY: 49, eyeOffset: 11, eyeScale: 1.0,
+    mouthY: 62, mouthSpan: 8,
+    topperX: 50, topperY: 18,
+    groundY: 88,
+    cheekY: 56, cheekOffset: 22,
+  },
 };

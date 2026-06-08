@@ -17,6 +17,10 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
   const kenyaRed = '#C8102E';
   const matatuBlack = '#101820';
   const paperWhite = '#F8F7EF';
+  const commandBlue = '#CBD5E1';
+  const commandGreen = '#8FB7A2';
+  const commandAmber = '#B7C3D0';
+  const commandSlate = '#64748B';
 
   switch (id) {
     case 'ears':
@@ -205,6 +209,38 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
         `<path d="M${cx - 14} ${topY + 5} L${cx + 15} ${topY + 5}" stroke="${routeYellow}" stroke-width="2.6" stroke-linecap="round" />`,
         `<rect x="${cx - 4}" y="${topY - 2}" width="12" height="5" rx="1.1" fill="${matatuBlack}" stroke="${ink}" stroke-width="0.35" />`,
         `<text x="${cx + 2}" y="${topY + 1.9}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="4.5" font-weight="800" fill="${routeYellow}">CBD</text>`,
+      ].join('');
+
+    case 'browserTabs':
+      return [
+        `<ellipse cx="${cx}" cy="${topY + 9}" rx="19" ry="5" fill="none" stroke="${commandBlue}" stroke-width="1.2" opacity="0.88" />`,
+        `<circle cx="${cx - 10}" cy="${topY + 9}" r="2.2" fill="${paperWhite}" opacity="0.92" />`,
+        `<circle cx="${cx}" cy="${topY + 9}" r="2.2" fill="${commandGreen}" opacity="0.88" />`,
+        `<circle cx="${cx + 10}" cy="${topY + 9}" r="2.2" fill="${commandAmber}" opacity="0.88" />`,
+      ].join('');
+
+    case 'commandBar':
+      return [
+        `<path d="M${cx - 17} ${topY + 12} Q${cx} ${topY + 5} ${cx + 17} ${topY + 12}" stroke="${commandBlue}" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.9" />`,
+        `<circle cx="${cx - 15}" cy="${topY + 11.5}" r="2" fill="${commandSlate}" opacity="0.92" />`,
+        `<circle cx="${cx + 15}" cy="${topY + 11.5}" r="2" fill="${commandGreen}" opacity="0.92" />`,
+      ].join('');
+
+    case 'notificationChip':
+      return [
+        `<rect x="${cx - 14}" y="${topY + 6}" width="28" height="8" rx="4" fill="${paperWhite}" stroke="${commandBlue}" stroke-width="0.9" opacity="0.9" />`,
+        `<circle cx="${cx - 6}" cy="${topY + 10}" r="1.5" fill="${commandSlate}" opacity="0.88" />`,
+        `<circle cx="${cx}" cy="${topY + 10}" r="1.5" fill="${commandGreen}" opacity="0.88" />`,
+        `<circle cx="${cx + 6}" cy="${topY + 10}" r="1.5" fill="${commandAmber}" opacity="0.88" />`,
+      ].join('');
+
+    case 'chartHeader':
+      return [
+        `<path d="M${cx - 22} ${topY + 9} Q${cx} ${topY + 3} ${cx + 22} ${topY + 9} L${cx + 22} ${topY + 14} Q${cx} ${topY + 8} ${cx - 22} ${topY + 14} Z" fill="${paperWhite}" stroke="${ink}" stroke-width="0.55" />`,
+        `<circle cx="${cx - 10}" cy="${topY + 10}" r="2.4" fill="${commandBlue}" opacity="0.86" />`,
+        `<circle cx="${cx}" cy="${topY + 7}" r="2.4" fill="${commandGreen}" opacity="0.86" />`,
+        `<circle cx="${cx + 10}" cy="${topY + 10}" r="2.4" fill="${commandAmber}" opacity="0.86" />`,
+        `<path d="M${cx - 8} ${topY + 9} L${cx - 2} ${topY + 7.5} L${cx + 8} ${topY + 9}" stroke="${commandSlate}" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.72" />`,
       ].join('');
 
     case 'witchHat': {

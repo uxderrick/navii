@@ -49,6 +49,23 @@ describe('api', () => {
     });
   });
 
+  it('GET /command-center-packs renders gallery and product use-case tabs', async () => {
+    const res = await get('/command-center-packs?count=12&size=72');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const body = await res.text();
+    expect(body).toContain('data-tab-target="gallery"');
+    expect(body).toContain('data-tab-target="use-cases"');
+    expect(body).toContain('id="gallery-panel"');
+    expect(body).toContain('id="use-cases-panel"');
+    expect(body).toContain('Workspace switcher');
+    expect(body).toContain('Team seats');
+    expect(body).toContain('Project cards');
+    expect(body).toContain('Integration list');
+    expect(body).toContain('Activity feed');
+    expect(body).toContain('Customer table');
+  });
+
   it('GET /figma redirects to the Figma community plugin', async () => {
     const res = await get('/figma');
     expect(res.status).toBe(302);
@@ -273,6 +290,25 @@ describe('api', () => {
     const res = await get('/group?seeds=a,b,c,d,e,f&size=32&max=3');
     const body = await res.text();
     expect(body).toContain('+4');
+  });
+
+  it('GET /group escapes custom SVG color params', async () => {
+    const ring = encodeURIComponent('#fff" stroke-width="99');
+    const tileBg = encodeURIComponent('#000" opacity="0');
+    const res = await get(`/group?seeds=a,b,c&max=2&ring=${ring}&tileBg=${tileBg}`);
+    const body = await res.text();
+    expect(body).toContain('stroke="#fff&quot; stroke-width=&quot;99"');
+    expect(body).toContain('fill="#000&quot; opacity=&quot;0"');
+    expect(body).not.toContain('stroke="#fff" stroke-width="99"');
+    expect(body).not.toContain('fill="#000" opacity="0"');
+  });
+
+  it('GET /avatar escapes tileBg before rendering SVG', async () => {
+    const tileBg = encodeURIComponent('#fff" onload="alert(1)');
+    const res = await get(`/avatar/alice?tileBg=${tileBg}`);
+    const body = await res.text();
+    expect(body).toContain('fill="#fff&quot; onload=&quot;alert(1)"');
+    expect(body).not.toContain('fill="#fff" onload="alert(1)"');
   });
 
   it('GET /group caps seeds at 50', async () => {

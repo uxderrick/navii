@@ -88,6 +88,12 @@ describe('createAvatar', () => {
     const svg = createAvatar('a', { title: 'A & <B>' });
     expect(svg).toContain('A &amp; &lt;B&gt;');
   });
+
+  it('escapes tileBg before writing it to SVG attributes', () => {
+    const svg = createAvatar('alice', { tileBg: '#fff" onload="alert(1)' });
+    expect(svg).toContain('fill="#fff&quot; onload=&quot;alert(1)"');
+    expect(svg).not.toContain('fill="#fff" onload="alert(1)"');
+  });
 });
 
 describe('renderAvatar', () => {
