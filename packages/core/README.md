@@ -98,6 +98,8 @@ Navii.{ create, random, render, select, group, seed, build }
 | `palette`    | `Palette` object — runtime/brand palette, no registration in `PALETTES` needed. Wins over `paletteId`. | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
 | `mood`       | `'neutral' \| 'happy' \| 'serious' \| 'sleepy' \| 'wink'` — overrides seed-derived eyes + mouth with a curated pair. Same seed + same mood = byte-identical. Bypasses pack eye/mouth constraints by design. | `'neutral'` |
+| `packs`      | `readonly string[]` — premium pack ids, e.g. `['accra-gallery']` | none |
+| `style`      | `'masc' \| 'femme' \| 'neutral'` — biases pack picks when supported | none |
 | `tileBg`     | CSS color or `'auto'` (palette accent)                | none         |
 | `title`      | accessible label (sets `<title>` + `aria-label`)      | none         |
 | `animated`   | `boolean` — idle float / blink / sway / pulse / twinkle | `false`    |

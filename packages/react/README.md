@@ -173,7 +173,7 @@ Or render `<Navii>` directly when `photoUrl` is null — no fetch needed, determ
 
 ## Determinism guarantee
 
-Same seed + same options → byte-identical SVG. Memoized on `seed + size + paletteId + palette + background + mood + title + animated + styleHint`. Re-renders with same props don't re-run the engine.
+Same seed + same options → byte-identical SVG. Memoized on `seed + size + paletteId + palette + background + mood + packs + title + animated + styleHint`. Re-renders with same props don't re-run the engine.
 
 ## License
 

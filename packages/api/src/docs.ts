@@ -896,7 +896,7 @@ function pageHttpApi(): string {
           <tr><td><code>background</code></td><td>enum</td><td>seeded</td><td><code>none</code> · <code>solid</code> · <code>ring</code>.</td></tr>
           <tr><td><code>tileBg</code></td><td>color</td><td>none</td><td>Opaque circular fill behind avatar. Any CSS color (URL-encoded, e.g. <code>%23ffffff</code>) or <code>auto</code> to use the palette accent.</td></tr>
           <tr><td><code>mood</code></td><td>enum</td><td>seeded</td><td><code>neutral</code> · <code>happy</code> · <code>serious</code> · <code>sleepy</code> · <code>wink</code>. Overrides seed-derived eyes + mouth with a curated pair. Same seed + mood = byte-identical render.</td></tr>
-          <tr><td><code>packs</code></td><td>csv</td><td>none</td><td>Comma-separated pack ids — e.g. <code>halloween</code>, <code>office,mono</code>. Themed bodies, palettes, accessories. Unknown ids are silently skipped. Order doesn't affect cached output.</td></tr>
+          <tr><td><code>packs</code></td><td>csv</td><td>none</td><td>Comma-separated pack ids — e.g. <code>accra-gallery</code>, <code>command-center</code>. Premium themed bodies, palettes, accessories, and outfits. Unknown ids are silently skipped. Order doesn't affect cached output.</td></tr>
           <tr><td><code>style</code></td><td>enum</td><td>seeded</td><td><code>masc</code> · <code>femme</code> · <code>neutral</code>. Style-hint bias on seeded picks. Only meaningful alongside <code>packs</code>; harmless otherwise.</td></tr>
           <tr><td><code>title</code></td><td>string</td><td>none</td><td>Accessible label. Adds <code>role="img"</code> + <code>aria-label</code> to the SVG root.</td></tr>
           <tr><td><code>animated</code></td><td>0 / 1</td><td>0</td><td>Idle motion (float, blink, antenna sway, spark pulse, twinkle). SVG only — ignored for PNG. Honors <code>prefers-reduced-motion</code>.</td></tr>
@@ -908,8 +908,8 @@ function pageHttpApi(): string {
 ${API_BASE}/avatar/alice?palette=violet&amp;animated=1
 ${API_BASE}/avatar/alice?tileBg=%23ffffff
 ${API_BASE}/avatar/alice?mood=happy
-${API_BASE}/avatar/alice?packs=halloween
-${API_BASE}/avatar/alice?packs=office,mono&amp;style=neutral
+${API_BASE}/avatar/alice?packs=accra-gallery
+${API_BASE}/avatar/alice?packs=command-center&amp;style=neutral
 ${API_BASE}/avatar/alice.png?size=512&amp;tileBg=auto</code></pre>
     </section>
 
@@ -1057,7 +1057,7 @@ async function pagePro(): Promise<string> {
     unavailableError,
   ] = await Promise.all([
     codeBlock(`curl -H "Authorization: Bearer <license_key>" \\
-  "${API_BASE}/avatar/alice?packs=halloween"`, 'bash'),
+  "${API_BASE}/avatar/alice?packs=accra-gallery"`, 'bash'),
     codeBlock(`${API_BASE}/avatar/alice?size=128`, 'text'),
     codeBlock(`{
   "error": "pro_auth_required",
@@ -1100,7 +1100,7 @@ async function pagePro(): Promise<string> {
       <table>
         <thead><tr><th>Option</th><th>Auth required?</th><th>Notes</th></tr></thead>
         <tbody>
-          <tr><td><code>packs=...</code></td><td>Yes</td><td>Premium themed packs such as <code>halloween</code>, <code>office</code>, and future pack drops.</td></tr>
+          <tr><td><code>packs=...</code></td><td>Yes</td><td>Premium themed packs such as <code>accra-gallery</code>, <code>lagos-danfo</code>, <code>nairobi-matatu</code>, and <code>command-center</code>.</td></tr>
           <tr><td><code>pro=1</code></td><td>Yes</td><td>Auth probe for testing whether a license key is accepted. Renders the same avatar after auth succeeds.</td></tr>
           <tr><td>Base avatar params</td><td>No</td><td><code>size</code>, <code>palette</code>, <code>background</code>, <code>mood</code>, <code>animated</code>, <code>tileBg</code>, and <code>title</code> stay anonymous.</td></tr>
         </tbody>
@@ -1423,8 +1423,7 @@ export function UserChip({ user }) {
           <tr><td><code>tileBg</code></td><td>string</td><td><code>#ffffff</code></td><td>Fill behind each tile (use <code>'transparent'</code> to skip).</td></tr>
           <tr><td><code>counterFill</code></td><td>string</td><td><code>#E5E7EB</code></td><td>Background of the <code>+N</code> tile.</td></tr>
           <tr><td><code>counterInk</code></td><td>string</td><td><code>#374151</code></td><td>Text color of the <code>+N</code> tile.</td></tr>
-          <tr><td><code>paletteId</code> / <code>palette</code> / <code>mood</code> / <code>background</code> / <code>animated</code> / <code>styleHint</code></td><td colspan="2">—</td><td>Forwarded to every tile. Same semantics as <code>&lt;Navii&gt;</code>.</td></tr>
-          <tr><td><code>packs</code> / <code>title</code></td><td colspan="2">—</td><td><strong>Typed but not forwarded</strong> — inherited from <code>GroupOptions</code> but the React wrapper does not currently pass them to per-tile renders. Use <code>renderGroup</code> from <code>@usenavii/core</code> directly if you need them per tile.</td></tr>
+          <tr><td><code>paletteId</code> / <code>palette</code> / <code>mood</code> / <code>background</code> / <code>animated</code> / <code>packs</code> / <code>styleHint</code></td><td colspan="2">—</td><td>Forwarded to every tile. Same semantics as <code>&lt;Navii&gt;</code>.</td></tr>
         </tbody>
       </table>
     </section>

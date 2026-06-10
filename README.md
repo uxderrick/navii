@@ -29,7 +29,7 @@ seed in  →  same avatar out, every time.
 - **Deterministic.** `createAvatar(seed)` is pure. Same seed → byte-identical SVG, forever.
 - **Stateless.** No accounts, no databases, no CDN warm-up. Render anywhere — server, browser, edge.
 - **Drop-in.** One function call, or a `<img src="...">` URL. Install to first avatar in under a minute.
-- **Expressive.** 3.3M discrete combinations × continuous params (hue, scale, eye gap, mouth curve, antenna tilt) = effectively unbounded.
+- **Expressive.** 22M+ discrete combinations × continuous params (hue, scale, eye gap, mouth curve, antenna tilt) = effectively unbounded.
 - **Animated, optionally.** Idle float, blink, antenna sway, spark pulse, sparkle twinkle — all honoring `prefers-reduced-motion`.
 
 ---
@@ -203,6 +203,8 @@ Any field left unspecified falls back to its first variant.
 | `palette`    | `Palette` object — runtime/brand palette, no registration needed. Wins over `paletteId`. | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
 | `mood`       | `'neutral' \| 'happy' \| 'serious' \| 'sleepy' \| 'wink'` — overrides seed-derived eyes + mouth with a curated pair. Same seed + mood = byte-identical. | `'neutral'` |
+| `packs`      | `readonly string[]` — premium pack ids, e.g. `['accra-gallery']` | none |
+| `style`      | `'masc' \| 'femme' \| 'neutral'` — biases pack picks when supported | none |
 | `title`      | accessible label (sets `<title>` + `aria-label`)      | none         |
 | `animated`   | `boolean` — emits idle animation `<style>` block      | `false`      |
 
