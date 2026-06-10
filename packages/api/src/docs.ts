@@ -31,16 +31,23 @@ import {
   TOPPER_IDS,
   PALETTES,
 } from '@usenavii/core/parts';
+import { codeToHtml } from 'shiki';
 
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
+type CodeToHtmlOptions = Parameters<typeof codeToHtml>[1];
+type ShikiLang = CodeToHtmlOptions['lang'];
+
+const SHIKI_THEME = 'vitesse-dark';
+const highlightedCode = new Map<string, Promise<string>>();
+const STATIC_CODE_BLOCK_RE = /<pre(?:\s+class="code")?><code>([\s\S]*?)<\/code><\/pre>/g;
 
 interface DocPage {
   slug: string;
   title: string;
   summary: string;
   section: string;
-  body: () => string;
+  body: () => string | Promise<string>;
 }
 
 const PAGES: DocPage[] = [
@@ -50,6 +57,7 @@ const PAGES: DocPage[] = [
   { slug: 'recipes',     section: 'Start',     title: 'Recipes',             summary: 'Battle-tested patterns: SSR, fallbacks, galleries, React Native.', body: pageRecipes },
   { slug: 'parts',       section: 'Reference', title: 'Parts catalog',       summary: 'Every variant value, rendered.', body: pageParts },
   { slug: 'http-api',    section: 'Reference', title: 'HTTP API',            summary: 'Full endpoint reference for the hosted service.', body: pageHttpApi },
+  { slug: 'pro',         section: 'Reference', title: 'Navii Pro',           summary: 'License keys, Pro-only API options, and upgrade errors.', body: pagePro },
   { slug: 'rate-limits', section: 'Reference', title: 'Rate limits',         summary: 'Per-route quotas, why immutable caching makes Navii cheap to host.', body: pageRateLimits },
   { slug: 'sdk-core',    section: 'SDK',       title: '@usenavii/core',         summary: 'Engine functions, types, and advanced composition.', body: pageSdkCore },
   { slug: 'sdk-react',   section: 'SDK',       title: '@usenavii/react',        summary: 'React component with memoized rendering.', body: pageSdkReact },
@@ -65,10 +73,11 @@ export function defaultDocSlug(): string {
   return 'quickstart';
 }
 
-export function docsHtml(slug: string): string {
+export async function docsHtml(slug: string): Promise<string> {
   const page = PAGES.find((p) => p.slug === slug);
   if (!page) return shell('not found', notFound(), slug, 'Documentation page not found.');
-  return shell(page.title, page.body(), slug, page.summary);
+  const content = await highlightStaticCodeBlocks(await page.body());
+  return shell(page.title, content, slug, page.summary);
 }
 
 /** All doc slugs — used by /sitemap.xml to advertise pages to crawlers. */
@@ -78,6 +87,65 @@ export function docSlugs(): readonly string[] {
 
 // ────────────────────────────────────────────────────────────────────────────
 // shell
+
+async function codeBlock(source: string, lang: ShikiLang): Promise<string> {
+  const code = source.trim();
+  const key = `${SHIKI_THEME}:${lang}:${code}`;
+  let highlighted = highlightedCode.get(key);
+  if (!highlighted) {
+    highlighted = codeToHtml(code, { lang, theme: SHIKI_THEME });
+    highlightedCode.set(key, highlighted);
+  }
+  return highlighted;
+}
+
+async function highlightStaticCodeBlocks(content: string): Promise<string> {
+  const matches = Array.from(content.matchAll(STATIC_CODE_BLOCK_RE));
+  if (matches.length === 0) return content;
+
+  const replacements = await Promise.all(
+    matches.map((match) => {
+      const code = decodeCodeHtml(match[1] ?? '');
+      return codeBlock(code, inferCodeLanguage(code));
+    }),
+  );
+
+  let next = '';
+  let cursor = 0;
+  matches.forEach((match, index) => {
+    const start = match.index ?? 0;
+    next += content.slice(cursor, start);
+    next += replacements[index]!;
+    cursor = start + match[0].length;
+  });
+  next += content.slice(cursor);
+  return next;
+}
+
+function inferCodeLanguage(source: string): ShikiLang {
+  const code = source.trim();
+  if (!code) return 'text';
+  if (/^[{\[]/.test(code)) return 'json';
+  if (/^HTTP\/\d|^(GET|POST|PUT|PATCH|DELETE)\s/m.test(code)) return 'http';
+  if (/^(npm|pnpm|yarn|docker|curl)\s|^#\s/m.test(code)) return 'bash';
+  if (/^https?:\/\//.test(code)) return 'text';
+  if (/^(raw:|encoded:|Cache-Control:|\d)/.test(code)) return 'text';
+  if (/<\/?[A-Z][\w.:-]*|<\/?[a-z][\w.:-]*/.test(code)) return 'tsx';
+  if (/\b(import|export|const|let|function|interface|type|await|async)\b/.test(code)) return 'ts';
+  return 'text';
+}
+
+function decodeCodeHtml(value: string): string {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec: string) => String.fromCodePoint(Number.parseInt(dec, 10)))
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&');
+}
 
 function shell(title: string, content: string, currentSlug: string, summary: string): string {
   const pageTitle = `${escapeHtml(title)} — Navii docs`;
@@ -298,14 +366,14 @@ ${styleBlock()}
   }
 
   function enhance() {
-    document.querySelectorAll('pre.code').forEach(function (pre) {
+    document.querySelectorAll('pre.code, pre.shiki').forEach(function (pre) {
       if (pre.parentElement && pre.parentElement.classList.contains('code-block')) return;
       const wrap = document.createElement('div');
       wrap.className = 'code-block';
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(pre);
       const codeEl = pre.querySelector('code') || pre;
-      paint(codeEl);
+      if (!pre.classList.contains('shiki')) paint(codeEl);
       wrap.appendChild(makeButton(function () { return codeEl.textContent; }));
     });
   }
@@ -801,6 +869,13 @@ function pageHttpApi(): string {
     </header>
 
     <section>
+      <h2 id="compatibility">Compatibility promise</h2>
+      <p>Every endpoint, query param, response format, and response header documented as of v0.24.x stays available on the hosted API. Existing URLs such as <code>${API_BASE}/avatar/alice</code> keep working unauthenticated.</p>
+      <p>Future Pro features are additive: they use <code>Authorization: Bearer &lt;polar_license_key&gt;</code> only when you request a Pro-only capability. Get a license at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. The free API remains anonymous, and hosted free-tier rate limits will not tighten beyond the currently published limits.</p>
+      <p class="note">Why so strict? Avatar responses use <code>cache-control: public, max-age=31536000, immutable</code>. Once a URL is in customer HTML, browsers and CDNs may hold it for a year. Navii treats those URLs as a public contract.</p>
+    </section>
+
+    <section>
       <h2 id="avatar">GET /avatar/:seed[.svg|.png]</h2>
       <p>Returns a deterministic mascot avatar for the given seed. Same seed → same avatar, byte-for-byte. Append <code>.png</code> to the seed to receive a rasterized PNG instead of SVG.</p>
 
@@ -955,7 +1030,7 @@ encoded: alice%40example.com</code></pre>
       <p>What we promise to keep stable in patch + minor releases:</p>
       <ul>
         <li>Existing seeds' part selections don't shift when new variants are added (new parts append to the PRNG stream, never insert).</li>
-        <li>Endpoint URLs, query params, and response headers stay backwards-compatible.</li>
+        <li>Endpoint URLs, query params, response formats, and response headers stay backwards-compatible; Pro-only features are additive and gated only when requested.</li>
         <li>SVG markup may change in tiny non-visible ways (formatting, attribute order) — treat as text-content stable, not byte-stable across upgrades.</li>
       </ul>
       <p>What can change in a major release:</p>
@@ -968,7 +1043,87 @@ encoded: alice%40example.com</code></pre>
 
     <section>
       <h2 id="auth">Authentication</h2>
-      <p>None. Every endpoint is anonymous. CORS is wide open (<code>access-control-allow-origin: *</code>) — embed from anywhere, no token, no signup. If you need to lock down a self-hosted deployment, put it behind your own auth layer (Cloudflare Access, BasicAuth via Caddy, etc.).</p>
+      <p>None for the documented free API. CORS is wide open (<code>access-control-allow-origin: *</code>) — embed from anywhere, no token, no signup. Future Pro-only capabilities may accept <code>Authorization: Bearer &lt;polar_license_key&gt;</code>, but that auth requirement applies only to the Pro-only capability being requested. Get a license at <a href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. If you need to lock down a self-hosted deployment, put it behind your own auth layer (Cloudflare Access, BasicAuth via Caddy, etc.).</p>
+    </section>
+  `;
+}
+
+async function pagePro(): Promise<string> {
+  const [
+    authCurl,
+    freeUrl,
+    missingAuthError,
+    invalidLicenseError,
+    unavailableError,
+  ] = await Promise.all([
+    codeBlock(`curl -H "Authorization: Bearer <license_key>" \\
+  "${API_BASE}/avatar/alice?packs=halloween"`, 'bash'),
+    codeBlock(`${API_BASE}/avatar/alice?size=128`, 'text'),
+    codeBlock(`{
+  "error": "pro_auth_required",
+  "message": "This option requires Navii Pro. Get a license at https://navii.dev/pro.",
+  "upgradeUrl": "https://navii.dev/pro"
+}`, 'json'),
+    codeBlock(`{
+  "error": "invalid_license",
+  "message": "The Navii Pro license key is invalid or inactive. Get a license at https://navii.dev/pro.",
+  "upgradeUrl": "https://navii.dev/pro"
+}`, 'json'),
+    codeBlock(`{
+  "error": "license_check_unavailable",
+  "message": "License verification is temporarily unavailable."
+}`, 'json'),
+  ]);
+
+  return `
+    <header class="page-head">
+      <h1>Navii Pro</h1>
+      <p class="lede">Use your Navii Pro license key to unlock premium API options such as themed packs while the free API stays anonymous and backwards-compatible.</p>
+    </header>
+
+    <section>
+      <h2 id="buy">Get a license</h2>
+      <p>Buy Navii Pro at <a class="license-url" href="${SITE_BASE}/pro">${SITE_BASE}/pro</a>. Today that URL sends you straight to checkout; later it may become a pricing page. API clients should keep linking to it either way.</p>
+      <p>After purchase, Polar emails your license key. The same key unlocks the Figma plugin and Pro-only hosted API options.</p>
+    </section>
+
+    <section>
+      <h2 id="auth">API auth</h2>
+      <p>Pass the license key as a bearer token when you request a Pro-only option:</p>
+      ${authCurl}
+      <p>Keep using ordinary unauthenticated URLs for free options:</p>
+      ${freeUrl}
+    </section>
+
+    <section>
+      <h2 id="requires-pro">What requires Pro</h2>
+      <table>
+        <thead><tr><th>Option</th><th>Auth required?</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>packs=...</code></td><td>Yes</td><td>Premium themed packs such as <code>halloween</code>, <code>office</code>, and future pack drops.</td></tr>
+          <tr><td><code>pro=1</code></td><td>Yes</td><td>Auth probe for testing whether a license key is accepted. Renders the same avatar after auth succeeds.</td></tr>
+          <tr><td>Base avatar params</td><td>No</td><td><code>size</code>, <code>palette</code>, <code>background</code>, <code>mood</code>, <code>animated</code>, <code>tileBg</code>, and <code>title</code> stay anonymous.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 id="errors">Error responses</h2>
+      <p>Missing Pro auth returns <code>401</code> with an upgrade URL:</p>
+      ${missingAuthError}
+      <p>Invalid, revoked, expired, or wrong-product keys return <code>401</code>:</p>
+      ${invalidLicenseError}
+      <p>If Polar cannot be reached or returns an invalid response, Navii returns <code>502</code>:</p>
+      ${unavailableError}
+    </section>
+
+    <section>
+      <h2 id="security">Security notes</h2>
+      <ul>
+        <li>Do not put a license key in public frontend code unless you are comfortable with users seeing it.</li>
+        <li>Prefer server-side calls, CLI usage, build scripts, or backend SDK helpers for Pro API requests.</li>
+        <li>License checks are cached in-process for 24 hours to keep rendering fast and avoid hitting Polar on every avatar request.</li>
+      </ul>
     </section>
   `;
 }
@@ -1541,10 +1696,24 @@ a:focus-visible, button:focus-visible {
   color: var(--muted-2);
 }
 .content p { margin: 0 0 14px; color: var(--ink); }
+.content a.license-url {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: 1px solid rgba(192, 132, 252, 0.42);
+  border-radius: 6px;
+  background: rgba(192, 132, 252, 0.12);
+  color: var(--ink);
+  font: 12.5px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+.content a.license-url:hover {
+  border-color: var(--accent);
+  background: rgba(192, 132, 252, 0.18);
+  color: var(--ink);
+}
 .content p.note {
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
   padding: 12px 14px;
   border-radius: 6px;
   color: var(--muted);
@@ -1555,7 +1724,8 @@ a:focus-visible, button:focus-visible {
 
 /* code blocks */
 .code-block { position: relative; margin: 0 0 16px; }
-.code-block pre.code { margin: 0; }
+.code-block pre.code,
+.code-block pre.shiki { margin: 0; }
 pre.code {
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -1568,6 +1738,17 @@ pre.code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 pre.code code { background: transparent; border: 0; padding: 0; font-size: inherit; font-family: inherit; color: var(--ink); }
+pre.shiki {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 44px 14px 16px;
+  overflow-x: auto;
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+pre.shiki code { background: transparent; border: 0; padding: 0; font-size: inherit; font-family: inherit; color: inherit; }
 
 .copy-icon {
   position: absolute;

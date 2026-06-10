@@ -18,7 +18,15 @@ export type BodyShapeId =
   | 'orb' | 'tall' | 'squat' | 'pear' | 'pebble'
   | 'dumpling' | 'taro' | 'wisp' | 'squircle'
   // Halloween pack-only bodies (kept out of base BODY_IDS to preserve seeds)
-  | 'pumpkin' | 'ghost' | 'skullHead';
+  | 'pumpkin' | 'ghost' | 'skullHead'
+  // Accra Gallery pack-only bodies
+  | 'galleryPlaque' | 'softShield' | 'wovenTile' | 'medallion'
+  // Lagos Danfo pack-only bodies
+  | 'busBadge' | 'routePlaque' | 'signTile'
+  // Nairobi Matatu pack-only bodies
+  | 'matatuBadge' | 'routeSticker' | 'cityPlaque' | 'angledSignTile'
+  // Command Center pack-only bodies
+  | 'dashboardCard' | 'metricTile' | 'appWindow' | 'alertPill';
 export type EyeStyleId =
   | 'round' | 'wide' | 'squint' | 'wink' | 'sleepy' | 'star'
   | 'heart' | 'oval' | 'dot' | 'cross';
@@ -30,16 +38,40 @@ export type MouthStyleId =
 export type AntennaStyleId = 'none' | 'classic' | 'curl' | 'double' | 'spike';
 export type AccessoryId =
   | 'none' | 'blush' | 'freckles' | 'sparkle'
-  | 'glasses' | 'eyepatch' | 'mole' | 'earring';
+  | 'glasses' | 'eyepatch' | 'mole' | 'earring'
+  // Accra Gallery pack-only accessories
+  | 'goldHoop' | 'blackStarPin'
+  // Lagos Danfo pack-only accessories
+  | 'yellowGlasses' | 'greenPin' | 'routeDot'
+  // Nairobi Matatu pack-only accessories
+  | 'brightGlasses' | 'kenyaPin' | 'matatuMark'
+  // Command Center pack-only accessories
+  | 'statusDot' | 'cursorPointer' | 'sparklineBadge' | 'integrationBadge' | 'successCheck';
 export type BackgroundId = 'none' | 'solid' | 'ring';
 export type TopperId =
   | 'none' | 'ears' | 'roundEars' | 'horn' | 'horns' | 'tuft' | 'cap' | 'leaf'
   | 'headband' | 'halo' | 'crown' | 'antlers'
   | 'bob' | 'bun' | 'ponytail'
   // Halloween pack-only toppers
-  | 'witchHat' | 'pumpkinStem' | 'ghostSheet';
+  | 'witchHat' | 'pumpkinStem' | 'ghostSheet'
+  // Accra Gallery pack-only toppers
+  | 'textileBand' | 'geometricCap' | 'galleryWrap'
+  // Lagos Danfo pack-only toppers
+  | 'danfoRoofStripe' | 'naijaBand' | 'routeCap'
+  // Nairobi Matatu pack-only toppers
+  | 'neonRouteBand' | 'shukaGridBand' | 'stickerCap'
+  // Command Center pack-only toppers
+  | 'browserTabs' | 'commandBar' | 'notificationChip' | 'chartHeader';
 export type OutfitId =
-  | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie';
+  | 'none' | 'collar' | 'scarf' | 'bowtie' | 'sunflower' | 'necklace' | 'tie'
+  // Accra Gallery pack-only outfits
+  | 'patternedCollar'
+  // Lagos Danfo pack-only outfits
+  | 'roadStripeCollar' | 'flagCollar' | 'yellowTrimNecklace'
+  // Nairobi Matatu pack-only outfits
+  | 'shukaCheckCollar' | 'neonTrimCollar' | 'routeStripeNecklace'
+  // Command Center pack-only outfits
+  | 'dataCollar' | 'pipelineBand' | 'connectorNecklace';
 
 /**
  * Optional style hint used to bias seeded picks toward a gender expression.
@@ -112,6 +144,8 @@ export interface AvatarSpec {
    * behind the sharp body). Used by Neon for cyberpunk signage feel.
    */
   glow?: boolean;
+  /** Alternate pack-specific render pipeline. */
+  renderMode?: 'workspace-glyph';
 }
 
 export interface AvatarOptions {

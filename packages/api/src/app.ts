@@ -15,10 +15,11 @@ import { ogPng, ogSvg } from './og.js';
 import { docsHtml, isDocSlug, defaultDocSlug } from './docs.js';
 import { blogIndexHtml, blogReleaseHtml, blogReleaseVersions, blogReleaseOgPng } from './blog.js';
 import { privacyHtml, supportHtml } from './legal.js';
-import { createLicenseRoutes } from './license.js';
+import { createLicenseRoutes, createLicenseValidator, type LicenseValidator } from './license.js';
 import { Checkout, CustomerPortal, Webhooks } from '@polar-sh/hono';
 
 const FIGMA_PLUGIN_URL = 'https://www.figma.com/community/plugin/1640037999835658823';
+const PRO_UPGRADE_URL = 'https://navii.dev/pro';
 
 export interface AppOptions {
   rateLimit?: RateLimitOptions;
@@ -85,6 +86,14 @@ export interface AppOptions {
 export function createApp(options: AppOptions = {}) {
   const app = new Hono();
   const pngCache = new LruCache<string, Uint8Array>(options.cache?.max ?? 500);
+  const validateLicense: LicenseValidator | undefined = options.polarOrganizationId
+    ? createLicenseValidator({
+      organizationId: options.polarOrganizationId,
+      ...(options.polarBenefitId ? { benefitId: options.polarBenefitId } : {}),
+      ...(options.polarApiBase ? { apiBase: options.polarApiBase } : {}),
+      cacheTtlMs: 86_400_000,
+    })
+    : undefined;
 
   if (options.rateLimit) {
     app.use(
@@ -94,11 +103,12 @@ export function createApp(options: AppOptions = {}) {
   }
 
   // License verification (proxy to Polar.sh). Only mounted when configured.
-  if (options.polarOrganizationId) {
+  if (options.polarOrganizationId && validateLicense) {
     app.route('/', createLicenseRoutes({
       organizationId: options.polarOrganizationId,
       ...(options.polarBenefitId ? { benefitId: options.polarBenefitId } : {}),
       ...(options.polarApiBase ? { apiBase: options.polarApiBase } : {}),
+      validator: validateLicense,
     }));
   }
 
@@ -180,10 +190,17 @@ export function createApp(options: AppOptions = {}) {
         helper: 'use @usenavii/core seed({ id, email, name, createdAt }) to pick the most-unique field automatically',
       },
       determinism: 'Same seed + same query → byte-identical response, forever. Safe to cache, safe to mirror.',
+      compatibility: {
+        freeApi: 'All documented endpoints and query params as of v0.24.x stay available, unauthenticated, with the same response formats.',
+        proFeatures: 'Future Pro features are additive and use Authorization: Bearer <polar_license_key> only when a Pro-only capability is requested.',
+        rateLimits: 'Free-tier rate limits will not tighten beyond the currently published hosted limits.',
+        immutableUrls: 'Existing avatar URLs keep working; immutable cache headers mean old URLs remain valid for cached clients.',
+      },
     }),
   );
 
   app.get('/figma', (c) => c.redirect(FIGMA_PLUGIN_URL, 302));
+  app.get('/pro', (c) => c.redirect('/checkout', 302));
 
   app.get('/thanks', (c) => {
     const checkoutId = c.req.query('checkout_id') ?? c.req.query('checkoutId') ?? '';
@@ -219,15 +236,15 @@ export function createApp(options: AppOptions = {}) {
 
   app.get('/docs', (c) => c.redirect(`/docs/${defaultDocSlug()}`, 302));
 
-  app.get('/docs/:slug', (c) => {
+  app.get('/docs/:slug', async (c) => {
     const slug = c.req.param('slug');
     if (!isDocSlug(slug)) {
-      return new Response(docsHtml(slug), {
+      return new Response(await docsHtml(slug), {
         status: 404,
         headers: { 'content-type': 'text/html; charset=utf-8' },
       });
     }
-    return new Response(docsHtml(slug), {
+    return new Response(await docsHtml(slug), {
       status: 200,
       headers: {
         'content-type': 'text/html; charset=utf-8',
@@ -652,6 +669,21 @@ export function createApp(options: AppOptions = {}) {
     const seed = stripExt(decoded);
     if (!seed) return c.text('seed required', 400);
 
+    // packs= comma-separated list. Unknown ids are silently skipped by the
+    // engine (resolvePacks ignores them), so no enum validation needed here.
+    const packsRaw = c.req.query('packs');
+    const packs = packsRaw
+      ? packsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+      : undefined;
+    const wantsPro =
+      c.req.query('pro') === '1' ||
+      c.req.query('pro') === 'true' ||
+      (packs !== undefined && packs.length > 0);
+    if (wantsPro) {
+      const authFailure = await requireProAuth(c.req.header('authorization'), validateLicense);
+      if (authFailure) return authFailure;
+    }
+
     // Email-shaped seed = plaintext PII on the wire (URL, logs, Referer,
     // CDN cache keys). Honor the request but flag it. Clients should hash
     // with `seedFromEmail()` from @usenavii/core instead.
@@ -672,12 +704,6 @@ export function createApp(options: AppOptions = {}) {
       moodRaw === 'wink' || moodRaw === 'neutral'
         ? moodRaw
         : undefined;
-    // packs= comma-separated list. Unknown ids are silently skipped by the
-    // engine (resolvePacks ignores them), so no enum validation needed here.
-    const packsRaw = c.req.query('packs');
-    const packs = packsRaw
-      ? packsRaw.split(',').map((s) => s.trim()).filter(Boolean)
-      : undefined;
     // style= biases seeded picks via masc/femme/neutral. Only meaningful
     // alongside packs but harmless otherwise — engine treats undefined style
     // as "no bias".
@@ -741,6 +767,34 @@ export function createApp(options: AppOptions = {}) {
     const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
     const seeds = Array.from({ length: count }, (_, i) => `${prefix}-${i}`);
     return c.html(renderGallery(seeds, size, animated));
+  });
+
+  app.get('/accra-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderAccraPacksDemo(count, size, animated));
+  });
+
+  app.get('/lagos-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderLagosPacksDemo(count, size, animated));
+  });
+
+  app.get('/nairobi-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderNairobiPacksDemo(count, size, animated));
+  });
+
+  app.get('/command-center-packs', (c) => {
+    const count = clampInt(c.req.query('count'), 12, 240, 72);
+    const size = clampInt(c.req.query('size'), 48, 180, 96);
+    const animated = c.req.query('animated') === '1' || c.req.query('animated') === 'true';
+    return c.html(renderCommandCenterPacksDemo(count, size, animated));
   });
 
   // Catch-all — any URL that didn't match a route redirects to the landing
@@ -843,6 +897,66 @@ function clampFloat(raw: string | undefined, min: number, max: number, fallback:
   return Math.max(min, Math.min(max, n));
 }
 
+function proAuthRequired(): Response {
+  return Response.json(
+    {
+      error: 'pro_auth_required',
+      message: `This option requires Navii Pro. Get a license at ${PRO_UPGRADE_URL}.`,
+      upgradeUrl: PRO_UPGRADE_URL,
+    },
+    {
+      status: 401,
+      headers: { 'access-control-allow-origin': '*' },
+    },
+  );
+}
+
+function invalidLicense(): Response {
+  return Response.json(
+    {
+      error: 'invalid_license',
+      message: `The Navii Pro license key is invalid or inactive. Get a license at ${PRO_UPGRADE_URL}.`,
+      upgradeUrl: PRO_UPGRADE_URL,
+    },
+    {
+      status: 401,
+      headers: { 'access-control-allow-origin': '*' },
+    },
+  );
+}
+
+function bearerToken(header: string | undefined): string | undefined {
+  const match = /^Bearer\s+(.+)$/i.exec(header ?? '');
+  return match?.[1]?.trim() || undefined;
+}
+
+async function requireProAuth(
+  authorization: string | undefined,
+  validateLicense: LicenseValidator | undefined,
+): Promise<Response | undefined> {
+  const token = bearerToken(authorization);
+  if (!token || !validateLicense) return proAuthRequired();
+
+  const result = await validateLicense(token);
+  if (!result.ok) {
+    if (result.reason === 'upstream_unreachable' || result.reason === 'upstream_invalid') {
+      return Response.json(
+        {
+          error: 'license_check_unavailable',
+          message: 'License verification is temporarily unavailable.',
+        },
+        {
+          status: 502,
+          headers: { 'access-control-allow-origin': '*' },
+        },
+      );
+    }
+    return invalidLicense();
+  }
+
+  return undefined;
+}
+
 function canonicalKey(
   seed: string,
   size: number,
@@ -897,4 +1011,1095 @@ function renderGallery(seeds: string[], size: number, animated: boolean): string
   <div class="grid">${tiles}</div>
 </body>
 </html>`;
+}
+
+function renderAccraPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'ama', 'kwame', 'akosua', 'kofi', 'esi', 'yaw', 'abena', 'kojo', 'afia', 'kwesi', 'adjoa', 'akua',
+    'accra-founder', 'oscar', 'nana', 'efua', 'kweku', 'yaa', 'selasi', 'adwoa', 'navii-accra', 'gallery-01',
+    'founder-page', 'team-card', 'pitch-deck', 'product-lead', 'design-lead', 'growth-lead', 'ops-lead', 'community',
+    'labadi', 'osu', 'ridge', 'cantonments', 'east-legon', 'jamestown', 'airport', 'spintex', 'madina', 'tema',
+  ];
+  const palettes = [
+    'accra-gallery:gallery-gold',
+    'accra-gallery:green-red',
+    'accra-gallery:red-black',
+    'accra-gallery:black-red',
+    'accra-gallery:red-gold',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['accra-gallery'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('accra-gallery:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const animQuery = animated ? '&animated=1' : '';
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Accra Gallery demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f6eedc;
+      --ink: #111827;
+      --gold: #f3cf4e;
+      --red: #b12f28;
+      --green: #2f6a3e;
+      --line: rgba(17, 24, 39, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 760px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 620px;
+      color: rgba(17, 24, 39, 0.68);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.28);
+      font-weight: 650;
+    }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(17,24,39,0.08);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.34);
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(17, 24, 39, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Accra Gallery</h1>
+        <p class="meta">${count} generated avatars using the Accra Gallery pack. Demo page only, rendered directly from core so you can scan the pack without Pro API auth.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/accra-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/accra-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/accra-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Accra Gallery palette">
+      <span style="background:#111827"></span>
+      <span style="background:#F3CF4E"></span>
+      <span style="background:#B12F28"></span>
+      <span style="background:#2F6A3E"></span>
+      <span style="background:#F8D04A"></span>
+    </div>
+    <section class="grid">${items}</section>
+  </main>
+</body>
+</html>`;
+}
+
+function renderLagosPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'eko', 'lagos', 'danfo', 'naija', 'yemi', 'tunde', 'ada', 'wale', 'sade', 'seun', 'ife', 'zainab',
+    'lagos-founder', 'eko-night', 'mainland', 'island', 'ikeja', 'yaba', 'lekki', 'surulere', 'oshodi', 'vi',
+    'team-card', 'pitch-deck', 'product-lead', 'design-lead', 'growth-lead', 'ops-lead', 'community', 'studio',
+    'route-01', 'route-02', 'bus-stop', 'city-energy', 'flag-first', 'danfo-line', 'green-white', 'street-black',
+  ];
+  const palettes = [
+    'lagos-danfo:green-white',
+    'lagos-danfo:white-green',
+    'lagos-danfo:danfo-green',
+    'lagos-danfo:deep-green',
+    'lagos-danfo:street-black',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['lagos-danfo'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('lagos-danfo:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lagos Danfo demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f8f7ef;
+      --ink: #111827;
+      --green: #008753;
+      --deep-green: #075f3a;
+      --yellow: #f5c51b;
+      --line: rgba(17, 24, 39, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 760px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 650px;
+      color: rgba(17, 24, 39, 0.68);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.34);
+      font-weight: 650;
+    }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(17,24,39,0.08);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.44);
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(17, 24, 39, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Lagos Danfo</h1>
+        <p class="meta">${count} generated avatars using the Lagos Danfo pack. Local review page only, rendered directly from core so you can scan the pack before we treat the Figma plugin visuals as approved.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/lagos-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/lagos-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/lagos-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Lagos Danfo palette">
+      <span style="background:#111827"></span>
+      <span style="background:#008753"></span>
+      <span style="background:#F8F7EF"></span>
+      <span style="background:#008753"></span>
+      <span style="background:#F5C51B"></span>
+    </div>
+    <section class="grid">${items}</section>
+  </main>
+</body>
+</html>`;
+}
+
+function renderNairobiPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'nairobi', 'matatu', 'ngong', 'westlands', 'karen', 'kilimani', 'langata', 'kariobangi', 'eastleigh', 'parklands', 'ruaraka', 'kibera',
+    'nairobi-founder', 'matatu-night', 'route-46', 'route-11', 'route-23', 'city-hop', 'stage-left', 'stage-right', 'neon-line', 'shuka-grid',
+    'team-card', 'pitch-deck', 'product-lead', 'design-lead', 'growth-lead', 'ops-lead', 'community', 'studio',
+    'uhuru', 'tom-mboya', 'archives', 'river-road', 'electric-stage', 'safari-neon', 'route-poster', 'green-light',
+  ];
+  const palettes = [
+    'nairobi-matatu:route-black',
+    'nairobi-matatu:kanu-red',
+    'nairobi-matatu:city-green',
+    'nairobi-matatu:yellow-stripe',
+    'nairobi-matatu:shuka-blue',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['nairobi-matatu'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('nairobi-matatu:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nairobi Matatu demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f7f1e3;
+      --ink: #101820;
+      --green: #12d977;
+      --red: #ff2d55;
+      --blue: #2f80ed;
+      --yellow: #ffd23f;
+      --line: rgba(16, 24, 32, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 780px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 690px;
+      color: rgba(16, 24, 32, 0.66);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.48);
+      font-weight: 650;
+    }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(16,24,32,0.12);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.44);
+      border: 1px solid rgba(16, 24, 32, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(16, 24, 32, 0.04);
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(16, 24, 32, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Nairobi Matatu</h1>
+        <p class="meta">${count} generated avatars using the Nairobi Matatu pack. Local review page only, focused on route stickers, yellow matatu stripes, Kenya flag color, and restrained shuka details.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/nairobi-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/nairobi-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/nairobi-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Nairobi Matatu palette">
+      <span style="background:#101820"></span>
+      <span style="background:#C8102E"></span>
+      <span style="background:#00843D"></span>
+      <span style="background:#F5C51B"></span>
+      <span style="background:#1E4EA8"></span>
+      <span style="background:#F8F7EF"></span>
+    </div>
+    <section class="grid">${items}</section>
+  </main>
+</body>
+</html>`;
+}
+
+function renderCommandCenterPacksDemo(count: number, size: number, animated: boolean): string {
+  const seeds = [
+    'workspace', 'operator', 'project', 'team-seat', 'integration', 'automation', 'bot', 'agent', 'sync', 'admin',
+    'workflow', 'handoff', 'access', 'tenant', 'cluster', 'node', 'audit', 'inbox', 'release', 'roadmap',
+    'north-star', 'activation', 'retention', 'revenue', 'product-led', 'design-system', 'ops', 'support',
+    'identity', 'segment', 'role', 'feature-flag', 'incident', 'success', 'blocked', 'shipped',
+  ];
+  const palettes = [
+    'command-center:graphite',
+    'command-center:slate',
+    'command-center:cloud',
+    'command-center:moss',
+    'command-center:cobalt',
+    'command-center:sand',
+  ];
+  const styles: Array<'masc' | 'femme' | 'neutral' | undefined> = [undefined, 'masc', 'femme', 'neutral'];
+  const moods: Array<'neutral' | 'happy' | 'serious' | 'sleepy' | 'wink'> = ['neutral', 'happy', 'serious', 'sleepy', 'wink'];
+  const items = Array.from({ length: count }, (_, i) => {
+    const seed = seeds[i % seeds.length] + '-' + Math.floor(i / seeds.length);
+    const paletteId = palettes[i % palettes.length]!;
+    const style = styles[Math.floor(i / palettes.length) % styles.length];
+    const mood = moods[Math.floor(i / (palettes.length * styles.length)) % moods.length];
+    const svg = createAvatar(seed, {
+      size,
+      packs: ['command-center'],
+      paletteId,
+      ...(style ? { style } : {}),
+      ...(mood !== 'neutral' ? { mood } : {}),
+      animated,
+    });
+    const label = [seed, paletteId.replace('command-center:', ''), style ?? 'auto', mood].join(' / ');
+    return `
+      <figure>
+        <div class="avatar">${svg}</div>
+        <figcaption>${escapeHtml(label)}</figcaption>
+      </figure>`;
+  }).join('');
+  const glyph = (seed: string, paletteId: string, glyphSize = 40): string => createAvatar(seed, {
+    size: glyphSize,
+    packs: ['command-center'],
+    paletteId,
+  });
+  const oppositeMode = animated ? '' : '&animated=1';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Command Center demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f7f8fa;
+      --ink: #111827;
+      --muted: rgba(17, 24, 39, 0.64);
+      --line: rgba(17, 24, 39, 0.14);
+      --panel: rgba(255, 255, 255, 0.72);
+      --blue: #cbd5e1;
+      --green: #8fb7a2;
+      --amber: #b7c3d0;
+      --violet: #3b5b8f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(rgba(17, 24, 39, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17, 24, 39, 0.04) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 32px 32px;
+      color: var(--ink);
+      font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell {
+      width: min(1480px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 82px);
+      line-height: 0.92;
+      letter-spacing: 0;
+      max-width: 800px;
+    }
+    .meta {
+      margin: 14px 0 0;
+      max-width: 690px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .controls a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: rgba(255,255,255,0.68);
+      font-weight: 650;
+    }
+    .tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      margin: 0 0 22px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.62);
+    }
+    .tab {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 15px;
+      color: rgba(17, 24, 39, 0.64);
+      background: transparent;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab[aria-selected="true"] {
+      color: #f8fafc;
+      background: var(--ink);
+    }
+    .tab-panel[hidden] { display: none; }
+    .swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .swatches span {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(17,24,39,0.1);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(${Math.max(size + 34, 116)}px, 1fr));
+      gap: 14px;
+    }
+    figure {
+      margin: 0;
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      gap: 9px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .use-cases {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .app-side,
+    .app-main,
+    .product-card {
+      background: rgba(255,255,255,0.74);
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      border-radius: 8px;
+      box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+    }
+    .app-side {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+    .app-main {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+    .use-title {
+      margin: 0 0 10px;
+      color: rgba(17, 24, 39, 0.54);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .workspace-item,
+    .member-row,
+    .integration-row,
+    .activity-row,
+    .table-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+      padding: 9px;
+      border-radius: 7px;
+    }
+    .workspace-item.active,
+    .member-row,
+    .integration-row,
+    .table-row {
+      background: rgba(17,24,39,0.035);
+    }
+    .glyph-sm,
+    .glyph-md {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      background: #fff;
+    }
+    .glyph-sm { width: 34px; height: 34px; }
+    .glyph-md { width: 42px; height: 42px; }
+    .glyph-sm svg,
+    .glyph-md svg { width: 100%; height: 100%; display: block; }
+    .item-copy {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+    }
+    .item-copy strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+    .item-copy span,
+    .muted {
+      color: rgba(17, 24, 39, 0.54);
+      font-size: 12px;
+    }
+    .pill {
+      border: 1px solid rgba(17, 24, 39, 0.1);
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: rgba(17, 24, 39, 0.62);
+      font-size: 11px;
+      font-weight: 750;
+      background: rgba(255,255,255,0.7);
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .product-card {
+      padding: 13px;
+      min-height: 126px;
+      display: grid;
+      align-content: space-between;
+      gap: 14px;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .metric {
+      margin: 8px 0 0;
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 850;
+    }
+    .bar {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(17,24,39,0.08);
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #567568;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .panel-lite {
+      border: 1px solid rgba(17, 24, 39, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(247,248,250,0.64);
+    }
+    .stack {
+      display: grid;
+      gap: 8px;
+    }
+    .avatar {
+      width: ${size}px;
+      height: ${size}px;
+      display: grid;
+      place-items: center;
+    }
+    .avatar svg {
+      display: block;
+      width: ${size}px;
+      height: ${size}px;
+    }
+    figcaption {
+      width: 100%;
+      color: rgba(17, 24, 39, 0.56);
+      font: 10px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-align: center;
+      overflow-wrap: anywhere;
+      min-height: 26px;
+    }
+    @media (max-width: 760px) {
+      .shell { width: min(100vw - 24px, 1480px); padding-top: 22px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .controls { justify-content: flex-start; }
+      .swatches span { width: 34px; height: 34px; }
+      .use-cases,
+      .split,
+      .product-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Command Center</h1>
+        <p class="meta">${count} generated avatars using the Command Center pack. Local review page only, rendered directly from core so you can scan abstract SaaS system tokens before it goes into the Figma plugin.</p>
+      </div>
+      <nav class="controls" aria-label="Demo controls">
+        <a href="/command-center-packs?count=72&size=96${animated ? '&animated=1' : ''}">72</a>
+        <a href="/command-center-packs?count=144&size=80${animated ? '&animated=1' : ''}">144</a>
+        <a href="/command-center-packs?count=${count}&size=${size}${oppositeMode}">${animated ? 'Static' : 'Animated'}</a>
+      </nav>
+    </header>
+    <div class="swatches" aria-label="Command Center palette">
+      <span style="background:#111827"></span>
+      <span style="background:#475569"></span>
+      <span style="background:#F7F8FA"></span>
+      <span style="background:#567568"></span>
+      <span style="background:#3B5B8F"></span>
+      <span style="background:#D8C7A3"></span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Command Center preview views">
+      <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="gallery-panel" id="gallery-tab" data-tab-target="gallery">Gallery</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="use-cases-panel" id="use-cases-tab" data-tab-target="use-cases">In Product</button>
+    </div>
+    <section class="tab-panel" id="gallery-panel" role="tabpanel" aria-labelledby="gallery-tab" data-tab-panel="gallery">
+      <div class="grid">${items}</div>
+    </section>
+    <section class="tab-panel" id="use-cases-panel" role="tabpanel" aria-labelledby="use-cases-tab" data-tab-panel="use-cases" hidden>
+      <div class="use-cases">
+        <aside class="app-side">
+          <section>
+            <h2 class="use-title">Workspace switcher</h2>
+            <div class="stack">
+              <div class="workspace-item active">
+                <div class="glyph-md">${glyph('workspace-primary', 'command-center:graphite', 42)}</div>
+                <div class="item-copy"><strong>Northstar CRM</strong><span>Production workspace</span></div>
+                <span class="pill">Live</span>
+              </div>
+              <div class="workspace-item">
+                <div class="glyph-md">${glyph('workspace-growth', 'command-center:moss', 42)}</div>
+                <div class="item-copy"><strong>Growth Lab</strong><span>Experiments</span></div>
+                <span class="pill">12</span>
+              </div>
+              <div class="workspace-item">
+                <div class="glyph-md">${glyph('workspace-sandbox', 'command-center:sand', 42)}</div>
+                <div class="item-copy"><strong>Sandbox</strong><span>Internal tools</span></div>
+                <span class="pill">Dev</span>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h2 class="use-title">Team seats</h2>
+            <div class="stack">
+              <div class="member-row">
+                <div class="glyph-sm">${glyph('seat-product-lead', 'command-center:cloud', 34)}</div>
+                <div class="item-copy"><strong>Product lead</strong><span>Owner</span></div>
+                <span class="pill">Admin</span>
+              </div>
+              <div class="member-row">
+                <div class="glyph-sm">${glyph('seat-support', 'command-center:cobalt', 34)}</div>
+                <div class="item-copy"><strong>Support ops</strong><span>8 queues</span></div>
+                <span class="pill">Ops</span>
+              </div>
+              <div class="member-row">
+                <div class="glyph-sm">${glyph('seat-finance', 'command-center:slate', 34)}</div>
+                <div class="item-copy"><strong>Finance</strong><span>Billing</span></div>
+                <span class="pill">View</span>
+              </div>
+            </div>
+          </section>
+        </aside>
+        <div class="app-main">
+          <section>
+            <h2 class="use-title">Project cards</h2>
+            <div class="product-grid">
+              <article class="product-card">
+                <div class="card-head">
+                  <div class="glyph-md">${glyph('project-retention', 'command-center:moss', 42)}</div>
+                  <span class="pill">On track</span>
+                </div>
+                <div>
+                  <strong>Retention engine</strong>
+                  <p class="metric">84%</p>
+                </div>
+                <div class="bar"><span style="width:84%"></span></div>
+              </article>
+              <article class="product-card">
+                <div class="card-head">
+                  <div class="glyph-md">${glyph('project-billing', 'command-center:graphite', 42)}</div>
+                  <span class="pill">Review</span>
+                </div>
+                <div>
+                  <strong>Billing rules</strong>
+                  <p class="metric">31</p>
+                </div>
+                <div class="bar"><span style="width:58%;background:#3B5B8F"></span></div>
+              </article>
+              <article class="product-card">
+                <div class="card-head">
+                  <div class="glyph-md">${glyph('project-segment', 'command-center:sand', 42)}</div>
+                  <span class="pill">Beta</span>
+                </div>
+                <div>
+                  <strong>Segment sync</strong>
+                  <p class="metric">9k</p>
+                </div>
+                <div class="bar"><span style="width:67%;background:#8A7858"></span></div>
+              </article>
+            </div>
+          </section>
+          <div class="split">
+            <section class="panel-lite">
+              <h2 class="use-title">Integration list</h2>
+              <div class="stack">
+                <div class="integration-row">
+                  <div class="glyph-sm">${glyph('integration-stripe', 'command-center:graphite', 34)}</div>
+                  <div class="item-copy"><strong>Stripe billing</strong><span>Synced 2m ago</span></div>
+                  <span class="pill">Healthy</span>
+                </div>
+                <div class="integration-row">
+                  <div class="glyph-sm">${glyph('integration-slack', 'command-center:moss', 34)}</div>
+                  <div class="item-copy"><strong>Slack alerts</strong><span>18 channels</span></div>
+                  <span class="pill">Active</span>
+                </div>
+                <div class="integration-row">
+                  <div class="glyph-sm">${glyph('integration-sheets', 'command-center:cloud', 34)}</div>
+                  <div class="item-copy"><strong>Sheets export</strong><span>Daily digest</span></div>
+                  <span class="pill">Auto</span>
+                </div>
+              </div>
+            </section>
+            <section class="panel-lite">
+              <h2 class="use-title">Activity feed</h2>
+              <div class="stack">
+                <div class="activity-row">
+                  <div class="glyph-sm">${glyph('activity-release', 'command-center:cobalt', 34)}</div>
+                  <div class="item-copy"><strong>Release approved</strong><span>Workspace policy updated</span></div>
+                  <span class="muted">Now</span>
+                </div>
+                <div class="activity-row">
+                  <div class="glyph-sm">${glyph('activity-audit', 'command-center:slate', 34)}</div>
+                  <div class="item-copy"><strong>Audit export</strong><span>Prepared by automation</span></div>
+                  <span class="muted">1h</span>
+                </div>
+                <div class="activity-row">
+                  <div class="glyph-sm">${glyph('activity-customer', 'command-center:sand', 34)}</div>
+                  <div class="item-copy"><strong>Customer table</strong><span>3 records enriched</span></div>
+                  <span class="muted">4h</span>
+                </div>
+              </div>
+            </section>
+          </div>
+          <section class="panel-lite">
+            <h2 class="use-title">Customer table</h2>
+            <div class="stack">
+              <div class="table-row">
+                <div class="glyph-sm">${glyph('customer-enterprise', 'command-center:graphite', 34)}</div>
+                <div class="item-copy"><strong>Enterprise account</strong><span>32 seats · yearly</span></div>
+                <span class="pill">Priority</span>
+              </div>
+              <div class="table-row">
+                <div class="glyph-sm">${glyph('customer-startup', 'command-center:moss', 34)}</div>
+                <div class="item-copy"><strong>Startup account</strong><span>6 seats · monthly</span></div>
+                <span class="pill">Trial</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const tabs = document.querySelectorAll('[data-tab-target]');
+    const panels = document.querySelectorAll('[data-tab-panel]');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab-target');
+        tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
+        panels.forEach((panel) => {
+          panel.hidden = panel.getAttribute('data-tab-panel') !== target;
+        });
+      });
+    });
+  </script>
+</body>
+</html>`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }

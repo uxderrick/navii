@@ -9,8 +9,10 @@ coverage
 .env.local
 .vercel
 .wrangler
+.superpowers/
 
 # private notes — monetization, strategy, brainstorms
+docs/
 docs/private/
 
 # Claude Code per-developer overrides (project settings + hooks are tracked)

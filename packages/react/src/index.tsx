@@ -35,6 +35,7 @@ export function Navii({
   title,
   animated,
   mood,
+  packs,
   className,
   style,
   styleHint,
@@ -48,10 +49,11 @@ export function Navii({
     if (title !== undefined) opts.title = title;
     if (animated !== undefined) opts.animated = animated;
     if (mood !== undefined) opts.mood = mood;
+    if (packs !== undefined) opts.packs = packs;
     if (styleHint !== undefined) opts.style = styleHint;
     const svg = createAvatar(seed, opts);
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  }, [seed, size, paletteId, palette, background, title, animated, mood, styleHint]);
+  }, [seed, size, paletteId, palette, background, title, animated, mood, packs, styleHint]);
 
   return (
     <img
@@ -96,6 +98,7 @@ export function NaviiGroup({
   background,
   mood,
   animated,
+  packs,
   className,
   style,
   styleHint,
@@ -116,10 +119,11 @@ export function NaviiGroup({
     if (background !== undefined) opts.background = background;
     if (mood !== undefined) opts.mood = mood;
     if (animated !== undefined) opts.animated = animated;
+    if (packs !== undefined) opts.packs = packs;
     if (styleHint !== undefined) opts.style = styleHint;
     const svg = renderGroup(stableSeeds, opts);
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  }, [stableSeeds, size, overlap, max, ring, tileBg, counterFill, counterInk, paletteId, palette, background, mood, animated, styleHint]);
+  }, [stableSeeds, size, overlap, max, ring, tileBg, counterFill, counterInk, paletteId, palette, background, mood, animated, packs, styleHint]);
 
   // Width mirrors core's renderGroup math so the <img> has correct intrinsic
   // dimensions. If a counter tile is shown (seeds.length > max), it counts as

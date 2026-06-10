@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/uxderrick-mac/Development/navii/.codex/hooks/pre-git-tag-audit.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}

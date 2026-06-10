@@ -1,11 +1,22 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { createApp } from '../src/app.js';
+import { docSlugs } from '../src/docs.js';
 
 const app = createApp();
+const POLAR_ORG = '00000000-0000-0000-0000-000000000001';
+const POLAR_BENEFIT = '00000000-0000-0000-0000-000000000002';
 
 async function get(path: string): Promise<Response> {
   return app.fetch(new Request(`http://test${path}`));
 }
+
+async function getWithHeaders(path: string, headers: Record<string, string>): Promise<Response> {
+  return app.fetch(new Request(`http://test${path}`, { headers }));
+}
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('api', () => {
   it('GET / returns landing HTML', async () => {
@@ -16,11 +27,43 @@ describe('api', () => {
     expect(body).toContain('<title>Navii');
   });
 
+  it('GET / landing links Pro in the top nav and Blog in the footer', async () => {
+    const res = await get('/');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('<a href="/docs/pro">pro</a>');
+    expect(body).toContain('<a href="/blog">blog</a>');
+    expect(body).not.toContain('<a href="/blog">blog</a>\n      <a href="https://github.com/uxderrick/navii">github</a>');
+  });
+
   it('GET /api returns JSON metadata', async () => {
     const res = await get('/api');
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body).toMatchObject({ name: 'navii' });
+    expect(body).toMatchObject({
+      name: 'navii',
+      compatibility: {
+        freeApi: expect.stringContaining('documented endpoints'),
+        proFeatures: expect.stringContaining('additive'),
+      },
+    });
+  });
+
+  it('GET /command-center-packs renders gallery and product use-case tabs', async () => {
+    const res = await get('/command-center-packs?count=12&size=72');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const body = await res.text();
+    expect(body).toContain('data-tab-target="gallery"');
+    expect(body).toContain('data-tab-target="use-cases"');
+    expect(body).toContain('id="gallery-panel"');
+    expect(body).toContain('id="use-cases-panel"');
+    expect(body).toContain('Workspace switcher');
+    expect(body).toContain('Team seats');
+    expect(body).toContain('Project cards');
+    expect(body).toContain('Integration list');
+    expect(body).toContain('Activity feed');
+    expect(body).toContain('Customer table');
   });
 
   it('GET /figma redirects to the Figma community plugin', async () => {
@@ -31,8 +74,128 @@ describe('api', () => {
     );
   });
 
+  it('GET /pro redirects to checkout', async () => {
+    const res = await get('/pro');
+    expect(res.status).toBe(302);
+    expect(res.headers.get('location')).toBe('/checkout');
+  });
+
+  it('GET /docs/pro documents Pro API auth', async () => {
+    const res = await get('/docs/pro');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('Navii Pro');
+    expect(body).toContain('Authorization: Bearer');
+    expect(body).toContain('https://navii.dev/pro');
+  });
+
+  it('GET /docs/pro highlights the license URL callout', async () => {
+    const res = await get('/docs/pro');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('<a class="license-url" href="https://navii.dev/pro">https://navii.dev/pro</a>');
+  });
+
+  it('GET /docs/pro renders Shiki-highlighted code blocks', async () => {
+    const res = await get('/docs/pro');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('class="shiki');
+    expect(body).toContain('Authorization: Bearer');
+  });
+
+  it('GET /docs/quickstart renders all static code blocks with Shiki', async () => {
+    const res = await get('/docs/quickstart');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('class="shiki');
+    expect(body).not.toContain('<pre class="code"><code>');
+  });
+
+  it('GET /docs/* does not render legacy static code blocks', async () => {
+    for (const slug of docSlugs()) {
+      const res = await get(`/docs/${slug}`);
+      expect(res.status).toBe(200);
+      const body = await res.text();
+      expect(body).not.toContain('<pre class="code"><code>');
+    }
+  });
+
   it('GET /avatar/:seed returns SVG', async () => {
     const res = await get('/avatar/alice');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('image/svg+xml');
+    const body = await res.text();
+    expect(body.startsWith('<svg')).toBe(true);
+  });
+
+  it('GET /avatar/:seed?pro=1 requires Pro auth', async () => {
+    const res = await get('/avatar/alice?pro=1');
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      error: 'pro_auth_required',
+      upgradeUrl: 'https://navii.dev/pro',
+    });
+    expect(body.message).toContain('https://navii.dev/pro');
+  });
+
+  it('GET /avatar/:seed with packs requires Pro auth', async () => {
+    const res = await get('/avatar/alice?packs=halloween');
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      error: 'pro_auth_required',
+      upgradeUrl: 'https://navii.dev/pro',
+    });
+  });
+
+  it('GET /avatar/:seed without pro query remains anonymous', async () => {
+    const res = await get('/avatar/alice');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('image/svg+xml');
+  });
+
+  it('GET /avatar/:seed?pro=1 rejects invalid Pro auth', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ detail: 'License key not found' }), {
+        status: 404,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const proApp = createApp({ polarOrganizationId: POLAR_ORG, polarBenefitId: POLAR_BENEFIT });
+
+    const res = await proApp.fetch(new Request('http://test/avatar/alice?pro=1', {
+      headers: { authorization: 'Bearer KEY-NOPE' },
+    }));
+
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      error: 'invalid_license',
+      upgradeUrl: 'https://navii.dev/pro',
+    });
+  });
+
+  it('GET /avatar/:seed?pro=1 renders with valid Pro auth', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({
+        id: 'license-pro',
+        organization_id: POLAR_ORG,
+        benefit_id: POLAR_BENEFIT,
+        status: 'granted',
+        expires_at: null,
+      }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const proApp = createApp({ polarOrganizationId: POLAR_ORG, polarBenefitId: POLAR_BENEFIT });
+
+    const res = await proApp.fetch(new Request('http://test/avatar/alice?pro=1', {
+      headers: { authorization: 'Bearer KEY-OK' },
+    }));
+
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('image/svg+xml');
     const body = await res.text();
@@ -127,6 +290,25 @@ describe('api', () => {
     const res = await get('/group?seeds=a,b,c,d,e,f&size=32&max=3');
     const body = await res.text();
     expect(body).toContain('+4');
+  });
+
+  it('GET /group escapes custom SVG color params', async () => {
+    const ring = encodeURIComponent('#fff" stroke-width="99');
+    const tileBg = encodeURIComponent('#000" opacity="0');
+    const res = await get(`/group?seeds=a,b,c&max=2&ring=${ring}&tileBg=${tileBg}`);
+    const body = await res.text();
+    expect(body).toContain('stroke="#fff&quot; stroke-width=&quot;99"');
+    expect(body).toContain('fill="#000&quot; opacity=&quot;0"');
+    expect(body).not.toContain('stroke="#fff" stroke-width="99"');
+    expect(body).not.toContain('fill="#000" opacity="0"');
+  });
+
+  it('GET /avatar escapes tileBg before rendering SVG', async () => {
+    const tileBg = encodeURIComponent('#fff" onload="alert(1)');
+    const res = await get(`/avatar/alice?tileBg=${tileBg}`);
+    const body = await res.text();
+    expect(body).toContain('fill="#fff&quot; onload=&quot;alert(1)"');
+    expect(body).not.toContain('fill="#fff" onload="alert(1)"');
   });
 
   it('GET /group caps seeds at 50', async () => {

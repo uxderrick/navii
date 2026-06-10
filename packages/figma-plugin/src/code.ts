@@ -185,6 +185,30 @@ function tagNode(node: SceneNode, seed: string, opts: AvatarOptions) {
   node.setPluginData('naviiOptions', JSON.stringify(opts));
 }
 
+async function avatarFillPaint(seed: string, opts: AvatarOptions): Promise<{ fill: ImagePaint; url: string }> {
+  const fillOptions: AvatarOptions = { ...opts, size: 512, animated: false };
+  const url = buildUrl(seed, fillOptions, '.png');
+  let temp: SceneNode | null = null;
+
+  try {
+    temp = figma.createNodeFromSvg(createAvatar(seed, fillOptions));
+    temp.name = `Navii / temp fill / ${seed}`;
+    temp.x = figma.viewport.center.x - 100000;
+    temp.y = figma.viewport.center.y - 100000;
+    const bytes = await temp.exportAsync({
+      format: 'PNG',
+      constraint: { type: 'WIDTH', value: 512 },
+    });
+    const image = figma.createImage(bytes);
+    return {
+      fill: { type: 'IMAGE', imageHash: image.hash, scaleMode: 'FILL' },
+      url,
+    };
+  } finally {
+    temp?.remove();
+  }
+}
+
 function placeAt(node: SceneNode, x: number, y: number) {
   node.x = x;
   node.y = y;
@@ -409,20 +433,19 @@ async function doInsert(msg: InsertMsg) {
   const shouldFill = msg.force === 'fill' || (msg.force !== 'insert' && fillable.length > 0);
   if (shouldFill) {
     figma.notify(`Filling ${fillable.length} shape${fillable.length === 1 ? '' : 's'}…`);
-    const url = buildUrl(msg.seed, { ...msg.options, size: 512 }, '.png');
     try {
-      const image = await figma.createImageAsync(url);
-      const fill: ImagePaint = { type: 'IMAGE', imageHash: image.hash, scaleMode: 'FILL' };
+      const { fill, url } = await avatarFillPaint(msg.seed, msg.options);
       for (const node of fillable) {
         (node as SceneNode & { fills: Paint[] }).fills = [fill];
         node.setPluginData('naviiSeed', msg.seed);
         node.setPluginData('naviiUrl', url);
+        node.setPluginData('naviiOptions', JSON.stringify(msg.options));
       }
       figma.notify(`Filled ${fillable.length} shape${fillable.length === 1 ? '' : 's'} with "${msg.seed}"`);
       figma.ui.postMessage({ type: 'inserted', seed: msg.seed, url });
     } catch (err) {
       console.error('navii: insert (fill mode) failed', err);
-      figma.notify('Fill failed — check network access for api.navii.dev', { error: true });
+      figma.notify('Fill failed — try again or insert on canvas', { error: true });
     }
     return;
   }
@@ -514,13 +537,12 @@ async function doFillRandom(msg: FillRandomMsg) {
     // Use Figma's stable node id as the seed so each shape gets a unique
     // avatar that's reproducible across plugin runs.
     const seed = node.id;
-    const url = buildUrl(seed, { ...msg.options, size: 512 }, '.png');
     try {
-      const image = await figma.createImageAsync(url);
-      const fill: ImagePaint = { type: 'IMAGE', imageHash: image.hash, scaleMode: 'FILL' };
+      const { fill, url } = await avatarFillPaint(seed, msg.options);
       (node as SceneNode & { fills: Paint[] }).fills = [fill];
       node.setPluginData('naviiSeed', seed);
       node.setPluginData('naviiUrl', url);
+      node.setPluginData('naviiOptions', JSON.stringify(msg.options));
       count++;
     } catch (err) {
       console.error('navii: fill-random failed for', node.id, err);

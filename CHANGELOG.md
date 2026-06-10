@@ -6,6 +6,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-06-10
+
+### Added (`@usenavii/core` 0.8.0)
+
+- Added premium packs: Accra Gallery, Lagos Danfo, Nairobi Matatu, and Command Center.
+- Added the pack-specific palettes, body shapes, toppers, accessories, outfits, and render directives needed for those premium pack identities.
+
+### Fixed (`@usenavii/react` 0.8.1)
+
+- `<Navii>` and `<NaviiGroup>` now forward `packs` to the core renderer, so React consumers can render premium pack avatars directly.
+
 ## [0.26.1] - 2026-05-31
 
 ### Changed (docs)

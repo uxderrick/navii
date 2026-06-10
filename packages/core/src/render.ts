@@ -11,6 +11,8 @@ import {
 } from './parts/index.js';
 import { ANCHORS, type FaceAnchor } from './parts/anchor.js';
 import { renderAnimationStyle } from './animate.js';
+import { escapeXml } from './xml.js';
+import { createRng } from './prng.js';
 import type { AvatarOptions, AvatarSpec } from './types.js';
 
 /**
@@ -44,6 +46,10 @@ export function renderAvatar(spec: AvatarSpec, options: AvatarOptions = {}): str
 }
 
 export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {}): string {
+  if (spec.renderMode === 'workspace-glyph') {
+    return renderWorkspaceGlyph(spec, options);
+  }
+
   const animated = options.animated === true;
   const id = stableId(spec.seed);
   const scopeClass = `n-${id}`;
@@ -131,10 +137,37 @@ export function renderAvatarInner(spec: AvatarSpec, options: AvatarOptions = {})
   ].join('');
 }
 
+function renderWorkspaceGlyph(spec: AvatarSpec, options: AvatarOptions = {}): string {
+  const rng = createRng(`workspace-glyph:${spec.seed}`);
+  const tileBg = resolveTileBg(options.tileBg, spec.palette);
+  const plate = tileBg ?? spec.bgColor ?? '#F7F8FA';
+  const ink = spec.palette.ink;
+  const accent = spec.palette.accent;
+  const soft = spec.palette.blush;
+  const body = spec.palette.bodyFrom;
+  const radius = Math.round(rng.range(16, 24));
+  const dot = {
+    x: Number(rng.range(63, 70).toFixed(1)),
+    y: Number(rng.range(31, 38).toFixed(1)),
+  };
+  const mark = rng.next() < 0.5
+    ? `<circle cx="${dot.x}" cy="${dot.y}" r="3" fill="${soft}" opacity="0.82" />`
+    : `<rect x="${Number((dot.x - 7).toFixed(1))}" y="${Number((dot.y - 1.5).toFixed(1))}" width="12" height="3" rx="1.5" fill="${accent}" opacity="0.76" />`;
+
+  return [
+    `<g data-navii-render="workspace-glyph">`,
+    `<rect x="0" y="0" width="100" height="100" fill="${plate}" />`,
+    `<rect x="18" y="18" width="64" height="64" rx="${radius}" fill="${body}" stroke="${accent}" stroke-width="1" opacity="0.96" />`,
+    mark,
+    `<circle cx="50" cy="50" r="${Number(rng.range(2.4, 3.4).toFixed(1))}" fill="${ink}" opacity="0.82" />`,
+    `</g>`,
+  ].join('');
+}
+
 function resolveTileBg(raw: string | undefined, palette: { accent: string; bodyFrom: string }): string | undefined {
   if (!raw) return undefined;
-  if (raw === 'auto') return palette.accent;
-  return raw;
+  if (raw === 'auto') return escapeXml(palette.accent);
+  return escapeXml(raw);
 }
 
 function transformBody(scale: number, anchor: FaceAnchor): string {
@@ -157,13 +190,4 @@ function stableId(seed: string): string {
   let h = 5381;
   for (let i = 0; i < seed.length; i++) h = ((h << 5) + h + seed.charCodeAt(i)) | 0;
   return (h >>> 0).toString(36);
-}
-
-function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
 }

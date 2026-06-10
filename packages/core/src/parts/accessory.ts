@@ -8,6 +8,15 @@ export function renderAccessory(
   opts?: { strokeMul?: number },
 ): string {
   const sw = opts?.strokeMul ?? 1;
+  const routeYellow = '#F5C51B';
+  const kenyaGreen = '#00843D';
+  const kenyaRed = '#C8102E';
+  const matatuBlack = '#101820';
+  const paperWhite = '#F8F7EF';
+  const commandBlue = '#CBD5E1';
+  const commandGreen = '#8FB7A2';
+  const commandAmber = '#B7C3D0';
+  const commandSlate = '#64748B';
   switch (id) {
     case 'none':
       return '';
@@ -84,6 +93,143 @@ export function renderAccessory(
         // Right earring
         `<circle cx="${rx}" cy="${ey}" r="${1.1 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
         `<ellipse cx="${rx}" cy="${ey + 3.2}" rx="${1.3 * sw}" ry="${2 * sw}" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="${0.4 * sw}" />`,
+      ].join('');
+    }
+
+    case 'goldHoop': {
+      const ex = anchor.cheekOffset + 4;
+      const ey = anchor.cheekY + 4;
+      return [
+        `<circle cx="${anchor.cx - ex}" cy="${ey}" r="${2.4 * sw}" fill="none" stroke="${palette.accent}" stroke-width="${0.9 * sw}" />`,
+        `<circle cx="${anchor.cx + ex}" cy="${ey}" r="${2.4 * sw}" fill="none" stroke="${palette.accent}" stroke-width="${0.9 * sw}" />`,
+      ].join('');
+    }
+
+    case 'blackStarPin': {
+      const x = anchor.cx + 13;
+      const y = anchor.cheekY + 11;
+      return `<path d="M${x} ${y - 3.6} L${x + 1.1} ${y - 1.1} L${x + 3.8} ${y - 1.1} L${x + 1.6} ${y + 0.6} L${x + 2.4} ${y + 3.2} L${x} ${y + 1.6} L${x - 2.4} ${y + 3.2} L${x - 1.6} ${y + 0.6} L${x - 3.8} ${y - 1.1} L${x - 1.1} ${y - 1.1} Z" fill="${palette.ink}" opacity="0.88" />`;
+    }
+
+    case 'yellowGlasses': {
+      const lx = anchor.cx - anchor.eyeOffset;
+      const rx = anchor.cx + anchor.eyeOffset;
+      const y = anchor.eyeY;
+      const r = 6;
+      const gw = 1.3 * sw;
+      return [
+        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="#F5C51B" stroke-width="${gw}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="#F5C51B" stroke-width="${gw}" />`,
+        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="#F5C51B" stroke-width="${gw}" />`,
+        `<circle cx="${lx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+      ].join('');
+    }
+
+    case 'greenPin': {
+      const x = anchor.cx + 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${3.2 * sw}" fill="#008753" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<rect x="${x - 1}" y="${y - 3}" width="2" height="6" fill="#F8F7EF" opacity="0.96" />`,
+      ].join('');
+    }
+
+    case 'routeDot': {
+      const x = anchor.cx - 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${3.3 * sw}" fill="#F5C51B" stroke="${palette.ink}" stroke-width="${0.5 * sw}" />`,
+        `<circle cx="${x}" cy="${y}" r="${1.1 * sw}" fill="#111827" opacity="0.9" />`,
+      ].join('');
+    }
+
+    case 'brightGlasses': {
+      const lx = anchor.cx - anchor.eyeOffset;
+      const rx = anchor.cx + anchor.eyeOffset;
+      const y = anchor.eyeY;
+      const r = 6;
+      const gw = 1.35 * sw;
+      return [
+        `<circle cx="${lx}" cy="${y}" r="${r}" fill="none" stroke="${paperWhite}" stroke-width="${gw}" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r}" fill="none" stroke="${routeYellow}" stroke-width="${gw}" />`,
+        `<line x1="${lx + r}" y1="${y}" x2="${rx - r}" y2="${y}" stroke="${kenyaGreen}" stroke-width="${gw}" />`,
+        `<circle cx="${lx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+        `<circle cx="${rx}" cy="${y}" r="${r - 1}" fill="#FFFFFF" opacity="0.16" />`,
+        `<path d="M${lx - 2} ${y - 8} L${lx + 2} ${y - 8}" stroke="${kenyaRed}" stroke-width="${0.9 * sw}" stroke-linecap="round" />`,
+      ].join('');
+    }
+
+    case 'kenyaPin': {
+      const x = anchor.cx + 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${3.4 * sw}" fill="${matatuBlack}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<rect x="${x - 2.6}" y="${y - 1.8}" width="5.2" height="1.2" fill="${kenyaRed}" opacity="0.98" />`,
+        `<rect x="${x - 2.6}" y="${y + 0.4}" width="5.2" height="1.2" fill="${kenyaGreen}" opacity="0.98" />`,
+        `<rect x="${x - 2.6}" y="${y - 0.4}" width="5.2" height="0.8" fill="${paperWhite}" opacity="0.98" />`,
+      ].join('');
+    }
+
+    case 'matatuMark': {
+      const x = anchor.cx - 13;
+      const y = anchor.cheekY + 10;
+      return [
+        `<rect x="${x - 5}" y="${y - 4}" width="10" height="7" rx="1.2" fill="${routeYellow}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<text x="${x}" y="${y + 1.1}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="5" font-weight="800" fill="${matatuBlack}">46</text>`,
+        `<circle cx="${x - 4.2}" cy="${y + 4.1}" r="${0.8 * sw}" fill="${kenyaGreen}" />`,
+        `<circle cx="${x + 4.2}" cy="${y + 4.1}" r="${0.8 * sw}" fill="${kenyaRed}" />`,
+      ].join('');
+    }
+
+    case 'statusDot': {
+      const x = anchor.cx + 15;
+      const y = anchor.cheekY + 9;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${4.1 * sw}" fill="#0F172A" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x}" cy="${y}" r="${2.1 * sw}" fill="${commandGreen}" />`,
+        `<circle cx="${x}" cy="${y}" r="${1.05 * sw}" fill="${commandSlate}" opacity="0.86" />`,
+      ].join('');
+    }
+
+    case 'cursorPointer': {
+      const x = anchor.cx + 13;
+      const y = anchor.eyeY - 15;
+      return [
+        `<circle cx="${x}" cy="${y}" r="${4.8 * sw}" fill="none" stroke="${commandBlue}" stroke-width="${1.1 * sw}" opacity="0.88" />`,
+        `<circle cx="${x}" cy="${y}" r="${1.5 * sw}" fill="${commandGreen}" opacity="0.95" />`,
+      ].join('');
+    }
+
+    case 'sparklineBadge': {
+      const x = anchor.cx - 15;
+      const y = anchor.cheekY + 8;
+      return [
+        `<circle cx="${x - 4.2}" cy="${y}" r="${2.1 * sw}" fill="${commandBlue}" opacity="0.9" />`,
+        `<circle cx="${x + 4.2}" cy="${y}" r="${2.1 * sw}" fill="${commandGreen}" opacity="0.9" />`,
+        `<path d="M${x - 2.1} ${y} L${x + 2.1} ${y}" stroke="${commandSlate}" stroke-width="${0.9 * sw}" stroke-linecap="round" opacity="0.75" />`,
+      ].join('');
+    }
+
+    case 'integrationBadge': {
+      const x = anchor.cx - 14;
+      const y = anchor.cheekY + 9;
+      return [
+        `<rect x="${x - 6.8}" y="${y - 4.6}" width="13.6" height="9.2" rx="2" fill="${commandBlue}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x - 2.6}" cy="${y}" r="${1.15 * sw}" fill="${commandSlate}" opacity="0.82" />`,
+        `<circle cx="${x + 2.6}" cy="${y}" r="${1.15 * sw}" fill="${paperWhite}" opacity="0.88" />`,
+        `<circle cx="${x + 6.5}" cy="${y - 4.2}" r="${1.4 * sw}" fill="${commandGreen}" stroke="${paperWhite}" stroke-width="${0.35 * sw}" />`,
+      ].join('');
+    }
+
+    case 'successCheck': {
+      const x = anchor.cx + 14;
+      const y = anchor.cheekY + 9;
+      return [
+        `<rect x="${x - 6}" y="${y - 5}" width="12" height="10" rx="3" fill="${commandGreen}" stroke="${palette.ink}" stroke-width="${0.45 * sw}" />`,
+        `<circle cx="${x - 2.1}" cy="${y}" r="${1.2 * sw}" fill="${paperWhite}" opacity="0.86" />`,
+        `<circle cx="${x + 2.1}" cy="${y}" r="${1.2 * sw}" fill="${commandSlate}" opacity="0.86" />`,
+        `<circle cx="${x - 7.5}" cy="${y - 4.8}" r="${1.25 * sw}" fill="${commandAmber}" />`,
       ].join('');
     }
   }

@@ -239,11 +239,13 @@ export function selectAvatar(seed: string, options: AvatarOptions = {}): AvatarS
   let bgColor: string | undefined;
   let featureStroke: number | undefined;
   let glow: boolean | undefined;
+  let renderMode: AvatarSpec['renderMode'] | undefined;
   for (const pack of enabledPacks) {
     if (pack.flat) flat = true;
     if (pack.bgColor) bgColor = pack.bgColor;
     if (pack.featureStroke) featureStroke = pack.featureStroke;
     if (pack.glow) glow = true;
+    if (pack.renderMode) renderMode = pack.renderMode;
   }
 
   return {
@@ -254,5 +256,6 @@ export function selectAvatar(seed: string, options: AvatarOptions = {}): AvatarS
     ...(bgColor ? { bgColor } : {}),
     ...(featureStroke ? { featureStroke } : {}),
     ...(glow ? { glow: true } : {}),
+    ...(renderMode ? { renderMode } : {}),
   };
 }

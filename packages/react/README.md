@@ -47,6 +47,8 @@ Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated
 | `palette`    | `Palette` object — runtime/brand palette, wins over `paletteId` | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
 | `mood`       | `'neutral' \| 'happy' \| 'serious' \| 'sleepy' \| 'wink'` — overrides seed-derived eyes + mouth. Same seed + mood = byte-identical. | `'neutral'` |
+| `packs`      | `string[]` — premium pack ids, e.g. `['accra-gallery']` | none |
+| `styleHint`  | `'masc' \| 'femme' \| 'neutral'` — biases pack picks when supported | none |
 | `tileBg`     | CSS color or `'auto'` (palette accent)                | none         |
 | `title`      | accessible label                                      | none         |
 | `animated`   | `boolean` — idle float / blink / sway / twinkle       | `false`      |
@@ -96,6 +98,7 @@ import { NaviiGroup } from '@usenavii/react';
 | `paletteId`   | known palette id — applies to every tile              | seed-derived |
 | `palette`     | `Palette` object override — applies to every tile     | none         |
 | `mood`        | mood overlay — applies to every tile                  | `'neutral'`  |
+| `packs`       | `string[]` — premium pack ids, e.g. `['command-center']` | none |
 | `background`  | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
 | `animated`    | `boolean` — idle motion per tile                      | `false`      |
 | `styleHint`   | `'masc' \| 'femme' \| 'neutral'`                      | none         |

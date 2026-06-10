@@ -1,5 +1,6 @@
 import { renderAvatarInner } from './render.js';
 import { selectAvatar } from './select.js';
+import { escapeXml } from './xml.js';
 import type { AvatarOptions } from './types.js';
 
 export interface GroupOptions extends AvatarOptions {
@@ -34,10 +35,10 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const size = options.size ?? 64;
   const overlap = clamp(options.overlap ?? 0.3, 0, 0.7);
   const max = options.max ?? seeds.length;
-  const ring = options.ring ?? '#ffffff';
-  const tileBg = options.tileBg ?? '#ffffff';
-  const counterFill = options.counterFill ?? '#E5E7EB';
-  const counterInk = options.counterInk ?? '#374151';
+  const ring = escapeXml(options.ring ?? '#ffffff');
+  const tileBg = escapeXml(options.tileBg ?? '#ffffff');
+  const counterFill = escapeXml(options.counterFill ?? '#E5E7EB');
+  const counterInk = escapeXml(options.counterInk ?? '#374151');
 
   const visibleSeeds = seeds.slice(0, Math.max(0, max - (seeds.length > max ? 1 : 0)));
   const overflow = seeds.length - visibleSeeds.length;

@@ -101,6 +101,14 @@ export interface Pack {
   bgColor?: string;
   paletteExclusive?: boolean;
   /**
+   * Alternate render pipeline for packs that should not use the default
+   * character/face composition.
+   *
+   * - `workspace-glyph`: deterministic abstract mini-logo glyphs for SaaS
+   *   workspaces, teams, projects, bots, and integrations.
+   */
+  renderMode?: 'workspace-glyph';
+  /**
    * Multiplier on face-feature stroke width (eyes, mouth, glasses lines).
    * Default = 1. Higher values = bolder face lines, useful for editorial
    * packs (Office uses ~1.4).

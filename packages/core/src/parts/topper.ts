@@ -12,6 +12,15 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
   const cx = anchor.topperX;
   const topY = anchor.topperY;
   const ink = palette.ink;
+  const routeYellow = '#F5C51B';
+  const kenyaGreen = '#00843D';
+  const kenyaRed = '#C8102E';
+  const matatuBlack = '#101820';
+  const paperWhite = '#F8F7EF';
+  const commandBlue = '#CBD5E1';
+  const commandGreen = '#8FB7A2';
+  const commandAmber = '#B7C3D0';
+  const commandSlate = '#64748B';
 
   switch (id) {
     case 'ears':
@@ -125,6 +134,114 @@ export function renderTopper(id: TopperId, anchor: FaceAnchor, palette: Palette)
         `<ellipse cx="${cx}" cy="${bunY - 0.5}" rx="3.5" ry="2.5" fill="none" stroke="${palette.accent}" stroke-width="0.4" opacity="0.4" />`,
       ].join('');
     }
+
+    case 'textileBand':
+      return [
+        `<path d="M${cx - 20} ${topY + 9} Q${cx} ${topY + 3} ${cx + 20} ${topY + 9} L${cx + 20} ${topY + 13} Q${cx} ${topY + 7} ${cx - 20} ${topY + 13} Z" fill="#F3CF4E" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 15}" y="${topY + 7.5}" width="5" height="4" fill="#111827" opacity="0.94" />`,
+        `<rect x="${cx - 8}" y="${topY + 7}" width="5" height="4.5" fill="#B12F28" opacity="0.94" />`,
+        `<rect x="${cx - 1}" y="${topY + 6.5}" width="5" height="5" fill="#2F6A3E" opacity="0.94" />`,
+        `<rect x="${cx + 6}" y="${topY + 7}" width="5" height="4.5" fill="#F8D04A" opacity="0.94" />`,
+      ].join('');
+
+    case 'geometricCap':
+      return [
+        `<path d="M${cx - 15} ${topY + 7} L${cx - 8} ${topY - 6} L${cx + 8} ${topY - 6} L${cx + 15} ${topY + 7} Z" fill="${palette.ink}" opacity="0.94" />`,
+        `<path d="M${cx - 12} ${topY + 5} L${cx - 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="#F3CF4E" opacity="0.94" />`,
+        `<path d="M${cx + 12} ${topY + 5} L${cx + 5} ${topY - 3} L${cx} ${topY + 5} Z" fill="#B12F28" opacity="0.94" />`,
+        `<rect x="${cx - 3}" y="${topY + 1}" width="6" height="5" fill="#2F6A3E" opacity="0.9" />`,
+      ].join('');
+
+    case 'galleryWrap':
+      return [
+        `<path d="M${cx - 18} ${topY + 8} Q${cx - 14} ${topY - 6} ${cx + 2} ${topY - 8} Q${cx + 17} ${topY - 5} ${cx + 19} ${topY + 9} Q${cx + 8} ${topY + 4} ${cx - 18} ${topY + 8} Z" fill="#B12F28" stroke="${ink}" stroke-width="0.55" />`,
+        `<path d="M${cx - 6} ${topY - 5} Q${cx + 2} ${topY + 1} ${cx + 16} ${topY + 5}" stroke="#F3CF4E" stroke-width="1" opacity="0.95" fill="none" />`,
+        `<path d="M${cx - 14} ${topY + 5} Q${cx - 4} ${topY + 1} ${cx + 13} ${topY + 7}" stroke="#2F6A3E" stroke-width="0.9" opacity="0.9" fill="none" />`,
+      ].join('');
+
+    case 'danfoRoofStripe':
+      return [
+        `<path d="M${cx - 20} ${topY + 8} Q${cx} ${topY + 2} ${cx + 20} ${topY + 8} L${cx + 20} ${topY + 13} Q${cx} ${topY + 7} ${cx - 20} ${topY + 13} Z" fill="#F5C51B" stroke="${ink}" stroke-width="0.6" />`,
+        `<rect x="${cx - 15}" y="${topY + 8}" width="30" height="2.5" rx="1" fill="#111827" opacity="0.9" />`,
+        `<rect x="${cx - 10}" y="${topY + 11}" width="8" height="2.5" fill="#008753" opacity="0.96" />`,
+        `<rect x="${cx - 1}" y="${topY + 11}" width="8" height="2.5" fill="#F8F7EF" opacity="0.96" />`,
+        `<rect x="${cx + 8}" y="${topY + 11}" width="8" height="2.5" fill="#008753" opacity="0.96" />`,
+      ].join('');
+
+    case 'naijaBand':
+      return [
+        `<path d="M${cx - 19} ${topY + 8} Q${cx} ${topY + 3} ${cx + 19} ${topY + 8} L${cx + 19} ${topY + 13} Q${cx} ${topY + 8} ${cx - 19} ${topY + 13} Z" fill="#008753" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 5}" y="${topY + 6.5}" width="10" height="6" rx="1" fill="#F8F7EF" opacity="0.98" />`,
+        `<rect x="${cx - 18}" y="${topY + 9}" width="6" height="3" fill="#F5C51B" opacity="0.96" />`,
+        `<rect x="${cx + 12}" y="${topY + 9}" width="6" height="3" fill="#F5C51B" opacity="0.96" />`,
+      ].join('');
+
+    case 'routeCap':
+      return [
+        `<path d="M${cx - 16} ${topY + 6} Q${cx - 13} ${topY - 6} ${cx} ${topY - 7} Q${cx + 13} ${topY - 6} ${cx + 16} ${topY + 6} Z" fill="#008753" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 14} ${topY + 6} L${cx + 14} ${topY + 6}" stroke="#F5C51B" stroke-width="3" stroke-linecap="round" />`,
+        `<rect x="${cx - 4}" y="${topY - 5}" width="8" height="8" rx="1.5" fill="#F8F7EF" stroke="${ink}" stroke-width="0.4" />`,
+      ].join('');
+
+    case 'neonRouteBand':
+      return [
+        `<path d="M${cx - 22} ${topY + 8} Q${cx} ${topY + 1} ${cx + 22} ${topY + 8} L${cx + 20} ${topY + 14} Q${cx} ${topY + 8} ${cx - 20} ${topY + 14} Z" fill="${matatuBlack}" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 18} ${topY + 9} L${cx + 18} ${topY + 7}" stroke="${routeYellow}" stroke-width="2.6" stroke-linecap="round" />`,
+        `<rect x="${cx - 18}" y="${topY + 11.5}" width="9" height="2" fill="${kenyaGreen}" opacity="0.96" />`,
+        `<rect x="${cx - 4}" y="${topY + 10.8}" width="8" height="2.4" fill="${paperWhite}" opacity="0.98" />`,
+        `<rect x="${cx + 9}" y="${topY + 11.5}" width="9" height="2" fill="${kenyaRed}" opacity="0.96" />`,
+        `<text x="${cx}" y="${topY + 10.7}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="5" font-weight="800" fill="${matatuBlack}">46</text>`,
+      ].join('');
+
+    case 'shukaGridBand':
+      return [
+        `<path d="M${cx - 20} ${topY + 8} Q${cx} ${topY + 3} ${cx + 20} ${topY + 8} L${cx + 20} ${topY + 13} Q${cx} ${topY + 8} ${cx - 20} ${topY + 13} Z" fill="${kenyaRed}" stroke="${ink}" stroke-width="0.55" />`,
+        `<rect x="${cx - 15}" y="${topY + 8}" width="30" height="1.7" fill="${matatuBlack}" opacity="0.96" />`,
+        `<rect x="${cx - 15}" y="${topY + 11.5}" width="30" height="1.5" fill="${paperWhite}" opacity="0.96" />`,
+        `<rect x="${cx - 7}" y="${topY + 6.5}" width="2" height="7" fill="#1E4EA8" opacity="0.92" />`,
+        `<rect x="${cx + 6}" y="${topY + 6.5}" width="2" height="7" fill="${matatuBlack}" opacity="0.92" />`,
+        `<rect x="${cx - 18}" y="${topY + 6.8}" width="5" height="2" fill="${routeYellow}" opacity="0.95" />`,
+      ].join('');
+
+    case 'stickerCap':
+      return [
+        `<path d="M${cx - 17} ${topY + 6} L${cx + 12} ${topY - 6} C${cx + 17} ${topY - 4} ${cx + 20} ${topY + 1} ${cx + 17} ${topY + 6} Z" fill="${paperWhite}" stroke="${ink}" stroke-width="0.6" />`,
+        `<path d="M${cx - 14} ${topY + 5} L${cx + 15} ${topY + 5}" stroke="${routeYellow}" stroke-width="2.6" stroke-linecap="round" />`,
+        `<rect x="${cx - 4}" y="${topY - 2}" width="12" height="5" rx="1.1" fill="${matatuBlack}" stroke="${ink}" stroke-width="0.35" />`,
+        `<text x="${cx + 2}" y="${topY + 1.9}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="4.5" font-weight="800" fill="${routeYellow}">CBD</text>`,
+      ].join('');
+
+    case 'browserTabs':
+      return [
+        `<ellipse cx="${cx}" cy="${topY + 9}" rx="19" ry="5" fill="none" stroke="${commandBlue}" stroke-width="1.2" opacity="0.88" />`,
+        `<circle cx="${cx - 10}" cy="${topY + 9}" r="2.2" fill="${paperWhite}" opacity="0.92" />`,
+        `<circle cx="${cx}" cy="${topY + 9}" r="2.2" fill="${commandGreen}" opacity="0.88" />`,
+        `<circle cx="${cx + 10}" cy="${topY + 9}" r="2.2" fill="${commandAmber}" opacity="0.88" />`,
+      ].join('');
+
+    case 'commandBar':
+      return [
+        `<path d="M${cx - 17} ${topY + 12} Q${cx} ${topY + 5} ${cx + 17} ${topY + 12}" stroke="${commandBlue}" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.9" />`,
+        `<circle cx="${cx - 15}" cy="${topY + 11.5}" r="2" fill="${commandSlate}" opacity="0.92" />`,
+        `<circle cx="${cx + 15}" cy="${topY + 11.5}" r="2" fill="${commandGreen}" opacity="0.92" />`,
+      ].join('');
+
+    case 'notificationChip':
+      return [
+        `<rect x="${cx - 14}" y="${topY + 6}" width="28" height="8" rx="4" fill="${paperWhite}" stroke="${commandBlue}" stroke-width="0.9" opacity="0.9" />`,
+        `<circle cx="${cx - 6}" cy="${topY + 10}" r="1.5" fill="${commandSlate}" opacity="0.88" />`,
+        `<circle cx="${cx}" cy="${topY + 10}" r="1.5" fill="${commandGreen}" opacity="0.88" />`,
+        `<circle cx="${cx + 6}" cy="${topY + 10}" r="1.5" fill="${commandAmber}" opacity="0.88" />`,
+      ].join('');
+
+    case 'chartHeader':
+      return [
+        `<path d="M${cx - 22} ${topY + 9} Q${cx} ${topY + 3} ${cx + 22} ${topY + 9} L${cx + 22} ${topY + 14} Q${cx} ${topY + 8} ${cx - 22} ${topY + 14} Z" fill="${paperWhite}" stroke="${ink}" stroke-width="0.55" />`,
+        `<circle cx="${cx - 10}" cy="${topY + 10}" r="2.4" fill="${commandBlue}" opacity="0.86" />`,
+        `<circle cx="${cx}" cy="${topY + 7}" r="2.4" fill="${commandGreen}" opacity="0.86" />`,
+        `<circle cx="${cx + 10}" cy="${topY + 10}" r="2.4" fill="${commandAmber}" opacity="0.86" />`,
+        `<path d="M${cx - 8} ${topY + 9} L${cx - 2} ${topY + 7.5} L${cx + 8} ${topY + 9}" stroke="${commandSlate}" stroke-width="0.9" fill="none" stroke-linecap="round" opacity="0.72" />`,
+      ].join('');
 
     case 'witchHat': {
       // Tall pointed witch hat — cone + brim + band w/ buckle. Sits on apex,
