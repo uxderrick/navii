@@ -1218,4 +1218,3 @@ export function landingHtml(): string {
 </body>
 </html>`;
 }
-

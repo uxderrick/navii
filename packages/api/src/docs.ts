@@ -1714,7 +1714,6 @@ a:focus-visible, button:focus-visible {
 .content p.note {
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
   padding: 12px 14px;
   border-radius: 6px;
   color: var(--muted);
