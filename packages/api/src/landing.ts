@@ -1,4 +1,5 @@
 import { TEMPLATES_JSON } from './landingTemplates.js';
+import { createAvatar } from '@usenavii/core';
 
 /**
  * Landing page served at GET /.
@@ -20,10 +21,53 @@ const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
 const OG_IMAGE = `${API_BASE}/og.png`;
 
+const PREMIUM_PACKS = [
+  {
+    id: 'accra-gallery',
+    name: 'Accra Gallery',
+    description: 'Contemporary Ghana-inspired avatars with refined textile geometry, warm gallery surfaces, gold, red, green, and black.',
+    seeds: ['adwoa', 'kweku', 'selasi'],
+  },
+  {
+    id: 'lagos-danfo',
+    name: 'Lagos Danfo',
+    description: 'Nigerian green-white-green, danfo yellow accents, and route-line geometry for crisp Lagos city energy.',
+    seeds: ['eko', 'yemi', 'sade'],
+  },
+  {
+    id: 'nairobi-matatu',
+    name: 'Nairobi Matatu',
+    description: 'Route stickers, yellow stripes, Kenya flag color, and restrained shuka-grid accents for Nairobi-inspired identity.',
+    seeds: ['matatu', 'ngong', 'route-46'],
+  },
+  {
+    id: 'command-center',
+    name: 'Command Center',
+    description: 'Minimal SaaS system tokens for workspaces, projects, bots, integrations, and customer lists.',
+    seeds: ['workspace-primary', 'project-retention', 'integration-slack'],
+  },
+] as const;
+
 export function landingHtml(): string {
   const tiles = CAST_SEEDS.map(
     (s) =>
       `<a class="tile" href="${API_BASE}/avatar/${s}?size=192&animated=1" title="${s}"><img src="${API_BASE}/avatar/${s}?size=160&animated=1" alt="${s}" loading="lazy" width="160" height="160" /><span>${s}</span></a>`,
+  ).join('');
+  const packCards = PREMIUM_PACKS.map(
+    (pack) => {
+      const previews = pack.seeds.map((seed) =>
+        `<div class="pack-avatar">${createAvatar(seed, { size: 88, packs: [pack.id], style: 'neutral', title: `${pack.name} avatar` })}</div>`,
+      ).join('');
+      return `
+      <article class="pack-card">
+        <div class="pack-preview" aria-hidden="true">${previews}</div>
+        <div class="pack-copy">
+          <h3>${pack.name}</h3>
+          <p>${pack.description}</p>
+          <code>${pack.id}</code>
+        </div>
+      </article>`;
+    },
   ).join('');
 
   return `<!doctype html>
@@ -564,6 +608,102 @@ export function landingHtml(): string {
   }
   .tile:hover span { opacity: 1; }
 
+  /* ── premium packs ── */
+  .packs-section { margin: 56px 0 0; }
+  .packs-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 18px;
+  }
+  .packs-head h2 {
+    margin: 6px 0 0;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+  }
+  .packs-head .blurb {
+    max-width: 720px;
+    margin: 10px 0 0;
+  }
+  .packs-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .packs-actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 9px 15px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    background: var(--bg-2);
+  }
+  .packs-actions a.primary { background: var(--accent); border-color: var(--accent); color: #0a0a0b; }
+  .packs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .pack-card {
+    min-width: 0;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform .18s ease, border-color .18s ease;
+  }
+  .pack-card:hover { transform: translateY(-2px); border-color: rgba(192, 132, 252, 0.75); }
+  .pack-preview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    background: #0f0f12;
+    border-bottom: 1px solid var(--line);
+  }
+  .pack-avatar {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .pack-avatar:last-child { border-right: 0; }
+  .pack-avatar svg { width: 100%; height: 100%; display: block; }
+  .pack-copy { padding: 18px; }
+  .pack-copy h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .pack-copy p {
+    min-height: 84px;
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .pack-copy code {
+    display: inline-flex;
+    max-width: 100%;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    font: 12px ui-monospace, SFMono-Regular, Menlo, monospace;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 980px) {
+    .packs-head { grid-template-columns: 1fr; align-items: start; }
+    .packs-actions { justify-content: flex-start; }
+    .packs-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .packs-grid { grid-template-columns: 1fr; }
+    .pack-copy p { min-height: 0; }
+  }
+
   /* ── group ── */
   .group-demo {
     display: flex; flex-direction: column; gap: 16px;
@@ -799,6 +939,23 @@ export function landingHtml(): string {
       </a>
     </div>
     </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="premium-packs" class="packs-section">
+    <div class="packs-head">
+      <div>
+        <p class="eyebrow">premium packs</p>
+        <h2>Give avatars a world to belong to.</h2>
+        <p class="blurb">Premium packs add themed palettes, bodies, accessories, outfits, and render rules while keeping Navii's deterministic seed contract intact.</p>
+      </div>
+      <div class="packs-actions">
+        <a class="primary" href="/docs/pro">Explore Pro →</a>
+        <a href="https://www.figma.com/community/plugin/1640037999835658823" target="_blank" rel="noopener">Get Figma Plugin</a>
+      </div>
+    </div>
+    <div class="packs-grid">${packCards}</div>
   </section>
 
   <hr class="rule" />

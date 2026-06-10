@@ -36,6 +36,18 @@ describe('api', () => {
     expect(body).not.toContain('<a href="/blog">blog</a>\n      <a href="https://github.com/uxderrick/navii">github</a>');
   });
 
+  it('GET / landing showcases premium packs', async () => {
+    const res = await get('/');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('id="premium-packs"');
+    expect(body).toContain('Give avatars a world to belong to.');
+    expect(body).toContain('accra-gallery');
+    expect(body).toContain('lagos-danfo');
+    expect(body).toContain('nairobi-matatu');
+    expect(body).toContain('command-center');
+  });
+
   it('GET /api returns JSON metadata', async () => {
     const res = await get('/api');
     expect(res.status).toBe(200);
@@ -87,6 +99,11 @@ describe('api', () => {
     expect(body).toContain('Navii Pro');
     expect(body).toContain('Authorization: Bearer');
     expect(body).toContain('https://navii.dev/pro');
+    expect(body).toContain('id="premium-packs"');
+    expect(body).toContain('accra-gallery');
+    expect(body).toContain('lagos-danfo');
+    expect(body).toContain('nairobi-matatu');
+    expect(body).toContain('command-center');
   });
 
   it('GET /docs/pro highlights the license URL callout', async () => {

@@ -1051,6 +1051,7 @@ encoded: alice%40example.com</code></pre>
 async function pagePro(): Promise<string> {
   const [
     authCurl,
+    packCurl,
     freeUrl,
     missingAuthError,
     invalidLicenseError,
@@ -1058,6 +1059,8 @@ async function pagePro(): Promise<string> {
   ] = await Promise.all([
     codeBlock(`curl -H "Authorization: Bearer <license_key>" \\
   "${API_BASE}/avatar/alice?packs=accra-gallery"`, 'bash'),
+    codeBlock(`curl -H "Authorization: Bearer <license_key>" \\
+  "${API_BASE}/avatar/workspace-primary?packs=command-center&style=neutral"`, 'bash'),
     codeBlock(`${API_BASE}/avatar/alice?size=128`, 'text'),
     codeBlock(`{
   "error": "pro_auth_required",
@@ -1093,6 +1096,21 @@ async function pagePro(): Promise<string> {
       ${authCurl}
       <p>Keep using ordinary unauthenticated URLs for free options:</p>
       ${freeUrl}
+    </section>
+
+    <section>
+      <h2 id="premium-packs">Premium packs</h2>
+      <p>Navii Pro includes four premium pack systems today. Each pack keeps the same seed deterministic while changing the visual world the avatar belongs to.</p>
+      <table>
+        <thead><tr><th>Pack</th><th>ID</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Accra Gallery</td><td><code>accra-gallery</code></td><td>Contemporary Ghana-inspired profiles, community pages, and editorial identity.</td></tr>
+          <tr><td>Lagos Danfo</td><td><code>lagos-danfo</code></td><td>Bright Lagos/Nigeria identity with route-line energy and danfo yellow accents.</td></tr>
+          <tr><td>Nairobi Matatu</td><td><code>nairobi-matatu</code></td><td>Nairobi-inspired social, creator, and city-culture surfaces.</td></tr>
+          <tr><td>Command Center</td><td><code>command-center</code></td><td>SaaS teams, workspaces, bots, integrations, projects, and customer lists.</td></tr>
+        </tbody>
+      </table>
+      ${packCurl}
     </section>
 
     <section>
