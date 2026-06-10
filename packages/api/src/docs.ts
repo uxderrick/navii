@@ -9,6 +9,7 @@
  */
 
 import {
+  createAvatar,
   selectAvatar,
   renderAvatar,
   type AvatarSpec,
@@ -41,6 +42,33 @@ type ShikiLang = CodeToHtmlOptions['lang'];
 const SHIKI_THEME = 'vitesse-dark';
 const highlightedCode = new Map<string, Promise<string>>();
 const STATIC_CODE_BLOCK_RE = /<pre(?:\s+class="code")?><code>([\s\S]*?)<\/code><\/pre>/g;
+
+const PREMIUM_PACK_EXAMPLES = [
+  {
+    id: 'accra-gallery',
+    name: 'Accra Gallery',
+    bestFor: 'Contemporary Ghana-inspired profiles, community pages, and editorial identity.',
+    seeds: ['adwoa', 'kweku', 'selasi'],
+  },
+  {
+    id: 'lagos-danfo',
+    name: 'Lagos Danfo',
+    bestFor: 'Bright Lagos/Nigeria identity with route-line energy and danfo yellow accents.',
+    seeds: ['eko', 'yemi', 'sade'],
+  },
+  {
+    id: 'nairobi-matatu',
+    name: 'Nairobi Matatu',
+    bestFor: 'Nairobi-inspired social, creator, and city-culture surfaces.',
+    seeds: ['matatu', 'ngong', 'route-46'],
+  },
+  {
+    id: 'command-center',
+    name: 'Command Center',
+    bestFor: 'SaaS teams, workspaces, bots, integrations, projects, and customer lists.',
+    seeds: ['workspace-primary', 'project-retention', 'integration-slack'],
+  },
+] as const;
 
 interface DocPage {
   slug: string;
@@ -391,10 +419,13 @@ ${styleBlock()}
 }
 
 function renderSidebar(currentSlug: string): string {
-  const sections = new Map<string, DocPage[]>();
+  const sections = new Map<string, Array<{ title: string; href: string; slug?: string }>>();
   for (const p of PAGES) {
     const arr = sections.get(p.section) ?? [];
-    arr.push(p);
+    arr.push({ title: p.title, href: `/docs/${p.slug}`, slug: p.slug });
+    if (p.slug === 'pro') {
+      arr.push({ title: 'Premium Packs', href: '/docs/pro#premium-packs' });
+    }
     sections.set(p.section, arr);
   }
   return Array.from(sections.entries())
@@ -402,7 +433,7 @@ function renderSidebar(currentSlug: string): string {
       const items = pages
         .map(
           (p) =>
-            `<a class="sb-item${p.slug === currentSlug ? ' active' : ''}" href="/docs/${p.slug}"${p.slug === currentSlug ? ' aria-current="page"' : ''}>${escapeHtml(p.title)}</a>`,
+            `<a class="sb-item${p.slug === currentSlug ? ' active' : ''}" href="${p.href}"${p.slug === currentSlug ? ' aria-current="page"' : ''}>${escapeHtml(p.title)}</a>`,
         )
         .join('');
       return `<div class="sb-section"><h5>${escapeHtml(section)}</h5>${items}</div>`;
@@ -1077,6 +1108,12 @@ async function pagePro(): Promise<string> {
   "message": "License verification is temporarily unavailable."
 }`, 'json'),
   ]);
+  const premiumPackRows = PREMIUM_PACK_EXAMPLES.map((pack) => {
+    const examples = pack.seeds.map((seed) =>
+      `<span class="premium-pack-avatar">${createAvatar(seed, { size: 72, packs: [pack.id], style: 'neutral', title: `${pack.name} example: ${seed}` })}</span>`,
+    ).join('');
+    return `<tr><td>${pack.name}</td><td><code>${pack.id}</code></td><td>${pack.bestFor}</td><td><div class="premium-pack-examples" aria-label="${pack.name} examples">${examples}</div></td></tr>`;
+  }).join('');
 
   return `
     <header class="page-head">
@@ -1102,12 +1139,9 @@ async function pagePro(): Promise<string> {
       <h2 id="premium-packs">Premium packs</h2>
       <p>Navii Pro includes four premium pack systems today. Each pack keeps the same seed deterministic while changing the visual world the avatar belongs to.</p>
       <table>
-        <thead><tr><th>Pack</th><th>ID</th><th>Best for</th></tr></thead>
+        <thead><tr><th>Pack</th><th>ID</th><th>Best for</th><th>Examples</th></tr></thead>
         <tbody>
-          <tr><td>Accra Gallery</td><td><code>accra-gallery</code></td><td>Contemporary Ghana-inspired profiles, community pages, and editorial identity.</td></tr>
-          <tr><td>Lagos Danfo</td><td><code>lagos-danfo</code></td><td>Bright Lagos/Nigeria identity with route-line energy and danfo yellow accents.</td></tr>
-          <tr><td>Nairobi Matatu</td><td><code>nairobi-matatu</code></td><td>Nairobi-inspired social, creator, and city-culture surfaces.</td></tr>
-          <tr><td>Command Center</td><td><code>command-center</code></td><td>SaaS teams, workspaces, bots, integrations, projects, and customer lists.</td></tr>
+          ${premiumPackRows}
         </tbody>
       </table>
       ${packCurl}
@@ -1832,6 +1866,26 @@ pre.code .tk-type    { color: #93c5fd; }
   background: var(--bg-2);
 }
 .content table td code { font-size: 12.5px; }
+.premium-pack-examples {
+  display: flex;
+  gap: 6px;
+  min-width: 228px;
+}
+.premium-pack-avatar {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-2);
+}
+.premium-pack-avatar svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
 /* rules table on concepts page */
 .content table.rules td:first-child { width: 40%; }

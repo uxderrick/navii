@@ -36,16 +36,12 @@ describe('api', () => {
     expect(body).not.toContain('<a href="/blog">blog</a>\n      <a href="https://github.com/uxderrick/navii">github</a>');
   });
 
-  it('GET / landing showcases premium packs', async () => {
+  it('GET / landing does not showcase premium packs', async () => {
     const res = await get('/');
     expect(res.status).toBe(200);
     const body = await res.text();
-    expect(body).toContain('id="premium-packs"');
-    expect(body).toContain('Give avatars a world to belong to.');
-    expect(body).toContain('accra-gallery');
-    expect(body).toContain('lagos-danfo');
-    expect(body).toContain('nairobi-matatu');
-    expect(body).toContain('command-center');
+    expect(body).not.toContain('id="premium-packs"');
+    expect(body).not.toContain('Give avatars a world to belong to.');
   });
 
   it('GET /api returns JSON metadata', async () => {
@@ -97,6 +93,7 @@ describe('api', () => {
     expect(res.status).toBe(200);
     const body = await res.text();
     expect(body).toContain('Navii Pro');
+    expect(body).toContain('<a class="sb-item" href="/docs/pro#premium-packs">Premium Packs</a>');
     expect(body).toContain('Authorization: Bearer');
     expect(body).toContain('https://navii.dev/pro');
     expect(body).toContain('id="premium-packs"');
@@ -104,6 +101,12 @@ describe('api', () => {
     expect(body).toContain('lagos-danfo');
     expect(body).toContain('nairobi-matatu');
     expect(body).toContain('command-center');
+    expect(body).toContain('class="premium-pack-examples" aria-label="Accra Gallery examples"');
+    expect(body).toContain('class="premium-pack-examples" aria-label="Lagos Danfo examples"');
+    expect(body).toContain('class="premium-pack-examples" aria-label="Nairobi Matatu examples"');
+    expect(body).toContain('class="premium-pack-examples" aria-label="Command Center examples"');
+    expect(body).toContain('<title>Accra Gallery example: adwoa</title>');
+    expect(body).toContain('<title>Command Center example: workspace-primary</title>');
   });
 
   it('GET /docs/pro highlights the license URL callout', async () => {

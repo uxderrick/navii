@@ -6,6 +6,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.27.1] - 2026-06-10
+
+### Changed (API host)
+
+- Moved the premium packs showcase out of the landing page and into the Pro docs.
+- Added a dedicated Premium Packs docs nav item that jumps to `/docs/pro#premium-packs`.
+- Added three rendered avatar examples for each premium pack row in the Pro docs.
+
 ## [0.27.0] - 2026-06-10
 
 ### Added (`@usenavii/core` 0.8.0)
