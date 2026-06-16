@@ -1,3 +1,4 @@
+import { createAvatar } from '@usenavii/core';
 import { TEMPLATES_JSON } from './landingTemplates.js';
 
 /**
@@ -16,15 +17,31 @@ const CAST_SEEDS: readonly string[] = [
   'yumi', 'cass', 'odi', 'hex', 'fae', 'rune',
 ];
 
+const CAST_PACKS: readonly { id: string; name: string }[] = [
+  { id: 'accra-gallery', name: 'Accra Gallery' },
+  { id: 'lagos-danfo', name: 'Lagos Danfo' },
+  { id: 'nairobi-matatu', name: 'Nairobi Matatu' },
+  { id: 'command-center', name: 'Command Center' },
+  { id: 'office', name: 'Office' },
+  { id: 'office-bright', name: 'Office Bright' },
+  { id: 'halloween', name: 'Halloween' },
+  { id: 'pastel', name: 'Pastel' },
+  { id: 'neon', name: 'Neon' },
+  { id: 'mono', name: 'Mono' },
+  { id: 'earth', name: 'Earth' },
+];
+
 const API_BASE = process.env['NAVII_API_BASE'] ?? 'https://api.navii.dev';
 const SITE_BASE = process.env['NAVII_SITE_BASE'] ?? 'https://navii.dev';
 const OG_IMAGE = `${API_BASE}/og.png`;
 
 export function landingHtml(): string {
-  const tiles = CAST_SEEDS.map(
-    (s) =>
-      `<a class="tile" href="${API_BASE}/avatar/${s}?size=192&animated=1" title="${s}"><img src="${API_BASE}/avatar/${s}?size=160&animated=1" alt="${s}" loading="lazy" width="160" height="160" /><span>${s}</span></a>`,
-  ).join('');
+  const tiles = CAST_SEEDS.map((s, index) => {
+    const pack = CAST_PACKS[index % CAST_PACKS.length]!;
+    const label = `${s} · ${pack.name}`;
+    const svg = createAvatar(s, { size: 160, animated: true, packs: [pack.id] });
+    return `<a class="tile" href="/docs/pro#premium-packs" title="${label}" aria-label="${label}" data-pack="${pack.id}">${svg}<span>${label}</span></a>`;
+  }).join('');
 
   return `<!doctype html>
 <html lang="en">
@@ -550,7 +567,8 @@ export function landingHtml(): string {
     transition: transform .18s ease, border-color .18s ease;
   }
   .tile:hover { transform: translateY(-2px); border-color: var(--accent); }
-  .tile img { width: 100%; height: 100%; display: block; }
+  .tile img,
+  .tile svg { width: 100%; height: 100%; display: block; }
   .tile span {
     position: absolute; left: 10px; bottom: 8px;
     font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;

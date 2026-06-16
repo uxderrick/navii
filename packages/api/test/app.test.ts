@@ -44,6 +44,24 @@ describe('api', () => {
     expect(body).not.toContain('Give avatars a world to belong to.');
   });
 
+  it('GET / landing cast grid showcases multiple avatar packs inline', async () => {
+    const res = await get('/');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    const packMatches = body.match(/data-pack="/g) ?? [];
+    const uniquePacks = new Set(
+      [...body.matchAll(/data-pack="([^"]+)"/g)].map((match) => match[1]),
+    );
+
+    expect(packMatches).toHaveLength(24);
+    expect(uniquePacks.size).toBeGreaterThan(6);
+    expect(body).toContain('data-pack="accra-gallery"');
+    expect(body).toContain('data-pack="command-center"');
+    expect(body).toContain('<span>aria · Accra Gallery</span>');
+    expect(body).toContain('<svg');
+    expect(body).not.toContain('/avatar/aria?size=160&amp;animated=1&amp;packs=');
+  });
+
   it('GET /api returns JSON metadata', async () => {
     const res = await get('/api');
     expect(res.status).toBe(200);
