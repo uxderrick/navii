@@ -54,14 +54,6 @@
     "react-native": ">=0.73",
     "react-native-svg": ">=15"
   },
-  "peerDependenciesMeta": {
-    "react-native": {
-      "optional": true
-    },
-    "react-native-svg": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@types/react": "^18.3.0",
     "react": "^18.3.0",

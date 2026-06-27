@@ -142,9 +142,13 @@ export const NaviiGroup = defineComponent({
       const all = t.counter ? [...t.tiles, t.counter] : t.tiles;
       const label = props.alt ?? `Group of ${props.seeds.length} avatars`;
 
+      const baseStyle = { position: 'relative', width: t.width, height: t.height };
+      const wrapperStyle = typeof props.style === 'string'
+        ? `${Object.entries(baseStyle).map(([k, v]) => `${k.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}:${v}`).join(';')};${props.style}`
+        : { ...baseStyle, ...(typeof props.style === 'object' ? props.style : {}) };
       const wrapperProps: Record<string, unknown> = {
         class: props.class,
-        style: { position: 'relative', width: t.width, height: t.height, ...(typeof props.style === 'object' ? props.style : {}) },
+        style: wrapperStyle,
       };
       if (label) {
         wrapperProps.role = 'img';
