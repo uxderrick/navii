@@ -1,0 +1,67 @@
+{
+  "name": "@usenavii/svelte",
+  "version": "0.9.0",
+  "description": "Svelte 5 binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "svelte": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "svelte-package --input src",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "avatar",
+    "avatars",
+    "mascot",
+    "svg",
+    "svelte",
+    "deterministic",
+    "navii"
+  ],
+  "license": "MIT",
+  "author": "uxderrick",
+  "homepage": "https://navii.uxderrick.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uxderrick/navii.git",
+    "directory": "packages/svelte"
+  },
+  "bugs": "https://github.com/uxderrick/navii/issues",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@mhaadi/svg": "^0.2.3",
+    "@usenavii/core": "workspace:^0.9.0"
+  },
+  "peerDependencies": {
+    "svelte": ">=5"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.3.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@testing-library/svelte": "^5.2.0",
+    "svelte": "^5.56.3",
+    "svelte-check": "^4.1.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.1.9"
+  }
+}
