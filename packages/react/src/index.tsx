@@ -169,7 +169,7 @@ export function NaviiGroup({
   onSvgError,
   alt,
 }: NaviiGroupProps): React.ReactElement | null {
-  const stableSeeds = React.useMemo(() => seeds, [seeds.join('\0')]);
+  const stableSeeds = React.useMemo(() => seeds, [JSON.stringify(seeds)]);
 
   const groupOpts = React.useMemo<GroupOptions>(() => {
     const opts: GroupOptions = { size, overlap };
