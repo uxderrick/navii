@@ -73,7 +73,6 @@ describe('determinism contract', () => {
       size: 64,
       overlap: 0.3,
     });
-    const normalized = svg.replace(/navii-clip-[a-z0-9]+/g, 'navii-clip-X');
-    expect(normalized).toMatchSnapshot();
+    expect(svg).toMatchSnapshot();
   });
 });

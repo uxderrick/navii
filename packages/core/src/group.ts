@@ -41,10 +41,11 @@ export interface GroupTiles {
  *
  * Each avatar is placed in its own 100x100 viewBox via nested <svg> so the
  * existing renderer is reused without changes. A circular clip per tile
- * crops to a disc — typical avatar UI. Clip ids are auto-unique per call so
- * multiple groups on the same page never collide. Pass `options.groupId` for
- * explicit control over id namespacing. Visual output (shapes, colors,
- * layout) is deterministic; only the clip id strings vary between calls.
+ * crops to a disc — typical avatar UI. Clip ids are derived from a hash of
+ * all seeds so output is deterministic across SSR and client. Two groups
+ * with the same seeds will share clip ids — pass `options.groupId` for
+ * document-wide uniqueness when rendering multiple groups with the same
+ * seeds on the same page.
  */
 export function renderGroup(seeds: string[], options: GroupOptions = {}): string {
   const t = renderGroupTiles(seeds, options);
@@ -68,7 +69,7 @@ export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): G
   const tileBg = escapeXml(options.tileBg ?? '#ffffff');
   const counterFill = escapeXml(options.counterFill ?? '#E5E7EB');
   const counterInk = escapeXml(options.counterInk ?? '#374151');
-  const salt = nextGroupId(options);
+  const salt = groupSalt(seeds, options);
 
   const visibleSeeds = seeds.slice(0, Math.max(0, max - (seeds.length > max ? 1 : 0)));
   const overflow = seeds.length - visibleSeeds.length;
@@ -112,11 +113,16 @@ function wrapGroupTiles(t: GroupTiles): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t.width} ${t.height}" width="${t.width}" height="${t.height}" aria-hidden="true">${all.join('')}</svg>`;
 }
 
-let groupCallCounter = 0;
-
-function nextGroupId(options: GroupOptions): string {
+function groupSalt(seeds: readonly string[], options: GroupOptions): string {
   if (options.groupId) return `g:${options.groupId}`;
-  return `g:auto:${groupCallCounter++}`;
+  let h = 5381;
+  for (let i = 0; i < seeds.length; i++) {
+    const s = seeds[i];
+    if (!s) continue;
+    for (let j = 0; j < s.length; j++) h = ((h << 5) + h + s.charCodeAt(j)) | 0;
+    h = ((h << 5) + h + 0x1f) | 0;
+  }
+  return `g:${(h >>> 0).toString(36)}`;
 }
 
 function stableTileId(seed: string, index: number, salt: string): string {
