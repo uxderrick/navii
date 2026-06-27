@@ -115,6 +115,7 @@ export const Navii = {
   select: selectAvatar,
   group: renderGroup,
   groupTiles: renderGroupTiles,
+  renderGroupTiles,
   seed,
   seedFromEmail,
   build,

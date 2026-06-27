@@ -41,9 +41,10 @@ export interface GroupTiles {
  *
  * Each avatar is placed in its own 100x100 viewBox via nested <svg> so the
  * existing renderer is reused without changes. A circular clip per tile
- * crops to a disc — typical avatar UI. Clip ids are unique within a single
- * group call; pass `options.groupId` for document-wide uniqueness when
- * rendering multiple groups with the same seeds on the same page.
+ * crops to a disc — typical avatar UI. Clip ids are auto-unique per call so
+ * multiple groups on the same page never collide. Pass `options.groupId` for
+ * explicit control over id namespacing. Visual output (shapes, colors,
+ * layout) is deterministic; only the clip id strings vary between calls.
  */
 export function renderGroup(seeds: string[], options: GroupOptions = {}): string {
   const t = renderGroupTiles(seeds, options);
@@ -67,7 +68,7 @@ export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): G
   const tileBg = escapeXml(options.tileBg ?? '#ffffff');
   const counterFill = escapeXml(options.counterFill ?? '#E5E7EB');
   const counterInk = escapeXml(options.counterInk ?? '#374151');
-  const salt = options.groupId ? `g:${options.groupId}` : 'g';
+  const salt = nextGroupId(options);
 
   const visibleSeeds = seeds.slice(0, Math.max(0, max - (seeds.length > max ? 1 : 0)));
   const overflow = seeds.length - visibleSeeds.length;
@@ -109,6 +110,13 @@ function wrapGroupTiles(t: GroupTiles): string {
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" aria-hidden="true"></svg>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t.width} ${t.height}" width="${t.width}" height="${t.height}" aria-hidden="true">${all.join('')}</svg>`;
+}
+
+let groupCallCounter = 0;
+
+function nextGroupId(options: GroupOptions): string {
+  if (options.groupId) return `g:${options.groupId}`;
+  return `g:auto:${groupCallCounter++}`;
 }
 
 function stableTileId(seed: string, index: number, salt: string): string {

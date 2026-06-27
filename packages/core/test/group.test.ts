@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { renderGroup, renderGroupTiles, Navii } from '../src/index.js';
 
+const stripClipIds = (svg: string): string => svg.replace(/navii-clip-[a-z0-9]+/g, 'navii-clip-X');
+
 describe('renderGroup', () => {
   it('returns SVG with N tiles', () => {
     const svg = renderGroup(['a', 'b', 'c'], { size: 64 });
@@ -10,10 +12,18 @@ describe('renderGroup', () => {
     expect(tiles?.length).toBe(3);
   });
 
-  it('is deterministic for same seeds', () => {
+  it('is visually deterministic for same seeds (clip ids vary, shapes match)', () => {
     const a = renderGroup(['alice', 'bob'], { size: 48 });
     const b = renderGroup(['alice', 'bob'], { size: 48 });
-    expect(a).toBe(b);
+    expect(stripClipIds(a)).toBe(stripClipIds(b));
+  });
+
+  it('produces different clip ids across calls with same seeds', () => {
+    const a = renderGroup(['alice', 'bob'], { size: 48 });
+    const b = renderGroup(['alice', 'bob'], { size: 48 });
+    const idA = a.match(/navii-clip-([a-z0-9]+)/)?.[1];
+    const idB = b.match(/navii-clip-([a-z0-9]+)/)?.[1];
+    expect(idA).not.toBe(idB);
   });
 
   it('respects max with +N counter tile', () => {
@@ -80,10 +90,23 @@ describe('renderGroupTiles', () => {
     }
   });
 
-  it('is deterministic for same seeds', () => {
+  it('is visually deterministic for same seeds (clip ids vary, shapes match)', () => {
     const a = renderGroupTiles(['alice', 'bob'], { size: 48 });
     const b = renderGroupTiles(['alice', 'bob'], { size: 48 });
-    expect(a).toEqual(b);
+    const stripTiles = (t: typeof a) => ({
+      ...t,
+      tiles: t.tiles.map(stripClipIds),
+      counter: t.counter ? stripClipIds(t.counter) : undefined,
+    });
+    expect(stripTiles(a)).toEqual(stripTiles(b));
+  });
+
+  it('produces different clip ids across calls with same seeds', () => {
+    const a = renderGroupTiles(['alice', 'bob'], { size: 48 });
+    const b = renderGroupTiles(['alice', 'bob'], { size: 48 });
+    const idA = a.tiles[0]?.match(/navii-clip-([a-z0-9]+)/)?.[1];
+    const idB = b.tiles[0]?.match(/navii-clip-([a-z0-9]+)/)?.[1];
+    expect(idA).not.toBe(idB);
   });
 
   it('produces per-tile unique clipPath ids', () => {
@@ -145,7 +168,8 @@ describe('renderGroupTiles', () => {
     expect(svg).not.toContain('viewBox="0 0 0 0"');
   });
 
-  it('Navii namespace exposes groupTiles', () => {
+  it('Navii namespace exposes groupTiles and renderGroupTiles', () => {
     expect(typeof Navii.groupTiles).toBe('function');
+    expect(typeof Navii.renderGroupTiles).toBe('function');
   });
 });
