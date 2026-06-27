@@ -2,7 +2,7 @@ export * from './types.js';
 export { createRng, cyrb53 } from './prng.js';
 export { selectAvatar } from './select.js';
 export { renderAvatar, renderAvatarInner } from './render.js';
-export { renderGroup, type GroupOptions } from './group.js';
+export { renderGroup, renderGroupTiles, type GroupOptions, type GroupTiles } from './group.js';
 export { seed, seedFromEmail, normalizeEmail, type SeedFields, type SeedOptions } from './seed.js';
 export { sha256Hex } from './sha256.js';
 export { build, type BuildSpec } from './build.js';

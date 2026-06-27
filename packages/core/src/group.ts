@@ -20,15 +20,38 @@ export interface GroupOptions extends AvatarOptions {
   tileBg?: string;
 }
 
+export interface GroupTiles {
+  /** Per-tile SVG strings, in render order. Each is a self-contained `<svg>` with nested viewBox. */
+  tiles: string[];
+  /** Optional "+N" counter tile. undefined when no overflow. */
+  counter?: string;
+  /** Pixel width of the assembled stack. */
+  width: number;
+  /** Pixel height of the assembled stack. */
+  height: number;
+}
+
 /**
  * Renders N seeded avatars in a horizontal overlapping stack, with an optional
  * "+N" counter tile when `max` is exceeded.
  *
  * Each avatar is placed in its own 100x100 viewBox via nested <svg> so the
  * existing renderer is reused without changes. A circular clip per tile
- * crops to a disc — typical avatar UI.
+ * crops to a disc — typical avatar UI. Clip ids are per-tile-unique so
+ * multiple groups on the same page don't collide.
  */
 export function renderGroup(seeds: string[], options: GroupOptions = {}): string {
+  const t = renderGroupTiles(seeds, options);
+  return wrapGroupTiles(t);
+}
+
+/**
+ * Returns per-tile SVG strings instead of a single composite SVG. Enables
+ * per-tile rendering in framework adapters (React, React Native, Vue, Svelte)
+ * where nested `<svg>` elements are not supported or where independent
+ * per-tile caching/sanitization is desirable.
+ */
+export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): GroupTiles {
   if (!Array.isArray(seeds) || seeds.length === 0) {
     throw new Error('navii: renderGroup requires at least one seed');
   }
@@ -39,6 +62,7 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const tileBg = escapeXml(options.tileBg ?? '#ffffff');
   const counterFill = escapeXml(options.counterFill ?? '#E5E7EB');
   const counterInk = escapeXml(options.counterInk ?? '#374151');
+  const salt = 'g';
 
   const visibleSeeds = seeds.slice(0, Math.max(0, max - (seeds.length > max ? 1 : 0)));
   const overflow = seeds.length - visibleSeeds.length;
@@ -47,31 +71,46 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const step = size * (1 - overlap);
   const totalWidth = tileCount > 0 ? step * (tileCount - 1) + size : 0;
 
-  // Per-tile clip + ring share generic ids since each is scoped inside its own
-  // nested <svg>, isolating ids per tile.
   const tiles = visibleSeeds.map((seed, i) => {
     const x = i * step;
     const spec = selectAvatar(seed, options);
+    const tileId = stableTileId(seed, i, salt);
     const bgCircle = tileBg !== 'transparent'
       ? `<circle cx="50" cy="50" r="50" fill="${tileBg}" />`
       : '';
     return `<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
-      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
-      <g clip-path="url(#navii-clip)">${bgCircle}${renderAvatarInner(spec, options)}</g>
+      <defs><clipPath id="navii-clip-${tileId}"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip-${tileId})">${bgCircle}${renderAvatarInner(spec, options)}</g>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
     </svg>`;
   });
 
   if (overflow > 0) {
     const x = visibleSeeds.length * step;
-    tiles.push(`<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
+    const counter = `<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
       <circle cx="50" cy="50" r="50" fill="${counterFill}" />
       <text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-family="-apple-system, system-ui, sans-serif" font-weight="600" font-size="34" fill="${counterInk}">+${overflow}</text>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
-    </svg>`);
+    </svg>`;
+    return { tiles, counter, width: totalWidth, height: size };
   }
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${size}" width="${totalWidth}" height="${size}" aria-hidden="true">${tiles.join('')}</svg>`;
+  return { tiles, width: totalWidth, height: size };
+}
+
+function wrapGroupTiles(t: GroupTiles): string {
+  if (t.tiles.length === 0) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" aria-hidden="true"></svg>`;
+  }
+  const all = t.counter ? [...t.tiles, t.counter] : t.tiles;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t.width} ${t.height}" width="${t.width}" height="${t.height}" aria-hidden="true">${all.join('')}</svg>`;
+}
+
+function stableTileId(seed: string, index: number, salt: string): string {
+  let h = 5381;
+  const s = `${salt}:${index}:${seed}`;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
 }
 
 function clamp(n: number, lo: number, hi: number): number {
