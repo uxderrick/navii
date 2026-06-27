@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { renderGroup, renderGroupTiles } from '../src/index.js';
+import { renderGroup, renderGroupTiles, Navii } from '../src/index.js';
 
 describe('renderGroup', () => {
   it('returns SVG with N tiles', () => {
     const svg = renderGroup(['a', 'b', 'c'], { size: 64 });
     expect(svg.startsWith('<svg')).toBe(true);
     expect(svg.endsWith('</svg>')).toBe(true);
-    const tiles = svg.match(/<svg x="/g);
+    const tiles = svg.match(/<svg [^>]* x="/g);
     expect(tiles?.length).toBe(3);
   });
 
@@ -19,7 +19,7 @@ describe('renderGroup', () => {
   it('respects max with +N counter tile', () => {
     const svg = renderGroup(['a', 'b', 'c', 'd', 'e', 'f'], { size: 32, max: 4 });
     expect(svg).toContain('+3');
-    const tiles = svg.match(/<svg x="/g);
+    const tiles = svg.match(/<svg [^>]* x="/g);
     expect(tiles?.length).toBe(4);
   });
 
@@ -89,7 +89,21 @@ describe('renderGroupTiles', () => {
   it('produces per-tile unique clipPath ids', () => {
     const { tiles } = renderGroupTiles(['a', 'b', 'c'], { size: 64 });
     const ids = tiles.flatMap((t) => [...t.matchAll(/id="navii-clip-([a-z0-9]+)"/g)].map((m) => m[1]));
+    expect(ids).toHaveLength(3);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('produces different clipPath ids with groupId', () => {
+    const a = renderGroupTiles(['a', 'b'], { groupId: 'group-a' });
+    const b = renderGroupTiles(['a', 'b'], { groupId: 'group-b' });
+    const idsA = a.tiles.flatMap((t) => [...t.matchAll(/id="navii-clip-([a-z0-9]+)"/g)].map((m) => m[1]));
+    const idsB = b.tiles.flatMap((t) => [...t.matchAll(/id="navii-clip-([a-z0-9]+)"/g)].map((m) => m[1]));
+    expect(idsA).not.toEqual(idsB);
+  });
+
+  it('includes xmlns on standalone tile SVGs', () => {
+    const { tiles } = renderGroupTiles(['a'], { size: 48 });
+    expect(tiles[0]).toContain('xmlns="http://www.w3.org/2000/svg"');
   });
 
   it('emits a +N counter tile when overflow', () => {
@@ -116,5 +130,22 @@ describe('renderGroupTiles', () => {
     const composite = renderGroup(seeds, opts);
     const compositeW = Number(composite.match(/viewBox="0 0 ([\d.]+)/)?.[1] ?? 0);
     expect(tiles.width).toBe(compositeW);
+  });
+
+  it('renders counter-only output when max is 0', () => {
+    const { tiles, counter } = renderGroupTiles(['a', 'b', 'c'], { size: 32, max: 0 });
+    expect(tiles).toHaveLength(0);
+    expect(counter).toBeDefined();
+    expect(counter).toContain('+3');
+  });
+
+  it('composite renderGroup includes counter when max is 0', () => {
+    const svg = renderGroup(['a', 'b', 'c'], { size: 32, max: 0 });
+    expect(svg).toContain('+3');
+    expect(svg).not.toContain('viewBox="0 0 0 0"');
+  });
+
+  it('Navii namespace exposes groupTiles', () => {
+    expect(typeof Navii.groupTiles).toBe('function');
   });
 });

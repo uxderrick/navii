@@ -16,7 +16,7 @@ export {
 
 import { selectAvatar } from './select.js';
 import { renderAvatar } from './render.js';
-import { renderGroup } from './group.js';
+import { renderGroup, renderGroupTiles } from './group.js';
 import { seed, seedFromEmail } from './seed.js';
 import { build } from './build.js';
 import type { AvatarOptions } from './types.js';
@@ -114,6 +114,7 @@ export const Navii = {
   render: renderAvatar,
   select: selectAvatar,
   group: renderGroup,
+  groupTiles: renderGroupTiles,
   seed,
   seedFromEmail,
   build,

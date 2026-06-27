@@ -18,6 +18,10 @@ export interface GroupOptions extends AvatarOptions {
   ring?: string;
   /** Solid (or near-solid) fill behind each avatar inside the clip — prevents underlying avatars showing through gaps when tiles overlap. Default `#ffffff`. Use `'transparent'` to skip. */
   tileBg?: string;
+  /** Optional namespace for clipPath ids. Pass a unique value when rendering
+   *  multiple groups with the same seeds on the same page to prevent DOM id
+   *  collisions. When omitted, ids are unique within a single group call. */
+  groupId?: string;
 }
 
 export interface GroupTiles {
@@ -37,8 +41,9 @@ export interface GroupTiles {
  *
  * Each avatar is placed in its own 100x100 viewBox via nested <svg> so the
  * existing renderer is reused without changes. A circular clip per tile
- * crops to a disc — typical avatar UI. Clip ids are per-tile-unique so
- * multiple groups on the same page don't collide.
+ * crops to a disc — typical avatar UI. Clip ids are unique within a single
+ * group call; pass `options.groupId` for document-wide uniqueness when
+ * rendering multiple groups with the same seeds on the same page.
  */
 export function renderGroup(seeds: string[], options: GroupOptions = {}): string {
   const t = renderGroupTiles(seeds, options);
@@ -62,7 +67,7 @@ export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): G
   const tileBg = escapeXml(options.tileBg ?? '#ffffff');
   const counterFill = escapeXml(options.counterFill ?? '#E5E7EB');
   const counterInk = escapeXml(options.counterInk ?? '#374151');
-  const salt = 'g';
+  const salt = options.groupId ? `g:${options.groupId}` : 'g';
 
   const visibleSeeds = seeds.slice(0, Math.max(0, max - (seeds.length > max ? 1 : 0)));
   const overflow = seeds.length - visibleSeeds.length;
@@ -78,7 +83,7 @@ export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): G
     const bgCircle = tileBg !== 'transparent'
       ? `<circle cx="50" cy="50" r="50" fill="${tileBg}" />`
       : '';
-    return `<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
+    return `<svg xmlns="http://www.w3.org/2000/svg" x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
       <defs><clipPath id="navii-clip-${tileId}"><circle cx="50" cy="50" r="50" /></clipPath></defs>
       <g clip-path="url(#navii-clip-${tileId})">${bgCircle}${renderAvatarInner(spec, options)}</g>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
@@ -87,7 +92,7 @@ export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): G
 
   if (overflow > 0) {
     const x = visibleSeeds.length * step;
-    const counter = `<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
+    const counter = `<svg xmlns="http://www.w3.org/2000/svg" x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
       <circle cx="50" cy="50" r="50" fill="${counterFill}" />
       <text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-family="-apple-system, system-ui, sans-serif" font-weight="600" font-size="34" fill="${counterInk}">+${overflow}</text>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
@@ -99,10 +104,10 @@ export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): G
 }
 
 function wrapGroupTiles(t: GroupTiles): string {
-  if (t.tiles.length === 0) {
+  const all = t.counter ? [...t.tiles, t.counter] : t.tiles;
+  if (all.length === 0) {
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" aria-hidden="true"></svg>`;
   }
-  const all = t.counter ? [...t.tiles, t.counter] : t.tiles;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t.width} ${t.height}" width="${t.width}" height="${t.height}" aria-hidden="true">${all.join('')}</svg>`;
 }
 
