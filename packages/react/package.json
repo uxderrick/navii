@@ -52,8 +52,8 @@
     "@usenavii/core": "workspace:^0.9.0"
   },
   "peerDependencies": {
-    "react": ">=17",
-    "react-dom": ">=17"
+    "react": ">=18",
+    "react-dom": ">=18"
   },
   "peerDependenciesMeta": {
     "react-dom": {

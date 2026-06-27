@@ -20,7 +20,7 @@ yarn add @usenavii/react
 bun  add @usenavii/react
 ```
 
-React `>=17` is a peer dep. `@usenavii/core` and `@mhaadi/svg` are auto-installed.
+React `>=18` is a peer dep. `@usenavii/core` and `@mhaadi/svg` are auto-installed.
 
 ## Usage
 

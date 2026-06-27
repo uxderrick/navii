@@ -163,14 +163,15 @@ describe('NaviiGroup', () => {
     expect(container.innerHTML).toBe('');
   });
 
-  it('is deterministic across re-renders', async () => {
+  it('is visually deterministic across re-renders (clip ids vary, shapes match)', async () => {
+    const normalize = (html: string) => html.replace(/navii-clip-[a-z0-9]+/g, 'navii-clip-X');
     const a = render(<NaviiGroup seeds={['x', 'y']} size={40} />);
     await waitFor(() => expect(a.container.querySelectorAll('svg').length).toBe(2));
-    const htmlA = a.container.innerHTML;
+    const htmlA = normalize(a.container.innerHTML);
     cleanup();
     const b = render(<NaviiGroup seeds={['x', 'y']} size={40} />);
     await waitFor(() => expect(b.container.querySelectorAll('svg').length).toBe(2));
-    expect(b.container.innerHTML).toBe(htmlA);
+    expect(normalize(b.container.innerHTML)).toBe(htmlA);
   });
 
   it('positions tiles with absolute left offsets', async () => {
