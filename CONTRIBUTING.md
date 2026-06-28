@@ -1,10 +1,10 @@
 # Contributing
 
-Small project, mostly solo. The notes below exist so consumers of `@usenavii/core` and `@usenavii/react` know what to expect from a version bump.
+Small project, mostly solo. The notes below exist so consumers of `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, and `@usenavii/svelte` know what to expect from a version bump.
 
 ## Versioning
 
-Both packages follow [SemVer](https://semver.org) and ship in **lockstep** — they always have the same version, and `@usenavii/react` depends on the matching `@usenavii/core` via `workspace:^<version>`.
+All packages follow [SemVer](https://semver.org) and ship in **lockstep** — they always have the same version, and each framework package depends on the matching `@usenavii/core` via `workspace:^<version>`.
 
 | Bump | When |
 |------|------|
@@ -33,7 +33,7 @@ Manual GitHub Actions trigger — no local `npm login` needed.
 
 1. Go to **Actions → deprecate → Run workflow**.
 2. Inputs:
-   - `package` — `@usenavii/core`, `@usenavii/react`, or `both`
+   - `package` — `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, `@usenavii/svelte`, or `all`
    - `version` — e.g. `0.4.0`
    - `message` — e.g. `Critical bug in seed derivation, upgrade to 0.4.1`
 3. Consumers see `npm warn deprecated @usenavii/react@0.4.0: …` on their next install.
@@ -45,8 +45,8 @@ To un-deprecate, re-run with an empty message.
 
 Before pushing a `vX.Y.Z` tag:
 
-- [ ] `packages/core/package.json` and `packages/react/package.json` versions match and are bumped
-- [ ] `packages/react/package.json` `dependencies."@usenavii/core"` is `workspace:^<new version>`
+- [ ] All `packages/*/package.json` versions match and are bumped
+- [ ] Each framework package's `dependencies."@usenavii/core"` is `workspace:^<new version>`
 - [ ] `CHANGELOG.md` has a finalized section for the new version (move from `[Unreleased]`, add date, add compare link)
 - [ ] `pnpm -r run build && pnpm -r run typecheck && pnpm -r run test` is clean
 - [ ] Tag `vX.Y.Z` matches the version in `package.json`
