@@ -2,7 +2,7 @@ export * from './types.js';
 export { createRng, cyrb53 } from './prng.js';
 export { selectAvatar } from './select.js';
 export { renderAvatar, renderAvatarInner } from './render.js';
-export { renderGroup, type GroupOptions } from './group.js';
+export { renderGroup, renderGroupTiles, type GroupOptions, type GroupTiles } from './group.js';
 export { seed, seedFromEmail, normalizeEmail, type SeedFields, type SeedOptions } from './seed.js';
 export { sha256Hex } from './sha256.js';
 export { build, type BuildSpec } from './build.js';
@@ -16,7 +16,7 @@ export {
 
 import { selectAvatar } from './select.js';
 import { renderAvatar } from './render.js';
-import { renderGroup } from './group.js';
+import { renderGroup, renderGroupTiles } from './group.js';
 import { seed, seedFromEmail } from './seed.js';
 import { build } from './build.js';
 import type { AvatarOptions } from './types.js';
@@ -114,6 +114,8 @@ export const Navii = {
   render: renderAvatar,
   select: selectAvatar,
   group: renderGroup,
+  groupTiles: renderGroupTiles,
+  renderGroupTiles,
   seed,
   seedFromEmail,
   build,

@@ -18,6 +18,21 @@ export interface GroupOptions extends AvatarOptions {
   ring?: string;
   /** Solid (or near-solid) fill behind each avatar inside the clip — prevents underlying avatars showing through gaps when tiles overlap. Default `#ffffff`. Use `'transparent'` to skip. */
   tileBg?: string;
+  /** Optional namespace for clipPath ids. Pass a unique value when rendering
+   *  multiple groups with the same seeds on the same page to prevent DOM id
+   *  collisions. When omitted, ids are unique within a single group call. */
+  groupId?: string;
+}
+
+export interface GroupTiles {
+  /** Per-tile SVG strings, in render order. Each is a self-contained `<svg>` with nested viewBox. */
+  tiles: string[];
+  /** Optional "+N" counter tile. undefined when no overflow. */
+  counter?: string;
+  /** Pixel width of the assembled stack. */
+  width: number;
+  /** Pixel height of the assembled stack. */
+  height: number;
 }
 
 /**
@@ -26,9 +41,24 @@ export interface GroupOptions extends AvatarOptions {
  *
  * Each avatar is placed in its own 100x100 viewBox via nested <svg> so the
  * existing renderer is reused without changes. A circular clip per tile
- * crops to a disc — typical avatar UI.
+ * crops to a disc — typical avatar UI. Clip ids are derived from a hash of
+ * all seeds so output is deterministic across SSR and client. Two groups
+ * with the same seeds will share clip ids — pass `options.groupId` for
+ * document-wide uniqueness when rendering multiple groups with the same
+ * seeds on the same page.
  */
 export function renderGroup(seeds: string[], options: GroupOptions = {}): string {
+  const t = renderGroupTiles(seeds, options);
+  return wrapGroupTiles(t);
+}
+
+/**
+ * Returns per-tile SVG strings instead of a single composite SVG. Enables
+ * per-tile rendering in framework adapters (React, React Native, Vue, Svelte)
+ * where nested `<svg>` elements are not supported or where independent
+ * per-tile caching/sanitization is desirable.
+ */
+export function renderGroupTiles(seeds: string[], options: GroupOptions = {}): GroupTiles {
   if (!Array.isArray(seeds) || seeds.length === 0) {
     throw new Error('navii: renderGroup requires at least one seed');
   }
@@ -39,6 +69,7 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const tileBg = escapeXml(options.tileBg ?? '#ffffff');
   const counterFill = escapeXml(options.counterFill ?? '#E5E7EB');
   const counterInk = escapeXml(options.counterInk ?? '#374151');
+  const salt = groupSalt(seeds, options);
 
   const visibleSeeds = seeds.slice(0, Math.max(0, max - (seeds.length > max ? 1 : 0)));
   const overflow = seeds.length - visibleSeeds.length;
@@ -47,31 +78,58 @@ export function renderGroup(seeds: string[], options: GroupOptions = {}): string
   const step = size * (1 - overlap);
   const totalWidth = tileCount > 0 ? step * (tileCount - 1) + size : 0;
 
-  // Per-tile clip + ring share generic ids since each is scoped inside its own
-  // nested <svg>, isolating ids per tile.
   const tiles = visibleSeeds.map((seed, i) => {
     const x = i * step;
     const spec = selectAvatar(seed, options);
+    const tileId = stableTileId(seed, i, salt);
     const bgCircle = tileBg !== 'transparent'
       ? `<circle cx="50" cy="50" r="50" fill="${tileBg}" />`
       : '';
-    return `<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
-      <defs><clipPath id="navii-clip"><circle cx="50" cy="50" r="50" /></clipPath></defs>
-      <g clip-path="url(#navii-clip)">${bgCircle}${renderAvatarInner(spec, options)}</g>
+    return `<svg xmlns="http://www.w3.org/2000/svg" x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
+      <defs><clipPath id="navii-clip-${tileId}"><circle cx="50" cy="50" r="50" /></clipPath></defs>
+      <g clip-path="url(#navii-clip-${tileId})">${bgCircle}${renderAvatarInner(spec, options)}</g>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
     </svg>`;
   });
 
   if (overflow > 0) {
     const x = visibleSeeds.length * step;
-    tiles.push(`<svg x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
+    const counter = `<svg xmlns="http://www.w3.org/2000/svg" x="${x}" y="0" width="${size}" height="${size}" viewBox="0 0 100 100" overflow="visible">
       <circle cx="50" cy="50" r="50" fill="${counterFill}" />
       <text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-family="-apple-system, system-ui, sans-serif" font-weight="600" font-size="34" fill="${counterInk}">+${overflow}</text>
       <circle cx="50" cy="50" r="49" fill="none" stroke="${ring}" stroke-width="2" />
-    </svg>`);
+    </svg>`;
+    return { tiles, counter, width: totalWidth, height: size };
   }
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${size}" width="${totalWidth}" height="${size}" aria-hidden="true">${tiles.join('')}</svg>`;
+  return { tiles, width: totalWidth, height: size };
+}
+
+function wrapGroupTiles(t: GroupTiles): string {
+  const all = t.counter ? [...t.tiles, t.counter] : t.tiles;
+  if (all.length === 0) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" aria-hidden="true"></svg>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t.width} ${t.height}" width="${t.width}" height="${t.height}" aria-hidden="true">${all.join('')}</svg>`;
+}
+
+function groupSalt(seeds: readonly string[], options: GroupOptions): string {
+  if (options.groupId) return `g:${options.groupId}`;
+  let h = 5381;
+  for (let i = 0; i < seeds.length; i++) {
+    const s = seeds[i];
+    if (!s) continue;
+    for (let j = 0; j < s.length; j++) h = ((h << 5) + h + s.charCodeAt(j)) | 0;
+    h = ((h << 5) + h + 0x1f) | 0;
+  }
+  return `g:${(h >>> 0).toString(36)}`;
+}
+
+function stableTileId(seed: string, index: number, salt: string): string {
+  let h = 5381;
+  const s = `${salt}:${index}:${seed}`;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
 }
 
 function clamp(n: number, lo: number, hi: number): number {
