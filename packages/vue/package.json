@@ -43,6 +43,9 @@
   },
   "bugs": "https://github.com/uxderrick/navii/issues",
   "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
   "publishConfig": {
     "access": "public"
   },
