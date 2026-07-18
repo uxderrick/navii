@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SVG } from '@mhaadi/svg/svelte';
+  import SVG from '@mhaadi/svg/svelte';
   import { createAvatar, type AvatarOptions, type StyleHint } from '@usenavii/core';
 
   let {

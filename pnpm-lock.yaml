@@ -145,9 +145,15 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^4.0.0
         version: 4.0.4(svelte@5.56.4)(vite@5.4.21(@types/node@20.19.41)(terser@5.48.0))
+      '@testing-library/jest-dom':
+        specifier: ^6.9.1
+        version: 6.9.1
       '@testing-library/svelte':
         specifier: ^5.2.0
         version: 5.4.2(svelte@5.56.4)(vite@5.4.21(@types/node@20.19.41)(terser@5.48.0))(vitest@2.1.9(@types/node@20.19.41)(happy-dom@15.11.7)(terser@5.48.0))
+      happy-dom:
+        specifier: ^15.0.0
+        version: 15.11.7
       svelte:
         specifier: ^5.56.3
         version: 5.56.4
