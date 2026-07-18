@@ -58,6 +58,9 @@
   },
   "devDependencies": {
     "@mhaadi/svg": "^0.2.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/vue": "^8.1.0",
+    "happy-dom": "^15.0.0",
     "tsup": "^8.3.0",
     "typescript": "^5.9.0",
     "vitest": "^2.1.9",
