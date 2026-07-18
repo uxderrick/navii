@@ -278,7 +278,7 @@ describe('api', () => {
     expect(res.headers.get('content-type')).toContain('image/svg+xml');
     const body = await res.text();
     expect(body.startsWith('<svg')).toBe(true);
-    expect(body.match(/<svg x="/g)?.length).toBe(3);
+    expect(body.match(/<svg\b[^>]*\bx="/g)?.length).toBe(3);
   });
 
   it('GET /group requires seeds', async () => {
