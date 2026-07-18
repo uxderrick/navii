@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SVG } from '@mhaadi/svg/svelte';
+  import SVG from '@mhaadi/svg/svelte';
   import { renderGroup, renderGroupTiles, type GroupOptions, type StyleHint } from '@usenavii/core';
 
   let {
