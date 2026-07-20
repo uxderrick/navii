@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to `@usenavii/core` and `@usenavii/react`.
+All notable changes to `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, and `@usenavii/svelte`.
 
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). Both packages ship in lockstep.
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). All packages ship in lockstep.
 
 ## [Unreleased]
 
@@ -10,6 +10,37 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 - **`renderGroupTiles(seeds, options)`** — returns per-tile SVG strings (`GroupTiles`) instead of a single composite SVG. Enables per-tile rendering in framework adapters where nested `<svg>` elements aren't supported (React Native) or where independent per-tile caching is desirable.
 - Per-tile unique `clipPath` ids in `renderGroup` output (`navii-clip-${tileId}` instead of shared `navii-clip`), preventing DOM id collisions when multiple groups render on the same page.
+
+### Changed (`@usenavii/react` 0.9.0) — breaking
+
+- `<Navii>` and `<NaviiGroup>` now render inline `<svg>` elements via `@mhaadi/svg` instead of `<img src="data:image/svg+xml;...">`. CSS animations and `<title>` accessibility work natively in the DOM. Pass `as="img"` to keep the old data-URI `<img>` behavior.
+- `<NaviiGroup>` now renders each tile as an independent `<svg>` inside a wrapper `<div>` with absolute positioning, instead of a single composite `<img>`. Pass `as="img"` for the composite data-URI `<img>` shape.
+- Added `@mhaadi/svg` as a dependency.
+- `react-dom` is now an optional peer dependency (for SSR).
+
+### Added (`@usenavii/react` 0.9.0)
+
+- `as` prop on `<Navii>` and `<NaviiGroup>` — `'svg'` (default, inline) or `'img'` (data-URI `<img>` fallback).
+- `sanitize` prop — run better-svg's sanitizer on engine output. Default `false` (engine output is already escaped).
+- `loading` / `fallback` props — rendered while SVG is parsing or when parsing fails. Forwarded to `@mhaadi/svg`.
+- `onSvgLoad` / `onSvgError` callbacks — forwarded to `@mhaadi/svg`.
+- `GroupTiles` type re-exported from `@usenavii/core`.
+
+### Added (`@usenavii/react-native` 0.9.0)
+
+- **New package.** React Native binding for Navii. Renders avatars as `react-native-svg` trees via `@mhaadi/svg/react-native`. Peer deps: `react-native` `>=0.73`, `react-native-svg` `>=15`.
+- `<Navii seed="..." />` and `<NaviiGroup seeds={[...]} />` components with the same prop surface as `@usenavii/react` (minus `as`, `className`, DOM-specific props).
+- `animated` prop accepted but rendered statically on React Native (first frame only). CSS keyframe animations don't translate to `react-native-svg`. A future version will use `react-native-reanimated`.
+
+### Added (`@usenavii/vue` 0.9.0)
+
+- **New package.** Vue 3 binding for Navii. Renders inline `<svg>` via `@mhaadi/svg/vue`. Peer dep: `vue` `>=3.5`.
+- `<Navii>` and `<NaviiGroup>` components with the same prop surface as `@usenavii/react`. Uses Vue's `defineComponent` + `computed` + `h`.
+
+### Added (`@usenavii/svelte` 0.9.0)
+
+- **New package.** Svelte 5 binding for Navii. Renders inline `<svg>` via `@mhaadi/svg/svelte`. Peer dep: `svelte` `>=5`.
+- `<Navii>` and `<NaviiGroup>` components using Svelte 5 runes (`$props`, `$derived`, `$derived.by`).
 
 ## [0.27.0] - 2026-06-10
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { SVG as SvgRoot } from '@mhaadi/svg/react';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
+import { SVG as SvgRoot } from '@mhaadi/svg/react-native';
 import {
   createAvatar,
   renderGroup,
@@ -7,44 +8,26 @@ import {
   type AvatarOptions,
   type GroupOptions,
   type GroupTiles,
-  type MoodId,
-  type Palette,
   type StyleHint,
 } from '@usenavii/core';
 
 export interface NaviiProps extends Omit<AvatarOptions, 'style'> {
   seed: string;
-  /** Render mode. `'svg'` (default) renders an inline `<svg>` via `@mhaadi/svg`
-   *  with full CSS animation support. `'img'` falls back to the original
-   *  `<img src="data:image/svg+xml;...">` shape — useful for CDN prefetch,
-   *  download attributes, or contexts where an `<img>` is expected. */
-  as?: 'svg' | 'img';
-  className?: string;
-  /** Standard React inline styles applied to the rendered root element. */
-  style?: React.CSSProperties;
-  /** Engine-level style hint (masc / femme / neutral) — biases seeded picks. */
+  className?: never;
+  style?: StyleProp<ViewStyle>;
   styleHint?: StyleHint;
-  /** Run better-svg's sanitizer on the engine output. Default `false` — the
-   *  engine already XML-escapes every dynamic field and emits no
-   *  `<script>`/event handlers. Flip on if composing untrusted SVG into the
-   *  same pipeline. */
   sanitize?: boolean;
-  /** Rendered while the SVG is being parsed. Forwarded to `@mhaadi/svg`. */
   loading?: React.ReactNode;
-  /** Rendered when parsing fails. Forwarded to `@mhaadi/svg`. */
   fallback?: React.ReactNode;
-  /** Called once the SVG markup is resolved. Forwarded to `@mhaadi/svg`. */
   onSvgLoad?: (markup: string) => void;
-  /** Called when loading or parsing fails. Forwarded to `@mhaadi/svg`. */
   onSvgError?: (error: Error) => void;
   alt?: string;
 }
 
 /**
- * Drop-in React avatar. Renders the engine output as an inline `<svg>` via
- * `@mhaadi/svg` so CSS animations and `<title>` accessibility work natively
- * in the DOM. Pass `as="img"` for the data-URI `<img>` shape. Memoized on
- * seed + options.
+ * React Native avatar. Renders the engine output as a `react-native-svg` tree
+ * via `@mhaadi/svg/react-native`. Animation (`animated` prop) is not yet
+ * supported on React Native — the first frame is rendered statically.
  */
 export function Navii({
   seed,
@@ -56,8 +39,6 @@ export function Navii({
   animated,
   mood,
   packs,
-  as = 'svg',
-  className,
   style,
   styleHint,
   sanitize = false,
@@ -80,68 +61,43 @@ export function Navii({
     return createAvatar(seed, opts);
   }, [seed, size, paletteId, palette, background, title, animated, mood, packs, styleHint]);
 
-  if (as === 'img') {
-    return (
-      <img
-        src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
-        width={size}
-        height={size}
-        alt={alt ?? title ?? ''}
-        className={className}
-        style={style}
-      />
-    );
-  }
-
-  const hasLabel = Boolean(alt || title);
   const svgProps = {
     src: svg,
     width: size,
     height: size,
-    className,
-    style,
     sanitize,
-    ...(hasLabel ? { role: 'img' as const, 'aria-label': alt ?? title } : { 'aria-hidden': true }),
     ...(loading !== undefined ? { loading } : {}),
     ...(fallback !== undefined ? { fallback } : {}),
     ...(onSvgLoad !== undefined ? { onSvgLoad } : {}),
     ...(onSvgError !== undefined ? { onSvgError } : {}),
   };
 
-  return <SvgRoot {...svgProps} />;
+  return (
+    <View
+      style={style}
+      accessibilityLabel={alt ?? title}
+      accessibilityRole={alt || title ? 'image' : undefined}
+    >
+      <SvgRoot {...svgProps} />
+    </View>
+  );
 }
 
 export interface NaviiGroupProps extends Omit<GroupOptions, 'style'> {
   seeds: string[];
-  /** Render mode. `'svg'` (default) renders each tile as an inline `<svg>`
-   *  via `@mhaadi/svg`, positioned absolutely inside a wrapper `<div>`.
-   *  `'img'` falls back to the composite data-URI `<img>`. */
-  as?: 'svg' | 'img';
-  className?: string;
-  /** Standard React inline styles applied to the wrapper element. */
-  style?: React.CSSProperties;
-  /** Engine-level style hint — biases seeded picks per tile. */
+  style?: StyleProp<ViewStyle>;
   styleHint?: StyleHint;
-  /** Run better-svg's sanitizer on each tile. Default `false`. */
   sanitize?: boolean;
-  /** Forwarded to `@mhaadi/svg` for each tile. */
   loading?: React.ReactNode;
-  /** Forwarded to `@mhaadi/svg` for each tile. */
   fallback?: React.ReactNode;
-  /** Forwarded to `@mhaadi/svg` for each tile. */
   onSvgLoad?: (markup: string) => void;
-  /** Forwarded to `@mhaadi/svg` for each tile. */
   onSvgError?: (error: Error) => void;
-  /** Accessible label for the whole stack. Defaults to "Group of N avatars". */
   alt?: string;
 }
 
 /**
- * Overlapping avatar stack. Renders each tile as an independent inline `<svg>`
- * via `@mhaadi/svg`, positioned absolutely inside a wrapper `<div>` so each
- * tile can be cached/sanitized/animated independently. Pass `as="img"` for the
- * composite data-URI `<img>` shape. Same per-tile determinism as `<Navii>`:
- * identical seed + options → identical pixel output.
+ * Overlapping avatar stack for React Native. Renders each tile as an
+ * independent `react-native-svg` tree inside a positioned `View`.
  */
 export function NaviiGroup({
   seeds,
@@ -158,8 +114,6 @@ export function NaviiGroup({
   mood,
   animated,
   packs,
-  as = 'svg',
-  className,
   style,
   styleHint,
   sanitize = false,
@@ -195,25 +149,10 @@ export function NaviiGroup({
 
   if (!tiles) return null;
 
-  if (as === 'img') {
-    return (
-      <img
-        src={`data:image/svg+xml;utf8,${encodeURIComponent(renderGroup(stableSeeds, groupOpts))}`}
-        width={tiles.width}
-        height={tiles.height}
-        alt={alt ?? `Group of ${stableSeeds.length} avatars`}
-        className={className}
-        style={style}
-      />
-    );
-  }
-
   const step = size * (1 - Math.max(0, Math.min(0.7, overlap)));
   const all = tiles.counter ? [...tiles.tiles, tiles.counter] : tiles.tiles;
-  const label = alt ?? (alt === undefined ? `Group of ${stableSeeds.length} avatars` : undefined);
 
   const tileProps = {
-    src: '',
     width: size,
     height: size,
     sanitize,
@@ -224,20 +163,20 @@ export function NaviiGroup({
   };
 
   return (
-    <div
-      className={className}
-      style={{ position: 'relative', width: tiles.width, height: tiles.height, ...style }}
-      {...(label ? { role: 'img', 'aria-label': label } : {})}
+    <View
+      style={[{ position: 'relative', width: tiles.width, height: tiles.height }, style] as StyleProp<ViewStyle>}
+      accessibilityLabel={alt ?? `Group of ${stableSeeds.length} avatars`}
+      accessibilityRole="image"
     >
       {all.map((tile, i) => (
-        <div
+        <View
           key={i}
           style={{ position: 'absolute', left: i * step, top: 0, width: size, height: size }}
         >
           <SvgRoot {...tileProps} src={tile} />
-        </div>
+        </View>
       ))}
-    </div>
+    </View>
   );
 }
 

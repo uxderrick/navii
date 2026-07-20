@@ -20,7 +20,7 @@ yarn add @usenavii/react
 bun  add @usenavii/react
 ```
 
-React `>=17` is a peer dep. `@usenavii/core` is auto-installed.
+React `>=18` is a peer dep. `@usenavii/core` and `@mhaadi/svg` are auto-installed.
 
 ## Usage
 
@@ -35,7 +35,7 @@ import { Navii } from '@usenavii/react';
 />
 ```
 
-Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated as opaque by the browser — no inline scripting surface.
+Renders as an inline `<svg>` via [`@mhaadi/svg`](https://svg.mhaadi.dev) so CSS animations and `<title>` accessibility work natively in the DOM. Pass `as="img"` for the data-URI `<img>` shape (CDN prefetch, download attributes, etc.).
 
 ## Props
 
@@ -43,6 +43,7 @@ Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated
 | ------------ | ----------------------------------------------------- | ------------ |
 | `seed`       | `string` — **required**                               | —            |
 | `size`       | `number` (px)                                         | `96`         |
+| `as`         | `'svg' \| 'img'` — inline `<svg>` or data-URI `<img>` | `'svg'`      |
 | `paletteId`  | known palette id (e.g. `'mint'`)                      | seed-derived |
 | `palette`    | `Palette` object — runtime/brand palette, wins over `paletteId` | none |
 | `background` | `'none' \| 'solid' \| 'ring'` or `{ color }`          | seed-derived |
@@ -52,9 +53,12 @@ Renders as a memoized `<img src="data:image/svg+xml;...">` so the SVG is treated
 | `tileBg`     | CSS color or `'auto'` (palette accent)                | none         |
 | `title`      | accessible label                                      | none         |
 | `animated`   | `boolean` — idle float / blink / sway / twinkle       | `false`      |
-| `alt`        | image alt text (falls back to `title`)                | `''`         |
-| `className`  | passed through to `<img>`                             | —            |
-| `style`      | passed through to `<img>`                             | —            |
+| `alt`        | accessible label (falls back to `title`)              | `''`         |
+| `sanitize`   | `boolean` — run better-svg sanitizer on engine output | `false`      |
+| `loading`    | `ReactNode` — rendered while SVG is parsing           | none         |
+| `fallback`   | `ReactNode` — rendered when parsing fails             | none         |
+| `className`  | passed through to the root element                    | —            |
+| `style`      | passed through to the root element                    | —            |
 
 ### Mood overlay
 
@@ -89,6 +93,7 @@ import { NaviiGroup } from '@usenavii/react';
 | ------------- | ----------------------------------------------------- | ------------ |
 | `seeds`       | `string[]` — **required**                             | —            |
 | `size`        | `number` per-tile px                                  | `64`         |
+| `as`          | `'svg' \| 'img'` — per-tile inline or composite `<img>` | `'svg'`    |
 | `overlap`     | `number` 0–0.7                                        | `0.3`        |
 | `max`         | `number` cap before showing `+N` counter              | all          |
 | `ring`        | `string` border color                                 | `#ffffff`    |
@@ -103,10 +108,13 @@ import { NaviiGroup } from '@usenavii/react';
 | `animated`    | `boolean` — idle motion per tile                      | `false`      |
 | `styleHint`   | `'masc' \| 'femme' \| 'neutral'`                      | none         |
 | `alt`         | accessible label (defaults to "Group of N avatars")   | derived      |
-| `className`   | passed through to `<img>`                             | —            |
-| `style`       | passed through to `<img>`                             | —            |
+| `sanitize`    | `boolean` — run better-svg sanitizer per tile         | `false`      |
+| `loading`     | `ReactNode` — forwarded to each tile                  | none         |
+| `fallback`    | `ReactNode` — forwarded to each tile                  | none         |
+| `className`   | passed through to the wrapper element                 | —            |
+| `style`       | passed through to the wrapper element                 | —            |
 
-The `<img>` width is calculated from `size`, `overlap`, and `max` so it has correct intrinsic dimensions — no layout shift after load.
+When `as="svg"` (default), each tile renders as an independent inline `<svg>` positioned absolutely inside a wrapper `<div>`. When `as="img"`, the composite SVG is rendered as a data-URI `<img>` with correct intrinsic dimensions.
 
 ## The seed: read this once
 
@@ -173,7 +181,7 @@ Or render `<Navii>` directly when `photoUrl` is null — no fetch needed, determ
 
 ## Determinism guarantee
 
-Same seed + same options → byte-identical SVG. Memoized on `seed + size + paletteId + palette + background + mood + title + animated + styleHint`. Re-renders with same props don't re-run the engine.
+Same seed + same options → byte-identical SVG. Memoized on `seed + size + paletteId + palette + background + mood + title + animated + styleHint + packs`. Re-renders with same props don't re-run the engine. `@mhaadi/svg` also caches parsed SVG markup by source string, so identical avatars across the tree deduplicate automatically.
 
 ## License
 
