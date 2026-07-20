@@ -28,23 +28,21 @@ describe('Navii', () => {
   });
 
   it('updates generated markup when the seed changes', async () => {
-    const view = render(Navii, { seed: 'alice', as: 'img' });
-    const image = view.container.querySelector('img');
-    const before = image?.getAttribute('src');
+    const view = render(Navii, { seed: 'alice', as: 'img', alt: 'Alice' });
+    const before = screen.getByRole('img', { name: 'Alice' }).getAttribute('src');
 
-    await view.rerender({ seed: 'bob', as: 'img' });
+    await view.rerender({ seed: 'bob', as: 'img', alt: 'Bob' });
 
-    expect(view.container.querySelector('img')?.getAttribute('src')).not.toBe(before);
+    expect(screen.getByRole('img', { name: 'Bob' }).getAttribute('src')).not.toBe(before);
   });
 
   it('is deterministic across equivalent rerenders', async () => {
-    const view = render(Navii, { seed: 'alice', as: 'img' });
-    const image = view.container.querySelector('img');
-    const before = image?.getAttribute('src');
+    const view = render(Navii, { seed: 'alice', as: 'img', alt: 'Alice' });
+    const before = screen.getByRole('img', { name: 'Alice' }).getAttribute('src');
 
-    await view.rerender({ seed: 'alice', as: 'img' });
+    await view.rerender({ seed: 'alice', as: 'img', alt: 'Alice' });
 
-    expect(view.container.querySelector('img')?.getAttribute('src')).toBe(before);
+    expect(screen.getByRole('img', { name: 'Alice' }).getAttribute('src')).toBe(before);
   });
 });
 
