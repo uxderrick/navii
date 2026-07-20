@@ -17,3 +17,6 @@ docs/private/
 
 # Claude Code per-developer overrides (project settings + hooks are tracked)
 .claude/settings.local.json
+
+# svelte-kit generated artifacts
+.svelte-kit/
