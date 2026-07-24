@@ -85,35 +85,91 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - run: pnpm install --frozen-lockfile=false
-      - run: pnpm --filter '@usenavii/core' run build
-      - run: pnpm --filter '@usenavii/react' run build
+
+      - name: build npm packages
+        run: |
+          set -euo pipefail
+          for package_name in \
+            @usenavii/core \
+            @usenavii/react \
+            @usenavii/react-native \
+            @usenavii/vue \
+            @usenavii/svelte
+          do
+            pnpm --filter "$package_name" run build
+          done
 
       - name: stage CHANGELOG into each package
         run: |
-          cp CHANGELOG.md packages/core/CHANGELOG.md
-          cp CHANGELOG.md packages/react/CHANGELOG.md
+          set -euo pipefail
+          for package_dir in core react react-native vue svelte; do
+            cp CHANGELOG.md "packages/$package_dir/CHANGELOG.md"
+          done
 
-      - name: publish @usenavii/core
-        working-directory: packages/core
+      - name: validate npm packages
         run: |
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          if npm view @usenavii/core@$PKG_VERSION version >/dev/null 2>&1; then
-            echo "@usenavii/core@$PKG_VERSION already on registry — skipping"
-            exit 0
-          fi
-          pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
 
-      - name: publish @usenavii/react
-        working-directory: packages/react
+          const packageDirs = ['core', 'react', 'react-native', 'vue', 'svelte'];
+          const manifests = packageDirs.map((packageDir) => {
+            const path = `packages/${packageDir}/package.json`;
+            return {
+              packageDir,
+              manifest: JSON.parse(fs.readFileSync(path, 'utf8')),
+            };
+          });
+
+          const expectedVersion = manifests[0].manifest.version;
+          for (const { packageDir, manifest } of manifests) {
+            if (manifest.version !== expectedVersion) {
+              throw new Error(
+                `${manifest.name} is ${manifest.version}; expected ${expectedVersion}`,
+              );
+            }
+
+            if (packageDir === 'core') continue;
+
+            const expectedCoreRange = `workspace:^${expectedVersion}`;
+            const actualCoreRange = manifest.dependencies?.['@usenavii/core'];
+            if (actualCoreRange !== expectedCoreRange) {
+              throw new Error(
+                `${manifest.name} depends on @usenavii/core ${actualCoreRange}; expected ${expectedCoreRange}`,
+              );
+            }
+          }
+
+          console.log(`Validated five npm packages at version ${expectedVersion}`);
+          NODE
+
+          package_tarballs="$RUNNER_TEMP/navii-package-tarballs"
+          mkdir -p "$package_tarballs"
+          for package_dir in core react react-native vue svelte; do
+            (
+              cd "packages/$package_dir"
+              pnpm pack --pack-destination "$package_tarballs"
+            )
+          done
+
+      - name: publish npm packages
         run: |
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          if npm view @usenavii/react@$PKG_VERSION version >/dev/null 2>&1; then
-            echo "@usenavii/react@$PKG_VERSION already on registry — skipping"
-            exit 0
-          fi
-          pnpm publish --access public --no-git-checks
+          set -euo pipefail
+          for package_dir in core react react-native vue svelte; do
+            package_name=$(node -p "require('./packages/$package_dir/package.json').name")
+            package_version=$(node -p "require('./packages/$package_dir/package.json').version")
+
+            if npm view "$package_name@$package_version" version >/dev/null 2>&1; then
+              echo "$package_name@$package_version already on registry — skipping"
+              continue
+            fi
+
+            echo "Publishing $package_name@$package_version"
+            (
+              cd "packages/$package_dir"
+              pnpm publish --access public --no-git-checks
+            )
+          done
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
