@@ -121,6 +121,41 @@ describe('api', () => {
     }
   });
 
+  it('documents every framework package', async () => {
+    const pages = [
+      ['sdk-react-native', '@usenavii/react-native', 'react-native-svg'],
+      ['sdk-vue', '@usenavii/vue', 'Vue 3'],
+      ['sdk-svelte', '@usenavii/svelte', 'Svelte 5'],
+    ] as const;
+
+    for (const [slug, packageName, peer] of pages) {
+      const res = await get(`/docs/${slug}`);
+      expect(res.status).toBe(200);
+      const body = await res.text();
+      expect(body).toContain(packageName);
+      expect(body).toContain(peer);
+    }
+  });
+
+  it('documents self-contained framework adapters', async () => {
+    const recipes = await (await get('/docs/recipes')).text();
+    expect(recipes).toContain('@usenavii/react-native');
+
+    const react = await (await get('/docs/sdk-react')).text();
+    expect(react).toContain('inline SVG');
+    expect(react).toContain('No separate SVG adapter installation');
+  });
+
+  it('publishes detailed v0.28.1 compatibility guidance', async () => {
+    const res = await get('/blog/v0.28.1');
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('Node ESM');
+    expect(body).toContain('SSR');
+    expect(body).toContain('Metro 0.76');
+    expect(body).toContain('No component API changes');
+  });
+
   it('GET /avatar/:seed returns SVG', async () => {
     const res = await get('/avatar/alice');
     expect(res.status).toBe(200);

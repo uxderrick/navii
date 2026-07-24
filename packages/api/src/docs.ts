@@ -61,6 +61,9 @@ const PAGES: DocPage[] = [
   { slug: 'rate-limits', section: 'Reference', title: 'Rate limits',         summary: 'Per-route quotas, why immutable caching makes Navii cheap to host.', body: pageRateLimits },
   { slug: 'sdk-core',    section: 'SDK',       title: '@usenavii/core',         summary: 'Engine functions, types, and advanced composition.', body: pageSdkCore },
   { slug: 'sdk-react',   section: 'SDK',       title: '@usenavii/react',        summary: 'React component with memoized rendering.', body: pageSdkReact },
+  { slug: 'sdk-react-native', section: 'SDK', title: '@usenavii/react-native', summary: 'Native SVG components for React Native.', body: pageSdkReactNative },
+  { slug: 'sdk-vue',     section: 'SDK',       title: '@usenavii/vue',          summary: 'Vue 3 components for inline avatars.', body: pageSdkVue },
+  { slug: 'sdk-svelte',  section: 'SDK',       title: '@usenavii/svelte',       summary: 'Svelte 5 components for inline avatars.', body: pageSdkSvelte },
   { slug: 'deployment',  section: 'Operate',   title: 'Self-hosting',        summary: 'Docker, env vars, reverse proxy notes.', body: pageDeployment },
   { slug: 'changelog',   section: 'Operate',   title: 'Changelog',           summary: 'Version history and breaking changes.', body: pageChangelog },
 ];
@@ -584,15 +587,13 @@ await db.users.update(user.id, { naviiSeed: seed });
 
     <section>
       <h2 id="react-native">React Native</h2>
-      <p>No dedicated package needed. Use core + <code>react-native-svg</code>:</p>
-      <pre class="code"><code>import { createAvatar } from '@usenavii/core';
-import { SvgXml } from 'react-native-svg';
+      <p>Use the dedicated adapter. It renders Navii's SVG as native <code>react-native-svg</code> components:</p>
+      <pre class="code"><code>npm i @usenavii/react-native react-native-svg
 
-export function Navii({ seed, size = 64 }) {
-  const svg = createAvatar(seed, { size });
-  return &lt;SvgXml xml={svg} width={size} height={size} /&gt;;
-}</code></pre>
-      <p>Determinism still holds — same SVG in RN as in the browser, byte-identical to the hosted API.</p>
+import { Navii } from '@usenavii/react-native';
+
+&lt;Navii seed={user.id} size={64} alt={user.name} /&gt;</code></pre>
+      <p>The SVG adapter is bundled. React Native and <code>react-native-svg</code> remain peer dependencies, and React Native 0.76 Metro works without enabling package exports. See the <a href="/docs/sdk-react-native">React Native SDK guide</a>.</p>
     </section>
 
     <section>
@@ -1358,13 +1359,13 @@ function pageSdkReact(): string {
   return `
     <header class="page-head">
       <h1>@usenavii/react</h1>
-      <p class="lede">A thin React component on top of <code>@usenavii/core</code>. Memoized; renders the engine output as a data-URI <code>&lt;img&gt;</code> so the SVG is treated as opaque by the browser.</p>
+      <p class="lede">React components for deterministic inline SVG avatars. Use <code>as="img"</code> when you need the data-URI image fallback.</p>
     </header>
 
     <section>
       <h2 id="install">Install</h2>
       <pre class="code"><code>npm i @usenavii/react</code></pre>
-      <p><code>@usenavii/core</code> is bundled in; you don't install it separately unless you also use the engine directly.</p>
+      <p><code>@usenavii/core</code> is installed as a runtime dependency. No separate SVG adapter installation is required: the React adapter is bundled into the package. React and React DOM remain peer dependencies.</p>
     </section>
 
     <section>
@@ -1423,21 +1424,100 @@ export function UserChip({ user }) {
           <tr><td><code>tileBg</code></td><td>string</td><td><code>#ffffff</code></td><td>Fill behind each tile (use <code>'transparent'</code> to skip).</td></tr>
           <tr><td><code>counterFill</code></td><td>string</td><td><code>#E5E7EB</code></td><td>Background of the <code>+N</code> tile.</td></tr>
           <tr><td><code>counterInk</code></td><td>string</td><td><code>#374151</code></td><td>Text color of the <code>+N</code> tile.</td></tr>
-          <tr><td><code>paletteId</code> / <code>palette</code> / <code>mood</code> / <code>background</code> / <code>animated</code> / <code>styleHint</code></td><td colspan="2">—</td><td>Forwarded to every tile. Same semantics as <code>&lt;Navii&gt;</code>.</td></tr>
-          <tr><td><code>packs</code> / <code>title</code></td><td colspan="2">—</td><td><strong>Typed but not forwarded</strong> — inherited from <code>GroupOptions</code> but the React wrapper does not currently pass them to per-tile renders. Use <code>renderGroup</code> from <code>@usenavii/core</code> directly if you need them per tile.</td></tr>
+          <tr><td><code>paletteId</code> / <code>palette</code> / <code>mood</code> / <code>background</code> / <code>animated</code> / <code>packs</code> / <code>styleHint</code></td><td colspan="2">—</td><td>Forwarded to every tile. Same semantics as <code>&lt;Navii&gt;</code>.</td></tr>
         </tbody>
       </table>
     </section>
 
     <section>
       <h2 id="memo">Memoization</h2>
-      <p>The component memoizes the data-URI on <code>seed</code> + all option props via <code>useMemo</code>. This runs on both the server (SSR) and client (hydration), so output is byte-identical between the two renders. Subsequent renders with unchanged props reuse the cached URI without re-running the engine.</p>
+      <p>The component memoizes the generated SVG on <code>seed</code> + all option props via <code>useMemo</code>. This runs on both the server (SSR) and client (hydration), so output is byte-identical between the two renders. Subsequent renders with unchanged props reuse the generated markup without re-running the engine.</p>
       <p>If you're rendering a list, ensure your seeds are stable across renders (e.g. <code>user.id</code>, not <code>idx + Date.now()</code>) — otherwise every render rebuilds every avatar.</p>
     </section>
 
     <section>
       <h2 id="re-exports">Re-exports</h2>
       <p>Top-level <code>@usenavii/core</code> exports re-exported for convenience: <code>createAvatar</code>, <code>selectAvatar</code>, <code>renderAvatar</code>, <code>renderGroup</code>, plus the types <code>AvatarSpec</code>, <code>AvatarOptions</code>, <code>GroupOptions</code>, <code>MoodId</code>, <code>Palette</code>.</p>
+    </section>
+  `;
+}
+
+function pageSdkReactNative(): string {
+  return `
+    <header class="page-head">
+      <h1>@usenavii/react-native</h1>
+      <p class="lede">React Native components that render deterministic avatars as native <code>react-native-svg</code> trees.</p>
+    </header>
+    <section>
+      <h2 id="install">Install</h2>
+      <pre class="code"><code>npm i @usenavii/react-native react-native-svg</code></pre>
+      <p>React Native <code>&gt;=0.73</code> and <code>react-native-svg</code> <code>&gt;=15</code> are peer dependencies. The Navii SVG adapter and <code>@usenavii/core</code> install with the package.</p>
+    </section>
+    <section>
+      <h2 id="usage">Usage</h2>
+      <pre class="code"><code>import { Navii, NaviiGroup } from '@usenavii/react-native';
+
+&lt;Navii seed={user.id} size={64} alt={user.name} /&gt;
+&lt;NaviiGroup seeds={team.map((user) =&gt; user.id)} size={48} max={5} /&gt;</code></pre>
+      <p>React Native 0.76 Metro resolves the package with its default configuration; do not enable experimental package exports for Navii.</p>
+    </section>
+    <section>
+      <h2 id="limitations">Platform notes</h2>
+      <ul>
+        <li><code>animated</code> is accepted but currently renders the first frame statically because CSS keyframes do not translate to native SVG.</li>
+        <li><code>style</code> applies to the wrapper <code>View</code>; <code>alt</code> and <code>title</code> map to the accessibility label.</li>
+        <li>Each group tile is an independent native SVG tree inside a positioned <code>View</code>.</li>
+      </ul>
+    </section>
+  `;
+}
+
+function pageSdkVue(): string {
+  return `
+    <header class="page-head">
+      <h1>@usenavii/vue</h1>
+      <p class="lede">Vue 3 components for deterministic inline SVG avatars and overlapping groups.</p>
+    </header>
+    <section>
+      <h2 id="install">Install</h2>
+      <pre class="code"><code>npm i @usenavii/vue</code></pre>
+      <p>Vue 3.5 or newer is a peer dependency. The core engine and Vue SVG adapter install with the package; no separate adapter dependency is required.</p>
+    </section>
+    <section>
+      <h2 id="usage">Usage</h2>
+      <pre class="code"><code>&lt;script setup lang="ts"&gt;
+import { Navii, NaviiGroup } from '@usenavii/vue';
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;Navii :seed="user.id" :size="64" :title="user.name" /&gt;
+  &lt;NaviiGroup :seeds="team.map(user =&gt; user.id)" :size="48" :max="5" /&gt;
+&lt;/template&gt;</code></pre>
+      <p>Inline SVG is the default. Set <code>as="img"</code> for a data-URI image. Direct Node ESM imports and Vue SSR are supported.</p>
+    </section>
+  `;
+}
+
+function pageSdkSvelte(): string {
+  return `
+    <header class="page-head">
+      <h1>@usenavii/svelte</h1>
+      <p class="lede">Svelte 5 components for deterministic inline SVG avatars and overlapping groups.</p>
+    </header>
+    <section>
+      <h2 id="install">Install</h2>
+      <pre class="code"><code>npm i @usenavii/svelte</code></pre>
+      <p>Svelte 5 is a peer dependency. The package retains <code>@mhaadi/svg</code> as a runtime dependency, so npm installs it automatically.</p>
+    </section>
+    <section>
+      <h2 id="usage">Usage</h2>
+      <pre class="code"><code>&lt;script lang="ts"&gt;
+  import { Navii, NaviiGroup } from '@usenavii/svelte';
+&lt;/script&gt;
+
+&lt;Navii seed={user.id} size={64} title={user.name} /&gt;
+&lt;NaviiGroup seeds={team.map(user =&gt; user.id)} size={48} max={5} /&gt;</code></pre>
+      <p>Inline SVG is the default. Set <code>as="img"</code> for a data-URI image. Consume the package through a Svelte-aware bundler such as Vite or SvelteKit.</p>
     </section>
   `;
 }

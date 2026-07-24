@@ -10,6 +10,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 - Bundled the `@mhaadi/svg` adapters into the React, Vue, and React Native distributions, restoring direct Node ESM/SSR imports and React Native 0.76 Metro compatibility without package-exports opt-in.
 
+### Compatibility
+
+- **React and Vue:** direct Node ESM imports and SSR no longer fail on the upstream adapter's extensionless internal imports.
+- **React Native:** Metro 0.76 resolves `@usenavii/react-native` with its default configuration. Remove `resolver.unstable_enablePackageExports` if it was added only for Navii.
+- **Dependencies:** React, React DOM, Vue, React Native, and `react-native-svg` remain peer dependencies. Svelte continues to install its runtime `@mhaadi/svg` adapter automatically.
+
+### Upgrade
+
+- Upgrade all Navii packages together: `npm i @usenavii/core@0.9.1 @usenavii/react@0.9.1 @usenavii/react-native@0.9.1 @usenavii/vue@0.9.1 @usenavii/svelte@0.9.1`.
+- No component API changes are required. Existing props, defaults, callbacks, sanitization, inline SVG rendering, and `as="img"` fallbacks are unchanged.
+- React, Vue, and React Native consumers should not add `@mhaadi/svg` directly; the required framework adapter is included in each Navii distribution.
+
 ## [0.28.0] - 2026-07-24
 
 ### Added (`@usenavii/core` 0.9.0)

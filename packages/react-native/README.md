@@ -13,7 +13,7 @@ Drop a `<Navii seed={user.id} />` and every user has a face, no uploads.
 pnpm add @usenavii/react-native react-native-svg
 ```
 
-`react-native` and `react-native-svg` are peer deps. `@usenavii/core` and `@mhaadi/svg` are auto-installed.
+`react-native` and `react-native-svg` are peer deps. `@usenavii/core` is auto-installed. The SVG adapter is bundled, so consumers do not install `@mhaadi/svg`. React Native 0.76 Metro works with its default resolver configuration.
 
 ## Usage
 
@@ -23,7 +23,7 @@ import { Navii } from '@usenavii/react-native';
 <Navii seed={user.id} size={64} title={user.name} />
 ```
 
-Renders as a `react-native-svg` tree via `@mhaadi/svg/react-native`. The SVG is parsed into native components (`Svg`, `Path`, `Circle`, `Rect`, `G`, gradients, `ClipPath`, etc.).
+Renders as a `react-native-svg` tree using Navii's bundled adapter. The SVG is parsed into native components (`Svg`, `Path`, `Circle`, `Rect`, `G`, gradients, `ClipPath`, etc.).
 
 > **Animation:** the `animated` prop is accepted but not yet supported on React Native — the first frame is rendered statically. CSS keyframe animations (`<style>` blocks) don't translate to `react-native-svg`. A future version will use `react-native-reanimated` for per-element animations.
 

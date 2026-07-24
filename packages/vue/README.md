@@ -13,7 +13,7 @@ Drop a `<Navii seed="user.id" />` and every user has a face, no uploads.
 pnpm add @usenavii/vue
 ```
 
-Vue `>=3.5` is a peer dep. `@usenavii/core` and `@mhaadi/svg` are auto-installed.
+Vue `>=3.5` is a peer dep. `@usenavii/core` is auto-installed. The SVG adapter is bundled, so consumers do not install `@mhaadi/svg`.
 
 ## Usage
 

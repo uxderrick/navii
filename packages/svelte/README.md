@@ -13,7 +13,7 @@ Drop a `<Navii seed={user.id} />` and every user has a face, no uploads.
 pnpm add @usenavii/svelte
 ```
 
-Svelte `>=5` is a peer dep. `@usenavii/core` and `@mhaadi/svg` are auto-installed.
+Svelte `>=5` is a peer dep. `@usenavii/core` and the runtime `@mhaadi/svg` adapter are auto-installed.
 
 ## Usage
 
