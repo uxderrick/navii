@@ -4,6 +4,14 @@ All notable changes to `@usenavii/core`, `@usenavii/react`, `@usenavii/react-nat
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). All packages ship in lockstep.
 
+## [0.28.2] - 2026-07-24
+
+### Changed (docs)
+
+- Added dedicated SDK guides for React Native, Vue, and Svelte.
+- Updated React and recipe guidance for the self-contained `0.9.1` framework adapters.
+- Expanded the `v0.28.1` release post with Node ESM, SSR, Metro 0.76, dependency, and upgrade guidance.
+
 ## [0.28.1] - 2026-07-24
 
 ### Fixed
@@ -353,7 +361,8 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.28.1...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.28.2...HEAD
+[0.28.2]: https://github.com/uxderrick/navii/compare/v0.28.1...v0.28.2
 [0.28.1]: https://github.com/uxderrick/navii/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/uxderrick/navii/compare/v0.27.2...v0.28.0
 [0.22.4]: https://github.com/uxderrick/navii/compare/v0.22.3...v0.22.4
