@@ -1,7 +1,7 @@
 {
-  "name": "@usenavii/core",
+  "name": "@usenavii/vue",
   "version": "0.9.0",
-  "description": "Deterministic mascot avatar engine. Pass any seed, get back a clean, designed SVG that's the same every time.",
+  "description": "Vue 3 binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -11,24 +11,17 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    },
-    "./parts": {
-      "types": "./dist/parts.d.ts",
-      "import": "./dist/parts.js",
-      "require": "./dist/parts.cjs"
     }
   },
   "files": [
     "dist",
     "README.md",
-    "LICENSE",
-    "CHANGELOG.md"
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest",
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [
@@ -36,9 +29,8 @@
     "avatars",
     "mascot",
     "svg",
+    "vue",
     "deterministic",
-    "identicon",
-    "placeholder",
     "navii"
   ],
   "license": "MIT",
@@ -47,7 +39,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uxderrick/navii.git",
-    "directory": "packages/core"
+    "directory": "packages/vue"
   },
   "bugs": "https://github.com/uxderrick/navii/issues",
   "sideEffects": false,
@@ -57,7 +49,21 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@mhaadi/svg": "^0.2.3",
+    "@usenavii/core": "workspace:^0.9.0"
+  },
+  "peerDependencies": {
+    "vue": ">=3.5"
+  },
   "devDependencies": {
-    "tsup": "^8.3.0"
+    "@mhaadi/svg": "^0.2.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/vue": "^8.1.0",
+    "happy-dom": "^15.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.1.9",
+    "vue": "^3.5.35"
   }
 }

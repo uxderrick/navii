@@ -1,34 +1,28 @@
 {
-  "name": "@usenavii/core",
+  "name": "@usenavii/svelte",
   "version": "0.9.0",
-  "description": "Deterministic mascot avatar engine. Pass any seed, get back a clean, designed SVG that's the same every time.",
+  "description": "Svelte 5 binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "svelte": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./parts": {
-      "types": "./dist/parts.d.ts",
-      "import": "./dist/parts.js",
-      "require": "./dist/parts.cjs"
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js"
     }
   },
   "files": [
     "dist",
     "README.md",
-    "LICENSE",
-    "CHANGELOG.md"
+    "LICENSE"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "svelte-package --input src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest",
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [
@@ -36,9 +30,8 @@
     "avatars",
     "mascot",
     "svg",
+    "svelte",
     "deterministic",
-    "identicon",
-    "placeholder",
     "navii"
   ],
   "license": "MIT",
@@ -47,7 +40,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uxderrick/navii.git",
-    "directory": "packages/core"
+    "directory": "packages/svelte"
   },
   "bugs": "https://github.com/uxderrick/navii/issues",
   "sideEffects": false,
@@ -57,7 +50,23 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@mhaadi/svg": "^0.2.3",
+    "@usenavii/core": "workspace:^0.9.0"
+  },
+  "peerDependencies": {
+    "svelte": ">=5"
+  },
   "devDependencies": {
-    "tsup": "^8.3.0"
+    "@sveltejs/package": "^2.3.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/svelte": "^5.2.0",
+    "happy-dom": "^15.0.0",
+    "svelte": "^5.56.3",
+    "svelte-check": "^4.1.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.1.9"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@usenavii/react",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "React binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -22,7 +22,7 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [
@@ -44,18 +44,34 @@
   },
   "bugs": "https://github.com/uxderrick/navii/issues",
   "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@usenavii/core": "workspace:^0.8.0"
+    "@mhaadi/svg": "^0.2.3",
+    "@usenavii/core": "workspace:^0.9.0"
   },
   "peerDependencies": {
-    "react": ">=17"
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "happy-dom": "^15.0.0",
     "react": "^18.3.0",
-    "tsup": "^8.3.0"
+    "react-dom": "^18.3.0",
+    "tsup": "^8.3.0",
+    "vitest": "^2.1.9"
   }
 }
