@@ -4,6 +4,12 @@ All notable changes to `@usenavii/core`, `@usenavii/react`, `@usenavii/react-nat
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). All packages ship in lockstep.
 
+## [Unreleased]
+
+### Fixed
+
+- Bundled the `@mhaadi/svg` adapters into the React, Vue, and React Native distributions, restoring direct Node ESM/SSR imports and React Native 0.76 Metro compatibility without package-exports opt-in.
+
 ## [0.28.0] - 2026-07-24
 
 ### Added (`@usenavii/core` 0.9.0)

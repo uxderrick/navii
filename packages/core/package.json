@@ -1,6 +1,6 @@
 {
   "name": "@usenavii/core",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Deterministic mascot avatar engine. Pass any seed, get back a clean, designed SVG that's the same every time.",
   "type": "module",
   "main": "./dist/index.cjs",

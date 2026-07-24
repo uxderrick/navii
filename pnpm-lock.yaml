@@ -64,13 +64,13 @@ importers:
 
   packages/react:
     dependencies:
-      '@mhaadi/svg':
-        specifier: ^0.2.3
-        version: 0.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue@3.5.39(typescript@5.9.3))
       '@usenavii/core':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.9.1
         version: link:../core
     devDependencies:
+      '@mhaadi/svg':
+        specifier: ^0.2.3
+        version: 0.2.3(react-dom@18.3.1(react@18.3.1))(react-native-svg@15.15.5(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1))(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1)
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -101,11 +101,8 @@ importers:
 
   packages/react-native:
     dependencies:
-      '@mhaadi/svg':
-        specifier: ^0.2.3
-        version: 0.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue@3.5.39(typescript@5.9.3))
       '@usenavii/core':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.9.1
         version: link:../core
       react-native:
         specifier: '>=0.73'
@@ -114,6 +111,9 @@ importers:
         specifier: '>=15'
         version: 15.15.5(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1)
     devDependencies:
+      '@mhaadi/svg':
+        specifier: ^0.2.3
+        version: 0.2.3(react-dom@18.3.1(react@18.3.1))(react-native-svg@15.15.5(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1))(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1)
       '@types/react':
         specifier: ^18.3.0
         version: 18.3.29
@@ -142,7 +142,7 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(svelte@5.56.4)
       '@usenavii/core':
-        specifier: workspace:^0.9.0
+        specifier: workspace:^0.9.1
         version: link:../core
     devDependencies:
       '@sveltejs/package':
@@ -178,13 +178,13 @@ importers:
 
   packages/vue:
     dependencies:
+      '@usenavii/core':
+        specifier: workspace:^0.9.1
+        version: link:../core
+    devDependencies:
       '@mhaadi/svg':
         specifier: ^0.2.3
         version: 0.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue@3.5.39(typescript@5.9.3))
-      '@usenavii/core':
-        specifier: workspace:^0.9.0
-        version: link:../core
-    devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -3635,6 +3635,14 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@mhaadi/svg@0.2.3(react-dom@18.3.1(react@18.3.1))(react-native-svg@15.15.5(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1))(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
+      react-native: 0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1)
+      react-native-svg: 15.15.5(react-native@0.86.0(@babel/core@7.29.7)(@types/react@18.3.29)(react@18.3.1))(react@18.3.1)
 
   '@mhaadi/svg@0.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(svelte@5.56.4)':
     dependencies:

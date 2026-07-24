@@ -9,5 +9,5 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   target: 'es2022',
-  external: ['react', 'react-native', 'react-native-svg', '@usenavii/core', '@mhaadi/svg'],
+  external: ['react', 'react-native', 'react-native-svg', '@usenavii/core'],
 });

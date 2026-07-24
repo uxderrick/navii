@@ -9,5 +9,5 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   target: 'es2022',
-  external: ['vue', '@usenavii/core', '@mhaadi/svg'],
+  external: ['vue', '@usenavii/core'],
 });
