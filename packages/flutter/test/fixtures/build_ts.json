@@ -1,0 +1,72 @@
+[
+  {
+    "id": "defaults",
+    "spec": {},
+    "options": {},
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"96\" height=\"96\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#818CF8\" />\n  <stop offset=\"100%\" stop-color=\"#6366F1\" />\n</radialGradient></defs><g><g class=\"body\"><ellipse cx=\"50\" cy=\"90\" rx=\"22\" ry=\"2.6\" fill=\"#1E1B4B\" opacity=\"0.16\" /><path d=\"M50 20 C72 20 84 36 84 54 C84 73 70 86 50 86 C30 86 16 73 16 54 C16 36 28 20 50 20 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(30,27,75,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"38\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 38)\" /></g></g><g class=\"eyes\"><ellipse cx=\"40\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><ellipse cx=\"60\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><circle cx=\"40\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"60\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"41\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /><circle cx=\"61\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /></g><path d=\"M43 62 Q50 67 57 62\" stroke=\"#1E1B4B\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></svg>"
+  },
+  {
+    "id": "mint-tall-star-grin",
+    "spec": {
+      "palette": "mint",
+      "body": "tall",
+      "eyes": "star",
+      "mouth": "grin"
+    },
+    "options": {},
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"96\" height=\"96\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#6EE7B7\" />\n  <stop offset=\"100%\" stop-color=\"#34D399\" />\n</radialGradient></defs><g><g class=\"body\"><ellipse cx=\"50\" cy=\"95\" rx=\"22\" ry=\"2.6\" fill=\"#064E3B\" opacity=\"0.16\" /><path d=\"M50 15 C66 15 74 30 74 48 C74 70 66 91 50 91 C34 91 26 70 26 48 C26 30 34 15 50 15 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(6,78,59,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"35\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 35)\" /></g></g><g class=\"eyes\"><path d=\"M42 46 L43.05 47.95 L45 49 L43.05 50.05 L42 52 L40.95 50.05 L39 49 L40.95 47.95 Z\" fill=\"#064E3B\" /><path d=\"M58 46 L59.05 47.95 L61 49 L59.05 50.05 L58 52 L56.95 50.05 L55 49 L56.95 47.95 Z\" fill=\"#064E3B\" /></g><path d=\"M43 58 Q50 67 57 58\" stroke=\"#064E3B\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></svg>"
+  },
+  {
+    "id": "size-256",
+    "spec": {},
+    "options": {
+      "size": 256
+    },
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"256\" height=\"256\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#818CF8\" />\n  <stop offset=\"100%\" stop-color=\"#6366F1\" />\n</radialGradient></defs><g><g class=\"body\"><ellipse cx=\"50\" cy=\"90\" rx=\"22\" ry=\"2.6\" fill=\"#1E1B4B\" opacity=\"0.16\" /><path d=\"M50 20 C72 20 84 36 84 54 C84 73 70 86 50 86 C30 86 16 73 16 54 C16 36 28 20 50 20 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(30,27,75,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"38\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 38)\" /></g></g><g class=\"eyes\"><ellipse cx=\"40\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><ellipse cx=\"60\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><circle cx=\"40\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"60\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"41\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /><circle cx=\"61\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /></g><path d=\"M43 62 Q50 67 57 62\" stroke=\"#1E1B4B\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></svg>"
+  },
+  {
+    "id": "tall-star",
+    "spec": {
+      "body": "tall",
+      "eyes": "star"
+    },
+    "options": {},
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"96\" height=\"96\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#818CF8\" />\n  <stop offset=\"100%\" stop-color=\"#6366F1\" />\n</radialGradient></defs><g><g class=\"body\"><ellipse cx=\"50\" cy=\"95\" rx=\"22\" ry=\"2.6\" fill=\"#1E1B4B\" opacity=\"0.16\" /><path d=\"M50 15 C66 15 74 30 74 48 C74 70 66 91 50 91 C34 91 26 70 26 48 C26 30 34 15 50 15 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(30,27,75,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"35\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 35)\" /></g></g><g class=\"eyes\"><path d=\"M42 46 L43.05 47.95 L45 49 L43.05 50.05 L42 52 L40.95 50.05 L39 49 L40.95 47.95 Z\" fill=\"#1E1B4B\" /><path d=\"M58 46 L59.05 47.95 L61 49 L59.05 50.05 L58 52 L56.95 50.05 L55 49 L56.95 47.95 Z\" fill=\"#1E1B4B\" /></g><path d=\"M44 60 Q50 65 56 60\" stroke=\"#1E1B4B\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></svg>"
+  },
+  {
+    "id": "orb-round",
+    "spec": {
+      "body": "orb",
+      "eyes": "round"
+    },
+    "options": {},
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"96\" height=\"96\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#818CF8\" />\n  <stop offset=\"100%\" stop-color=\"#6366F1\" />\n</radialGradient></defs><g><g class=\"body\"><ellipse cx=\"50\" cy=\"90\" rx=\"22\" ry=\"2.6\" fill=\"#1E1B4B\" opacity=\"0.16\" /><path d=\"M50 20 C72 20 84 36 84 54 C84 73 70 86 50 86 C30 86 16 73 16 54 C16 36 28 20 50 20 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(30,27,75,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"38\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 38)\" /></g></g><g class=\"eyes\"><ellipse cx=\"40\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><ellipse cx=\"60\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><circle cx=\"40\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"60\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"41\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /><circle cx=\"61\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /></g><path d=\"M43 62 Q50 67 57 62\" stroke=\"#1E1B4B\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></svg>"
+  },
+  {
+    "id": "unknown-palette",
+    "spec": {
+      "palette": "nonexistent"
+    },
+    "options": {},
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"96\" height=\"96\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#818CF8\" />\n  <stop offset=\"100%\" stop-color=\"#6366F1\" />\n</radialGradient></defs><g><g class=\"body\"><ellipse cx=\"50\" cy=\"90\" rx=\"22\" ry=\"2.6\" fill=\"#1E1B4B\" opacity=\"0.16\" /><path d=\"M50 20 C72 20 84 36 84 54 C84 73 70 86 50 86 C30 86 16 73 16 54 C16 36 28 20 50 20 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(30,27,75,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"38\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 38)\" /></g></g><g class=\"eyes\"><ellipse cx=\"40\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><ellipse cx=\"60\" cy=\"52\" rx=\"4\" ry=\"4.5\" fill=\"#FFFFFF\" /><circle cx=\"40\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"60\" cy=\"52\" r=\"2.2\" fill=\"#1E1B4B\" /><circle cx=\"41\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /><circle cx=\"61\" cy=\"51\" r=\"0.8\" fill=\"#FFFFFF\" /></g><path d=\"M43 62 Q50 67 57 62\" stroke=\"#1E1B4B\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></svg>"
+  },
+  {
+    "id": "curated-hero",
+    "spec": {
+      "body": "tall",
+      "eyes": "star",
+      "mouth": "grin",
+      "palette": "violet",
+      "topper": "crown",
+      "antenna": "bobble",
+      "accessory": "bow",
+      "hueShift": 12,
+      "bodyScale": 1.05
+    },
+    "options": {
+      "size": 192,
+      "animated": true
+    },
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" width=\"192\" height=\"192\" aria-hidden=\"true\"><defs><radialGradient id=\"navii-grad-t5rh75\" cx=\"42%\" cy=\"32%\" r=\"68%\">\n  <stop offset=\"0%\" stop-color=\"#C084FC\" />\n  <stop offset=\"100%\" stop-color=\"#A855F7\" />\n</radialGradient><filter id=\"navii-hue-t5rh75\" color-interpolation-filters=\"sRGB\"><feColorMatrix type=\"hueRotate\" values=\"12\" /></filter></defs><style>\n    .n-t5rh75 .body { animation: n-float 3.4s ease-in-out infinite; animation-delay: 1.45s; transform-origin: 50px 80px; transform-box: view-box; }\n    .n-t5rh75 .eyes { animation: n-blink 5.4s ease-in-out infinite; animation-delay: 3.23s; transform-origin: 50px 52px; transform-box: view-box; }\n    .n-t5rh75 .antenna { animation: n-sway 3.6s ease-in-out infinite; animation-delay: 1.82s; transform-origin: 50% 100%; transform-box: fill-box; }\n    .n-t5rh75 .spark { animation: n-pulse 1.9s ease-in-out infinite; animation-delay: 0.30s; transform-origin: center; transform-box: fill-box; }\n    .n-t5rh75 .sparkle { animation: n-twinkle 2.2s ease-in-out infinite; animation-delay: 1.49s; transform-origin: center; transform-box: fill-box; }\n    @keyframes n-float {\n      0%, 100% { transform: translateY(0)      rotate(0deg)    scale(1, 1); }\n      25%      { transform: translateY(-2px)   rotate(-1.6deg) scale(1.025, 0.975); }\n      50%      { transform: translateY(-4.5px) rotate(0deg)    scale(0.985, 1.025); }\n      75%      { transform: translateY(-2px)   rotate(1.6deg)  scale(1.025, 0.975); }\n    }\n    @keyframes n-blink {\n      0%, 85%, 91%, 100% { transform: scaleY(1); }\n      87%, 89%, 93%, 95% { transform: scaleY(0.06); }\n    }\n    @keyframes n-sway {\n      0%, 100% { transform: rotate(0deg); }\n      25%      { transform: rotate(-5deg); }\n      75%      { transform: rotate(5deg); }\n    }\n    @keyframes n-pulse {\n      0%, 100% { opacity: 0.55; transform: scale(1); }\n      50%      { opacity: 1;    transform: scale(1.32); }\n    }\n    @keyframes n-twinkle {\n      0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(0.85); }\n      50%      { opacity: 1;   transform: rotate(180deg) scale(1.12); }\n    }\n    @media (prefers-reduced-motion: reduce) {\n      .n-t5rh75 .body, .n-t5rh75 .eyes, .n-t5rh75 .antenna, .n-t5rh75 .spark, .n-t5rh75 .sparkle { animation: none; }\n    }\n  </style><g class=\"n-t5rh75\"><g transform=\"translate(50 91) scale(1.05) translate(-50 -91)\" filter=\"url(#navii-hue-t5rh75)\"><g class=\"body\"><ellipse cx=\"50\" cy=\"95\" rx=\"22\" ry=\"2.6\" fill=\"#4C1D95\" opacity=\"0.16\" /><path d=\"M50 15 C66 15 74 30 74 48 C74 70 66 91 50 91 C34 91 26 70 26 48 C26 30 34 15 50 15 Z\" fill=\"url(#navii-grad-t5rh75)\" stroke=\"rgba(76,29,149,0.18)\" stroke-width=\"0.7\" /><ellipse cx=\"38\" cy=\"35\" rx=\"11\" ry=\"7\" fill=\"#FFFFFF\" opacity=\"0.22\" transform=\"rotate(-18 38 35)\" /></g></g><path d=\"M39 22 L39 14 L44 19 L50 11 L56 19 L61 14 L61 22 Z\" fill=\"#FACC15\" stroke=\"#4C1D95\" stroke-width=\"0.7\" /><circle cx=\"39\" cy=\"14\" r=\"1.4\" fill=\"#EF4444\" stroke=\"#4C1D95\" stroke-width=\"0.3\" /><circle cx=\"50\" cy=\"11\" r=\"1.6\" fill=\"#EF4444\" stroke=\"#4C1D95\" stroke-width=\"0.3\" /><circle cx=\"61\" cy=\"14\" r=\"1.4\" fill=\"#EF4444\" stroke=\"#4C1D95\" stroke-width=\"0.3\" /><g class=\"eyes\"><path d=\"M42 46 L43.05 47.95 L45 49 L43.05 50.05 L42 52 L40.95 50.05 L39 49 L40.95 47.95 Z\" fill=\"#4C1D95\" /><path d=\"M58 46 L59.05 47.95 L61 49 L59.05 50.05 L58 52 L56.95 50.05 L55 49 L56.95 47.95 Z\" fill=\"#4C1D95\" /></g><path d=\"M43 58 Q50 67 57 58\" stroke=\"#4C1D95\" stroke-width=\"1.8\" stroke-linecap=\"round\" fill=\"none\" /></g></svg>"
+  }
+]

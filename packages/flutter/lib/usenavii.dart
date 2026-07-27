@@ -4,7 +4,9 @@
 /// See the repo root `AGENTS.md` for the phase-by-phase implementation plan.
 library;
 
+export 'src/core/build.dart' show build, BuildSpec;
 export 'src/core/create_avatar.dart';
+export 'src/core/group.dart' show renderGroup, renderGroupTiles;
 export 'src/core/packs/index.dart' show builtInPacks, packRegistry, resolvePacks, Pack;
 export 'src/core/prng.dart' show cyrb53, createRng, Rng;
 export 'src/core/render.dart' show renderAvatar, renderAvatarInner;

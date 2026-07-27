@@ -86,15 +86,11 @@ seed(SeedFields(...), [SeedOptions(hashEmail: true)]);
 selectAvatar(seed, options);
 createAvatar(seed, options); // → SVG string
 renderAvatar(spec, options);
-resolvePacks(ids);
-random(options);
-```
-
-**Later phases:**
-
-```dart
+build(spec, options); // explicit parts, no seed
 renderGroup(seeds, options);
 renderGroupTiles(seeds, options);
+resolvePacks(ids);
+random(options);
 ```
 
 ## License
