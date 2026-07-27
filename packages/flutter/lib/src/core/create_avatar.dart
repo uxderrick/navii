@@ -2,6 +2,8 @@ import 'render.dart';
 import 'select.dart';
 import 'types.dart';
 
+export 'build.dart' show build, BuildSpec;
+export 'group.dart' show renderGroup, renderGroupTiles;
 export 'render.dart' show renderAvatar, renderAvatarInner;
 export 'select.dart' show selectAvatar;
 
@@ -13,23 +15,6 @@ String createAvatar(String seed, [AvatarOptions options = const AvatarOptions()]
     throw ArgumentError('navii: seed must be a non-empty string');
   }
   return renderAvatar(selectAvatar(seed, options), options);
-}
-
-/// Composite overlapping stack SVG.
-String renderGroup(List<String> seeds, [GroupOptions options = const GroupOptions()]) {
-  throw UnimplementedError(
-    'renderGroup: not implemented yet (see AGENTS.md Phase 5)',
-  );
-}
-
-/// Per-tile SVGs for Flutter [NaviiGroup].
-GroupTiles renderGroupTiles(
-  List<String> seeds, [
-  GroupOptions options = const GroupOptions(),
-]) {
-  throw UnimplementedError(
-    'renderGroupTiles: not implemented yet (see AGENTS.md Phase 5)',
-  );
 }
 
 /// Random avatar + seed to persist.

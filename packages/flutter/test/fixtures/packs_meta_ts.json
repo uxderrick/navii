@@ -1,0 +1,32 @@
+{
+  "builtInIds": [
+    "accra-gallery",
+    "command-center",
+    "earth",
+    "halloween",
+    "lagos-danfo",
+    "mono",
+    "nairobi-matatu",
+    "neon",
+    "office",
+    "office-bright",
+    "pastel"
+  ],
+  "resolveSample": [
+    "office",
+    "halloween"
+  ],
+  "registryKeys": [
+    "accra-gallery",
+    "command-center",
+    "earth",
+    "halloween",
+    "lagos-danfo",
+    "mono",
+    "nairobi-matatu",
+    "neon",
+    "office",
+    "office-bright",
+    "pastel"
+  ]
+}
