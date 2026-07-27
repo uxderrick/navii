@@ -1,0 +1,22 @@
+name: usenavii
+description: Official Flutter SDK for Navii. Deterministic mascot avatars for Flutter. Same seed in, same face out offline SVG via a Dart port of @usenavii/core.
+version: 0.1.0-dev.1
+homepage: https://navii.dev
+repository: https://github.com/uxderrick/navii
+issue_tracker: https://github.com/uxderrick/navii/issues
+
+environment:
+  sdk: ^3.5.0
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.10+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
