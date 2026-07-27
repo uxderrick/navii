@@ -6,6 +6,8 @@ Small project, mostly solo. The notes below exist so consumers of `@usenavii/cor
 
 All packages follow [SemVer](https://semver.org) and ship in **lockstep** — they always have the same version, and each framework package depends on the matching `@usenavii/core` via `workspace:^<version>`.
 
+**Exception:** the Flutter package `usenavii` in [`packages/flutter`](./packages/flutter) versions independently on [pub.dev](https://pub.dev/packages/usenavii) and is **not** included in the npm release matrix (`.github/workflows/release.yml`). Map Flutter ↔ core versions in the root `CHANGELOG.md` / `packages/flutter/CHANGELOG.md`.
+
 | Bump | When |
 |------|------|
 | `patch` (`0.4.x`) | Bug fix. No public API change. Safe upgrade. |
@@ -43,14 +45,23 @@ To un-deprecate, re-run with an empty message.
 
 ## Release checklist
 
-Before pushing a `vX.Y.Z` tag:
+Before pushing a `vX.Y.Z` tag (npm packages):
 
-- [ ] All `packages/*/package.json` versions match and are bumped
+- [ ] All `packages/{core,react,react-native,vue,svelte}/package.json` versions match and are bumped
 - [ ] Each framework package's `dependencies."@usenavii/core"` is `workspace:^<new version>`
 - [ ] `CHANGELOG.md` has a finalized section for the new version (move from `[Unreleased]`, add date, add compare link)
 - [ ] `pnpm -r run build && pnpm -r run typecheck && pnpm -r run test` is clean
 - [ ] Tag `vX.Y.Z` matches the version in `package.json`
 - [ ] `git push --tags` — CI handles publish + GitHub release notes
+- [ ] Confirm `packages/flutter` is **not** in the npm publish loop (pub.dev is separate)
+
+### Flutter (`usenavii` on pub.dev)
+
+- [ ] Bump `packages/flutter/pubspec.yaml` version independently
+- [ ] Update `packages/flutter/CHANGELOG.md` and the version-mapping table in root `CHANGELOG.md`
+- [ ] `cd packages/flutter && flutter analyze --no-fatal-infos && flutter test`
+- [ ] `dart pub publish --dry-run` succeeds
+- [ ] Publish with `dart pub publish` (not the npm tag workflow)
 
 ## CHANGELOG entries
 

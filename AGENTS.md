@@ -296,9 +296,9 @@ under `packages/flutter/**`: `flutter pub get`, `analyze`, `test`
 
 **Exit criteria:**
 
-- [ ] CI green on the Flutter workflow
-- [ ] Dry-run publish succeeds
-- [ ] npm tag release still only publishes the five JS packages
+- [x] CI green on the Flutter workflow
+- [x] Dry-run publish succeeds
+- [x] npm tag release still only publishes the five JS packages
 
 ---
 
@@ -360,6 +360,10 @@ cd packages/flutter/example
 flutter pub get
 flutter run -d chrome
 # flutter run -d macos
+
+# pub.dev dry-run (clean git tree)
+cd packages/flutter
+dart pub publish --dry-run
 ```
 
 
@@ -373,5 +377,6 @@ flutter run -d chrome
 - Phase 5: `renderGroup` / `renderGroupTiles`, `build(BuildSpec)`, packs registry parity + goldens.
 - Phase 6: `Navii` / `NaviiGroup` widgets (SvgPicture, Semantics, widget tests).
 - Phase 7: example app (`packages/flutter/example`) + root README Packages listing.
-- Phase 8+: implement per exit criteria above.
+- Phase 8: Flutter CI workflow, pub.dev dry-run, CHANGELOG / npm exclusion docs.
+- Done through Phase 8 — further work is maintenance / publish.
 

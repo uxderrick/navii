@@ -4,6 +4,11 @@ version: 0.1.0-dev.1
 homepage: https://navii.dev
 repository: https://github.com/uxderrick/navii
 issue_tracker: https://github.com/uxderrick/navii/issues
+topics:
+  - avatar
+  - svg
+  - flutter
+  - mascot
 
 environment:
   sdk: ^3.5.0
