@@ -21,8 +21,13 @@ docs/private/
 # svelte-kit generated artifacts
 .svelte-kit/
 
-# Dart / Flutter (packages/flutter)
+# Dart / Flutter (packages/flutter + example)
 .dart_tool/
 .packages
 *.iml
-AGENTS.md
+.flutter-plugins
+.flutter-plugins-dependencies
+**/doc/api/
+.pub-cache/
+.pub/
+build/

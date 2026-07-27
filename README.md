@@ -41,8 +41,9 @@ seed in  →  same avatar out, every time.
 | `@usenavii/core`  | Framework-agnostic engine. Seed → SVG string. Pure TS.      |
 | `@usenavii/react` | Thin React component. `<Navii seed="alice" />`.             |
 | `@usenavii/api`   | Hono app exposing `GET /avatar/:seed`. Deploy anywhere.     |
+| [`usenavii`](./packages/flutter) | Flutter / Dart SDK. `Navii(seed: user.id)` via `flutter_svg`. Independent SemVer on pub.dev. |
 
-> **Status:** v0.1 — public API stable. Deterministic contract locked. Cast may grow (new variants appended to PRNG stream, never inserted).
+> **Status:** v0.1 — public API stable. Deterministic contract locked. Cast may grow (new variants appended to PRNG stream, never inserted). Flutter ships out of npm lockstep.
 
 ---
 
@@ -77,6 +78,20 @@ import { Navii } from '@usenavii/react';
 
 <Navii seed={user.id} size={64} title={user.name} animated />
 ```
+
+### Flutter
+
+```dart
+import 'package:usenavii/usenavii.dart';
+
+Navii(
+  seed: user.id,
+  size: 64,
+  title: user.name,
+)
+```
+
+See [`packages/flutter`](./packages/flutter) and the [example app](./packages/flutter/example).
 
 ### `<img src>` via hosted endpoint
 
@@ -340,6 +355,10 @@ pnpm install
 pnpm test           # runs vitest across all packages
 pnpm build          # builds @usenavii/core, @usenavii/react, @usenavii/api
 pnpm dev:api        # hot-reload hosted endpoint on :8787
+
+# Flutter SDK (independent of pnpm)
+cd packages/flutter && flutter pub get && flutter test
+cd example && flutter run -d chrome
 ```
 
 ---
