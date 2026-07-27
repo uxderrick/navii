@@ -155,20 +155,3 @@ class GroupTiles {
   final double width;
   final double height;
 }
-
-/// Fields accepted by [seed].
-class SeedFields {
-  const SeedFields({this.id, this.uuid, this.email, this.username});
-
-  final String? id;
-  final String? uuid;
-  final String? email;
-  final String? username;
-}
-
-/// Options for seed helpers.
-class SeedOptions {
-  const SeedOptions({this.normalize});
-
-  final bool? normalize;
-}

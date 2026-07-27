@@ -2,13 +2,13 @@ import 'types.dart';
 
 /// Render a deterministic mascot avatar from a seed.
 ///
-/// Same seed in → same SVG out. Implementation: Phases 2–4 in root AGENTS.md.
+/// Same seed in → same SVG out. Implementation: Phases 3–4 in root AGENTS.md.
 String createAvatar(String seed, [AvatarOptions options = const AvatarOptions()]) {
   if (seed.isEmpty) {
     throw ArgumentError('navii: seed must be a non-empty string');
   }
   throw UnimplementedError(
-    'createAvatar: Dart core port not implemented yet (see AGENTS.md Phase 2–4)',
+    'createAvatar: Dart core port not implemented yet (see AGENTS.md Phase 3–4)',
   );
 }
 
@@ -43,27 +43,6 @@ GroupTiles renderGroupTiles(
 ]) {
   throw UnimplementedError(
     'renderGroupTiles: Dart core port not implemented yet (see AGENTS.md Phase 5)',
-  );
-}
-
-/// Pick a stable seed from common user fields (id → uuid → email → username).
-String seed(SeedFields fields, [SeedOptions options = const SeedOptions()]) {
-  throw UnimplementedError(
-    'seed: Dart core port not implemented yet (see AGENTS.md Phase 2)',
-  );
-}
-
-/// Normalize + hash an email into a seed.
-String seedFromEmail(String email) {
-  throw UnimplementedError(
-    'seedFromEmail: Dart core port not implemented yet (see AGENTS.md Phase 2)',
-  );
-}
-
-/// Lowercase / trim email for seeding.
-String normalizeEmail(String email) {
-  throw UnimplementedError(
-    'normalizeEmail: Dart core port not implemented yet (see AGENTS.md Phase 2)',
   );
 }
 
