@@ -2,7 +2,15 @@
 
 All notable changes to `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, and `@usenavii/svelte`.
 
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). All packages ship in lockstep.
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). All **npm** packages ship in lockstep.
+
+### Flutter (`usenavii` on pub.dev)
+
+The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independently** and is **not** part of the npm tag release matrix (`.github/workflows/release.yml`). See [`packages/flutter/CHANGELOG.md`](./packages/flutter/CHANGELOG.md).
+
+| Flutter (`usenavii`) | Compatible `@usenavii/core` (SVG parity) |
+| -------------------- | --------------------------------------- |
+| `0.1.0-dev.1`        | `0.9.x`                                 |
 
 ## [0.28.2] - 2026-07-24
 

@@ -1,0 +1,12 @@
+# Files / dirs excluded from the pub.dev tarball.
+# (example/ is kept — pub.dev surfaces it as the package example.)
+
+.dart_tool/
+build/
+.idea/
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+tool/
+test/
+**/doc/api/

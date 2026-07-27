@@ -8,8 +8,8 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [GitHub](https://github.com/uxderrick/navii)
 - [Implementation plan](../../AGENTS.md)
 
-> **Status:** Phase 7 complete — example app + root README listing. Engine and
-> widgets match `@usenavii/core` / `@usenavii/react-native`.
+> **Status:** Phase 8 complete — CI workflow, pub.dev dry-run path, CHANGELOG.
+> Engine and widgets match `@usenavii/core` / `@usenavii/react-native`.
 
 ## Install
 
@@ -119,3 +119,15 @@ random(options);
 ## License
 
 MIT. See [LICENSE](./LICENSE).
+
+## Publishing
+
+Flutter versions independently of the npm `@usenavii/*` lockstep:
+
+```sh
+cd packages/flutter
+dart pub publish --dry-run
+dart pub publish
+```
+
+Do **not** add this package to `.github/workflows/release.yml`.
