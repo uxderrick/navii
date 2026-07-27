@@ -1,4 +1,4 @@
-/// Base palettes — port of `packages/core/src/parts/palette.ts`.
+/// Base palettes — port of 'packages/core/src/parts/palette.ts'.
 library;
 
 import '../types.dart';

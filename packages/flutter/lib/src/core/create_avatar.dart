@@ -1,28 +1,24 @@
+import 'render.dart';
+import 'select.dart';
 import 'types.dart';
+
+export 'render.dart' show renderAvatar, renderAvatarInner;
+export 'select.dart' show selectAvatar;
 
 /// Render a deterministic mascot avatar from a seed.
 ///
-/// Same seed in → same SVG out. Implementation: Phase 4 in root AGENTS.md.
+/// Same seed in → same SVG out, byte-identical with `@usenavii/core`.
 String createAvatar(String seed, [AvatarOptions options = const AvatarOptions()]) {
   if (seed.isEmpty) {
     throw ArgumentError('navii: seed must be a non-empty string');
   }
-  throw UnimplementedError(
-    'createAvatar: Dart render port not implemented yet (see AGENTS.md Phase 4)',
-  );
-}
-
-/// Spec → full `<svg>` string.
-String renderAvatar(AvatarSpec spec, [AvatarOptions options = const AvatarOptions()]) {
-  throw UnimplementedError(
-    'renderAvatar: Dart core port not implemented yet (see AGENTS.md Phase 4)',
-  );
+  return renderAvatar(selectAvatar(seed, options), options);
 }
 
 /// Composite overlapping stack SVG.
 String renderGroup(List<String> seeds, [GroupOptions options = const GroupOptions()]) {
   throw UnimplementedError(
-    'renderGroup: Dart core port not implemented yet (see AGENTS.md Phase 5)',
+    'renderGroup: not implemented yet (see AGENTS.md Phase 5)',
   );
 }
 
@@ -32,13 +28,19 @@ GroupTiles renderGroupTiles(
   GroupOptions options = const GroupOptions(),
 ]) {
   throw UnimplementedError(
-    'renderGroupTiles: Dart core port not implemented yet (see AGENTS.md Phase 5)',
+    'renderGroupTiles: not implemented yet (see AGENTS.md Phase 5)',
   );
 }
 
-/// Random avatar + seed to persist. Implementation: Phase 4+.
+/// Random avatar + seed to persist.
 ({String svg, String seed}) random([AvatarOptions options = const AvatarOptions()]) {
-  throw UnimplementedError(
-    'random: Dart core port not implemented yet (see AGENTS.md Phase 4)',
-  );
+  final seed = _randomSeed();
+  return (svg: createAvatar(seed, options), seed: seed);
+}
+
+String _randomSeed() {
+  // Match core: prefer UUID-like entropy via DateTime + hash fallback.
+  final a = DateTime.now().microsecondsSinceEpoch.toRadixString(36);
+  final b = (DateTime.now().millisecondsSinceEpoch ^ 0x9e3779b9).toRadixString(36);
+  return '$a$b';
 }
