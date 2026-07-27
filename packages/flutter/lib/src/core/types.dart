@@ -20,6 +20,37 @@ class Palette {
   final String accent;
   final String ink;
   final String blush;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'bodyFrom': bodyFrom,
+        'bodyTo': bodyTo,
+        'accent': accent,
+        'ink': ink,
+        'blush': blush,
+      };
+
+  factory Palette.fromJson(Map<String, dynamic> json) => Palette(
+        id: json['id'] as String,
+        bodyFrom: json['bodyFrom'] as String,
+        bodyTo: json['bodyTo'] as String,
+        accent: json['accent'] as String,
+        ink: json['ink'] as String,
+        blush: json['blush'] as String,
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is Palette &&
+      other.id == id &&
+      other.bodyFrom == bodyFrom &&
+      other.bodyTo == bodyTo &&
+      other.accent == accent &&
+      other.ink == ink &&
+      other.blush == blush;
+
+  @override
+  int get hashCode => Object.hash(id, bodyFrom, bodyTo, accent, ink, blush);
 }
 
 /// Bias seeded picks toward a gender expression.
@@ -73,6 +104,34 @@ class AvatarSpec {
   final double? featureStroke;
   final bool? glow;
   final String? renderMode;
+
+  /// JSON shape matching `@usenavii/core` `selectAvatar` output (omit nulls).
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{
+      'seed': seed,
+      'palette': palette.toJson(),
+      'body': body,
+      'eyes': eyes,
+      'mouth': mouth,
+      'antenna': antenna,
+      'accessory': accessory,
+      'background': background,
+      'topper': topper,
+      'outfit': outfit,
+      'hueShift': hueShift == hueShift.truncateToDouble() ? hueShift.toInt() : hueShift,
+      'bodyScale': bodyScale,
+      'eyeGapShift': eyeGapShift,
+      'mouthCurveScale': mouthCurveScale,
+      'antennaTilt':
+          antennaTilt == antennaTilt.truncateToDouble() ? antennaTilt.toInt() : antennaTilt,
+    };
+    if (flat != null) map['flat'] = flat;
+    if (bgColor != null) map['bgColor'] = bgColor;
+    if (featureStroke != null) map['featureStroke'] = featureStroke;
+    if (glow != null) map['glow'] = glow;
+    if (renderMode != null) map['renderMode'] = renderMode;
+    return map;
+  }
 }
 
 /// Options for [createAvatar] / selection + render.
