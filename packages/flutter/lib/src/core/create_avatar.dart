@@ -2,23 +2,13 @@ import 'types.dart';
 
 /// Render a deterministic mascot avatar from a seed.
 ///
-/// Same seed in → same SVG out. Implementation: Phases 3–4 in root AGENTS.md.
+/// Same seed in → same SVG out. Implementation: Phase 4 in root AGENTS.md.
 String createAvatar(String seed, [AvatarOptions options = const AvatarOptions()]) {
   if (seed.isEmpty) {
     throw ArgumentError('navii: seed must be a non-empty string');
   }
   throw UnimplementedError(
-    'createAvatar: Dart core port not implemented yet (see AGENTS.md Phase 3–4)',
-  );
-}
-
-/// Resolve parts without rendering.
-AvatarSpec selectAvatar(String seed, [AvatarOptions options = const AvatarOptions()]) {
-  if (seed.isEmpty) {
-    throw ArgumentError('navii: seed must be a non-empty string');
-  }
-  throw UnimplementedError(
-    'selectAvatar: Dart core port not implemented yet (see AGENTS.md Phase 3)',
+    'createAvatar: Dart render port not implemented yet (see AGENTS.md Phase 4)',
   );
 }
 
