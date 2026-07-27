@@ -5,6 +5,9 @@
 library;
 
 export 'src/core/create_avatar.dart';
+export 'src/core/prng.dart' show cyrb53, createRng, Rng;
+export 'src/core/seed.dart';
+export 'src/core/sha256.dart' show sha256Hex;
 export 'src/core/types.dart';
 export 'src/widgets/navii.dart';
 export 'src/widgets/navii_group.dart';

@@ -8,8 +8,8 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [GitHub](https://github.com/uxderrick/navii)
 - [Implementation plan](../../AGENTS.md) (Phases 2+ — engine port in progress)
 
-> **Status:** Phase 1 scaffold. `createAvatar` and related APIs throw
-> `UnimplementedError` until the Dart core port lands (see root `AGENTS.md`).
+> **Status:** Phase 2 complete — hashing / PRNG / seed helpers match `@usenavii/core`.
+> `createAvatar` / widgets still await Phases 3–6 (see root `AGENTS.md`).
 
 ## Install
 
@@ -74,7 +74,18 @@ Each tile renders as an independent SVG inside a positioned `Stack`.
 
 ## Engine API (re-exported)
 
-Once implemented (Phases 2–5):
+**Phase 2 (available now):**
+
+```dart
+sha256Hex(input);
+cyrb53(input, [salt]);
+createRng(seed); // .next / .nextInt / .pick / .nextBool / .range
+normalizeEmail(email);
+seedFromEmail(email);
+seed(SeedFields(...), [SeedOptions(hashEmail: true)]);
+```
+
+**Later phases:**
 
 ```dart
 createAvatar(seed, options);
@@ -82,9 +93,6 @@ selectAvatar(seed, options);
 renderAvatar(spec, options);
 renderGroup(seeds, options);
 renderGroupTiles(seeds, options);
-seed(fields);
-seedFromEmail(email);
-normalizeEmail(email);
 random(options);
 ```
 
