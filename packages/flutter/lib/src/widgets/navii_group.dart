@@ -1,10 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../core/create_avatar.dart';
+import '../core/group.dart';
 import '../core/types.dart';
 
-/// Overlapping avatar stack. Each tile is an independent [SvgPicture.string].
+/// Overlapping avatar stack for Flutter.
+///
+/// Mirrors `@usenavii/react-native` [NaviiGroup]: each tile is an independent
+/// [SvgPicture.string] inside a positioned [Stack]. Empty [seeds] yields a
+/// zero-size widget (RN returns `null`).
 class NaviiGroup extends StatelessWidget {
   const NaviiGroup({
     super.key,
@@ -41,8 +45,12 @@ class NaviiGroup extends StatelessWidget {
   final MoodId? mood;
   final bool animated;
   final List<String>? packs;
+
+  /// Engine style hint (`masc` / `femme` / `neutral`).
   final StyleHint? styleHint;
   final String? alt;
+
+  /// Optional clipPath id namespace when multiple groups share the same seeds.
   final String? groupId;
 
   GroupOptions get _options => GroupOptions(
@@ -99,6 +107,7 @@ class NaviiGroup extends StatelessWidget {
                   width: size,
                   height: size,
                   fit: BoxFit.contain,
+                  excludeFromSemantics: true,
                 ),
               ),
           ],

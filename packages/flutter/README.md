@@ -6,10 +6,10 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [Live demo](https://navii.dev)
 - [Docs](https://navii.dev/docs)
 - [GitHub](https://github.com/uxderrick/navii)
-- [Implementation plan](../../AGENTS.md) (Phases 2+ — engine port in progress)
+- [Implementation plan](../../AGENTS.md)
 
-> **Status:** Phase 4 complete — `createAvatar` / `renderAvatar` match `@usenavii/core` SVG output.
-> Group / packs polish and Flutter widgets polish continue in Phases 5–6.
+> **Status:** Phase 6 complete — `Navii` / `NaviiGroup` widgets over a Dart port
+> of `@usenavii/core` with SVG string parity.
 
 ## Install
 
@@ -56,8 +56,11 @@ Renders engine SVG via [`flutter_svg`](https://pub.dev/packages/flutter_svg)
 | `styleHint` | `'masc' \| 'femme' \| 'neutral'` | none |
 | `title` | accessible label | none |
 | `animated` | `bool` — accepted, painted statically for now | `false` |
-| `alt` | accessible label | none |
+| `alt` | accessible label (wins over `title`) | none |
 | `tileBg` | opaque disc behind the avatar | none |
+
+Accessibility uses `alt ?? title` via [Semantics] (image role), matching RN
+`accessibilityLabel`.
 
 ## `NaviiGroup`
 
@@ -70,11 +73,21 @@ NaviiGroup(
 )
 ```
 
-Each tile renders as an independent SVG inside a positioned `Stack`.
+Each tile renders as an independent SVG inside a positioned `Stack`. Empty
+`seeds` yields a zero-size widget (RN returns `null`).
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `seeds` | `List<String>` — **required** | — |
+| `size` | `double` | `64` |
+| `overlap` | `double` (clamped 0–0.7) | `0.3` |
+| `max` | `int` — overflow → `+N` tile | all seeds |
+| `ring` / `tileBg` / `counterFill` / `counterInk` | colors | engine defaults |
+| `paletteId` / `palette` / `background` / `mood` / `packs` / `styleHint` / `animated` | same as `Navii` | — |
+| `alt` | accessible label | `'Group of N avatars'` |
+| `groupId` | clipPath id namespace | derived from seeds |
 
 ## Engine API (re-exported)
-
-**Phases 2–4 (available now):**
 
 ```dart
 sha256Hex(input);
