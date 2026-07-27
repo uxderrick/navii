@@ -8,8 +8,8 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [GitHub](https://github.com/uxderrick/navii)
 - [Implementation plan](../../AGENTS.md)
 
-> **Status:** Phase 6 complete — `Navii` / `NaviiGroup` widgets over a Dart port
-> of `@usenavii/core` with SVG string parity.
+> **Status:** Phase 7 complete — example app + root README listing. Engine and
+> widgets match `@usenavii/core` / `@usenavii/react-native`.
 
 ## Install
 
@@ -41,6 +41,16 @@ Renders engine SVG via [`flutter_svg`](https://pub.dev/packages/flutter_svg)
 > Flutter widget — the first frame is painted statically (same as
 > `@usenavii/react-native`). CSS keyframes from the engine do not run inside
 > `flutter_svg`.
+
+## Example app
+
+```sh
+cd example
+flutter pub get
+flutter run -d chrome    # or: flutter run -d macos
+```
+
+Demo covers seed input, size, mood, and `NaviiGroup`. See [`example/README.md`](./example/README.md).
 
 ## Props (`Navii`)
 
