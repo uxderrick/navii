@@ -8,8 +8,8 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [GitHub](https://github.com/uxderrick/navii)
 - [Implementation plan](../../AGENTS.md) (Phases 2+ — engine port in progress)
 
-> **Status:** Phase 3 complete — `selectAvatar` matches `@usenavii/core` for the
-> same seed + options (including mood, style, packs). SVG render is Phase 4.
+> **Status:** Phase 4 complete — `createAvatar` / `renderAvatar` match `@usenavii/core` SVG output.
+> Group / packs polish and Flutter widgets polish continue in Phases 5–6.
 
 ## Install
 
@@ -74,27 +74,27 @@ Each tile renders as an independent SVG inside a positioned `Stack`.
 
 ## Engine API (re-exported)
 
-**Phases 2–3 (available now):**
+**Phases 2–4 (available now):**
 
 ```dart
 sha256Hex(input);
 cyrb53(input, [salt]);
-createRng(seed); // .next / .nextInt / .pick / .nextBool / .range
+createRng(seed);
 normalizeEmail(email);
 seedFromEmail(email);
 seed(SeedFields(...), [SeedOptions(hashEmail: true)]);
-selectAvatar(seed, options); // → AvatarSpec
+selectAvatar(seed, options);
+createAvatar(seed, options); // → SVG string
+renderAvatar(spec, options);
 resolvePacks(ids);
+random(options);
 ```
 
 **Later phases:**
 
 ```dart
-createAvatar(seed, options);
-renderAvatar(spec, options);
 renderGroup(seeds, options);
 renderGroupTiles(seeds, options);
-random(options);
 ```
 
 ## License
