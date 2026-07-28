@@ -172,11 +172,9 @@ void main() {
         ),
       );
 
-      // 2 avatar tiles + 1 counter
-      expect(find.byType(SvgPicture), findsNWidgets(3));
-      final pictures =
-          tester.widgetList<SvgPicture>(find.byType(SvgPicture)).toList();
-      expect(_svgOf(pictures.last), contains('+3'));
+      // 2 avatar SvgPictures + 1 Flutter-native counter (centered Text).
+      expect(find.byType(SvgPicture), findsNWidgets(2));
+      expect(find.text('+3'), findsOneWidget);
     });
 
     testWidgets('default accessibility label', (tester) async {
@@ -242,7 +240,9 @@ void main() {
           ),
         ),
       );
-      expect(find.byType(SvgPicture), findsNWidgets(5));
+      // max: 5 with 6 seeds → 4 avatar tiles + Flutter +N counter
+      expect(find.byType(SvgPicture), findsNWidgets(4));
+      expect(find.text('+2'), findsOneWidget);
       expect(tester.getSize(find.byType(NaviiGroup)).height, 48);
     });
   });

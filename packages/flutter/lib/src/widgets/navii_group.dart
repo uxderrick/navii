@@ -6,9 +6,11 @@ import '../core/types.dart';
 
 /// Overlapping avatar stack for Flutter.
 ///
-/// Mirrors `@usenavii/react-native` [NaviiGroup]: each tile is an independent
-/// [SvgPicture.string] inside a positioned [Stack]. Empty [seeds] yields a
-/// zero-size widget (RN returns `null`).
+/// Mirrors `@usenavii/react-native` [NaviiGroup]: each avatar tile is an
+/// independent [SvgPicture.string] inside a positioned [Stack]. The `+N`
+/// overflow tile is painted with Flutter widgets — `flutter_svg` ignores
+/// SVG `dominant-baseline`, which left engine counter text sitting high.
+/// Empty [seeds] yields a zero-size widget (RN returns `null`).
 class NaviiGroup extends StatelessWidget {
   const NaviiGroup({
     super.key,
@@ -80,11 +82,7 @@ class NaviiGroup extends StatelessWidget {
     final tiles = renderGroupTiles(seeds, _options);
     final clampedOverlap = overlap.clamp(0.0, 0.7);
     final step = size * (1 - clampedOverlap);
-    final all = [
-      ...tiles.tiles,
-      if (tiles.counter != null) tiles.counter!,
-    ];
-
+    final overflow = _overflowCount(seeds.length, max);
     final label = alt ?? 'Group of ${seeds.length} avatars';
 
     return Semantics(
@@ -96,18 +94,32 @@ class NaviiGroup extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            for (var i = 0; i < all.length; i++)
+            for (var i = 0; i < tiles.tiles.length; i++)
               Positioned(
                 left: i * step,
                 top: 0,
                 width: size,
                 height: size,
                 child: SvgPicture.string(
-                  all[i],
+                  tiles.tiles[i],
                   width: size,
                   height: size,
                   fit: BoxFit.contain,
                   excludeFromSemantics: true,
+                ),
+              ),
+            if (overflow > 0)
+              Positioned(
+                left: tiles.tiles.length * step,
+                top: 0,
+                width: size,
+                height: size,
+                child: _CounterTile(
+                  count: overflow,
+                  size: size,
+                  fill: counterFill ?? '#E5E7EB',
+                  ink: counterInk ?? '#374151',
+                  ring: ring ?? '#ffffff',
                 ),
               ),
           ],
@@ -115,4 +127,75 @@ class NaviiGroup extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Matches engine overflow math in [renderGroupTiles].
+int _overflowCount(int seedCount, int? max) {
+  final capped = max ?? seedCount;
+  final visible =
+      (capped - (seedCount > capped ? 1 : 0)).clamp(0, seedCount);
+  return seedCount - visible;
+}
+
+/// Flutter-native `+N` disc. Keeps engine SVG counter strings for goldens /
+/// `renderGroup`, but centers label correctly under `flutter_svg`.
+class _CounterTile extends StatelessWidget {
+  const _CounterTile({
+    required this.count,
+    required this.size,
+    required this.fill,
+    required this.ink,
+    required this.ring,
+  });
+
+  final int count;
+  final double size;
+  final String fill;
+  final String ink;
+  final String ring;
+
+  @override
+  Widget build(BuildContext context) {
+    // Engine counter uses font-size 34 in a 100×100 viewBox.
+    final fontSize = size * 0.34;
+    // stroke-width 2 on the ring circle in the same viewBox.
+    final stroke = (size * 0.02).clamp(1.0, 3.0);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: _parseCssColor(fill, const Color(0xFFE5E7EB)),
+        border: Border.all(
+          color: _parseCssColor(ring, const Color(0xFFFFFFFF)),
+          width: stroke,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          '+$count',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: _parseCssColor(ink, const Color(0xFF374151)),
+            fontSize: fontSize,
+            fontWeight: FontWeight.w600,
+            height: 1.0,
+            leadingDistribution: TextLeadingDistribution.even,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Color _parseCssColor(String raw, Color fallback) {
+  var hex = raw.trim();
+  if (hex.startsWith('#')) hex = hex.substring(1);
+  if (hex.length == 3) {
+    hex = '${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}';
+  }
+  if (hex.length == 6) hex = 'FF$hex';
+  if (hex.length != 8) return fallback;
+  final value = int.tryParse(hex, radix: 16);
+  if (value == null) return fallback;
+  return Color(value);
 }

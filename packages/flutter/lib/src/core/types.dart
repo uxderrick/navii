@@ -1,6 +1,6 @@
 /// Public types for the Navii avatar engine (Dart port of `@usenavii/core`).
 ///
-/// Implementations land in Phases 2–5 — see root [AGENTS.md](../../../AGENTS.md).
+
 library;
 
 /// Color family for an avatar body / accents.

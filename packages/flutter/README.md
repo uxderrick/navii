@@ -6,7 +6,6 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [Live demo](https://navii.dev)
 - [Docs](https://navii.dev/docs)
 - [GitHub](https://github.com/uxderrick/navii)
-- [Implementation plan](../../AGENTS.md)
 
 > **Status:** Phase 8 complete — CI workflow, pub.dev dry-run path, CHANGELOG.
 > Engine and widgets match `@usenavii/core` / `@usenavii/react-native`.
@@ -45,7 +44,7 @@ Renders engine SVG via [`flutter_svg`](https://pub.dev/packages/flutter_svg)
 ## Example app
 
 ```sh
-cd example
+cd packages/flutter/example
 flutter pub get
 flutter run -d chrome    # or: flutter run -d macos
 ```
@@ -83,8 +82,10 @@ NaviiGroup(
 )
 ```
 
-Each tile renders as an independent SVG inside a positioned `Stack`. Empty
-`seeds` yields a zero-size widget (RN returns `null`).
+Each avatar tile renders as an independent SVG inside a positioned `Stack`.
+The `+N` overflow chip is a Flutter-centered disc (`flutter_svg` does not
+honor SVG `dominant-baseline`). Empty `seeds` yields a zero-size widget (RN
+returns `null`).
 
 | Prop | Type | Default |
 | --- | --- | --- |
