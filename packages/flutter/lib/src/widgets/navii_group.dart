@@ -164,9 +164,9 @@ class _CounterTile extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: _parseCssColor(fill, const Color(0xFFE5E7EB)),
+        color: _parseCssHexColor(fill),
         border: Border.all(
-          color: _parseCssColor(ring, const Color(0xFFFFFFFF)),
+          color: _parseCssHexColor(ring),
           width: stroke,
         ),
       ),
@@ -175,7 +175,7 @@ class _CounterTile extends StatelessWidget {
           '+$count',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: _parseCssColor(ink, const Color(0xFF374151)),
+            color: _parseCssHexColor(ink),
             fontSize: fontSize,
             fontWeight: FontWeight.w600,
             height: 1.0,
@@ -187,15 +187,22 @@ class _CounterTile extends StatelessWidget {
   }
 }
 
-Color _parseCssColor(String raw, Color fallback) {
+Color _parseCssHexColor(String raw) {
   var hex = raw.trim();
   if (hex.startsWith('#')) hex = hex.substring(1);
-  if (hex.length == 3) {
-    hex = '${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}';
+
+  if (hex.length == 3 || hex.length == 4) {
+    hex = hex.split('').map((digit) => '$digit$digit').join();
   }
-  if (hex.length == 6) hex = 'FF$hex';
-  if (hex.length != 8) return fallback;
-  final value = int.tryParse(hex, radix: 16);
-  if (value == null) return fallback;
-  return Color(value);
+
+  final isValidLength = hex.length == 6 || hex.length == 8;
+  final isHex = RegExp(r'^[0-9a-fA-F]+$').hasMatch(hex);
+  if (!isValidLength || !isHex) {
+    throw ArgumentError.value(raw, 'color', 'navii: expected a CSS hex color');
+  }
+
+  final argb = hex.length == 6
+      ? 'FF$hex'
+      : '${hex.substring(6, 8)}${hex.substring(0, 6)}';
+  return Color(int.parse(argb, radix: 16));
 }

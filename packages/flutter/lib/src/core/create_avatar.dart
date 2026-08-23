@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'render.dart';
 import 'select.dart';
 import 'types.dart';
@@ -24,8 +26,15 @@ String createAvatar(String seed, [AvatarOptions options = const AvatarOptions()]
 }
 
 String _randomSeed() {
-  // Match core: prefer UUID-like entropy via DateTime + hash fallback.
-  final a = DateTime.now().microsecondsSinceEpoch.toRadixString(36);
-  final b = (DateTime.now().millisecondsSinceEpoch ^ 0x9e3779b9).toRadixString(36);
-  return '$a$b';
+  final secureRandom = Random.secure();
+  final bytes = List<int>.generate(16, (_) => secureRandom.nextInt(256));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  final hex = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+  return '${hex.substring(0, 8)}-'
+      '${hex.substring(8, 12)}-'
+      '${hex.substring(12, 16)}-'
+      '${hex.substring(16, 20)}-'
+      '${hex.substring(20)}';
 }

@@ -177,6 +177,71 @@ void main() {
       expect(find.text('+3'), findsOneWidget);
     });
 
+    testWidgets('counter converts CSS RRGGBBAA colors to Flutter ARGB',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const NaviiGroup(
+            seeds: ['a', 'b'],
+            size: 32,
+            max: 1,
+            counterFill: '#11223380',
+            counterInk: '#44556640',
+            ring: '#77889920',
+          ),
+        ),
+      );
+
+      final counter = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = counter.decoration as BoxDecoration;
+      final border = decoration.border! as Border;
+      final text = tester.widget<Text>(find.text('+2'));
+
+      expect(decoration.color, const Color(0x80112233));
+      expect(border.top.color, const Color(0x20778899));
+      expect(text.style!.color, const Color(0x40445566));
+    });
+
+    testWidgets('counter expands CSS RGBA shorthand', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const NaviiGroup(
+            seeds: ['a', 'b'],
+            size: 32,
+            max: 1,
+            counterFill: '#1238',
+          ),
+        ),
+      );
+
+      final counter = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = counter.decoration as BoxDecoration;
+      expect(decoration.color, const Color(0x88112233));
+    });
+
+    testWidgets('counter rejects unsupported CSS color syntax',
+        (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const NaviiGroup(
+            seeds: ['a', 'b'],
+            size: 32,
+            max: 1,
+            counterFill: 'rgb(1, 2, 3)',
+          ),
+        ),
+      );
+
+      expect(
+        tester.takeException(),
+        isA<ArgumentError>().having(
+          (error) => error.message,
+          'message',
+          contains('hex color'),
+        ),
+      );
+    });
+
     testWidgets('default accessibility label', (tester) async {
       await tester.pumpWidget(
         _wrap(const NaviiGroup(seeds: ['a', 'b'], size: 32)),

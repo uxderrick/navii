@@ -180,6 +180,9 @@ AvatarSpec selectAvatar(String seed, [AvatarOptions options = const AvatarOption
   final accessory = rng.pick(accessoryPool);
 
   final mood = options.mood;
+  if (mood != null && mood != 'neutral' && !_moodEyes.containsKey(mood)) {
+    throw ArgumentError.value(mood, 'mood', 'navii: unsupported mood');
+  }
   final eyes = (mood != null && mood != 'neutral') ? _moodEyes[mood]! : eyesPicked;
   final mouth = (mood != null && mood != 'neutral') ? _moodMouth[mood]! : mouthPicked;
 

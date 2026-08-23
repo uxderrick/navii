@@ -13,4 +13,20 @@ void main() {
       expect(svg.contains('navii-grad-'), isTrue);
     });
   });
+
+  group('random', () {
+    test('returns an RFC 4122 version 4 seed', () {
+      final result = random();
+
+      expect(
+        result.seed,
+        matches(
+          RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+          ),
+        ),
+      );
+      expect(result.svg, createAvatar(result.seed));
+    });
+  });
 }

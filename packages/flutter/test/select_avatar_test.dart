@@ -78,6 +78,22 @@ void main() {
       expect(happy.topper, base.topper);
     });
 
+    test('unsupported mood throws an argument error', () {
+      expect(
+        () => selectAvatar(
+          'alice',
+          const AvatarOptions(mood: 'confused'),
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('unsupported mood'),
+          ),
+        ),
+      );
+    });
+
     test('office pack sets flat + bgColor flags', () {
       final spec = selectAvatar('alice', const AvatarOptions(packs: ['office']));
       expect(spec.flat, true);
