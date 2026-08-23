@@ -34,26 +34,11 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
-      - name: diagnose workspace after pub get
-        run: |
-          git status --short
-          git diff -- analysis_options.yaml example/analysis_options.yaml
-
       - name: flutter analyze
         run: flutter analyze --no-fatal-infos
 
-      - name: diagnose workspace after analyze
-        run: |
-          git status --short
-          git diff -- analysis_options.yaml example/analysis_options.yaml
-
       - name: flutter test
         run: flutter test
-
-      - name: diagnose workspace after test
-        run: |
-          git status --short
-          git diff -- analysis_options.yaml example/analysis_options.yaml
 
       - name: pub publish dry-run
         run: dart pub publish --dry-run
