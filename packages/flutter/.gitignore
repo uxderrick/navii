@@ -1,0 +1,12 @@
+# https://dart.dev/guides/libraries/private-files
+.dart_tool/
+.packages
+build/
+pubspec.lock
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+**/doc/api/
+.idea/
+.vscode/

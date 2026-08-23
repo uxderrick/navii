@@ -64,6 +64,7 @@ const PAGES: DocPage[] = [
   { slug: 'sdk-react-native', section: 'SDK', title: '@usenavii/react-native', summary: 'Native SVG components for React Native.', body: pageSdkReactNative },
   { slug: 'sdk-vue',     section: 'SDK',       title: '@usenavii/vue',          summary: 'Vue 3 components for inline avatars.', body: pageSdkVue },
   { slug: 'sdk-svelte',  section: 'SDK',       title: '@usenavii/svelte',       summary: 'Svelte 5 components for inline avatars.', body: pageSdkSvelte },
+  { slug: 'sdk-flutter', section: 'SDK',       title: 'Flutter',                 summary: 'Flutter widgets and the Dart engine API.', body: pageSdkFlutter },
   { slug: 'deployment',  section: 'Operate',   title: 'Self-hosting',        summary: 'Docker, env vars, reverse proxy notes.', body: pageDeployment },
   { slug: 'changelog',   section: 'Operate',   title: 'Changelog',           summary: 'Version history and breaking changes.', body: pageChangelog },
 ];
@@ -1518,6 +1519,65 @@ function pageSdkSvelte(): string {
 &lt;Navii seed={user.id} size={64} title={user.name} /&gt;
 &lt;NaviiGroup seeds={team.map(user =&gt; user.id)} size={48} max={5} /&gt;</code></pre>
       <p>Inline SVG is the default. Set <code>as="img"</code> for a data-URI image. Consume the package through a Svelte-aware bundler such as Vite or SvelteKit.</p>
+    </section>
+  `;
+}
+
+function pageSdkFlutter(): string {
+  return `
+    <header class="page-head">
+      <h1>Flutter</h1>
+      <p class="lede"><code>usenavii</code> provides deterministic Navii widgets and a Dart port of the core engine for Flutter applications.</p>
+    </header>
+
+    <section>
+      <h2 id="install">Install</h2>
+      <pre class="code"><code>flutter pub add usenavii</code></pre>
+      <p>Requires Flutter 3.24 or newer. The package uses <code>flutter_svg</code> to paint generated SVG strings and works offline on Android, iOS, Web, macOS, Windows, and Linux.</p>
+    </section>
+
+    <section>
+      <h2 id="usage">Usage</h2>
+      <pre class="code"><code>import 'package:usenavii/usenavii.dart';
+
+Navii(
+  seed: user.id,
+  size: 64,
+  mood: 'happy',
+  title: user.name,
+)
+
+NaviiGroup(
+  seeds: team.map((user) =&gt; user.id).toList(),
+  size: 48,
+  overlap: 0.3,
+  max: 5,
+  alt: 'Team avatars',
+)</code></pre>
+      <p>Use a stable seed such as a database id or UUID. <code>alt</code> takes precedence over <code>title</code> for the Flutter semantics label.</p>
+    </section>
+
+    <section>
+      <h2 id="options">Widget options</h2>
+      <p><code>Navii</code> supports size, palette overrides, background, mood, packs, style hints, tile background, and accessibility labels. <code>NaviiGroup</code> adds overlap, maximum visible tiles, ring color, and overflow-counter colors.</p>
+      <p>The package also re-exports the Dart engine APIs, including <code>createAvatar</code>, <code>selectAvatar</code>, <code>renderAvatar</code>, <code>renderGroup</code>, <code>build</code>, <code>random</code>, seed helpers, hashing, and pack resolution.</p>
+    </section>
+
+    <section>
+      <h2 id="limitations">Renderer limitations</h2>
+      <ul>
+        <li><code>animated: true</code> is accepted for API parity, but <code>flutter_svg</code> does not execute the SVG CSS keyframes. Flutter paints the static first frame.</li>
+        <li>SVG filter effects such as hue rotation and Gaussian glow are not supported by <code>flutter_svg</code>. Avatars still render, but affected pack effects can look different from Web.</li>
+        <li>The Flutter package versions independently from the npm <code>@usenavii/*</code> packages and is released through pub.dev.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 id="example">Example app</h2>
+      <pre class="code"><code>cd packages/flutter/example
+flutter pub get
+flutter run -d chrome</code></pre>
+      <p>The repository example demonstrates seed input, random avatars, size, moods, and an overlapping <code>NaviiGroup</code>.</p>
     </section>
   `;
 }

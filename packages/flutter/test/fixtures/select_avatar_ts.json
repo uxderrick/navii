@@ -1,0 +1,741 @@
+[
+  {
+    "seed": "alice",
+    "options": {},
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "bob",
+    "options": {},
+    "spec": {
+      "seed": "bob",
+      "palette": {
+        "id": "amber",
+        "bodyFrom": "#FCD34D",
+        "bodyTo": "#F59E0B",
+        "accent": "#FFF7ED",
+        "ink": "#78350F",
+        "blush": "#FB7185"
+      },
+      "body": "dumpling",
+      "eyes": "wink",
+      "mouth": "tooth",
+      "antenna": "double",
+      "accessory": "none",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 14,
+      "bodyScale": 0.944,
+      "eyeGapShift": -1.06,
+      "mouthCurveScale": 0.877,
+      "antennaTilt": -2
+    }
+  },
+  {
+    "seed": "user@example.com",
+    "options": {},
+    "spec": {
+      "seed": "user@example.com",
+      "palette": {
+        "id": "forest",
+        "bodyFrom": "#86EFAC",
+        "bodyTo": "#16A34A",
+        "accent": "#F0FDF4",
+        "ink": "#14532D",
+        "blush": "#FBCFE8"
+      },
+      "body": "pebble",
+      "eyes": "wink",
+      "mouth": "smile",
+      "antenna": "curl",
+      "accessory": "mole",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 24,
+      "bodyScale": 1.039,
+      "eyeGapShift": 0.07,
+      "mouthCurveScale": 1.042,
+      "antennaTilt": 8
+    }
+  },
+  {
+    "seed": "navii-parity",
+    "options": {},
+    "spec": {
+      "seed": "navii-parity",
+      "palette": {
+        "id": "lime",
+        "bodyFrom": "#BEF264",
+        "bodyTo": "#84CC16",
+        "accent": "#F7FEE7",
+        "ink": "#365314",
+        "blush": "#FCA5A5"
+      },
+      "body": "wisp",
+      "eyes": "cross",
+      "mouth": "tongue",
+      "antenna": "none",
+      "accessory": "mole",
+      "background": "ring",
+      "topper": "cap",
+      "outfit": "none",
+      "hueShift": -30,
+      "bodyScale": 1.005,
+      "eyeGapShift": -0.7,
+      "mouthCurveScale": 0.87,
+      "antennaTilt": -3
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "paletteId": "mint"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "mint",
+        "bodyFrom": "#6EE7B7",
+        "bodyTo": "#34D399",
+        "accent": "#ECFDF5",
+        "ink": "#064E3B",
+        "blush": "#FBCFE8"
+      },
+      "body": "taro",
+      "eyes": "star",
+      "mouth": "smile",
+      "antenna": "none",
+      "accessory": "blush",
+      "background": "solid",
+      "topper": "headband",
+      "outfit": "none",
+      "hueShift": -8,
+      "bodyScale": 1.066,
+      "eyeGapShift": -0.33,
+      "mouthCurveScale": 0.927,
+      "antennaTilt": 3
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "background": "ring"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": -8,
+      "bodyScale": 1.066,
+      "eyeGapShift": -0.33,
+      "mouthCurveScale": 0.927,
+      "antennaTilt": 3
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "background": {
+        "color": "#ff00aa"
+      }
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": -8,
+      "bodyScale": 1.066,
+      "eyeGapShift": -0.33,
+      "mouthCurveScale": 0.927,
+      "antennaTilt": 3
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "mood": "happy"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "wide",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "mood": "serious"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "squint",
+      "mouth": "flat",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "mood": "sleepy"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "sleepy",
+      "mouth": "dot",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "mood": "wink"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "wink",
+      "mouth": "smirk",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "mood": "neutral"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "office"
+      ]
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "office:slate",
+        "bodyFrom": "#9DA2AA",
+        "bodyTo": "#6C7077",
+        "accent": "#FFFFFF",
+        "ink": "#1A1C20",
+        "blush": "#A0A2A6"
+      },
+      "body": "squircle",
+      "eyes": "dot",
+      "mouth": "flat",
+      "antenna": "none",
+      "accessory": "freckles",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "bowtie",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1,
+      "flat": true,
+      "bgColor": "#FFFFFF",
+      "featureStroke": 1.35
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "office"
+      ],
+      "style": "masc"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "office:slate",
+        "bodyFrom": "#9DA2AA",
+        "bodyTo": "#6C7077",
+        "accent": "#FFFFFF",
+        "ink": "#1A1C20",
+        "blush": "#A0A2A6"
+      },
+      "body": "squircle",
+      "eyes": "dot",
+      "mouth": "flat",
+      "antenna": "none",
+      "accessory": "mole",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "bowtie",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1,
+      "flat": true,
+      "bgColor": "#FFFFFF",
+      "featureStroke": 1.35
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "office"
+      ],
+      "style": "femme"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "office:slate",
+        "bodyFrom": "#9DA2AA",
+        "bodyTo": "#6C7077",
+        "accent": "#FFFFFF",
+        "ink": "#1A1C20",
+        "blush": "#A0A2A6"
+      },
+      "body": "squircle",
+      "eyes": "dot",
+      "mouth": "flat",
+      "antenna": "none",
+      "accessory": "earring",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "necklace",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1,
+      "flat": true,
+      "bgColor": "#FFFFFF",
+      "featureStroke": 1.35
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "halloween"
+      ]
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "halloween:bone",
+        "bodyFrom": "#F5EEDB",
+        "bodyTo": "#C8B89A",
+        "accent": "#FFFEF5",
+        "ink": "#1A1612",
+        "blush": "#E8D9B8"
+      },
+      "body": "ghost",
+      "eyes": "cross",
+      "mouth": "jagged",
+      "antenna": "none",
+      "accessory": "eyepatch",
+      "background": "solid",
+      "topper": "pumpkinStem",
+      "outfit": "scarf",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1,
+      "flat": true,
+      "bgColor": "#0E0A1A",
+      "featureStroke": 1.4
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "neon"
+      ]
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "neon:plasma",
+        "bodyFrom": "#FF6A3D",
+        "bodyTo": "#C42500",
+        "accent": "#FFD9CC",
+        "ink": "#1F0500",
+        "blush": "#FFA98A"
+      },
+      "body": "wisp",
+      "eyes": "star",
+      "mouth": "grin",
+      "antenna": "spike",
+      "accessory": "eyepatch",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "necklace",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1,
+      "flat": true,
+      "bgColor": "#0A0A14",
+      "featureStroke": 1.5,
+      "glow": true
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "pastel"
+      ],
+      "style": "femme"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "pastel:sky-drop",
+        "bodyFrom": "#A8D9F5",
+        "bodyTo": "#6BB1E0",
+        "accent": "#EFF8FE",
+        "ink": "#15324A",
+        "blush": "#BCDDF0"
+      },
+      "body": "orb",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "none",
+      "accessory": "blush",
+      "background": "solid",
+      "topper": "ears",
+      "outfit": "necklace",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1,
+      "flat": true,
+      "bgColor": "#FBF6F0",
+      "featureStroke": 1.3
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "office"
+      ],
+      "paletteId": "office:graphite"
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "office:graphite",
+        "bodyFrom": "#989BA2",
+        "bodyTo": "#696D72",
+        "accent": "#FFFFFF",
+        "ink": "#1A1C1F",
+        "blush": "#A09D99"
+      },
+      "body": "squircle",
+      "eyes": "sleepy",
+      "mouth": "flat",
+      "antenna": "none",
+      "accessory": "glasses",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "necklace",
+      "hueShift": -8,
+      "bodyScale": 1.066,
+      "eyeGapShift": -0.33,
+      "mouthCurveScale": 0.927,
+      "antennaTilt": 3,
+      "flat": true,
+      "bgColor": "#FFFFFF",
+      "featureStroke": 1.35
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": [
+        "does-not-exist"
+      ]
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "alice",
+    "options": {
+      "packs": []
+    },
+    "spec": {
+      "seed": "alice",
+      "palette": {
+        "id": "lavender",
+        "bodyFrom": "#DDD6FE",
+        "bodyTo": "#7C3AED",
+        "accent": "#F5F3FF",
+        "ink": "#3B0764",
+        "blush": "#F5D0FE"
+      },
+      "body": "pebble",
+      "eyes": "round",
+      "mouth": "smile",
+      "antenna": "classic",
+      "accessory": "glasses",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.987,
+      "eyeGapShift": -0.97,
+      "mouthCurveScale": 1.05,
+      "antennaTilt": -1
+    }
+  },
+  {
+    "seed": "u-42",
+    "options": {
+      "packs": [
+        "office",
+        "halloween"
+      ]
+    },
+    "spec": {
+      "seed": "u-42",
+      "palette": {
+        "id": "halloween:witch",
+        "bodyFrom": "#B266FF",
+        "bodyTo": "#6A1FB8",
+        "accent": "#F0D9FF",
+        "ink": "#0E031F",
+        "blush": "#D6A0FF"
+      },
+      "body": "skullHead",
+      "eyes": "sleepy",
+      "mouth": "dot",
+      "antenna": "none",
+      "accessory": "none",
+      "background": "solid",
+      "topper": "none",
+      "outfit": "collar",
+      "hueShift": -21,
+      "bodyScale": 1.062,
+      "eyeGapShift": -0.76,
+      "mouthCurveScale": 1.133,
+      "antennaTilt": -4,
+      "flat": true,
+      "bgColor": "#0E0A1A",
+      "featureStroke": 1.4
+    }
+  },
+  {
+    "seed": "brand",
+    "options": {
+      "palette": {
+        "id": "custom",
+        "bodyFrom": "#111111",
+        "bodyTo": "#222222",
+        "accent": "#FFFFFF",
+        "ink": "#000000",
+        "blush": "#FFAAAA"
+      }
+    },
+    "spec": {
+      "seed": "brand",
+      "palette": {
+        "id": "custom",
+        "bodyFrom": "#111111",
+        "bodyTo": "#222222",
+        "accent": "#FFFFFF",
+        "ink": "#000000",
+        "blush": "#FFAAAA"
+      },
+      "body": "pebble",
+      "eyes": "wide",
+      "mouth": "open",
+      "antenna": "classic",
+      "accessory": "sparkle",
+      "background": "ring",
+      "topper": "none",
+      "outfit": "none",
+      "hueShift": 25,
+      "bodyScale": 0.928,
+      "eyeGapShift": -1.76,
+      "mouthCurveScale": 1.022,
+      "antennaTilt": -3
+    }
+  }
+]

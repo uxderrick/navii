@@ -126,6 +126,7 @@ describe('api', () => {
       ['sdk-react-native', '@usenavii/react-native', 'react-native-svg'],
       ['sdk-vue', '@usenavii/vue', 'Vue 3'],
       ['sdk-svelte', '@usenavii/svelte', 'Svelte 5'],
+      ['sdk-flutter', 'usenavii', 'flutter_svg'],
     ] as const;
 
     for (const [slug, packageName, peer] of pages) {

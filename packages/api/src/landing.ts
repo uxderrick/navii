@@ -911,6 +911,7 @@ export function landingHtml(): string {
       <a class="doc-card" href="/docs/http-api"><h3>HTTP API</h3><p>Endpoints, params, errors, headers.</p></a>
       <a class="doc-card" href="/docs/sdk-core"><h3>@usenavii/core</h3><p>Functions, types, composition.</p></a>
       <a class="doc-card" href="/docs/sdk-react"><h3>@usenavii/react</h3><p>Component props + memoization.</p></a>
+      <a class="doc-card" href="/docs/sdk-flutter"><h3>Flutter</h3><p>Widgets, groups, Dart engine, platform notes.</p></a>
     </div>
   </section>
 

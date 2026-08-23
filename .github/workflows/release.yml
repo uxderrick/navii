@@ -87,6 +87,8 @@ jobs:
       - run: pnpm install --frozen-lockfile=false
 
       - name: build npm packages
+        # Five JS SDKs only — packages/flutter (usenavii on pub.dev) is
+        # intentionally out of npm lockstep and is never published here.
         run: |
           set -euo pipefail
           for package_name in \
@@ -102,6 +104,7 @@ jobs:
       - name: stage CHANGELOG into each package
         run: |
           set -euo pipefail
+          # npm packages only (not packages/flutter)
           for package_dir in core react react-native vue svelte; do
             cp CHANGELOG.md "packages/$package_dir/CHANGELOG.md"
           done
@@ -112,6 +115,7 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
 
+          // Explicit allowlist — do not add `flutter` / `usenavii` here.
           const packageDirs = ['core', 'react', 'react-native', 'vue', 'svelte'];
           const manifests = packageDirs.map((packageDir) => {
             const path = `packages/${packageDir}/package.json`;
@@ -153,6 +157,7 @@ jobs:
           done
 
       - name: publish npm packages
+        # Publishes the five JS packages only. Flutter → pub.dev separately.
         run: |
           set -euo pipefail
           for package_dir in core react react-native vue svelte; do
