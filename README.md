@@ -81,6 +81,10 @@ import { Navii } from '@usenavii/react';
 
 ### Flutter
 
+```sh
+flutter pub add usenavii
+```
+
 ```dart
 import 'package:usenavii/usenavii.dart';
 
@@ -91,7 +95,9 @@ Navii(
 )
 ```
 
-See [`packages/flutter`](./packages/flutter) and the [example app](./packages/flutter/example).
+See the [Flutter SDK guide](https://navii.dev/docs/sdk-flutter),
+[`packages/flutter`](./packages/flutter), and the
+[example app](./packages/flutter/example).
 
 ### `<img src>` via hosted endpoint
 

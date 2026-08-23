@@ -19,3 +19,5 @@ Versioning: [SemVer](https://semver.org).
   `@usenavii/react-native`; `animated` accepted, painted statically in v1).
 - Example app under `example/` (seed, size, mood, group).
 - Golden tests against `@usenavii/core` fixtures.
+- Flutter SDK guide at `/docs/sdk-flutter`, including supported platforms and
+  current `flutter_svg` animation / filter limitations.

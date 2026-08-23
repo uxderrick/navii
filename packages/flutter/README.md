@@ -7,8 +7,9 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [Docs](https://navii.dev/docs)
 - [GitHub](https://github.com/uxderrick/navii)
 
-> **Status:** Phase 8 complete — CI workflow, pub.dev dry-run path, CHANGELOG.
-> Engine and widgets match `@usenavii/core` / `@usenavii/react-native`.
+> **Status:** Pre-release. Engine and widgets match `@usenavii/core` /
+> `@usenavii/react-native`; Flutter-specific renderer limitations are listed
+> below.
 
 ## Install
 
@@ -18,7 +19,7 @@ dependencies:
 ```
 
 ```sh
-flutter pub get
+flutter pub add usenavii
 ```
 
 ## Usage
@@ -40,6 +41,15 @@ Renders engine SVG via [`flutter_svg`](https://pub.dev/packages/flutter_svg)
 > Flutter widget — the first frame is painted statically (same as
 > `@usenavii/react-native`). CSS keyframes from the engine do not run inside
 > `flutter_svg`.
+
+> **SVG filters:** `flutter_svg` does not support the engine's hue-rotation or
+> Gaussian-glow filters. Avatars still render, but affected pack effects can
+> look different from Web.
+
+## Platform support
+
+`usenavii` supports Android, iOS, Web, macOS, Windows, and Linux on Flutter
+3.24 or newer. Rendering is fully offline and does not load remote assets.
 
 ## Example app
 
