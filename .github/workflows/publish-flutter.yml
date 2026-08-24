@@ -1,0 +1,58 @@
+name: publish Flutter package
+
+on:
+  push:
+    tags:
+      - 'usenavii-v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-flutter-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: packages/flutter
+
+jobs:
+  publish:
+    name: verify + publish to pub.dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: verify tag matches pubspec version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          package_version=$(awk '$1 == "version:" { print $2; exit }' pubspec.yaml)
+          expected_tag="usenavii-v${package_version}"
+
+          if [ "$TAG" != "$expected_tag" ]; then
+            echo "::error::Tag $TAG does not match pubspec version $package_version (expected $expected_tag)"
+            exit 1
+          fi
+
+      - name: resolve dependencies
+        run: flutter pub get
+
+      - name: analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: test
+        run: flutter test
+
+      - name: validate package
+        run: dart pub publish --dry-run
+
+      - name: publish to pub.dev
+        run: dart pub publish --force
