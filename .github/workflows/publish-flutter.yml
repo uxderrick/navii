@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'usenavii-v*'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,8 +19,8 @@ defaults:
     working-directory: packages/flutter
 
 jobs:
-  publish:
-    name: verify + publish to pub.dev
+  verify:
+    name: analyze + test
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -31,6 +32,7 @@ jobs:
           cache: true
 
       - name: verify tag matches pubspec version
+        if: github.event_name == 'push'
         env:
           TAG: ${{ github.ref_name }}
         run: |
@@ -51,8 +53,12 @@ jobs:
       - name: test
         run: flutter test
 
-      - name: validate package
-        run: dart pub publish --dry-run
-
-      - name: publish to pub.dev
-        run: dart pub publish --force
+  publish:
+    name: publish to pub.dev
+    needs: verify
+    permissions:
+      contents: read
+      id-token: write
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    with:
+      working-directory: packages/flutter
