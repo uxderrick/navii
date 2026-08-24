@@ -8,6 +8,13 @@ This package versions **independently** of the npm `@usenavii/*` lockstep
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org).
 
+## [0.1.0] - 2026-08-24
+
+### Changed
+
+- Promoted the initial official Flutter SDK to a stable release after
+  validating the published package in Flutter web and Android applications.
+
 ## [0.1.0-dev.1] - 2026-07-27
 
 ### Added
