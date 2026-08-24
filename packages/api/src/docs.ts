@@ -1533,6 +1533,7 @@ function pageSdkFlutter(): string {
     <section>
       <h2 id="install">Install</h2>
       <pre class="code"><code>flutter pub add usenavii</code></pre>
+      <p>Stable release: <a href="https://pub.dev/packages/usenavii"><code>usenavii 0.1.1</code> on pub.dev</a>.</p>
       <p>Requires Flutter 3.24 or newer. The package uses <code>flutter_svg</code> to paint generated SVG strings and works offline on Android, iOS, Web, macOS, Windows, and Linux.</p>
     </section>
 

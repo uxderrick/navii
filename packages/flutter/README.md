@@ -7,7 +7,7 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 - [Docs](https://navii.dev/docs)
 - [GitHub](https://github.com/uxderrick/navii)
 
-> **Status:** Pre-release. Engine and widgets match `@usenavii/core` /
+> **Status:** Stable. Engine and widgets match `@usenavii/core` /
 > `@usenavii/react-native`; Flutter-specific renderer limitations are listed
 > below.
 
@@ -15,7 +15,7 @@ Drop a `Navii(seed: user.id)` and every user has a face, no uploads.
 
 ```yaml
 dependencies:
-  usenavii: ^0.1.0-dev.1
+  usenavii: ^0.1.1
 ```
 
 ```sh

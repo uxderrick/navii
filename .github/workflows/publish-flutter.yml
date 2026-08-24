@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'usenavii-v*'
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,7 +31,6 @@ jobs:
           cache: true
 
       - name: verify tag matches pubspec version
-        if: github.event_name == 'push'
         env:
           TAG: ${{ github.ref_name }}
         run: |

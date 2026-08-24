@@ -8,6 +8,13 @@ This package versions **independently** of the npm `@usenavii/*` lockstep
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org).
 
+## [0.1.1] - 2026-08-24
+
+### Fixed
+
+- Updated the package README to identify the SDK as stable and recommend the
+  stable pub.dev dependency instead of the prerelease version.
+
 ## [0.1.0] - 2026-08-24
 
 ### Changed
