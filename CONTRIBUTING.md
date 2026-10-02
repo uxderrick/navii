@@ -2,6 +2,20 @@
 
 Small project, mostly solo. The notes below exist so consumers of `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, and `@usenavii/svelte` know what to expect from a version bump.
 
+## Development tooling
+
+Use Node.js 22.22.2+, 24.15+, or 26+ and the pnpm version pinned in `package.json`.
+Run `pnpm install --frozen-lockfile`, `pnpm build`, `pnpm typecheck`,
+`pnpm test`, and `pnpm test:artifacts` before submitting changes.
+
+`@typescript/native` supplies TypeScript 7's `tsc` executable. The `typescript`
+alias points to Microsoft's `@typescript/typescript6` compatibility package
+because tsup and Svelte tooling use the TypeScript 6 compiler API.
+`svelte-check` validates the `.svelte` components as well as their TypeScript.
+
+The Flutter package and example require Flutter 3.35 or newer and Dart 3.9
+or newer. Run their existing analysis and test commands with Flutter stable.
+
 ## Versioning
 
 All packages follow [SemVer](https://semver.org) and ship in **lockstep** — they always have the same version, and each framework package depends on the matching `@usenavii/core` via `workspace:^<version>`.

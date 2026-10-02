@@ -392,8 +392,6 @@ describe('api', () => {
   });
 });
 
-import { createApp } from '../src/app.js';
-
 describe('rate limit', () => {
   it('emits 429 after max requests in window', async () => {
     const limited = createApp({

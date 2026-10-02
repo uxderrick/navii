@@ -356,10 +356,12 @@ Highlights:
 
 ## Develop
 
+Use Node.js 22.22.2+, 24.15+, or 26+ and pnpm 12.8.1. CI and the API container use Node.js 24.
+
 ```bash
 pnpm install
 pnpm test           # runs vitest across all packages
-pnpm build          # builds @usenavii/core, @usenavii/react, @usenavii/api
+pnpm build          # builds all JavaScript packages and the Figma plugin
 pnpm dev:api        # hot-reload hosted endpoint on :8787
 
 # Flutter SDK (independent of pnpm)

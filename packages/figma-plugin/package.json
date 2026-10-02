@@ -14,7 +14,7 @@
     "@usenavii/core": "workspace:*"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "^1.108.0",
-    "esbuild": "^0.24.0"
+    "@figma/plugin-typings": "^1.140.0",
+    "esbuild": "^0.28.2"
   }
 }
