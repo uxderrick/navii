@@ -8,6 +8,13 @@ This package versions **independently** of the npm `@usenavii/*` lockstep
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org).
 
+## [Unreleased]
+
+### Changed
+
+- Updated `flutter_svg` to 2.3.0 and raised the minimum SDK versions to
+  Flutter 3.35 and Dart 3.9.
+
 ## [0.1.1] - 2026-08-24
 
 ### Fixed

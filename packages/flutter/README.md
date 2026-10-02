@@ -49,7 +49,7 @@ Renders engine SVG via [`flutter_svg`](https://pub.dev/packages/flutter_svg)
 ## Platform support
 
 `usenavii` supports Android, iOS, Web, macOS, Windows, and Linux on Flutter
-3.24 or newer. Rendering is fully offline and does not load remote assets.
+3.35 or newer. Rendering is fully offline and does not load remote assets.
 
 ## Example app
 
