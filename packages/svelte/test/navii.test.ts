@@ -75,7 +75,8 @@ describe('NaviiGroup', () => {
     });
 
     const image = screen.getByRole('img', { name: 'Pair' });
-    expect(image).toHaveAttribute('width', '108.8');
+    // Svelte assigns the native image width property, which reflects an integer.
+    expect(image).toHaveAttribute('width', '108');
     expect(image).toHaveAttribute('height', '64');
   });
 

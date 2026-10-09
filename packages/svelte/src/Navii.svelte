@@ -60,11 +60,9 @@
     src={svg}
     width={size}
     height={size}
-    class={className}
-    {style}
+    {...className !== undefined ? { class: className } : {}}
+    {...style !== undefined ? { style } : {}}
     {sanitize}
-    role={hasLabel ? 'img' : undefined}
-    aria-label={hasLabel ? (alt ?? title) : undefined}
-    aria-hidden={hasLabel ? undefined : true}
+    {...hasLabel ? { role: 'img', 'aria-label': alt ?? title ?? '' } : { 'aria-hidden': true }}
   />
 {/if}

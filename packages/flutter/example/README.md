@@ -20,7 +20,7 @@ cd packages/flutter/example
 flutter run -d chrome
 ```
 
-Requires the Flutter SDK (`>=3.24`). The app depends on the local package via
+Requires the Flutter SDK (`>=3.35`). The app depends on the local package via
 `path: ../`.
 
 ## Links

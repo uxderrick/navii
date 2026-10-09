@@ -1,2 +1,25 @@
 packages:
   - 'packages/*'
+
+strictPeerDependencies: true
+autoInstallPeers: true
+
+allowBuilds:
+  esbuild: true
+  '@resvg/resvg-js': true
+minimumReleaseAgeExclude:
+  - '@shikijs/core@4.5.0'
+  - '@shikijs/engine-javascript@4.5.0'
+  - '@shikijs/engine-oniguruma@4.5.0'
+  - '@shikijs/langs@4.5.0'
+  - '@shikijs/primitive@4.5.0'
+  - '@shikijs/themes@4.5.0'
+  - '@shikijs/types@4.5.0'
+  - '@sveltejs/package@3.0.0'
+  - '@types/node@26.6.4'
+  - shiki@4.5.0
+  - vite@8.3.2
+
+# tsup still pins esbuild 0.27, which has a Windows dev-server file-read advisory.
+overrides:
+  esbuild: ^0.28.2

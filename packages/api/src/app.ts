@@ -120,7 +120,7 @@ export function createApp(options: AppOptions = {}) {
       ...(options.polarSuccessUrl ? { successUrl: options.polarSuccessUrl } : {}),
       ...(options.polarServer ? { server: options.polarServer } : {}),
     };
-    app.get('/checkout', (c) => {
+    app.get('/checkout', async (c) => {
       // If caller didn't specify ?products=, fall back to configured productId.
       const hasProduct = c.req.query('products') || c.req.query('productId');
       if (!hasProduct && options.polarProductId) {

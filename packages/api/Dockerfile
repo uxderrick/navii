@@ -4,23 +4,18 @@
 # Stage 1: install workspace deps + build core/api.
 # Stage 2: copy only prod artifacts into a slim runtime.
 
-FROM node:20-bookworm-slim AS build
+FROM node:24-bookworm-slim AS build
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+RUN npm install --global pnpm@12.8.1
 
 WORKDIR /repo
 
 # Copy workspace manifests first for better layer caching
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* tsconfig.base.json ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.base.json ./
 COPY packages/core/package.json packages/core/
-COPY packages/react/package.json packages/react/
 COPY packages/api/package.json packages/api/
 
-# --ignore-scripts skips esbuild's postinstall binary-version check, which has
-# flaked across pnpm store boundaries when multiple esbuild major versions are
-# present in the lockfile. We don't run esbuild as a CLI binary in the build —
-# tsup imports esbuild as a JS module, which works regardless.
-RUN pnpm install --frozen-lockfile=false --ignore-scripts
+RUN pnpm install --filter @usenavii/api... --frozen-lockfile
 
 # Now copy sources
 COPY packages/core packages/core
@@ -33,7 +28,7 @@ RUN pnpm --filter @usenavii/core run build \
 RUN pnpm deploy --filter=@usenavii/api --prod /out
 
 # --- runtime image -----------------------------------------------------------
-FROM node:20-bookworm-slim AS runtime
+FROM node:24-bookworm-slim AS runtime
 ENV NODE_ENV=production \
     PORT=8787 \
     HOST=0.0.0.0 \
