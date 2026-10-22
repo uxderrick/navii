@@ -144,7 +144,8 @@ describe('api', () => {
 
     const react = await (await get('/docs/sdk-react')).text();
     expect(react).toContain('inline SVG');
-    expect(react).toContain('No separate SVG adapter installation');
+    expect(react).toContain('The SVG adapter is bundled for compatibility');
+    expect(react).toContain('@mhaadi/svg</code> installs automatically');
   });
 
   it('publishes detailed v0.28.1 compatibility guidance', async () => {

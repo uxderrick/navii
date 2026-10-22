@@ -1,6 +1,6 @@
 {
   "name": "@usenavii/react-native",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "React Native binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,7 +15,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -49,7 +50,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@usenavii/core": "workspace:^0.9.1"
+    "@usenavii/core": "workspace:^0.10.0",
+    "@mhaadi/svg": "^0.4.0"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -57,7 +59,6 @@
     "react-native-svg": ">=15"
   },
   "devDependencies": {
-    "@mhaadi/svg": "^0.2.3",
     "@types/react": "^19.3.0",
     "@types/react-test-renderer": "^19.3.0",
     "react": "^19.3.0",

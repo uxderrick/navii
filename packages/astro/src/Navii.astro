@@ -1,0 +1,26 @@
+---
+import SVG from '@mhaadi/svg/astro';
+import { createAvatar } from '@usenavii/core';
+
+import type { NaviiProps } from './props.js';
+
+export interface Props extends NaviiProps {}
+
+const { seed, size = 96, as = 'svg', class: className, style, styleHint, sanitize = false, alt, ...options } = Astro.props;
+const svg = createAvatar(seed, { ...options, size, ...(styleHint !== undefined ? { style: styleHint } : {}) });
+const label = alt ?? options.title ?? '';
+---
+
+{as === 'img' ? (
+  <img src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`} width={size} height={size} alt={label} class={className} style={style} />
+) : (
+  <SVG
+    src={svg}
+    width={size}
+    height={size}
+    {...className !== undefined ? { class: className } : {}}
+    {...style !== undefined ? { style } : {}}
+    sanitize={sanitize}
+    {...label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true }}
+  />
+)}

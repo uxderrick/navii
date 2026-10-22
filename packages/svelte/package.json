@@ -1,6 +1,6 @@
 {
   "name": "@usenavii/svelte",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Svelte 5 binding for Navii deterministic avatars — <Navii seed=\"...\" />.",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,7 +17,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "svelte-package --input src",
@@ -51,8 +52,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@mhaadi/svg": "^0.2.3",
-    "@usenavii/core": "workspace:^0.9.1"
+    "@mhaadi/svg": "^0.4.0",
+    "@usenavii/core": "workspace:^0.10.0"
   },
   "peerDependencies": {
     "svelte": ">=5"

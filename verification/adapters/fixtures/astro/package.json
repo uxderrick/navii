@@ -1,0 +1,6 @@
+{
+  "name": "astro-consumer",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "astro check && astro build" }
+}

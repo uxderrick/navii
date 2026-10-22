@@ -1,0 +1,27 @@
+---
+import SVG from '@mhaadi/svg/astro';
+import { renderGroup, renderGroupTiles, type GroupOptions } from '@usenavii/core';
+
+import type { NaviiGroupProps } from './props.js';
+
+export interface Props extends NaviiGroupProps {}
+
+const { seeds, size = 64, overlap = 0.3, as = 'svg', class: className, style, styleHint, sanitize = false, alt, ...options } = Astro.props;
+const groupOptions: GroupOptions = { ...options, size, overlap, ...(styleHint !== undefined ? { style: styleHint } : {}) };
+const group = seeds.length ? renderGroupTiles(seeds, groupOptions) : undefined;
+const tiles = group ? (group.counter ? [...group.tiles, group.counter] : group.tiles) : [];
+const label = alt ?? `Group of ${seeds.length} avatars`;
+const step = size * (1 - Math.max(0, Math.min(0.7, overlap)));
+---
+
+{group && (as === 'img' ? (
+  <img src={`data:image/svg+xml;utf8,${encodeURIComponent(renderGroup(seeds, groupOptions))}`} width={group.width} height={group.height} alt={label} class={className} style={style} />
+) : (
+  <div class={className} style={`position:relative;width:${group.width}px;height:${group.height}px;${style ?? ''}`} role={label ? 'img' : undefined} aria-label={label || undefined}>
+    {tiles.map((tile, index) => (
+      <div style={`position:absolute;left:${index * step}px;top:0;width:${size}px;height:${size}px`}>
+        <SVG src={tile} width={size} height={size} sanitize={sanitize} aria-hidden={true} />
+      </div>
+    ))}
+  </div>
+))}

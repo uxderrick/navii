@@ -89,3 +89,5 @@ Format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Sections use
 - **Security** — anything with a security implication
 
 Write entries from the consumer's point of view. Skip internal refactors, doc-only commits, and CI churn — they don't belong in a CHANGELOG that consumers read to decide whether to upgrade.
+
+The JavaScript workspace requires Node 22.22 or newer in the 22 release line, Node 24.15 or newer, or Node 26 or newer. Angular and Astro build tools need these versions. Angular builds use the TypeScript 6 compatibility package required by its compiler.

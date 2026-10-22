@@ -64,6 +64,9 @@ const PAGES: DocPage[] = [
   { slug: 'sdk-react-native', section: 'SDK', title: '@usenavii/react-native', summary: 'Native SVG components for React Native.', body: pageSdkReactNative },
   { slug: 'sdk-vue',     section: 'SDK',       title: '@usenavii/vue',          summary: 'Vue 3 components for inline avatars.', body: pageSdkVue },
   { slug: 'sdk-svelte',  section: 'SDK',       title: '@usenavii/svelte',       summary: 'Svelte 5 components for inline avatars.', body: pageSdkSvelte },
+  { slug: 'sdk-solid', section: 'SDK', title: '@usenavii/solid', summary: 'Reactive Solid avatar and group components.', body: pageSdkSolid },
+  { slug: 'sdk-angular', section: 'SDK', title: '@usenavii/angular', summary: 'Standalone Angular avatar and group components.', body: pageSdkAngular },
+  { slug: 'sdk-astro', section: 'SDK', title: '@usenavii/astro', summary: 'Astro avatars rendered on the server.', body: pageSdkAstro },
   { slug: 'sdk-flutter', section: 'SDK',       title: 'Flutter',                 summary: 'Flutter widgets and the Dart engine API.', body: pageSdkFlutter },
   { slug: 'deployment',  section: 'Operate',   title: 'Self-hosting',        summary: 'Docker, env vars, reverse proxy notes.', body: pageDeployment },
   { slug: 'changelog',   section: 'Operate',   title: 'Changelog',           summary: 'Version history and breaking changes.', body: pageChangelog },
@@ -1366,7 +1369,7 @@ function pageSdkReact(): string {
     <section>
       <h2 id="install">Install</h2>
       <pre class="code"><code>npm i @usenavii/react</code></pre>
-      <p><code>@usenavii/core</code> is installed as a runtime dependency. No separate SVG adapter installation is required: the React adapter is bundled into the package. React and React DOM remain peer dependencies.</p>
+      <p><code>@usenavii/core</code> is installed as a runtime dependency. The SVG adapter is bundled for compatibility, and <code>@mhaadi/svg</code> installs automatically. React and React DOM remain peer dependencies.</p>
     </section>
 
     <section>
@@ -1452,7 +1455,7 @@ function pageSdkReactNative(): string {
     <section>
       <h2 id="install">Install</h2>
       <pre class="code"><code>npm i @usenavii/react-native react-native-svg</code></pre>
-      <p>React Native <code>&gt;=0.73</code> and <code>react-native-svg</code> <code>&gt;=15</code> are peer dependencies. The Navii SVG adapter and <code>@usenavii/core</code> install with the package.</p>
+      <p>React Native <code>&gt;=0.73</code> and <code>react-native-svg</code> <code>&gt;=15</code> are peer dependencies. <code>@mhaadi/svg</code> and <code>@usenavii/core</code> install with the package.</p>
     </section>
     <section>
       <h2 id="usage">Usage</h2>
@@ -1520,6 +1523,48 @@ function pageSdkSvelte(): string {
 &lt;NaviiGroup seeds={team.map(user =&gt; user.id)} size={48} max={5} /&gt;</code></pre>
       <p>Inline SVG is the default. Set <code>as="img"</code> for a data-URI image. Consume the package through a Svelte-aware bundler such as Vite or SvelteKit.</p>
     </section>
+  `;
+}
+
+function pageSdkSolid(): string {
+  return `
+    <header class="page-head"><h1>@usenavii/solid</h1><p class="lede">Reactive Solid 1.9 components for avatars and overlapping groups.</p></header>
+    <section><h2 id="install">Install</h2><pre class="code"><code>npm i @usenavii/solid</code></pre></section>
+    <section><h2 id="usage">Usage</h2><pre class="code"><code>import { Navii, NaviiGroup } from '@usenavii/solid';
+
+&lt;Navii seed={user.id} size={64} title={user.name} animated /&gt;
+&lt;NaviiGroup seeds={team.map(user =&gt; user.id)} size={48} max={5} /&gt;</code></pre>
+    <p>Props update reactively. Use <code>class</code> and a CSS string for <code>style</code>. The SVG renderer loads in a client effect; use <code>as="img"</code> when the avatar must appear in server-rendered HTML.</p>
+    <p>Core avatar options, group options, accessible labels, sanitization, loading and fallback content, and SVG callbacks are supported. Core engine functions and types are also exported.</p></section>
+  `;
+}
+
+function pageSdkAngular(): string {
+  return `
+    <header class="page-head"><h1>@usenavii/angular</h1><p class="lede">Standalone Angular 22 components with signal inputs.</p></header>
+    <section><h2 id="install">Install</h2><pre class="code"><code>npm i @usenavii/angular</code></pre></section>
+    <section><h2 id="usage">Usage</h2><pre class="code"><code>import { Navii, NaviiGroup } from '@usenavii/angular';
+
+// Add Navii and NaviiGroup to your component's imports.
+&lt;navii-avatar [seed]="user.id" [size]="64" [title]="user.name" /&gt;
+&lt;navii-group [seeds]="teamSeeds" [size]="48" [max]="5" /&gt;</code></pre>
+    <p>Pass palette, background, mood, and other engine settings through <code>[options]</code>. Groups add overlap, maximum count, ring, tile background, and counter colors. Both components accept <code>alt</code>, <code>sanitize</code>, <code>svgClass</code>, and <code>svgStyle</code>, and emit <code>svgLoad</code> and <code>svgError</code>.</p>
+    <p>Inline SVG loads in the browser. Set <code>as="img"</code> for server-rendered HTML. Angular's application build links the package's partial declarations.</p></section>
+  `;
+}
+
+function pageSdkAstro(): string {
+  return `
+    <header class="page-head"><h1>@usenavii/astro</h1><p class="lede">Server-rendered avatars with no client JavaScript.</p></header>
+    <section><h2 id="install">Install</h2><pre class="code"><code>npm i @usenavii/astro</code></pre></section>
+    <section><h2 id="usage">Usage</h2><pre class="code"><code>---
+import { Navii, NaviiGroup } from '@usenavii/astro';
+---
+
+&lt;Navii seed="alice" size={64} title="Alice" animated /&gt;
+&lt;NaviiGroup seeds={['alice', 'bob', 'carol']} size={48} max={2} /&gt;</code></pre>
+    <p>Astro 5 and newer are supported. No hydration directive is needed. Core avatar and group options, CSS class and style strings, accessible labels, sanitization, and <code>as="img"</code> are supported.</p>
+    <p>Direct component imports are available at <code>@usenavii/astro/Navii.astro</code> and <code>@usenavii/astro/NaviiGroup.astro</code>. Core functions and types are also exported from the package root.</p></section>
   `;
 }
 

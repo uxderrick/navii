@@ -7,6 +7,11 @@ afterEach(() => {
   cleanup();
 });
 
+// The SVG renderer scopes IDs per instance; the underlying avatar stays deterministic.
+function normalizeInstanceIds(markup: string): string {
+  return markup.replace(/svg-[a-z0-9]+-\d+-/g, 'svg-instance-');
+}
+
 describe('Navii', () => {
   it('renders an inline <svg> by default (better-svg path)', async () => {
     const { container } = render(<Navii seed="abc" />);
@@ -98,11 +103,11 @@ describe('Navii', () => {
   it('is deterministic across re-renders', async () => {
     const a = render(<Navii seed="same" size={40} />);
     await waitFor(() => expect(a.container.querySelector('svg')).toBeTruthy());
-    const htmlA = a.container.innerHTML;
+    const htmlA = normalizeInstanceIds(a.container.innerHTML);
     cleanup();
     const b = render(<Navii seed="same" size={40} />);
     await waitFor(() => expect(b.container.querySelector('svg')).toBeTruthy());
-    expect(b.container.innerHTML).toBe(htmlA);
+    expect(normalizeInstanceIds(b.container.innerHTML)).toBe(htmlA);
   });
 
   it('honors paletteId override', async () => {
@@ -145,9 +150,10 @@ describe('NaviiGroup', () => {
     await waitFor(() => {
       expect(container.querySelectorAll('svg')).toHaveLength(3);
     });
-    const ids = [...container.querySelectorAll('[id^="navii-clip-"]')].map(
+    const ids = [...container.querySelectorAll('clipPath[id]')].map(
       (el) => el.id,
     );
+    expect(ids).toHaveLength(3);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -166,11 +172,11 @@ describe('NaviiGroup', () => {
   it('is deterministic across re-renders', async () => {
     const a = render(<NaviiGroup seeds={['x', 'y']} size={40} />);
     await waitFor(() => expect(a.container.querySelectorAll('svg').length).toBe(2));
-    const htmlA = a.container.innerHTML;
+    const htmlA = normalizeInstanceIds(a.container.innerHTML);
     cleanup();
     const b = render(<NaviiGroup seeds={['x', 'y']} size={40} />);
     await waitFor(() => expect(b.container.querySelectorAll('svg').length).toBe(2));
-    expect(b.container.innerHTML).toBe(htmlA);
+    expect(normalizeInstanceIds(b.container.innerHTML)).toBe(htmlA);
   });
 
   it('positions tiles with absolute left offsets', async () => {

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 
-const affectedPackages = ['react', 'vue', 'react-native'];
+const affectedPackages = ['react', 'vue', 'react-native', 'solid', 'angular'];
 
 for (const packageName of affectedPackages) {
   const manifest = JSON.parse(
@@ -11,8 +11,8 @@ for (const packageName of affectedPackages) {
   );
   assert.equal(
     manifest.dependencies?.['@mhaadi/svg'],
-    undefined,
-    `@usenavii/${packageName} must not require @mhaadi/svg at runtime`,
+    '^0.4.0',
+    `@usenavii/${packageName} must declare the SVG adapter dependency`,
   );
 
   const bundle = await readFile(
@@ -23,6 +23,39 @@ for (const packageName of affectedPackages) {
     bundle,
     /from\s*["']@mhaadi\/svg(?:\/[^"']*)?["']/,
     `@usenavii/${packageName} must bundle its @mhaadi/svg adapter`,
+  );
+}
+
+for (const packageName of ['svelte', 'astro']) {
+  const manifest = JSON.parse(
+    await readFile(new URL(`../packages/${packageName}/package.json`, import.meta.url), 'utf8'),
+  );
+  assert.equal(
+    manifest.dependencies?.['@mhaadi/svg'],
+    '^0.4.0',
+    `@usenavii/${packageName} must declare the SVG adapter dependency`,
+  );
+}
+
+{
+  const svelteBundle = await readFile(
+    new URL('../packages/svelte/dist/Navii.svelte', import.meta.url),
+    'utf8',
+  );
+  assert.match(
+    svelteBundle,
+    /from\s*['"]@mhaadi\/svg\/svelte['"]/,
+    '@usenavii/svelte must import the SVG adapter at runtime',
+  );
+
+  const astroBundle = await readFile(
+    new URL('../packages/astro/dist/index.js', import.meta.url),
+    'utf8',
+  );
+  assert.match(
+    astroBundle,
+    /from\s*['"]\.\.\/src\/Navii\.astro['"]/,
+    '@usenavii/astro must export its .astro components',
   );
 }
 

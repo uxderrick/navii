@@ -1,0 +1,70 @@
+{
+  "name": "@usenavii/angular",
+  "version": "0.10.0",
+  "description": "Angular components for Navii deterministic avatars.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "avatar",
+    "avatars",
+    "svg",
+    "angular",
+    "navii"
+  ],
+  "license": "MIT",
+  "author": "uxderrick",
+  "homepage": "https://navii.uxderrick.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uxderrick/navii.git",
+    "directory": "packages/angular"
+  },
+  "bugs": "https://github.com/uxderrick/navii/issues",
+  "sideEffects": false,
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@usenavii/core": "workspace:^0.10.0",
+    "@mhaadi/svg": "^0.4.0"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=20",
+    "@angular/common": ">=20",
+    "@angular/platform-browser": ">=20"
+  },
+  "scripts": {
+    "build": "ngc -p tsconfig.build.json && node scripts/build.mjs",
+    "typecheck": "ngc -p tsconfig.build.json --noEmit",
+    "test": "node test/partials.test.mjs",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@angular/core": "^22.2.1",
+    "@angular/common": "^22.2.1",
+    "@angular/platform-browser": "^22.2.1",
+    "@angular/compiler": "^22.2.1",
+    "@angular/compiler-cli": "^22.2.1",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "rxjs": "^7.8.2",
+    "esbuild": "^0.28.2"
+  }
+}

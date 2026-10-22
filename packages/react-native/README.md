@@ -13,7 +13,7 @@ Drop a `<Navii seed={user.id} />` and every user has a face, no uploads.
 pnpm add @usenavii/react-native react-native-svg
 ```
 
-`react-native` and `react-native-svg` are peer deps. `@usenavii/core` is auto-installed. The SVG adapter is bundled, so consumers do not install `@mhaadi/svg`. React Native 0.76 Metro works with its default resolver configuration.
+`react-native` and `react-native-svg` are peer deps. `@usenavii/core` is auto-installed. The SVG adapter is bundled for compatibility. `@mhaadi/svg` installs automatically with the package. React Native 0.76 Metro works with its default resolver configuration.
 
 ## Usage
 

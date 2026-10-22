@@ -92,7 +92,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: build npm packages
-        # Five JS SDKs only — packages/flutter (usenavii on pub.dev) is
+        # Eight JS SDKs only — packages/flutter (usenavii on pub.dev) is
         # intentionally out of npm lockstep and is never published here.
         run: |
           set -euo pipefail
@@ -101,7 +101,10 @@ jobs:
             @usenavii/react \
             @usenavii/react-native \
             @usenavii/vue \
-            @usenavii/svelte
+            @usenavii/svelte \
+            @usenavii/solid \
+            @usenavii/angular \
+            @usenavii/astro
           do
             pnpm --filter "$package_name" run build
           done
@@ -110,7 +113,7 @@ jobs:
         run: |
           set -euo pipefail
           # npm packages only (not packages/flutter)
-          for package_dir in core react react-native vue svelte; do
+          for package_dir in core react react-native vue svelte solid angular astro; do
             cp CHANGELOG.md "packages/$package_dir/CHANGELOG.md"
           done
 
@@ -121,7 +124,7 @@ jobs:
           const fs = require('node:fs');
 
           // Explicit allowlist — do not add `flutter` / `usenavii` here.
-          const packageDirs = ['core', 'react', 'react-native', 'vue', 'svelte'];
+          const packageDirs = ['core', 'react', 'react-native', 'vue', 'svelte', 'solid', 'angular', 'astro'];
           const manifests = packageDirs.map((packageDir) => {
             const path = `packages/${packageDir}/package.json`;
             return {
@@ -149,12 +152,12 @@ jobs:
             }
           }
 
-          console.log(`Validated five npm packages at version ${expectedVersion}`);
+          console.log(`Validated eight npm packages at version ${expectedVersion}`);
           NODE
 
           package_tarballs="$RUNNER_TEMP/navii-package-tarballs"
           mkdir -p "$package_tarballs"
-          for package_dir in core react react-native vue svelte; do
+          for package_dir in core react react-native vue svelte solid angular astro; do
             (
               cd "packages/$package_dir"
               pnpm pack --pack-destination "$package_tarballs"
@@ -162,10 +165,10 @@ jobs:
           done
 
       - name: publish npm packages
-        # Publishes the five JS packages only. Flutter → pub.dev separately.
+        # Publishes the eight JS packages only. Flutter → pub.dev separately.
         run: |
           set -euo pipefail
-          for package_dir in core react react-native vue svelte; do
+          for package_dir in core react react-native vue svelte solid angular astro; do
             package_name=$(node -p "require('./packages/$package_dir/package.json').name")
             package_version=$(node -p "require('./packages/$package_dir/package.json').version")
 

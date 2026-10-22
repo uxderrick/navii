@@ -1,0 +1,73 @@
+{
+  "name": "@usenavii/astro",
+  "version": "0.10.0",
+  "description": "Astro components for Navii deterministic avatars.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./Navii.astro": {
+      "types": "./src/Navii.astro.d.ts",
+      "default": "./src/Navii.astro"
+    },
+    "./NaviiGroup.astro": {
+      "types": "./src/NaviiGroup.astro.d.ts",
+      "default": "./src/NaviiGroup.astro"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "avatar",
+    "avatars",
+    "svg",
+    "astro",
+    "navii"
+  ],
+  "license": "MIT",
+  "author": "uxderrick",
+  "homepage": "https://navii.uxderrick.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uxderrick/navii.git",
+    "directory": "packages/astro"
+  },
+  "bugs": "https://github.com/uxderrick/navii/issues",
+  "sideEffects": false,
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@usenavii/core": "workspace:^0.10.0",
+    "@mhaadi/svg": "^0.4.0"
+  },
+  "peerDependencies": {
+    "astro": ">=5"
+  },
+  "scripts": {
+    "build": "tsup && node scripts/build-dts.mjs",
+    "typecheck": "astro check",
+    "test": "node test/dts.test.mjs",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "astro": "^7.3.5",
+    "@astrojs/check": "^0.9.10",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  }
+}

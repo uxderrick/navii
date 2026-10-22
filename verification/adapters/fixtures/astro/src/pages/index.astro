@@ -1,0 +1,16 @@
+---
+import { Navii, NaviiGroup } from '@usenavii/astro';
+---
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" /><title>Astro adapter verification</title></head><body>
+  <main>
+    <section id="avatar"><Navii seed="before" alt="Person" /></section>
+    <section id="decorative"><Navii seed="decoration" /></section>
+    <section id="image"><Navii seed="before" size={80} as="img" alt="Photo" /></section>
+    <section id="group"><NaviiGroup seeds={['a', 'b', 'c', 'd']} max={2} alt="Team" /></section>
+    <section id="group-image"><NaviiGroup seeds={['a', 'b']} as="img" alt="Team image" /></section>
+    <section id="empty"><NaviiGroup seeds={[]} /></section>
+    <section id="repeat-a"><NaviiGroup seeds={['same', 'same']} /></section>
+    <section id="repeat-b"><NaviiGroup seeds={['same', 'same']} /></section>
+  </main>
+</body></html>

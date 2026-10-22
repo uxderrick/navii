@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, and `@usenavii/svelte`.
+All notable changes to `@usenavii/core`, `@usenavii/react`, `@usenavii/react-native`, `@usenavii/vue`, `@usenavii/svelte`, `@usenavii/solid`, `@usenavii/angular`, and `@usenavii/astro`.
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org). All **npm** packages ship in lockstep.
 
@@ -10,7 +10,33 @@ The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independe
 
 | Flutter (`usenavii`) | Compatible `@usenavii/core` (SVG parity) |
 | -------------------- | --------------------------------------- |
-| `0.1.0-dev.1`        | `0.9.x`                                 |
+| `0.1.0-dev.1`        | `0.9.x` – `0.10.0`                      |
+
+## [0.29.0] - 2026-10-17
+
+### Added (`@usenavii/solid` 0.10.0, `@usenavii/angular` 0.10.0, `@usenavii/astro` 0.10.0)
+
+- `@usenavii/solid`: Solid 1.9 components with reactive signal props and an `as="img"` SSR fallback.
+- `@usenavii/angular`: Angular 20–22 standalone components with signal inputs; partial declarations survive the bundle for application builds.
+- `@usenavii/astro`: Server-rendered `.astro` components with no client JavaScript, plus factory-typed root exports for consumer `tsc` and ESLint setups.
+- Every adapter exports `Navii` and `NaviiGroup` with the same prop surface as `@usenavii/react`.
+
+### Changed (`@usenavii/react` 0.10.0, `@usenavii/vue` 0.10.0, `@usenavii/react-native` 0.10.0, `@usenavii/svelte` 0.10.0)
+
+- Updated framework rendering to `@mhaadi/svg` 0.4.0, including per-instance SVG ID scoping so identical avatars no longer share gradient and clip IDs.
+- React, Vue, React Native, and Svelte declare `@mhaadi/svg` as a runtime dependency alongside the bundled adapter code, so package managers register the relationship.
+- Framework builds and package checks run on Node 22, 24, and 26.
+
+### Compatibility
+
+- **Rendering:** identical avatar SVGs are produced for identical seeds; only internal gradient/clip IDs differ between instances.
+- **Dependencies:** `@mhaadi/svg` is now installed automatically by every framework SDK. Consumers may still pin or alias it themselves; the bundled adapters in React, Vue, React Native, Solid, and Angular take precedence.
+- **Angular:** releases require Angular 20 or newer and Node 22.22+, 24.15+, or 26.
+
+### Upgrade
+
+- Upgrade all Navii packages together: `npm i @usenavii/core@0.10.0 @usenavii/react@0.10.0 @usenavii/react-native@0.10.0 @usenavii/vue@0.10.0 @usenavii/svelte@0.10.0 @usenavii/solid@0.10.0 @usenavii/angular@0.10.0 @usenavii/astro@0.10.0`.
+- No component API changes are required. Existing props, defaults, callbacks, sanitization, inline SVG rendering, and `as="img"` fallbacks are unchanged.
 
 ## [0.28.2] - 2026-07-24
 
@@ -369,7 +395,8 @@ Deployment-only release. No changes to `@usenavii/core` or `@usenavii/react` (bo
 - React binding: `<Navii seed="..." />`.
 - Dual ESM/CJS build via tsup. TypeScript types included.
 
-[Unreleased]: https://github.com/uxderrick/navii/compare/v0.28.2...HEAD
+[Unreleased]: https://github.com/uxderrick/navii/compare/v0.29.0...HEAD
+[0.29.0]: https://github.com/uxderrick/navii/compare/v0.28.2...v0.29.0
 [0.28.2]: https://github.com/uxderrick/navii/compare/v0.28.1...v0.28.2
 [0.28.1]: https://github.com/uxderrick/navii/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/uxderrick/navii/compare/v0.27.2...v0.28.0

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "projects": {
+    "consumer": {
+      "projectType": "application",
+      "root": "",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "main.ts",
+            "index": "index.html",
+            "tsConfig": "tsconfig.json",
+            "outputPath": "dist"
+          },
+          "configurations": { "production": { "optimization": true, "outputHashing": "all" } }
+        }
+      }
+    }
+  }
+}

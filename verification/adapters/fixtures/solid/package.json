@@ -1,0 +1,6 @@
+{
+  "name": "solid-consumer",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "vite build" }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "angular-consumer",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "ng build --configuration production" }
+}

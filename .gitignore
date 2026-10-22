@@ -32,3 +32,6 @@ docs/private/
 .pub-cache/
 .pub/
 build/
+
+# Astro generated types
+.astro/

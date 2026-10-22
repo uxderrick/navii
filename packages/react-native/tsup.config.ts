@@ -10,5 +10,7 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   target: 'es2022',
+  // Keep Node ESM and Metro compatible with the SVG package's internal imports.
+  noExternal: ['@mhaadi/svg', '@xmldom/xmldom'],
   external: ['react', 'react-native', 'react-native-svg', '@usenavii/core'],
 });

@@ -40,6 +40,12 @@ seed in  →  same avatar out, every time.
 | -------------- | ----------------------------------------------------------- |
 | `@usenavii/core`  | Framework-agnostic engine. Seed → SVG string. Pure TS.      |
 | `@usenavii/react` | Thin React component. `<Navii seed="alice" />`.             |
+| [`@usenavii/vue`](./packages/vue) | Vue 3 avatar and group components. |
+| [`@usenavii/svelte`](./packages/svelte) | Svelte 5 avatar and group components. |
+| [`@usenavii/react-native`](./packages/react-native) | Native avatar and group components. |
+| [`@usenavii/solid`](./packages/solid) | Reactive Solid avatar and group components. |
+| [`@usenavii/angular`](./packages/angular) | Standalone Angular avatar and group components. |
+| [`@usenavii/astro`](./packages/astro) | Server-rendered Astro avatar and group components. |
 | `@usenavii/api`   | Hono app exposing `GET /avatar/:seed`. Deploy anywhere.     |
 | [`usenavii`](./packages/flutter) | Flutter / Dart SDK. `Navii(seed: user.id)` via `flutter_svg`. Independent SemVer on pub.dev. |
 
@@ -78,6 +84,10 @@ import { Navii } from '@usenavii/react';
 
 <Navii seed={user.id} size={64} title={user.name} animated />
 ```
+
+### Solid, Angular, and Astro
+
+Install `@usenavii/solid`, `@usenavii/angular`, or `@usenavii/astro`. Each package exports `Navii` and `NaviiGroup`. See the [Solid](./packages/solid/README.md), [Angular](./packages/angular/README.md), and [Astro](./packages/astro/README.md) guides for framework setup and server rendering.
 
 ### Flutter
 
