@@ -973,6 +973,7 @@ await db.users.update(user.id, { naviiSeed: seed });</code></pre>
           <tr><td><code>GET /api</code></td><td>Service metadata as JSON. Returns <code>{ "name": "navii", "version": "...", "endpoints": {...} }</code>.</td></tr>
           <tr><td><code>GET /healthz</code></td><td>Liveness probe. Returns <code>{ "ok": true, "pngCacheSize": N }</code>.</td></tr>
           <tr><td><code>GET /gallery</code></td><td>HTML grid of N seeded avatars (visual debug).</td></tr>
+          <tr><td><code>GET /checkout</code></td><td>Redirects to the Polar checkout for Navii Pro. Available when the server has a Polar access token configured.</td></tr>
           <tr><td><code>GET /favicon.svg</code></td><td>Brand favicon. SVG.</td></tr>
           <tr><td><code>GET /apple-touch-icon.png</code></td><td>180×180 dark-tile icon for iOS home-screen.</td></tr>
           <tr><td><code>GET /og.png</code></td><td>1200×630 Open Graph image. No params.</td></tr>

@@ -12,7 +12,7 @@ The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independe
 | -------------------- | --------------------------------------- |
 | `0.1.0-dev.1`        | `0.9.x` – `0.10.0`                      |
 
-## [0.29.0] - 2026-10-17
+## [0.29.0] - 2026-10-22
 
 ### Added (`@usenavii/solid` 0.10.0, `@usenavii/angular` 0.10.0, `@usenavii/astro` 0.10.0)
 
@@ -27,11 +27,17 @@ The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independe
 - React, Vue, React Native, and Svelte declare `@mhaadi/svg` as a runtime dependency alongside the bundled adapter code, so package managers register the relationship.
 - Framework builds and package checks run on Node 22, 24, and 26.
 
+### Fixed (`@usenavii/angular` 0.10.0)
+
+- Preserve UTF-8 Angular declaration identifiers in the published bundle so production applications link the components correctly instead of failing with `JIT compiler unavailable`.
+- Added a linker regression check and production consumer tests for the packed Solid, Angular, and Astro packages.
+
 ### Compatibility
 
 - **Rendering:** identical avatar SVGs are produced for identical seeds; only internal gradient/clip IDs differ between instances.
 - **Dependencies:** `@mhaadi/svg` is now installed automatically by every framework SDK. Consumers may still pin or alias it themselves; the bundled adapters in React, Vue, React Native, Solid, and Angular take precedence.
-- **Angular:** releases require Angular 20 or newer and Node 22.22+, 24.15+, or 26.
+- **Runtime:** all JavaScript SDKs require Node 22.23.4+, 24.22.1+, or 26.12.1+, matching the patched API and container runtimes.
+- **Angular:** releases require Angular 20 or newer.
 
 ### Upgrade
 
