@@ -13,6 +13,14 @@ function normalizeInstanceIds(markup: string): string {
 }
 
 describe('Navii', () => {
+  it('uses the test default of 80px when size is omitted', async () => {
+    const { container } = render(<Navii seed="doccs-test" />);
+    await waitFor(() => {
+      expect(container.querySelector('svg')?.getAttribute('width')).toBe('80');
+      expect(container.querySelector('svg')?.getAttribute('height')).toBe('80');
+    });
+  });
+
   it('renders an inline <svg> by default (better-svg path)', async () => {
     const { container } = render(<Navii seed="abc" />);
     await waitFor(() => {

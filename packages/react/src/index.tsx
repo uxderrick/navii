@@ -48,7 +48,7 @@ export interface NaviiProps extends Omit<AvatarOptions, 'style'> {
  */
 export function Navii({
   seed,
-  size = 96,
+  size = 80,
   paletteId,
   palette,
   background,
