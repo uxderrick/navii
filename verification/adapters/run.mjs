@@ -65,10 +65,10 @@ try {
         [`@usenavii/${adapter}`]: `file:${join(work, 'packed', `${adapter}.tgz`)}`,
         typescript: rootManifest.devDependencies.typescript,
       };
-      if (adapter === 'solid') Object.assign(dependencies, { 'solid-js': tools['solid-js'], vite: '^8.3.2' });
+      if (adapter === 'solid') Object.assign(dependencies, { 'solid-js': tools['solid-js'], vite: '^8.3.8' });
       if (adapter === 'angular') {
         for (const key of ['@angular/core', '@angular/common', '@angular/platform-browser', '@angular/compiler', '@angular/compiler-cli', 'rxjs']) dependencies[key] = tools[key];
-        Object.assign(dependencies, { '@angular/build': '22.2.1', '@angular/cli': '22.2.1' });
+        Object.assign(dependencies, { '@angular/build': '22.3.0', '@angular/cli': '22.3.0' });
       }
       if (adapter === 'astro') Object.assign(dependencies, { astro: tools.astro, '@astrojs/check': tools['@astrojs/check'] });
       await writeFile(join(app, 'package.json'), `${JSON.stringify({ ...pkg, dependencies }, null, 2)}\n`);

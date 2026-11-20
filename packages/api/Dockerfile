@@ -4,7 +4,7 @@
 # Stage 1: install workspace deps + build core/api.
 # Stage 2: copy only prod artifacts into a slim runtime.
 
-FROM node:24.22.1-bookworm-slim AS build
+FROM node:24.22.3-bookworm-slim AS build
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN npm install --global pnpm@12.8.1
 
@@ -28,7 +28,7 @@ RUN pnpm --filter @usenavii/core run build \
 RUN pnpm deploy --filter=@usenavii/api --prod /out
 
 # --- runtime image -----------------------------------------------------------
-FROM node:24.22.1-bookworm-slim AS runtime
+FROM node:24.22.3-bookworm-slim AS runtime
 ENV NODE_ENV=production \
     PORT=8787 \
     HOST=0.0.0.0 \
