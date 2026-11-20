@@ -67,7 +67,7 @@
   "devDependencies": {
     "tsup": "^8.5.1",
     "astro": "^7.4.13",
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
 }
