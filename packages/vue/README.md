@@ -15,6 +15,8 @@ pnpm add @usenavii/vue
 
 Vue `>=3.5` is a peer dep. `@usenavii/core` and the SVG adapter `@mhaadi/svg` install automatically.
 
+The SDK supports Node.js 22.23.5+ on 22.x, 24.22.3+ on 24.x, and 26.13.1 or later. The CommonJS build uses `require(esm)` to load the SVG adapter. Node enables this by default on supported versions. If you disable it with `--no-require-module` or `--no-experimental-require-module`, load the SDK with `import` or dynamic `import()`. [Node.js module loading](https://nodejs.org/api/modules.html#loading-ecmascript-modules-using-require)
+
 ## Usage
 
 ```vue
