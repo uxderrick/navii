@@ -1370,7 +1370,7 @@ function pageSdkReact(): string {
     <section>
       <h2 id="install">Install</h2>
       <pre class="code"><code>npm i @usenavii/react</code></pre>
-      <p><code>@usenavii/core</code> is installed as a runtime dependency. The SVG adapter is bundled for compatibility, and <code>@mhaadi/svg</code> installs automatically. React and React DOM remain peer dependencies.</p>
+      <p><code>@usenavii/core</code> is installed as a runtime dependency. The SVG adapter is loaded from <code>@mhaadi/svg</code>, which installs automatically. React and React DOM remain peer dependencies.</p>
     </section>
 
     <section>
