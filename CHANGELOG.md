@@ -14,9 +14,14 @@ The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independe
 
 ## [Unreleased]
 
+### Added
+
+- React Native avatars and group tiles support idle animation on the UI thread with Reanimated. Avatars stay static when system reduced motion is enabled.
+
 ### Changed
 
 - Framework SDKs now depend on `@mhaadi/svg` `^0.5.0`. React, Vue, Solid, and Angular load their installed SVG adapters, so compatible fixes can reach apps through dependency updates.
+- The React Native SDK requires the New Architecture on React Native 0.87 through 0.89 and loads its installed Better SVG adapter.
 
 ### Security
 

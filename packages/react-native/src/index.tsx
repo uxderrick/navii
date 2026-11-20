@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
-import { SVG as SvgRoot } from '@mhaadi/svg/react-native';
 import {
   createAvatar,
   renderGroup,
@@ -10,6 +9,7 @@ import {
   type GroupTiles,
   type StyleHint,
 } from '@usenavii/core';
+import { AvatarSvg } from './avatar-svg.js';
 
 export interface NaviiProps extends Omit<AvatarOptions, 'style'> {
   seed: string;
@@ -26,8 +26,7 @@ export interface NaviiProps extends Omit<AvatarOptions, 'style'> {
 
 /**
  * React Native avatar. Renders the engine output as a `react-native-svg` tree
- * via `@mhaadi/svg/react-native`. Animation (`animated` prop) is not yet
- * supported on React Native — the first frame is rendered statically.
+ * with optional per-part idle animation.
  */
 export function Navii({
   seed,
@@ -78,7 +77,7 @@ export function Navii({
       accessibilityLabel={alt ?? title}
       accessibilityRole={alt || title ? 'image' : undefined}
     >
-      <SvgRoot {...svgProps} />
+      <AvatarSvg {...svgProps} seed={seed} animated={animated} />
     </View>
   );
 }
@@ -173,7 +172,7 @@ export function NaviiGroup({
           key={i}
           style={{ position: 'absolute', left: i * step, top: 0, width: size, height: size }}
         >
-          <SvgRoot {...tileProps} src={tile} />
+          <AvatarSvg {...tileProps} src={tile} seed={i < tiles.tiles.length ? stableSeeds[i] : undefined} animated={animated} />
         </View>
       ))}
     </View>

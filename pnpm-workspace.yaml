@@ -21,10 +21,16 @@ minimumReleaseAgeExclude:
   # Security fix for GHSA-qhm2-7mpr-ghjp, published November 20.
   - '@hono/node-server@2.1.11'
   - '@mhaadi/svg@0.5.0'
+  - react-native-reanimated@4.8.0
+  - react-native-worklets@0.14.0
 
 overrides:
   # tsup still pins esbuild 0.27, which has a Windows dev-server file-read advisory.
   esbuild: ^0.28.2
+  # Metro 0.87 still loads Babel 7 plugins. Angular uses Babel 8 separately.
+  '@react-native/metro-babel-transformer>@babel/core': ^7.29.13
+  # The native SDK supplies Metro directly. Avoid pulling the optional CLI peer into web adapters.
+  '@react-native/community-cli-plugin>@react-native/metro-config': '-'
   # Auto-installed Better SVG peers can resolve separately from workspace dev dependencies.
   'astro@7': ^7.4.13
   'solid-js@1': ^1.9.19
