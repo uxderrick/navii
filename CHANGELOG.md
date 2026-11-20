@@ -12,6 +12,12 @@ The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independe
 | -------------------- | --------------------------------------- |
 | `0.1.0-dev.1`        | `0.9.x` – `0.10.0`                      |
 
+## [Unreleased]
+
+### Changed
+
+- Framework SDKs now depend on `@mhaadi/svg` `^0.5.0`. React, Vue, Solid, and Angular load their installed SVG adapters, so compatible fixes can reach apps through dependency updates.
+
 ## [0.29.0] - 2026-10-22
 
 ### Added (`@usenavii/solid` 0.10.0, `@usenavii/angular` 0.10.0, `@usenavii/astro` 0.10.0)

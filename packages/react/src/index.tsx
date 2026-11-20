@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SVG as SvgRoot } from '@mhaadi/svg/react';
+import { SVG as SvgRoot } from './svg-adapter.js';
 import {
   createAvatar,
   renderGroup,
