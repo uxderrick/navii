@@ -366,7 +366,7 @@ Highlights:
 
 ## Develop
 
-Use Node.js 22.22.2+, 24.15+, or 26+ and pnpm 12.8.1. CI and the API container use Node.js 24.
+Use Node.js 22.23.5+, 24.22.3+, or 26.13.1+ and pnpm 12.8.1. CI tests all three versions, and the API container uses Node.js 24.22.3.
 
 ```bash
 pnpm install

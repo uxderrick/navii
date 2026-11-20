@@ -4,7 +4,7 @@ Small project, mostly solo. The notes below exist so consumers of `@usenavii/cor
 
 ## Development tooling
 
-Use Node.js 22.23.4+, 24.22.1+, or 26.12.1+ and the pnpm version pinned in `package.json`.
+Use Node.js 22.23.5+, 24.22.3+, or 26.13.1+ and the pnpm version pinned in `package.json`.
 Run `pnpm install --frozen-lockfile`, `pnpm build`, `pnpm typecheck`,
 `pnpm test`, and `pnpm test:artifacts` before submitting changes.
 
@@ -90,4 +90,4 @@ Format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Sections use
 
 Write entries from the consumer's point of view. Skip internal refactors, doc-only commits, and CI churn — they don't belong in a CHANGELOG that consumers read to decide whether to upgrade.
 
-The JavaScript workspace requires Node 22.22 or newer in the 22 release line, Node 24.15 or newer, or Node 26 or newer. Angular and Astro build tools need these versions. Angular builds use the TypeScript 6 compatibility package required by its compiler.
+Angular builds use the TypeScript 6 compatibility package required by its compiler.

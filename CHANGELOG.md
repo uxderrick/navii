@@ -18,6 +18,10 @@ The Flutter SDK in [`packages/flutter`](./packages/flutter) versions **independe
 
 - Framework SDKs now depend on `@mhaadi/svg` `^0.5.0`. React, Vue, Solid, and Angular load their installed SVG adapters, so compatible fixes can reach apps through dependency updates.
 
+### Security
+
+- Require Node.js 22.23.5, 24.22.3, or 26.13.1 at minimum, following the [November Node.js security release](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases/).
+
 ## [0.29.0] - 2026-10-22
 
 ### Added (`@usenavii/solid` 0.10.0, `@usenavii/angular` 0.10.0, `@usenavii/astro` 0.10.0)
