@@ -10,10 +10,10 @@ Drop a `<Navii seed={user.id} />` and every user has a face, no uploads.
 ## Install
 
 ```sh
-pnpm add @usenavii/react-native react-native-svg
+pnpm add @usenavii/react-native react-native-svg@^15.16.1 react-native-reanimated@~4.8.0 react-native-worklets@~0.14.0
 ```
 
-`react-native` and `react-native-svg` are peer deps. `@usenavii/core` is auto-installed. The SVG adapter is bundled for compatibility. `@mhaadi/svg` installs automatically with the package. React Native 0.76 Metro works with its default resolver configuration.
+Use React Native 0.87 through 0.89 with the New Architecture. Add `react-native-worklets/plugin` as the last plugin in your Babel config, then rebuild the native app. Follow the [Reanimated installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/) for your app's setup.
 
 ## Usage
 
@@ -23,9 +23,13 @@ import { Navii } from '@usenavii/react-native';
 <Navii seed={user.id} size={64} title={user.name} />
 ```
 
-Renders as a `react-native-svg` tree using Navii's bundled adapter. The SVG is parsed into native components (`Svg`, `Path`, `Circle`, `Rect`, `G`, gradients, `ClipPath`, etc.).
+Navii renders the avatar as native SVG. The `animated` prop enables body float, blinking, and any antenna, spark, or sparkle motion for the avatar.
 
-> **Animation:** the `animated` prop is accepted but not yet supported on React Native — the first frame is rendered statically. CSS keyframe animations (`<style>` blocks) don't translate to `react-native-svg`. A future version will use `react-native-reanimated` for per-element animations.
+```tsx
+<Navii seed={user.id} size={64} animated />
+```
+
+Reanimated runs the motion on the UI thread. Navii renders a static avatar when system reduced motion is enabled.
 
 ## Props
 
@@ -40,9 +44,9 @@ Renders as a `react-native-svg` tree using Navii's bundled adapter. The SVG is p
 | `packs`      | `string[]` — premium pack ids                         | none         |
 | `styleHint`  | `'masc' \| 'femme' \| 'neutral'`                      | none         |
 | `title`      | accessible label (maps to `accessibilityLabel`)       | none         |
-| `animated`   | `boolean` — accepted, rendered statically on RN       | `false`      |
+| `animated`   | `boolean` — opt into idle animation                   | `false`      |
 | `alt`        | accessible label (maps to `accessibilityLabel`)       | none         |
-| `sanitize`   | `boolean` — run better-svg sanitizer                  | `false`      |
+| `sanitize`   | `boolean` — sanitize the generated SVG                  | `false`      |
 | `style`      | `StyleProp<ViewStyle>` — applied to wrapper `View`    | —            |
 
 ## `<NaviiGroup>`
@@ -53,7 +57,7 @@ import { NaviiGroup } from '@usenavii/react-native';
 <NaviiGroup seeds={team.map(u => u.id)} size={48} overlap={0.3} max={5} />
 ```
 
-Each tile renders as an independent `react-native-svg` tree inside a positioned `View`.
+Pass `animated` to animate each visible avatar using its own seed. The overflow counter stays still.
 
 ## License
 

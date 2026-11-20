@@ -8,6 +8,7 @@ export * from './background.js';
 export * from './topper.js';
 export * from './outfit.js';
 export * from './anchor.js';
+export { avatarMotion, avatarMotionDelays, type AvatarMotionPose } from '../animate.js';
 
 import type {
   AccessoryId,

@@ -46,14 +46,14 @@
   "bugs": "https://github.com/uxderrick/navii/issues",
   "sideEffects": false,
   "engines": {
-    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
+    "node": "^22.23.5 || ^24.22.3 || >=26.13.1"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
     "@usenavii/core": "workspace:^0.10.0",
-    "@mhaadi/svg": "^0.4.0"
+    "@mhaadi/svg": "^0.5.0"
   },
   "peerDependencies": {
     "astro": ">=5"
@@ -66,8 +66,8 @@
   },
   "devDependencies": {
     "tsup": "^8.5.1",
-    "astro": "^7.3.5",
-    "@astrojs/check": "^0.9.10",
+    "astro": "^7.4.13",
+    "@astrojs/check": "^0.9.12",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
 }

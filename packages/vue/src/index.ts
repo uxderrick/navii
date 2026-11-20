@@ -1,5 +1,5 @@
 import { defineComponent, h, computed, type PropType } from 'vue';
-import { SVG as SvgRoot } from '@mhaadi/svg/vue';
+import { SVG as SvgRoot } from './svg-adapter.js';
 import {
   createAvatar,
   renderGroup,

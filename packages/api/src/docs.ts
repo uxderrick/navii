@@ -597,7 +597,7 @@ await db.users.update(user.id, { naviiSeed: seed });
 import { Navii } from '@usenavii/react-native';
 
 &lt;Navii seed={user.id} size={64} alt={user.name} /&gt;</code></pre>
-      <p>The SVG adapter is bundled. React Native and <code>react-native-svg</code> remain peer dependencies, and React Native 0.76 Metro works without enabling package exports. See the <a href="/docs/sdk-react-native">React Native SDK guide</a>.</p>
+      <p>The React Native SDK uses the New Architecture and Reanimated for optional avatar animation. See the <a href="/docs/sdk-react-native">React Native SDK guide</a>.</p>
     </section>
 
     <section>
@@ -1370,7 +1370,7 @@ function pageSdkReact(): string {
     <section>
       <h2 id="install">Install</h2>
       <pre class="code"><code>npm i @usenavii/react</code></pre>
-      <p><code>@usenavii/core</code> is installed as a runtime dependency. The SVG adapter is bundled for compatibility, and <code>@mhaadi/svg</code> installs automatically. React and React DOM remain peer dependencies.</p>
+      <p><code>@usenavii/core</code> is installed as a runtime dependency. The SVG adapter is loaded from <code>@mhaadi/svg</code>, which installs automatically. React and React DOM remain peer dependencies.</p>
     </section>
 
     <section>
@@ -1455,8 +1455,8 @@ function pageSdkReactNative(): string {
     </header>
     <section>
       <h2 id="install">Install</h2>
-      <pre class="code"><code>npm i @usenavii/react-native react-native-svg</code></pre>
-      <p>React Native <code>&gt;=0.73</code> and <code>react-native-svg</code> <code>&gt;=15</code> are peer dependencies. <code>@mhaadi/svg</code> and <code>@usenavii/core</code> install with the package.</p>
+      <pre class="code"><code>npm i @usenavii/react-native react-native-svg@^15.16.1 react-native-reanimated@~4.8.0 react-native-worklets@~0.14.0</code></pre>
+      <p>Use React Native 0.87 through 0.89 with the New Architecture. Add <code>react-native-worklets/plugin</code> as the last Babel plugin, then rebuild the app. <code>@mhaadi/svg</code> and <code>@usenavii/core</code> install with the package.</p>
     </section>
     <section>
       <h2 id="usage">Usage</h2>
@@ -1464,12 +1464,11 @@ function pageSdkReactNative(): string {
 
 &lt;Navii seed={user.id} size={64} alt={user.name} /&gt;
 &lt;NaviiGroup seeds={team.map((user) =&gt; user.id)} size={48} max={5} /&gt;</code></pre>
-      <p>React Native 0.76 Metro resolves the package with its default configuration; do not enable experimental package exports for Navii.</p>
     </section>
     <section>
       <h2 id="limitations">Platform notes</h2>
       <ul>
-        <li><code>animated</code> is accepted but currently renders the first frame statically because CSS keyframes do not translate to native SVG.</li>
+        <li>Pass <code>animated</code> to enable idle motion. Reanimated runs the motion on the UI thread. System reduced motion keeps avatars static, and group overflow counters stay still.</li>
         <li><code>style</code> applies to the wrapper <code>View</code>; <code>alt</code> and <code>title</code> map to the accessibility label.</li>
         <li>Each group tile is an independent native SVG tree inside a positioned <code>View</code>.</li>
       </ul>
