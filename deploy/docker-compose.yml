@@ -83,7 +83,7 @@ services:
           memory: "256M"
 
   log-shipper:
-    image: node:22.23.4-alpine
+    image: node:22.23.5-alpine
     container_name: log-shipper
     restart: unless-stopped
     volumes:

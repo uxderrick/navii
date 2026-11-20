@@ -23,11 +23,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@hono/node-server": "^2.1.3",
+    "@hono/node-server": "^2.1.11",
     "@polar-sh/hono": "^0.5.6",
     "@resvg/resvg-js": "^2.6.2",
     "@usenavii/core": "workspace:*",
-    "hono": "^4.13.12",
+    "hono": "^4.13.19",
     "shiki": "^4.5.0"
   },
   "devDependencies": {
@@ -35,6 +35,6 @@
   },
   "license": "MIT",
   "engines": {
-    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
+    "node": "^22.23.5 || ^24.22.3 || >=26.13.1"
   }
 }

@@ -19,4 +19,4 @@ The original PR revision fails all Angular browser checks with `JIT compiler una
 
 The Angular build now preserves UTF-8 identifiers. Its declaration test includes a regression assertion using Angular's own `needsLinking` function. See `RESULTS.md` for the before/after results.
 
-This checks the framework versions declared in the source checkout, with Angular CLI/build 22.2.1 and Vite 8.3.2. It does not establish compatibility with every version allowed by the SDK peer dependency ranges. Consumer installs save lockfiles in the result directory; later runs can resolve newer versions within the declared ranges.
+This checks the framework versions declared in the source checkout, with Angular CLI/build 22.3.0 and Vite 8.3.8 or newer within the 8.x line. It does not establish compatibility with every version allowed by the SDK peer dependency ranges. Consumer installs save lockfiles in the result directory; later runs can resolve newer versions within the declared ranges.
