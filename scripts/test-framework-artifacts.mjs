@@ -3,9 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 
-const externalAdapters = ['react', 'vue', 'solid', 'angular'];
+const externalAdapters = ['react', 'vue', 'solid', 'angular', 'react-native'];
 
-for (const packageName of [...externalAdapters, 'react-native', 'svelte', 'astro']) {
+for (const packageName of [...externalAdapters, 'svelte', 'astro']) {
   const manifest = JSON.parse(
     await readFile(new URL(`../packages/${packageName}/package.json`, import.meta.url), 'utf8'),
   );
@@ -87,12 +87,13 @@ const reactNativeBundle = await readFile(
   new URL('../packages/react-native/dist/index.js', import.meta.url),
   'utf8',
 );
-assert.doesNotMatch(
-  reactNativeBundle,
-  /from\s*["']@mhaadi\/svg\/react-native["']/,
-  'React Native must bundle its SVG adapter for Metro 0.76',
-);
 assert.match(reactNativeBundle, /from\s*["']react-native["']/, 'React Native must remain external');
 assert.match(reactNativeBundle, /from\s*["']react-native-svg["']/, 'react-native-svg must remain external');
+
+assert.match(
+  reactNativeBundle,
+  /from\s*["']react-native-reanimated["']/,
+  'Reanimated must remain external',
+);
 
 console.log('Framework artifact checks passed.');

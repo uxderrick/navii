@@ -12,6 +12,15 @@ vi.mock('@mhaadi/svg/react-native', () => ({
   SVG: (props: Record<string, unknown>) => React.createElement('SvgRoot', props),
 }));
 
+vi.mock('react-native-svg', () => ({
+  G: ({ children }: React.PropsWithChildren) => children,
+}));
+
+vi.mock('react-native-reanimated', () => ({
+  default: { createAnimatedComponent: (component: React.ComponentType) => component },
+  Easing: { bezierFn: () => (value: number) => value },
+}));
+
 const mounted: TestRenderer.ReactTestRenderer[] = [];
 
 function render(element: React.ReactElement): TestRenderer.ReactTestRenderer {
