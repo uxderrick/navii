@@ -9,6 +9,5 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   target: 'es2022',
-  noExternal: ['@mhaadi/svg', '@xmldom/xmldom'],
-  external: ['solid-js', 'solid-js/web', '@usenavii/core'],
+  external: ['solid-js', 'solid-js/web', '@usenavii/core', '@mhaadi/svg/solid'],
 });

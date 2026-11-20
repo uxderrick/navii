@@ -18,9 +18,9 @@ minimumReleaseAgeExclude:
   - '@sveltejs/package@3.0.0'
   - '@types/node@26.6.4'
   - shiki@4.5.0
-  - '@mhaadi/svg@0.4.0'
   # Security fix for GHSA-qhm2-7mpr-ghjp, published November 20.
   - '@hono/node-server@2.1.11'
+  - '@mhaadi/svg@0.5.0'
 
 overrides:
   # tsup still pins esbuild 0.27, which has a Windows dev-server file-read advisory.
