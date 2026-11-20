@@ -1,90 +1,50 @@
+import { avatarMotion, type AvatarMotionPose } from '@usenavii/core/parts';
 import { Easing } from 'react-native-reanimated';
 
-type Pose = {
-  y?: number;
-  rotation?: number;
-  scaleX?: number;
-  scaleY?: number;
-  opacity?: number;
+type Keyframe = AvatarMotionPose & { at: number; pose: number };
+export type MotionPart = keyof typeof avatarMotion;
+export type MotionTiming = { duration: number; delay: number };
+
+const framesByPart = {
+  body: flattenFrames(avatarMotion.body.frames),
+  eyes: flattenFrames(avatarMotion.eyes.frames),
+  antenna: flattenFrames(avatarMotion.antenna.frames),
+  spark: flattenFrames(avatarMotion.spark.frames),
+  sparkle: flattenFrames(avatarMotion.sparkle.frames),
 };
 
-type Keyframe = Pose & { at: number };
-
-// Mirror the poses in core's SVG keyframes. The generated SVG supplies the
-// duration and seed-specific start delay for each motion.
-const motions = {
-  body: {
-    name: 'n-float',
-    frames: [
-      { at: 0 },
-      { at: 0.25, y: -2, rotation: -1.6, scaleX: 1.025, scaleY: 0.975 },
-      { at: 0.5, y: -4.5, scaleX: 0.985, scaleY: 1.025 },
-      { at: 0.75, y: -2, rotation: 1.6, scaleX: 1.025, scaleY: 0.975 },
-      { at: 1 },
-    ],
-  },
-  eyes: {
-    name: 'n-blink',
-    frames: [
-      { at: 0 },
-      { at: 0.85 },
-      { at: 0.87, scaleY: 0.06 },
-      { at: 0.89, scaleY: 0.06 },
-      { at: 0.91 },
-      { at: 0.93, scaleY: 0.06 },
-      { at: 0.95, scaleY: 0.06 },
-      { at: 1 },
-    ],
-  },
-  antenna: {
-    name: 'n-sway',
-    frames: [{ at: 0 }, { at: 0.25, rotation: -5 }, { at: 0.75, rotation: 5 }, { at: 1 }],
-  },
-  spark: {
-    name: 'n-pulse',
-    frames: [
-      { at: 0, opacity: 0.55 },
-      { at: 0.5, opacity: 1, scaleX: 1.32, scaleY: 1.32 },
-      { at: 1, opacity: 0.55 },
-    ],
-  },
-  sparkle: {
-    name: 'n-twinkle',
-    frames: [
-      { at: 0, opacity: 0.3, scaleX: 0.85, scaleY: 0.85 },
-      { at: 0.5, opacity: 1, rotation: 180, scaleX: 1.12, scaleY: 1.12 },
-      { at: 1, opacity: 0.3, scaleX: 0.85, scaleY: 0.85 },
-    ],
-  },
-} as const satisfies Record<string, { name: string; frames: readonly [Keyframe, ...Keyframe[]] }>;
-
-export type MotionPart = keyof typeof motions;
-export type MotionTiming = { duration: number; delay: number };
-export type MotionTimings = ReadonlyMap<string, MotionTiming>;
-
-export function readMotionTimings(svg: string): MotionTimings {
-  const timings = new Map<string, MotionTiming>();
-  const style = /<style>([\s\S]*?)<\/style>/.exec(svg)?.[1] ?? '';
-  const declarations = /animation: (n-\w+) (\d+(?:\.\d+)?)s [^;]+; animation-delay: (\d+(?:\.\d+)?)s;/g;
-  for (const [, name, duration, delay] of style.matchAll(declarations)) {
-    if (name && duration && delay) {
-      timings.set(name, { duration: Number(duration) * 1000, delay: Number(delay) * 1000 });
-    }
-  }
-  return timings;
+function flattenFrames(frames: readonly (AvatarMotionPose & { readonly at: readonly number[] })[]): Keyframe[] {
+  return frames.flatMap(({ at, ...values }, pose) =>
+    at.map((percent) => ({ ...values, at: percent / 100, pose })),
+  ).sort((left, right) => left.at - right.at);
 }
 
 export function isMotionPart(name: unknown): name is MotionPart {
-  return typeof name === 'string' && Object.hasOwn(motions, name);
+  return typeof name === 'string' && Object.hasOwn(avatarMotion, name);
 }
 
-export function getMotion(part: MotionPart, timings: MotionTimings) {
-  const { name, frames } = motions[part];
-  const timing = timings.get(name);
-  return timing && { ...timing, frames };
+export function getMotion(part: MotionPart, delay: string) {
+  return {
+    duration: avatarMotion[part].duration * 1000,
+    delay: Number(delay) * 1000,
+    frames: framesByPart[part],
+  };
 }
 
 const easeInOut = Easing.bezierFn(0.42, 0, 0.58, 1);
+
+/** Keep the derived phase constant while a sequence of keyframes shares a pose. */
+export function motionPhase(elapsed: number, timing: MotionTiming, frames: readonly Keyframe[]): number {
+  'worklet';
+  if (elapsed < timing.delay) return -1;
+  const phase = ((elapsed - timing.delay) % timing.duration) / timing.duration;
+  let from = frames[0];
+  for (const to of frames) {
+    if (from && phase <= to.at) return from.pose === to.pose ? from.at : phase;
+    from = to;
+  }
+  return phase;
+}
 
 function lerp(from: number, to: number, progress: number): number {
   'worklet';
@@ -92,27 +52,25 @@ function lerp(from: number, to: number, progress: number): number {
 }
 
 export function motionProps(
-  elapsed: number,
-  timing: MotionTiming,
-  frames: readonly [Keyframe, ...Keyframe[]],
+  phase: number,
+  frames: readonly Keyframe[],
   originX: number,
   originY: number,
   restingOpacity: number,
 ) {
   'worklet';
-  if (elapsed < timing.delay) {
+  let from = frames[0];
+  let to = from;
+  if (phase < 0 || !from || !to) {
     return { matrix: [1, 0, 0, 1, 0, 0], opacity: restingOpacity };
   }
 
-  const phase = ((elapsed - timing.delay) % timing.duration) / timing.duration;
-  let from = frames[0];
-  let to = from;
   for (const frame of frames) {
     to = frame;
     if (frame.at >= phase) break;
     from = frame;
   }
-  const progress = from === to ? 0 : easeInOut((phase - from.at) / (to.at - from.at));
+  const progress = from.at === to.at ? 0 : easeInOut((phase - from.at) / (to.at - from.at));
   const y = lerp(from.y ?? 0, to.y ?? 0, progress);
   const angle = lerp(from.rotation ?? 0, to.rotation ?? 0, progress) * Math.PI / 180;
   const scaleX = lerp(from.scaleX ?? 1, to.scaleX ?? 1, progress);

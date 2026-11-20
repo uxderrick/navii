@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { AccessibilityInfo, Platform } from 'react-native';
 import { SVG as SvgRoot, type NativeSvgProps } from '@mhaadi/svg/react-native';
+import { avatarMotion, avatarMotionDelays } from '@usenavii/core/parts';
 import Animated, {
   useAnimatedProps,
+  useDerivedValue,
   useFrameCallback,
   useReducedMotion,
   useSharedValue,
@@ -13,10 +15,9 @@ import { G, parse, SvgAst, type JsxAST, type XmlAST } from 'react-native-svg';
 import {
   getMotion,
   isMotionPart,
+  motionPhase,
   motionProps,
-  readMotionTimings,
   type MotionPart,
-  type MotionTimings,
 } from './motion.js';
 
 type AvatarSvgProps = Pick<
@@ -25,8 +26,10 @@ type AvatarSvgProps = Pick<
 > & {
   src: string;
   animated?: boolean | undefined;
+  seed?: string | undefined;
 };
-type ActiveMotion = NonNullable<ReturnType<typeof getMotion>>;
+type ActiveMotion = ReturnType<typeof getMotion>;
+type MotionDelays = ReturnType<typeof avatarMotionDelays>;
 type Point = readonly [number, number];
 
 const MotionGroup = Animated.createAnimatedComponent(G);
@@ -36,18 +39,13 @@ const avatarTags = new Set([
 ]);
 const ignoredTags = new Set(['filter', 'style', 'title']);
 
-export function AvatarSvg({ animated, ...props }: AvatarSvgProps) {
-  const timings = React.useMemo(
-    () => animated && Platform.OS !== 'web' ? readMotionTimings(props.src) : null,
-    [animated, props.src],
-  );
-  return timings?.size
-    ? <MotionPreference {...props} timings={timings} />
+export function AvatarSvg({ animated, seed, ...props }: AvatarSvgProps) {
+  return animated && seed !== undefined && Platform.OS !== 'web' && props.src.includes('<style>')
+    ? <AnimatedAvatarSvg {...props} seed={seed} />
     : <SvgRoot {...props} />;
 }
 
-function MotionPreference(props: AvatarSvgProps & { timings: MotionTimings }) {
-  const { timings, ...svgProps } = props;
+function useSystemReducedMotion(): boolean {
   const [reducedMotion, setReducedMotion] = React.useState(useReducedMotion());
 
   React.useEffect(() => {
@@ -65,17 +63,16 @@ function MotionPreference(props: AvatarSvgProps & { timings: MotionTimings }) {
     };
   }, []);
 
-  return reducedMotion
-    ? <SvgRoot {...svgProps} />
-    : <AnimatedAvatarSvg {...svgProps} timings={timings} />;
+  return reducedMotion;
 }
 
 function AnimatedAvatarSvg({
-  src, sanitize, width, height, loading, fallback, timings, onSvgLoad, onSvgError,
-}: AvatarSvgProps & { timings: MotionTimings }) {
+  src, seed, sanitize, width, height, loading, fallback, onSvgLoad, onSvgError,
+}: AvatarSvgProps & { seed: string }) {
   const idPrefix = React.useId().replace(/[^\w-]/g, '');
-  const elapsed = useSharedValue(0);
-  const request = React.useMemo(() => ({ src, sanitize, timings }), [src, sanitize, timings]);
+  const elapsed = useSharedValue(-1);
+  const reducedMotion = useSystemReducedMotion();
+  const request = React.useMemo(() => ({ src, sanitize, seed }), [src, sanitize, seed]);
   const [result, setResult] = React.useState<{ request: typeof request; ast: JsxAST | null }>();
   const callbacks = React.useRef({ onSvgLoad, onSvgError });
   React.useEffect(() => {
@@ -83,14 +80,19 @@ function AnimatedAvatarSvg({
   }, [onSvgLoad, onSvgError]);
 
   React.useEffect(() => {
+    if (reducedMotion) elapsed.value = -1;
+  }, [elapsed, reducedMotion]);
+
+  React.useEffect(() => {
     try {
+      const delays = avatarMotionDelays(request.seed);
       const ast = parse(request.src, (root) => {
         if (root.tag !== 'svg') throw new Error('SVG markup is invalid.');
-        prepareTree(root, idPrefix, elapsed, request.timings, request.sanitize === true);
+        prepareTree(root, idPrefix, elapsed, delays, request.sanitize === true);
         return root;
       });
       if (!ast) throw new Error('SVG markup is invalid.');
-      elapsed.value = 0;
+      elapsed.value = -1;
       setResult({ request, ast });
     } catch (error) {
       setResult({ request, ast: null });
@@ -104,7 +106,7 @@ function AnimatedAvatarSvg({
   if (!result.ast) return fallback;
   return (
     <>
-      <AnimationClock elapsed={elapsed} />
+      {!reducedMotion && <AnimationClock elapsed={elapsed} />}
       <SvgAst ast={result.ast} override={{ width, height }} />
     </>
   );
@@ -129,10 +131,15 @@ function AnimatedPart({
 }>) {
   const { frames, duration, delay } = motion;
   const [originX, originY] = origin;
+  // An unchanged numeric phase doesn't trigger the animated-props mapper.
+  const phase = useDerivedValue(() => {
+    'worklet';
+    return motionPhase(elapsed.value, { duration, delay }, frames);
+  });
   // The native SVG host accepts the affine matrix directly on the UI thread.
   const animatedProps = useAnimatedProps<React.ComponentProps<typeof G> & { matrix: number[] }>(() => {
     'worklet';
-    return motionProps(elapsed.value, { duration, delay }, frames, originX, originY, restingOpacity);
+    return motionProps(phase.value, frames, originX, originY, restingOpacity);
   });
   return <MotionGroup opacity={restingOpacity} animatedProps={animatedProps}>{children}</MotionGroup>;
 }
@@ -142,7 +149,7 @@ function prepareTree(
   node: XmlAST,
   idPrefix: string,
   elapsed: SharedValue<number>,
-  timings: MotionTimings,
+  delays: MotionDelays,
   sanitize: boolean,
 ) {
   node.children = node.children.filter((child) => {
@@ -170,28 +177,25 @@ function prepareTree(
   const part = node.props.class;
   delete node.props.class;
   if (isMotionPart(part)) {
-    const motion = getMotion(part, timings);
-    if (motion) {
-      const Tag = node.Tag;
-      const origin = partOrigin(part, node);
-      const opacity = Number(node.props.opacity ?? 1);
-      delete node.props.opacity;
-      node.Tag = (props) => (
-        <AnimatedPart elapsed={elapsed} motion={motion} origin={origin} restingOpacity={opacity}>
-          <Tag {...props} />
-        </AnimatedPart>
-      );
-    }
+    const Tag = node.Tag;
+    const motion = getMotion(part, delays[part]);
+    const origin = partOrigin(part, node);
+    const opacity = Number(node.props.opacity ?? 1);
+    delete node.props.opacity;
+    node.Tag = (props) => (
+      <AnimatedPart elapsed={elapsed} motion={motion} origin={origin} restingOpacity={opacity}>
+        <Tag {...props} />
+      </AnimatedPart>
+    );
   }
 
   for (const child of node.children) {
-    if (typeof child !== 'string') prepareTree(child, idPrefix, elapsed, timings, sanitize);
+    if (typeof child !== 'string') prepareTree(child, idPrefix, elapsed, delays, sanitize);
   }
 }
 
 function partOrigin(part: MotionPart, node: XmlAST): Point {
-  if (part === 'body') return [50, 80];
-  if (part === 'eyes') return [50, 52];
+  if (part === 'body' || part === 'eyes') return avatarMotion[part].origin;
 
   const points = artPoints(node);
   if (!points.length) return [50, 50];

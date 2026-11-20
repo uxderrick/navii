@@ -77,7 +77,7 @@ export function Navii({
       accessibilityLabel={alt ?? title}
       accessibilityRole={alt || title ? 'image' : undefined}
     >
-      <AvatarSvg {...svgProps} animated={animated} />
+      <AvatarSvg {...svgProps} seed={seed} animated={animated} />
     </View>
   );
 }
@@ -172,7 +172,7 @@ export function NaviiGroup({
           key={i}
           style={{ position: 'absolute', left: i * step, top: 0, width: size, height: size }}
         >
-          <AvatarSvg {...tileProps} src={tile} animated={i < tiles.tiles.length && animated} />
+          <AvatarSvg {...tileProps} src={tile} seed={i < tiles.tiles.length ? stableSeeds[i] : undefined} animated={animated} />
         </View>
       ))}
     </View>
